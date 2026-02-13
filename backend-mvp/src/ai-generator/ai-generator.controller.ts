@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Logger } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Logger,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { AiGeneratorService } from './ai-generator.service';
 
 @Controller('ai')
@@ -38,14 +45,17 @@ export class AiGeneratorController {
         }
 
         const results = await Promise.all(promises);
-        const validResults = results.filter(r => r !== null && r.success);
+        const validResults = results.filter((r) => r && r?.success === true);
 
         if (validResults.length > 0) {
             this.logger.log(`✅ Enviando ${validResults.length} problema(s) generado(s).`);
             // Retornamos el array de datas. El frontend ya sabe manejar arrays.
             return { data: validResults.map(r => r.data) };
         } else {
-            throw new Error("No se pudo generar ningún problema válido tras los intentos.");
+            throw new HttpException(
+              'La IA no pudo generar el problema.',
+              HttpStatus.UNPROCESSABLE_ENTITY,
+            );
         }
     }
 }

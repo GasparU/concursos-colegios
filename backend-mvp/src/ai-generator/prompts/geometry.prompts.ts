@@ -2,11 +2,17 @@ import { OUTPUT_FORMAT_JSON } from './common.rules';
 import { getSeeds } from '../seeds';
 import { GET_VARIABILITY_RULES } from './variability.manager';
 
-export const GEOMETRY_PROMPT = (grade: string, stage: string, difficulty: string) => `
+export const GEOMETRY_PROMPT = (grade: string, stage: string, difficulty: string) => {
+const allowDecimals = difficulty === 'Avanzado' || difficulty === 'Concurso';
+const numberTypeRule = allowDecimals
+  ? "OBJETIVO: Problemas desafiantes. La respuesta 'x' PUEDE SER DECIMAL (ej: 4.5, 7.2) o Entera."
+  : "OBJETIVO: Problemas didácticos. La respuesta 'x' DEBE SER ENTERA (Integer Only).";
+
+return `
 ROL: Experto en Geometría Euclidiana (Nivel ${grade}).
 ETAPA: ${stage} | DIFICULTAD: ${difficulty}
 
-OBJETIVO: Problemas con RESPUESTAS ENTERAS (Integer Only).
+${numberTypeRule}
 
 ${GET_VARIABILITY_RULES('GEOMETRY', difficulty)}
 
@@ -188,4 +194,10 @@ SEMILLAS DE INSPIRACIÓN:
 ${getSeeds(grade, stage)}
 
 ${OUTPUT_FORMAT_JSON}
+
+🔥 REGLA ESTRICTA DE BACKEND:
+- El backend FORZARÁ que el resultado sea entero en Básico/Intermedio y decimal/fracción en Avanzad
+
 `;
+
+}

@@ -56,7 +56,7 @@ export const GET_VARIABILITY_RULES = (subject: 'GEOMETRY' | 'ALGEBRA' | 'ARITHME
         } else {
             numberRules = `
             1. DEFINIR OBJETIVO (AVANZADO):
-               - ✅ NIVEL RETADOR: Puedes usar enteros grandes (19-30) O decimales "limpios" (0.5, 2.5) o fracciones (1/3, 7/9).
+               - ✅ NIVEL RETADOR: Puedes usar enteros grandes (12-50) O decimales "limpios" (0.5, 2.5) o fracciones (1/3, 7/9).
                - OPCIONAL: Fracciones simples si el renderizado lo permite.
                - IMPORTANTE: Si la respuesta es decimal (ej: 17.5), asegúrate de que las alternativas también lo sean.`;
         }

@@ -43,29 +43,36 @@ export const VisualDataSchema = z.object({
     data: z.any().optional().describe("Datos del gráfico estadístico"),
 });
 
-const MathDataSchema = z.object({
+const MathDataSchema = z
+  .object({
     type: z.enum([
-        'collinear_segments',
-        'solid_cube',
-        'solid_prism',
-        'polygon_regular',
-        'consecutive_angles',
-        'circle_sectors',
-        'circle_arc_angle',
-        'parallel_lines_bisector',
-        'composite_squares',
-        'net_box',
-        'chain_links',
-        'composite_3d_solid',
+      'collinear_segments',
+      'solid_cube',
+      'solid_prism',
+      'polygon_regular',
+      'consecutive_angles',
+      'circle_sectors',
+      'circle_arc_angle',
+      'parallel_lines_bisector',
+      'composite_squares',
+      'net_box',
+      'chain_links',
+      'composite_3d_solid',
 
-        'none']),
-    params: z.object({
+      'none',
+    ]),
+    params: z
+      .object({
         // Para Segmentos
-        segments: z.array(z.object({
-            name: z.string(),
-            label: z.string(),
-            value: z.number()
-        })).optional(),
+        segments: z
+          .array(
+            z.object({
+              name: z.string(),
+              label: z.string(),
+              value: z.number(),
+            }),
+          )
+          .optional(),
         total_label: z.string().optional(),
 
         // Para Sólidos/Polígonos
@@ -78,115 +85,158 @@ const MathDataSchema = z.object({
         label: z.string().optional(),
 
         // --- Para ángulos consecutivos ---
-        vertex: z.object({
-            label: z.string().default("O"),
-            coords: z.array(z.number()).optional()
-        }).optional(),
-        rays: z.array(z.object({
-            pointLabel: z.string(),    // A, B, C, D...
-            angleLabel: z.string(),    // "5k", "3k+10", ...
-            value: z.number()         // valor real ya resuelto
-        })).optional(),
+        vertex: z
+          .object({
+            label: z.string().default('O'),
+            coords: z.array(z.number()).optional(),
+          })
+          .optional(),
+        rays: z
+          .array(
+            z.object({
+              pointLabel: z.string(), // A, B, C, D...
+              angleLabel: z.string(), // "5k", "3k+10", ...
+              value: z.number(), // valor real ya resuelto
+            }),
+          )
+          .optional(),
 
         // ----- circle_sectors -----
-        total_angle: z.number().optional(),     // 360° para círculo completo
-        sector_labels: z.array(z.object({
-            label: z.string().optional(),
-            angle: z.number(),                  // en grados
-            color: z.string().optional()
-        })).optional(),
+        total_angle: z.number().optional(), // 360° para círculo completo
+        sector_labels: z
+          .array(
+            z.object({
+              label: z.string().optional(),
+              angle: z.number(), // en grados
+              color: z.string().optional(),
+            }),
+          )
+          .optional(),
         show_radii: z.boolean().optional(),
 
         // ----- circle_arc_angle -----
-        center: z.object({ label: z.string().default("O") }).optional(),
+        center: z.object({ label: z.string().default('O') }).optional(),
         points: z.array(z.string()).optional(), // ["A", "B", "C"] para ángulo inscrito
-        arc_measure: z.number().optional(),     // medida del arco en grados
-        angle_value: z.number().optional(),     // valor del ángulo x
+        arc_measure: z.number().optional(), // medida del arco en grados
+        angle_value: z.number().optional(), // valor del ángulo x
         show_arc: z.boolean().optional(),
 
         // ----- parallel_lines_bisector -----
-        lines: z.array(z.object({
-            label: z.string(),
-            direction: z.enum(["horizontal", "vertical"]),
-            offset: z.number(),                 // distancia desde el origen
-            arrow: z.boolean().optional()
-        })).optional(),
-        bisector: z.object({
-            vertex: z.string(),                // punto de intersección (ej: "B")
-            lines: z.array(z.string()),        // ["AB", "BC"] o ["BD", "DC"]
+        lines: z
+          .array(
+            z.object({
+              label: z.string(),
+              direction: z.enum(['horizontal', 'vertical']),
+              offset: z.number(), // distancia desde el origen
+              arrow: z.boolean().optional(),
+            }),
+          )
+          .optional(),
+        bisector: z
+          .object({
+            vertex: z.string(), // punto de intersección (ej: "B")
+            lines: z.array(z.string()), // ["AB", "BC"] o ["BD", "DC"]
             angle_label: z.string().optional(),
-            angle_value: z.number().optional()
-        }).optional(),
+            angle_value: z.number().optional(),
+          })
+          .optional(),
         parallel_markers: z.boolean().optional(), // marcas de paralelismo ( > )
 
         // ----- composite_squares -----
-        squares: z.array(z.object({
-            label: z.string(),                 // "ABCD"
-            side: z.number(),                 // longitud real
-            position: z.object({
+        squares: z
+          .array(
+            z.object({
+              label: z.string(), // "ABCD"
+              side: z.number(), // longitud real
+              position: z.object({
                 x: z.number(),
-                y: z.number()
-            }),                               // esquina inferior izquierda
-            color: z.string().optional(),
-            filled: z.boolean().optional()
-        })).optional(),
-        shaded_region: z.object({
-            type: z.enum(["polygon", "difference"]),
+                y: z.number(),
+              }), // esquina inferior izquierda
+              color: z.string().optional(),
+              filled: z.boolean().optional(),
+            }),
+          )
+          .optional(),
+        shaded_region: z
+          .object({
+            type: z.enum(['polygon', 'difference']),
             points: z.array(z.array(z.number())).optional(),
-            color: z.string().default("#fbbf24")
-        }).optional(),
+            color: z.string().default('#fbbf24'),
+          })
+          .optional(),
 
         // ----- net_box -----
-        net_dimensions: z.object({
-            width: z.number(),               // 28
-            height: z.number(),              // 24
-            cut_square_side: z.number()      // lado del cuadrado recortado (x)
-        }).optional(),
+        net_dimensions: z
+          .object({
+            width: z.number(), // 28
+            height: z.number(), // 24
+            cut_square_side: z.number(), // lado del cuadrado recortado (x)
+          })
+          .optional(),
         box_label: z.string().optional(),
 
         // ----- chain_links -----
-        link_length: z.number(),             // largo de cada eslabón (2 cm)
-        link_width: z.number(),             // ancho (3 cm) o diámetro
-        num_links: z.number(),              // 5
+        link_length: z.number(), // largo de cada eslabón (2 cm)
+        link_width: z.number(), // ancho (3 cm) o diámetro
+        num_links: z.number(), // 5
         total_length_label: z.string().optional(),
 
         // ----- composite_3d_solid (isométrico) -----
-        solid_parts: z.array(z.object({
-            shape: z.enum(["cube", "prism"]),
-            dimensions: z.object({
+        solid_parts: z
+          .array(
+            z.object({
+              shape: z.enum(['cube', 'prism']),
+              dimensions: z.object({
                 length: z.number(),
                 width: z.number(),
-                height: z.number()
+                height: z.number(),
+              }),
+              position: z
+                .object({
+                  x: z.number(),
+                  y: z.number(),
+                  z: z.number(),
+                })
+                .optional(),
+              color: z.string().optional(),
             }),
-            position: z.object({
-                x: z.number(),
-                y: z.number(),
-                z: z.number()
-            }).optional(),
-            color: z.string().optional()
-        })).optional(),
+          )
+          .optional(),
         isometric_angle: z.number().default(30), // grados
-
-
-    }).optional().describe("Parámetros matemáticos estructurados."),
-}).optional().describe("Datos matemáticos puros.");
+        x_value: z
+          .number()
+          .describe(
+            'OBLIGATORIO: valor numérico de la incógnita (sin unidades, solo número).',
+          ),
+      })
+      .optional()
+      .describe('Parámetros matemáticos estructurados.'),
+  })
+  .optional()
+  .describe('Datos matemáticos puros.');
 
 // Esquema de Respuesta Final del Servicio
 export const MathProblemSchema = z.object({
-    topic: z.string(),
-    difficulty: z.string(),
-    question_markdown: z.string(),
-    options: z.object({
-        A: z.string(),
-        B: z.string(),
-        C: z.string(),
-        D: z.string(),
-        E: z.string()
-    }).describe("Las 5 alternativas de respuesta. Una correcta, 4 distractores."),
-    solution_markdown: z.string().describe("Solución FINAL y directa. MÁXIMO 5 líneas. PROHIBIDO incluir pensamientos o correcciones."),
-    correct_answer: z.string(),
-    math_data: MathDataSchema,
-    visual_data: z.any().optional(),
+  topic: z.string(),
+  difficulty: z.string(),
+  question_markdown: z.string(),
+  options: z
+    .object({
+      A: z.string(),
+      B: z.string(),
+      C: z.string(),
+      D: z.string(),
+      E: z.string(),
+    })
+    .describe('Las 5 alternativas de respuesta. Una correcta, 4 distractores.'),
+  solution_markdown: z
+    .string()
+    .describe(
+      'Solución FINAL y directa. MÁXIMO 5 líneas. PROHIBIDO incluir pensamientos o correcciones.',
+    ),
+  correct_answer: z.string(),
+  math_data: MathDataSchema.describe('OBLIGATORIO: Datos para el gráfico'),
+  visual_data: z.any().optional(),
 });
 
 export type MathProblem = z.infer<typeof MathProblemSchema>;
