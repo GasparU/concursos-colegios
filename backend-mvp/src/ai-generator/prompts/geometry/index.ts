@@ -1,0 +1,11 @@
+export { SEGMENTS_PROMPT } from './segments.prompt';
+export { ANGLES_PROMPT } from './angles.prompt';
+export { CIRCLE_SECTORS_PROMPT } from './circle-sectors.prompt';
+export { CIRCLE_ARC_ANGLE_PROMPT } from './circle-arc-angle.prompt';
+export { PARALLEL_LINES_PROMPT } from './parallel-lines.prompt';
+export { COMPOSITE_SQUARES_PROMPT } from './composite-squares.prompt';
+export { NET_BOX_PROMPT } from './net-box.prompt';
+export { CHAIN_LINKS_PROMPT } from './chain-links.prompt';
+export { COMPOSITE_3D_PROMPT } from './composite-3d.prompt';
+export { POLYGON_REGULAR_PROMPT } from './polygon-regular.prompt';
+export { CUBE_PRISM_PROMPT } from './cube-prism.prompt';

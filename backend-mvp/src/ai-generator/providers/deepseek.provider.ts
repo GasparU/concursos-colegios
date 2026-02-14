@@ -45,9 +45,13 @@ export class DeepSeekProvider implements IAiProvider {
       { ...lastMessage, content: promptWithFormat },
     ];
 
+    let rawText = '';
+
     try {
       const response = await this.model.invoke(messagesToSend);
       let rawText = response.content as string;
+
+      console.log('📤 [DeepSeek] Respuesta cruda:', rawText);
 
       // 🔥 LIMPIEZA AGRESIVA
       rawText = rawText
@@ -66,20 +70,32 @@ export class DeepSeekProvider implements IAiProvider {
       const parsed = JSON.parse(jsonMatch[0]);
 
       // 🔥 VALIDACIÓN CLAVE: math_data debe existir
-      if (!parsed.math_data) {
-        const error = new Error('La IA no generó math_data');
+      let mathData = parsed.math_data;
+      if (!mathData && parsed.visual_data?.math_data) {
+        mathData = parsed.visual_data.math_data;
+      }
+
+      if (!mathData) {
+        const error = new Error(
+          'La IA no generó math_data (ni en raíz ni en visual_data)',
+        );
         (error as any).rawResponse = rawText;
         throw error;
       }
 
+      // 🔥 Reemplazar parsed.math_data por el encontrado
+      parsed.math_data = mathData;
+
       return parsed as T;
     } catch (e: any) {
-      this.logger.error(
-        `Error parseando JSON de DeepSeek. Respuesta cruda: ${e.rawResponse || 'no disponible'}`,
-      );
-      // Aseguramos que el error tenga la respuesta cruda para el log superior
-      if (!e.rawResponse && (e as any).rawResponse === undefined) {
-        (e as any).rawResponse = 'No capturada';
+      if (e.rawResponse) {
+        this.logger.error(`🔥 RAW RESPONSE (DeepSeek): ${e.rawResponse}`);
+      } else {
+        this.logger.error(
+          `Error parseando JSON de DeepSeek. Respuesta cruda: ${e.rawResponse || 'no disponible'}`,
+        );
+        if (!e.rawResponse) (e as any).rawResponse = rawText; 
+        throw e;
       }
       throw e;
     }

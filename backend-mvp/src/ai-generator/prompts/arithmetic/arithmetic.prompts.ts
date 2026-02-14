@@ -1,10 +1,7 @@
-import {
-   OUTPUT_FORMAT_JSON,
-   VISUAL_RULES_ARITHMETIC,
-   VISUAL_RULES_STATISTICS
-} from './common.rules';
-import { getSeeds } from '../seeds';
-import { GET_VARIABILITY_RULES } from './variability.manager';
+import { getSeeds } from 'src/ai-generator/seeds';
+
+import { GET_VARIABILITY_RULES } from '../variability.manager';
+import { OUTPUT_FORMAT_JSON, VISUAL_RULES_ARITHMETIC, VISUAL_RULES_STATISTICS } from '../common.rules';
 
 export const ARITHMETIC_PROMPT = (grade: string, stage: string, difficulty: string) => `
 ROL: Experto en Aritmética y Estadística (Nivel ${grade}).

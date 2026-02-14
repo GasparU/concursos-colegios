@@ -20,6 +20,7 @@ import {
 import clsx from 'clsx';
 import axios from 'axios';
 import { Toaster, toast } from "sonner";
+import remarkBreaks from "remark-breaks";
 
 // 🔥 CSS PARA LATEX INLINE CORREGIDO
 import 'katex/dist/katex.min.css'; 
@@ -681,16 +682,14 @@ export const GeneratorPage = () => {
                       <span>SOLUCIÓN</span>
                       <ChevronDown size={10} />
                     </summary>
-                    <div className="mt-2 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <div className="mt-2 text-sm text-slate-600 dark:text-slate-400 leading-relaxed overflow-x-auto">
                       <ReactMarkdown
-                        remarkPlugins={[remarkMath]}
+                        remarkPlugins={[remarkMath, remarkBreaks]} // añadido remarkBreaks
                         rehypePlugins={[rehypeKatex]}
                         components={{
-                          // 1. PÁRRAFOS: Renderizamos children DIRECTO. Sin String(), sin Latex.
                           p: ({ children }) => (
                             <p className="mb-2">{children}</p>
                           ),
-                          // 2. TÍTULOS Y LISTAS: Para que se vea ordenado
                           li: ({ children }) => (
                             <li className="ml-4 list-disc">{children}</li>
                           ),
@@ -751,12 +750,14 @@ export const GeneratorPage = () => {
               Generando ejercicio {problems.length + 1} de {config.quantity}...
             </p>
 
-            <button 
-                    onClick={() => { abortControllerRef.current = true; }} // ⚡ Activa la señal
-                    className="px-3 py-1 bg-rose-50 text-rose-600 text-[10px] font-bold rounded-md hover:bg-rose-100 transition-colors border border-rose-100"
-                >
-                    CANCELAR
-                </button>
+            <button
+              onClick={() => {
+                abortControllerRef.current = true;
+              }} // ⚡ Activa la señal
+              className="px-3 py-1 bg-rose-50 text-rose-600 text-[10px] font-bold rounded-md hover:bg-rose-100 transition-colors border border-rose-100"
+            >
+              CANCELAR
+            </button>
 
             {/* Indicador visual de "Arrástrame" (Opcional) */}
             <div className="absolute top-2 right-2 text-slate-300">

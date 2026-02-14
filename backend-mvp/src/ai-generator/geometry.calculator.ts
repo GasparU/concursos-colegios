@@ -60,12 +60,18 @@ export function calculateGeometryTotal(mathData: any): number | null {
         // 2 & 4. ÁNGULOS CONSECUTIVOS / ALREDEDOR DE UN PUNTO
         // =====================================================================
         if (type === 'consecutive_angles' && Array.isArray(params.rays)) {
-            let total = 0;
-            params.rays.forEach((ray: any) => {
-                // A veces viene como 'angleLabel', a veces hay que parsear coef/const
-                total += evalExpr(ray);
-            });
-            return parseFloat(total.toFixed(2));
+          let total = 0;
+          params.rays.forEach((ray: any, index: number) => {
+            // 🔥 AÑADIR index AQUÍ
+            const val = evalExpr(ray);
+            total += val;
+
+            // 🔥 Usar 'index' en lugar de 'i'
+            console.log(
+              `🧮 [CALC] Rayo ${index}: coef=${ray.coef}, const=${ray.const}, x=${x_value}, evalExpr=${val}`,
+            );
+          });
+          return parseFloat(total.toFixed(2));
         }
 
         // =====================================================================

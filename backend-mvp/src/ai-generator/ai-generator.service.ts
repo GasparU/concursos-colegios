@@ -7,6 +7,9 @@ import { EXAM_BLUEPRINT, SYLLABUS_DB } from './exam-syllabus';
 import { getSystemPrompt } from './prompt-router';
 import { VisualFactory } from './visual-factory';
 import { calculateGeometryTotal } from './geometry.calculator';
+import { buildOptions, buildSolution, formatByDifficulty, generateDistractors, normalizeConsecutiveAngles, sanitizeAngles, sanitizeSegments } from './ai-generator-service/geometry';
+
+
 
 
 @Injectable()
@@ -258,32 +261,53 @@ export class AiGeneratorService {
           MathProblemSchema,
         );
 
-        if (result.math_data?.params?.segments) {
-          result.math_data.params.segments =
-            result.math_data.params.segments.map((seg: any) => {
-              if (seg.coef === undefined || seg.const === undefined) {
-                const label = seg.label || '';
-                // Busca patrones como "6y", "4y+10", "2y-3", "y+5"
-                const match = label.match(
-                  /^([+-]?\d*\.?\d*)?([a-zA-Z])([+-]\d+)?$/,
-                );
-                let coef = 1,
-                  constVal = 0;
-                if (match) {
-                  coef = match[1] ? parseFloat(match[1]) : 1;
-                  constVal = match[3] ? parseFloat(match[3]) : 0;
-                }
-                return { ...seg, coef, const: constVal };
-              }
-              return seg;
-            });
+        // 🔥 NORMALIZAR ESTRUCTURAS ERRÓNEAS DE DEEPSEEK
+        if (provider.providerName.includes('DeepSeek')) {
+          // Si no hay math_data en la raíz, intentar normalizar desde visual_data
+          if (!result.math_data && result.visual_data) {
+            const normalized = normalizeConsecutiveAngles(
+              null,
+              result.visual_data,
+            );
+            if (normalized) {
+              result.math_data = normalized;
+              // Limpiar visual_data para evitar duplicación
+              delete result.visual_data.math_data;
+            }
+          }
+
+          // Si ya hay math_data pero con tipo incorrecto, normalizarlo
+          if (result.math_data) {
+            const normalized = normalizeConsecutiveAngles(result.math_data);
+            if (normalized) {
+              result.math_data = normalized;
+            }
+          }
+        }
+
+        // Si después de todo sigue sin haber math_data, lanzar error
+        if (!result.math_data) {
+          throw new Error('La IA no generó math_data');
         }
 
         const params = result.math_data.params;
         const type = result.math_data.type;
 
+        if (
+          type === 'consecutive_angles' &&
+          (!params.rays || params.rays.length < 2)
+        ) {
+          throw new Error('El problema de ángulos requiere al menos 2 rayos.');
+        }
+
         // 1. Obtener x_value de forma tolerante
         let rawX: number | undefined;
+        console.log(
+          '🔍 [DEBUG] params.x_value crudo:',
+          params?.x_value,
+          'tipo:',
+          typeof params?.x_value,
+        );
         if (params.x_value !== undefined) {
           if (typeof params.x_value === 'string') {
             const match = params.x_value.match(/-?\d+(\.\d+)?/);
@@ -304,86 +328,40 @@ export class AiGeneratorService {
           );
         }
 
-        // 2. Determinar modo según dificultad
-        const isBasic =
-          difficulty.toLowerCase().includes('básico') ||
-          difficulty.toLowerCase().includes('basic');
-        const isInter = difficulty.toLowerCase().includes('inter');
-        const isAdvanced =
-          difficulty.toLowerCase().includes('avanzado') ||
-          difficulty.toLowerCase().includes('concurso');
+        const {
+          cleanX,
+          displayX,
+          isFractionMode,
+          isMixedMode,
+          isBasic,
+          isInter,
+        } = formatByDifficulty(rawX, difficulty);
+        params.x_value = cleanX;
+        console.log('✅ [DEBUG] cleanX asignado:', cleanX);
 
-        let isFractionMode = false; // si las opciones se muestran como fracciones LaTeX
-        let isMixedMode = false;
-        let displayX: string; // cómo se muestra en solución/opciones
-        let cleanX: number;
+        if (params.segments)
+          console.log(
+            '📦 [DEBUG] segmentos antes sanitizar:',
+            params.segments.length,
+          );
+        if (params.rays)
+          console.log('📐 [DEBUG] rayos antes sanitizar:', params.rays.length);
 
-        // ---------------------------------------------
-        // 🟢 BÁSICO   → Enteros pequeños (2-12)
-        // 🟡 INTERMEDIO → Enteros medianos (13-19)
-        // 🔴 AVANZADO  → Decimales (máx 2 decimales) o fracciones simples, aleatorio
-        // ---------------------------------------------
-        if (isBasic || isInter) {
-          // ---------- ENTEROS ESTRICTOS ----------
-          cleanX = Math.round(rawX);
-          // Aseguramos que esté dentro del rango adecuado (opcional, mejora la calidad)
-          if (isBasic) {
-            if (cleanX < 2) cleanX = 2 + Math.floor(Math.random() * 11); // 2..12
-            if (cleanX > 12) cleanX = 12 - Math.floor(Math.random() * 11);
-          } else {
-            // Intermedio
-            if (cleanX < 13) cleanX = 13 + Math.floor(Math.random() * 7); // 13..19
-            if (cleanX > 19) cleanX = 19 - Math.floor(Math.random() * 7);
-          }
-          displayX = cleanX.toString();
-          isFractionMode = false; // fracciones prohibidas
-        } else {
-          // ---------- AVANZADO: decimales o fracciones ----------
-          // Si rawX es entero, lo dejamos entero o le añadimos .5 / .25 aleatoriamente
-          if (Number.isInteger(rawX)) {
-            const rand = Math.random();
-            if (rand < 0.34) {
-              cleanX = rawX; // entero
-            } else if (rand < 0.67) {
-              cleanX = rawX + 0.5; // .5
-            } else {
-              cleanX = rawX + 0.25; // .25
-            }
-          } else {
-            // Redondear al múltiplo de 0.25 más cercano
-            cleanX = Math.round(rawX * 4) / 4;
-          }
-
-          const formatRand = Math.random();
-          // 40% decimal, 40% fracción, 20% mixto
-          if (formatRand < 0.4) {
-            // --- DECIMAL ---
-            isFractionMode = false;
-            isMixedMode = false;
-            displayX =
-              cleanX % 1 === 0
-                ? cleanX.toString()
-                : cleanX.toFixed(2).replace(/\.?0+$/, '');
-          } else if (formatRand < 0.8) {
-            // --- FRACCIÓN (impropia) ---
-            isFractionMode = true;
-            isMixedMode = false;
-            displayX = formatFraction(cleanX);
-          } else {
-            // --- MIXTO (solo si cleanX >= 1, si no, se cae a fracción) ---
-            isFractionMode = true; // técnicamente es una representación de fracción
-            isMixedMode = true;
-            if (cleanX < 1) {
-              displayX = formatFraction(cleanX);
-              isMixedMode = false; // no se puede mostrar como mixto
-            } else {
-              displayX = formatMixed(cleanX);
-            }
-          }
+        // =========================================================================
+        // 🔥 SANITIZACIÓN DE SEGMENTOS Y RAYOS (AHORA CON x_value LIMPIO)
+        // =========================================================================
+        if (params.segments && Array.isArray(params.segments)) {
+          params.segments = sanitizeSegments(params.segments, cleanX);
         }
 
-        // Guardar el valor final en params (para el visual)
-        params.x_value = cleanX;
+        if (params.rays && Array.isArray(params.rays)) {
+          params.rays = sanitizeAngles(params.rays, cleanX, this.logger);
+        } else if (type === 'consecutive_angles') {
+          console.error(
+            '❌ [SANITIZE] type es consecutive_angles pero params.rays no existe o no es array',
+          );
+          throw new Error('El problema de ángulos consecutivos requiere rays');
+        }
 
         // ---------------------------------------------
         // 🚨 Validación extra: etiquetas basura en segmentos
@@ -400,6 +378,25 @@ export class AiGeneratorService {
         }
         // B) Calcular Total
         const computedTotal = calculateGeometryTotal(result.math_data);
+
+        console.log('🧮 [DEBUG] computedTotal =', computedTotal);
+        if (computedTotal === null || computedTotal <= 0) {
+          console.error('❌ [DEBUG] Total inválido, lanzando error...');
+        }
+
+        // 🔥 VALIDACIÓN ESPECÍFICA PARA ÁNGULOS
+        if (type === 'consecutive_angles') {
+          this.logger.debug(
+            `🧮 Total calculado para ángulos: ${computedTotal}`,
+          );
+          if (computedTotal === null || computedTotal <= 0) {
+            // Log detallado de los rayos para depuración
+            this.logger.error(
+              `🔥 Rayos recibidos: ${JSON.stringify(params.rays)}`,
+            );
+            throw new Error(`Total inválido (${computedTotal}) para ángulos`);
+          }
+        }
 
         if (computedTotal === null || computedTotal <= 0) {
           throw new Error('Fallo en el cálculo matemático del Backend.');
@@ -419,197 +416,45 @@ export class AiGeneratorService {
             totalStr,
           );
         }
-        // D) REGENERAR OPCIONES (SHUFFLE DINÁMICO)
-        // 1. Definimos la respuesta correcta (número limpio)
-        // D) REGENERAR OPCIONES (SHUFFLE DINÁMICO)
+
+        // D) REGENERAR OPCIONES
         const correctVal = cleanX;
-        let distractors: number[] = [];
-
-        if (isBasic || isInter) {
-          // Enteros: diferencias de 1 y 2
-          distractors = [
-            correctVal - 2,
-            correctVal - 1,
-            correctVal + 1,
-            correctVal + 2,
-          ];
-          // Evitar negativos o cero en básico
-          if (isBasic) {
-            distractors = distractors.map((d) => (d < 1 ? d + 3 : d));
-          }
-        } else {
-          // Avanzado: diferencias según el tipo de número
-          if (isFractionMode) {
-            // Si es fracción, generamos fracciones cercanas
-            // Tomamos el decimal y le sumamos/restamos 0.5, 0.25, etc.
-            distractors = [
-              correctVal - 0.5,
-              correctVal + 0.5,
-              correctVal - 0.25,
-              correctVal + 0.25,
-            ];
-          } else {
-            // Decimales: diferencias de 0.5, 1, etc.
-            distractors = [
-              correctVal - 1,
-              correctVal + 1,
-              correctVal - 0.5,
-              correctVal + 0.5,
-              correctVal - 0.25,
-              correctVal + 0.25,
-            ];
-          }
-          // Limpiar decimales a 2 dígitos
-          distractors = distractors.map((d) => Math.round(d * 5) / 5);
-        }
-
-        // Eliminar duplicados y valores iguales al correcto
-        distractors = [...new Set(distractors)].filter((d) => d !== correctVal);
-
-        // Si no tenemos suficientes, rellenar con variaciones
-        while (distractors.length < 4) {
-          distractors.push(correctVal + (distractors.length + 1) * 0.5);
-        }
-
-        // Mezclar y asignar a letras
-        const optionsPool = [
-          { val: correctVal, isCorrect: true },
-          ...distractors.slice(0, 4).map((d) => ({ val: d, isCorrect: false })),
-        ].sort(() => Math.random() - 0.5);
-
-        const letters = ['A', 'B', 'C', 'D', 'E'];
-        result.options = {};
-
-        optionsPool.forEach((opt, index) => {
-          if (index < 5) {
-            const letter = letters[index];
-            let optionText: string;
-
-            if (isBasic || isInter) {
-              // Básico/Intermedio: siempre enteros
-              optionText = opt.val.toString();
-            } else {
-              // 🔥 AVANZADO: usa el MISMO modo que elegimos para la respuesta
-              if (!isFractionMode) {
-                // Decimal
-                optionText =
-                  opt.val % 1 === 0
-                    ? opt.val.toString()
-                    : opt.val.toFixed(2).replace(/\.?0+$/, '');
-              } else if (!isMixedMode) {
-                // Fracción impropia
-                optionText = `$${formatFraction(opt.val)}$`;
-              } else {
-                // Mixto (si es <1, se muestra fracción)
-                optionText =
-                  opt.val < 1
-                    ? `$${formatFraction(opt.val)}$`
-                    : `$${formatMixed(opt.val)}$`;
-              }
-            }
-
-            result.options[letter] = optionText;
-            if (opt.isCorrect) {
-              result.correct_answer = letter;
-            }
-          }
-        });
+        const distractors = generateDistractors(
+          correctVal,
+          isBasic,
+          isInter,
+          isFractionMode,
+        );
+        const { options, correct_answer } = buildOptions(
+          correctVal,
+          distractors,
+          isBasic,
+          isInter,
+          isFractionMode,
+          isMixedMode,
+        );
+        result.options = options;
+        result.correct_answer = correct_answer;
 
         // F) SOBRESCRITURA DE SOLUCIÓN (Adiós texto gigante)
         // Escribimos nosotros la solución.
-        // =========================================================
-        // 🔥 GENERACIÓN DE LA SOLUCIÓN (PASO A PASO, SEGÚN EL TIPO)
-        // =========================================================
-        const valTotal = String(params.total_label || totalStr);
-        const valXSolution = displayX; // Ya viene formateado (decimal, fracción o mixto SIN $)
-        let solutionMarkdown = '';
 
-        // 1. SEGMENTOS COLINEALES – Solución algebraica detallada
-        if (type === 'collinear_segments' && Array.isArray(params.segments)) {
-          // Extraer nombre de la variable (x, y, k, etc.)
-          const varName =
-            params.segments[0]?.label.replace(/[0-9.+\- ]/g, '') || 'x';
-
-          // Ecuación visual: "2x + x+5 + 3x-2"
-          const planteamientoStr = params.segments
-            .map((s: any) => s.label)
-            .join(' + ');
-
-          // Reducción de coeficientes y constantes (ya calculados en sanitización)
-          const totalCoef = params.segments.reduce(
-            (acc: number, s: any) => acc + (parseFloat(s.coef) || 0),
-            0,
-          );
-          const totalConst = params.segments.reduce(
-            (acc: number, s: any) => acc + (parseFloat(s.const) || 0),
-            0,
-          );
-
-          const signConst = totalConst >= 0 ? '+' : '-';
-          const absConst = Math.abs(totalConst);
-          const rhsValue = parseFloat(valTotal) - totalConst; // número después de pasar constantes
-
-          solutionMarkdown = `
-1. **Planteamiento:**
-   Sumamos las longitudes de los segmentos para igualar al total:
-   $$ ${planteamientoStr} = ${valTotal} $$
-
-2. **Resolución:**
-   - Agrupamos términos semejantes (${varName}):
-     $$ ${totalCoef}${varName} ${signConst} ${absConst} = ${valTotal} $$
-   - Pasamos el ${absConst} al otro lado:
-     $$ ${totalCoef}${varName} = ${valTotal} ${totalConst >= 0 ? '-' : '+'} ${absConst} $$
-     $$ ${totalCoef}${varName} = ${rhsValue} $$
-   - Despejamos ${varName}:
-     $$ ${varName} = ${valXSolution} $$
-
-3. **Respuesta:**
-   El valor de **${varName}** es **${valXSolution}**.
-  `.trim();
-
-          // 2. ÁNGULOS CONSECUTIVOS – Solución análoga
-        }  else if (type === 'consecutive_angles' && Array.isArray(params.rays)) {
-  // Extraer la variable (k, y, m, etc.) del primer ángulo
-  const varName = params.rays[0]?.angleLabel.replace(/[0-9.+\- ]/g, '') || 'x';
-  const planteamientoStr = params.rays
-    .map((r: any) => r.angleLabel)
-    .join(' + ');
-  
-  solutionMarkdown = `
-1. **Planteamiento:**
-   Sumamos las medidas de los ángulos consecutivos:
-   $$ ${planteamientoStr} = ${valTotal}° $$
-
-2. **Resolución:**
-   Al resolver la ecuación para **${varName}**:
-   $$ ${varName} = ${valXSolution} $$
-
-3. **Respuesta:**
-   El valor de **${varName}** es **${valXSolution}°**.
-  `.trim();
-} else {
-          solutionMarkdown = `
-1. **Planteamiento:**
-   $$ \\text{Suma total} = ${valTotal} $$
-
-2. **Resolución:**
-   $$ x = ${valXSolution} $$
-
-3. **Respuesta:**
-   **${valXSolution}**
-  `.trim();
-        }
-
-        // Asignar la solución generada
-        result.solution_markdown = solutionMarkdown;
+        // F) GENERAR SOLUCIÓN
+        result.solution_markdown = buildSolution(
+          type,
+          params,
+          totalStr,
+          displayX,
+        );
 
         // =========================================================
         // CONTINÚA TU CÓDIGO: VisualFactory, etc.
         // =========================================================
-        this.logger.log(`🏭 Ejecutando VisualFactory...`);
+        
 
         // 4. EJECUTAR FACTORY VISUAL (Ya sabemos que los datos son válidos)
         this.logger.log(`🏭 Ejecutando VisualFactory...`);
+
         const generatedVisual = VisualFactory(result.math_data);
         if (generatedVisual) {
           result.visual_data = generatedVisual;
@@ -625,84 +470,25 @@ export class AiGeneratorService {
           provider: provider.providerName,
         };
       } catch (error: any) {
-        if (
-          provider.providerName.includes('Gemini') ||
-          provider.providerName.includes('DeepSeek')
-        ) {
-          // Si el error contiene la respuesta original, la mostramos
-          if (error.rawResponse) {
-            this.logger.debug(
-              `📄 Respuesta cruda de ${provider.providerName}: ${error.rawResponse}`,
-            );
-          }
+        console.error('🔥🔥🔥 ERROR CAPTURADO EN EXECUTE GENERATION 🔥🔥🔥');
+        console.error('Nombre del proveedor:', provider?.providerName);
+        console.error('Mensaje de error:', error?.message);
+        console.error('Stack:', error?.stack);
+        console.error('Respuesta cruda (rawResponse):', error?.rawResponse);
+        console.error(
+          'Error completo:',
+          JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
+        );
+
+        // También usar Logger por si acaso
+        this.logger.error(
+          `🔥 Fallo en intento ${attempt}: ${error?.message || 'Sin mensaje'}`,
+        );
+        if (error?.rawResponse) {
+          this.logger.debug(`📄 Respuesta cruda: ${error.rawResponse}`);
         }
         lastError = error;
       }
     }
   }
-}
-
-/**
- * Convierte un número decimal a fracción en formato LaTeX.
- * Si el denominador es muy grande (>100), devuelve el decimal con 2 dígitos.
- * @returns string en formato "\frac{num}{den}" (un solo backslash)
- */
-function decimalToFraction(decimal: number): string {
-  if (Number.isInteger(decimal)) return decimal.toString();
-  const tolerance = 1.0e-6;
-  let h1 = 1,
-    h2 = 0,
-    k1 = 0,
-    k2 = 1;
-  let b = decimal;
-  do {
-    let a = Math.floor(b);
-    let aux = h1;
-    h1 = a * h1 + h2;
-    h2 = aux;
-    aux = k1;
-    k1 = a * k1 + k2;
-    k2 = aux;
-    b = 1 / (b - a);
-  } while (Math.abs(decimal - h1 / k1) > decimal * tolerance);
-
-  if (k1 > 100) return parseFloat(decimal.toFixed(2)).toString();
-  // 🔥 Retorna con un solo backslash (en el string se escribe doble por escape de JS, pero en memoria es un solo \)
-  return `\\frac{${h1}}{${k1}}`;
-}
-
-// ============================================================================
-// 🧮 FUNCIONES PARA FORMATO EXACTO (múltiplos de 0.25)
-// ============================================================================
-
-// Máximo común divisor (Euclides)
-function gcd(a: number, b: number): number {
-  while (b !== 0) [a, b] = [b, a % b];
-  return a;
-}
-
-// Formato FRACCIÓN (siempre impropia, reducida)
-// Ej: 3.5 → \frac{7}{2},  2.75 → \frac{11}{4}
-function formatFraction(val: number): string {
-  if (Number.isInteger(val)) return val.toString();
-  const n = Math.round(val * 4);
-  const g = gcd(n, 4);
-  const num = n / g;
-  const den = 4 / g;
-  return `\\frac{${num}}{${den}}`;
-}
-
-// Formato MIXTO (solo para valores >= 1)
-// Ej: 3.5 → 3\frac{1}{2},  2.75 → 2\frac{3}{4}
-function formatMixed(val: number): string {
-  if (Number.isInteger(val)) return val.toString();
-  const n = Math.round(val * 4);
-  const g = gcd(n, 4);
-  let num = n / g;
-  let den = 4 / g;
-  const whole = Math.floor(num / den);
-  const remainder = num % den;
-  if (remainder === 0) return whole.toString();
-  if (whole === 0) return `\\frac{${num}}{${den}}`; // no debería pasar porque val<1 se filtra antes
-  return `${whole}\\frac{${remainder}}{${den}}`;
 }

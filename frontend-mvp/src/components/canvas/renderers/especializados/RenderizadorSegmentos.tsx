@@ -1,17 +1,24 @@
 import { Point, Line, Text } from "mafs";
 import { MeasureDimension } from "./MeasureDimension";
+import { Mafs } from "mafs";
+
+const VIEWBOX_SEGMENTOS = {
+  x: [-1, 11] as [number, number], // 🔥 AGREGA ESTO
+  y: [-3, 3] as [number, number], // 🔥 AGREGA ESTO
+  padding: 0.2,
+};
 
 // 🔥🔥🔥 TU PANEL DE CONTROL - MODIFICA AQUÍ LOS VALORES 🔥🔥🔥
 const CONFIG = {
   // --- COLORES ---
-  COLOR_LINEA_PRINCIPAL: "#334155", // Negro pizarra (El eje principal)
-  COLOR_PUNTOS: "#2563EB", // Azul rey (Los puntos A, B, C)
+  COLOR_LINEA_PRINCIPAL: "#36a2eb", // Negro pizarra (El eje principal)
+  COLOR_PUNTOS: "#36a2eb", // Azul rey (Los puntos A, B, C)
   COLOR_COTAS: "#10B981", // Verde esmeralda (Las medidas)
   COLOR_LETRAS: "#1E293B", // Color de A, B, C
 
   // --- GROSORES ---
   GROSOR_PRINCIPAL: 3, // Grosor de la línea negra central
-  GROSOR_COTAS: 2, // Grosor de las líneas verdes
+  GROSOR_COTAS: 1.5, // Grosor de las líneas verdes
   RADIO_PUNTOS: 3, // Tamaño de los puntos azules
 
   // --- ALTURAS (Y) - LA PARTE CLAVE ---
@@ -51,7 +58,7 @@ export const RenderizadorSegmentos = ({ parametros }: { parametros: any }) => {
 
   // Factor de escala para que quepa en pantalla [-6, 6]
   const factorEscala = ANCHO_VISUAL_DESEADO / longitudTotalReal;
-  
+
   let xAcumulado = 0;
   const puntosX: number[] = [0];
 
@@ -66,6 +73,10 @@ export const RenderizadorSegmentos = ({ parametros }: { parametros: any }) => {
   const xFinalTotal = puntosX[puntosX.length - 1];
 
   return (
+
+  
+  <Mafs height={300} viewBox={VIEWBOX_SEGMENTOS} pan={false} zoom={false}>
+
     <>
       {/* 1. LÍNEA PRINCIPAL (EJE X) */}
       <Line.Segment
@@ -134,5 +145,8 @@ export const RenderizadorSegmentos = ({ parametros }: { parametros: any }) => {
         />
       )}
     </>
-  );
+  
+
+  </Mafs>
+  )
 };

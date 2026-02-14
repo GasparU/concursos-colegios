@@ -97,6 +97,8 @@ const MathDataSchema = z
               pointLabel: z.string(), // A, B, C, D...
               angleLabel: z.string(), // "5k", "3k+10", ...
               value: z.number(), // valor real ya resuelto
+              coef: z.number().optional(), // 🔥 NUEVO
+              const: z.number().optional(), // 🔥 NUEVO
             }),
           )
           .optional(),
