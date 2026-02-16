@@ -8,6 +8,8 @@ import { getSystemPrompt } from './prompt-router';
 import { VisualFactory } from './visual-factory';
 import { calculateGeometryTotal } from './geometry.calculator';
 import { buildOptions, buildSolution, formatByDifficulty, generateDistractors, normalizeConsecutiveAngles, sanitizeAngles, sanitizeSegments } from './ai-generator-service/geometry';
+import { calculateStatistics } from './statistics.calculator';
+import { calculateArithmetic } from './ai-generator-service/arithmetic/arithmetic.calculator';
 
 
 
@@ -261,6 +263,20 @@ export class AiGeneratorService {
           MathProblemSchema,
         );
 
+        // =============================================================
+        // 🔥 CONTROL DE ALUCINACIONES POR LONGITUD DE SOLUCIÓN
+        // =============================================================
+        const SOLUTION_MAX_LENGTH = 800; // Número máximo de caracteres permitido en la solución
+        if (
+          result.solution_markdown &&
+          result.solution_markdown.length > SOLUTION_MAX_LENGTH
+        ) {
+          this.logger.warn(
+            `🚨 Solución demasiado larga (${result.solution_markdown.length} caracteres), posible alucinación. Reintentando...`,
+          );
+          throw new Error('Solución demasiado larga');
+        }
+
         // 🔥 NORMALIZAR ESTRUCTURAS ERRÓNEAS DE DEEPSEEK
         if (provider.providerName.includes('DeepSeek')) {
           // Si no hay math_data en la raíz, intentar normalizar desde visual_data
@@ -376,6 +392,270 @@ export class AiGeneratorService {
             );
           }
         }
+        const arithmeticKeywords = [
+          'fracciones',
+          'aritmética',
+          'operaciones',
+          'descomposición',
+          'polinómica',
+          'divisibilidad',
+          'mcd',
+          'mcm',
+          'primos',
+          'porcentaje',
+          'proporcionalidad',
+          'canjes',
+          'monedas',
+          'billetes',
+          'sucesiones',
+          'progresión',
+          'ecuaciones',
+          'decimales',
+          'potenciación',
+          'radicación',
+          'razones',
+          'regla de tres',
+          'intereses',
+          'impuestos',
+          'múltiplos',
+          'divisores',
+          'cuadrado',
+          'cubo',
+          'cifras',
+          'valor posicional',
+          'orden',
+          'doble',
+          'triple',
+          'mitad',
+          'cuádruple',
+          'equivalencias',
+          'cambio monetario',
+          'conjuntos',
+          'numeración',
+        ];
+
+        const topicLower = topic.toLowerCase();
+        const esAritmetica =
+          arithmeticKeywords.some((keyword) => topicLower.includes(keyword)) ||
+          result.math_data?.type === 'fraction_problem' ||
+          result.math_data?.type === 'arithmetic_problem' ||
+          result.math_data?.type === 'mcd_problem' ||
+          result.math_data?.type === 'mcm_problem' ||
+          result.math_data?.type === 'compound_proportion' ||
+          result.math_data?.type === 'fraction_of_fraction' ||
+          result.math_data?.type === 'fraction_equation' ||
+          result.math_data?.type === 'successive_percentage' ||
+          result.math_data?.type === 'motion_problem';
+          result.math_data?.type === 'money_exchange_simple';
+
+        if (esAritmetica) {
+          // Si el problema tiene un tipo que podemos calcular, lo procesamos
+          const calculableTypes = [
+            'mcd_problem',
+            'mcm_problem',
+            'compound_proportion',
+            'fraction_of_fraction',
+            'fraction_equation',
+            'successive_percentage',
+            'money_exchange',
+            'motion_problem',
+            'money_exchange_simple',
+          ];
+
+          if (
+            result.math_data &&
+            calculableTypes.includes(result.math_data.type)
+          ) {
+            this.logger.log(
+              `🔢 Problema de aritmética (${result.math_data.type}) detectado, procesando con calculador...`,
+            );
+
+            // Importar el dispatcher (asegúrate de la ruta correcta)
+            const {
+              calculateArithmetic,
+            } = require('./ai-generator-service/arithmetic/arithmetic.dispatcher');
+            const arithResult = calculateArithmetic(result.math_data);
+
+            if (!arithResult) {
+              throw new Error(
+                'El calculador de aritmética no pudo obtener un resultado válido',
+              );
+            }
+
+            // Sobrescribir la solución y eliminar visual_data
+            result.solution_markdown = arithResult.solutionMarkdown;
+            result.visual_data = null;
+
+            // Generar opciones alrededor del valor correcto
+            const correctVal = arithResult.correctValue;
+            let distractors: number[];
+            if (Number.isInteger(correctVal)) {
+              distractors = [
+                correctVal - 2,
+                correctVal - 1,
+                correctVal + 1,
+                correctVal + 2,
+              ];
+            } else {
+              distractors = [
+                correctVal - 1,
+                correctVal + 1,
+                correctVal - 0.5,
+                correctVal + 0.5,
+              ];
+            }
+            distractors = [...new Set(distractors)].filter(
+              (d) => d > 0 && d !== correctVal,
+            );
+
+            const optionsPool = [
+              { val: correctVal, isCorrect: true },
+              ...distractors
+                .slice(0, 4)
+                .map((d) => ({ val: d, isCorrect: false })),
+            ].sort(() => Math.random() - 0.5);
+
+            const letters = ['A', 'B', 'C', 'D', 'E'];
+            result.options = {};
+            optionsPool.forEach((opt, index) => {
+              if (index < 5) {
+                const letter = letters[index];
+                const optionText =
+                  opt.val % 1 === 0 ? opt.val.toString() : opt.val.toFixed(2);
+                result.options[letter] = optionText;
+                if (opt.isCorrect) result.correct_answer = letter;
+              }
+            });
+          } else {
+            // Para otros temas de aritmética, early return
+            this.logger.log(
+              `🔢 Problema de aritmética detectado (${topic}), retornando directamente.`,
+            );
+            if (result.visual_data) {
+              result.visual_data = null;
+            }
+            }
+
+          // Retornar el resultado (ya sea procesado o no)
+          return {
+            success: true,
+            data: result,
+            provider: provider.providerName,
+          };
+        }
+
+        // Después de obtener result y sanitizar...
+
+        const esEstadistica =
+          topic.toLowerCase().includes('estadística') ||
+          topic.toLowerCase().includes('frecuencia') ||
+          topic.toLowerCase().includes('promedio') ||
+          topic.toLowerCase().includes('gráfico') ||
+          topic.toLowerCase().includes('moda') ||
+          topic.toLowerCase().includes('mediana') ||
+          result.visual_data?.type === 'frequency_table' ||
+          result.visual_data?.type === 'chart_pie' ||
+          result.visual_data?.type === 'chart_bar' ||
+          result.visual_data?.type === 'chart_line';
+
+        if (esEstadistica) {
+          this.logger.log(
+            `📊 Problema de estadística detectado, procesando con calculador...`,
+          );
+
+          console.log(
+            '📥 math_data recibido:',
+            JSON.stringify(result.math_data, null, 2),
+          );
+          console.log(
+            '📥 visual_data recibido:',
+            JSON.stringify(result.visual_data, null, 2),
+          );
+          const statsResult = calculateStatistics(
+            result.math_data,
+            result.visual_data,
+          );
+          console.log('📤 statsResult:', statsResult);
+          if (!statsResult) {
+            throw new Error(
+              'El calculador de estadística no pudo obtener un resultado válido',
+            );
+          }
+
+          // 🔥 APLICAR ACTUALIZACIONES VISUALES
+          if (statsResult.visualUpdates && result.visual_data) {
+            for (const update of statsResult.visualUpdates) {
+              if (
+                result.visual_data.type === 'chart_bar' ||
+                result.visual_data.type === 'chart_line'
+              ) {
+                if (update.index !== undefined) {
+                  result.visual_data.data.values[update.index] = update.value;
+                }
+              } else if (result.visual_data.type === 'chart_pie') {
+                if (update.index !== undefined) {
+                  result.visual_data.data.sectors[update.index].value =
+                    update.value;
+                }
+              } else if (result.visual_data.type === 'frequency_table') {
+                if (update.rowIndex !== undefined) {
+                  result.visual_data.data.rows[update.rowIndex][1] =
+                    update.value;
+                }
+              }
+            }
+          }
+
+          // Sobrescribir solución y generar opciones
+          result.solution_markdown = statsResult.solutionMarkdown;
+
+          const correctVal = statsResult.correctValue;
+          let distractors: number[];
+          if (Number.isInteger(correctVal)) {
+            distractors = [
+              correctVal - 2,
+              correctVal - 1,
+              correctVal + 1,
+              correctVal + 2,
+            ];
+          } else {
+            distractors = [
+              correctVal - 1,
+              correctVal + 1,
+              correctVal - 0.5,
+              correctVal + 0.5,
+            ];
+          }
+          distractors = [...new Set(distractors)].filter(
+            (d) => d > 0 && d !== correctVal,
+          );
+
+          const optionsPool = [
+            { val: correctVal, isCorrect: true },
+            ...distractors
+              .slice(0, 4)
+              .map((d) => ({ val: d, isCorrect: false })),
+          ].sort(() => Math.random() - 0.5);
+
+          const letters = ['A', 'B', 'C', 'D', 'E'];
+          result.options = {};
+          optionsPool.forEach((opt, index) => {
+            if (index < 5) {
+              const letter = letters[index];
+              const optionText =
+                opt.val % 1 === 0 ? opt.val.toString() : opt.val.toFixed(2);
+              result.options[letter] = optionText;
+              if (opt.isCorrect) result.correct_answer = letter;
+            }
+          });
+
+          return {
+            success: true,
+            data: result,
+            provider: provider.providerName,
+          };
+        }
+
         // B) Calcular Total
         const computedTotal = calculateGeometryTotal(result.math_data);
 
@@ -446,11 +726,6 @@ export class AiGeneratorService {
           totalStr,
           displayX,
         );
-
-        // =========================================================
-        // CONTINÚA TU CÓDIGO: VisualFactory, etc.
-        // =========================================================
-        
 
         // 4. EJECUTAR FACTORY VISUAL (Ya sabemos que los datos son válidos)
         this.logger.log(`🏭 Ejecutando VisualFactory...`);

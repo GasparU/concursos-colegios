@@ -10,7 +10,6 @@ import 'katex/dist/katex.min.css';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { useNavigate } from 'react-router-dom';
-import { ALL_TOPICS } from '../../lib/topics';
 import { normalizeText } from '../../lib/utils';
 import { 
     Sparkles, Dices, Search, Zap, Brain, 
@@ -21,10 +20,16 @@ import clsx from 'clsx';
 import axios from 'axios';
 import { Toaster, toast } from "sonner";
 import remarkBreaks from "remark-breaks";
+import { getTopicsByGrade } from "../../lib/topics";
+
 
 // 🔥 CSS PARA LATEX INLINE CORREGIDO
 import 'katex/dist/katex.min.css'; 
+import { StatisticsChart } from '../../components/canvas/renderers/StatisticsChart';
+import { StatisticsTable } from '../../components/canvas/renderers/StatisticsTable';
 
+type Grade = "3ro" | "4to" | "5to" | "6to";
+type Stage = "clasificatoria" | "final";
 
 export const GeneratorPage = () => {
   const { generate } = useProblemGenerator();
@@ -81,21 +86,27 @@ export const GeneratorPage = () => {
   };
 
   const [config, setConfig] = useState({
-    grade: '6to',
-    stage: 'clasificatoria',
-    difficulty: 'Intermedio',
-    model: 'deepseek' as 'deepseek' | 'gemini',
-    quantity: 1
+    grade: "6to" as Grade,
+    stage: "clasificatoria" as Stage,
+    difficulty: "Intermedio",
+    model: "deepseek" as "deepseek" | "gemini",
+    quantity: 1,
   });
 
-  const handleChange = (field: string, value: any) => setConfig(prev => ({ ...prev, [field]: value }));
+  const topicOptions = getTopicsByGrade(config.grade);
+
+  const handleChange = (field: keyof typeof config, value: any) => {
+    setConfig((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setTopic(val);
     if (val.length > 1) {
       const search = normalizeText(val);
-      const filtered = ALL_TOPICS.filter(t => normalizeText(t).includes(search));
+      const filtered = topicOptions.filter((t) =>
+        normalizeText(t).includes(search),
+      );
       setSuggestions(filtered.slice(0, 8));
     } else {
       setSuggestions([]);
@@ -120,7 +131,7 @@ export const GeneratorPage = () => {
 
     const totalToGenerate = config.quantity; // Ej: 20
     let successCount = 0;
-    const MAX_SAFETY_ATTEMPTS = totalToGenerate * 4;
+    const MAX_SAFETY_ATTEMPTS = totalToGenerate * 30;
 
     let generatedCount = 0;
     let safetyAttempts = 0;
@@ -135,7 +146,7 @@ export const GeneratorPage = () => {
 
       safetyAttempts++;
       try {
-        const randomTotal = Math.floor(Math.random() * (250 - 30) + 30);
+        const randomTotal = Math.floor(Math.random() * (250 - 30) + 60);
         const forbiddenCoef = [2, 3, 5][Math.floor(Math.random() * 3)];
         const newCoef = Math.floor(Math.random() * 7) + 4; // Genera coeficientes entre 4 y 10
         const variable = ["x", "y", "m", "k", "a"][
@@ -189,8 +200,9 @@ export const GeneratorPage = () => {
           );
         }
       } catch (e) {
-        console.error(
-          `⚠️ Falló problema ${e}, pero seguimos con el resto.`,
+        console.error("Error en generación:", e);
+        toast.error(
+          "No se pudo generar un problema válido. Intenta con otros parámetros.",
         );
       }
       // D. Actualizamos Barra de Progreso
@@ -271,95 +283,127 @@ export const GeneratorPage = () => {
     setIsGenerating(true);
     if (sidebarOpen) toggleSidebar();
 
-    // 2. Definimos los temas del examen (Mezcla de cursos)
-    // Puedes personalizar esta lista si quieres más de un curso que de otro
-    const examTopics = [
-        "Aritmética: Operaciones Combinadas", "Aritmética: Conjuntos", "Aritmética: Fracciones", "Aritmética: Porcentajes", "Aritmética: Divisibilidad",
-        "Álgebra: Ecuaciones", "Álgebra: Potenciación", "Álgebra: Polinomios", "Álgebra: Inecuaciones", "Álgebra: Planteo de Ecuaciones",
-        "Geometría: Segmentos y Ángulos", "Geometría: Triángulos", "Geometría: Polígonos", "Geometría: Áreas", "Geometría: Circunferencia",
-        "RM: Sucesiones", "RM: Operadores Matemáticos", "RM: Conteo de Figuras", "RM: Planteo de Ecuaciones", "RM: Edades"
-    ];
+  
+    // Si no hay temas para el grado/etapa, mostrar error o no hacer nada
+    if (topicOptions.length === 0) {
+      console.warn("No hay temas para el grado y etapa seleccionados");
+      return;
+    }
+
 
     // Mezclamos los temas al azar
-    const shuffledTopics = examTopics.sort(() => Math.random() - 0.5);
+    const shuffledTopics = [...topicOptions].sort(() => Math.random() - 0.5);
+    const topicsToUse = shuffledTopics.slice(0, 20);
 
     // 3. BUCLE: 20 Preguntas (Una por una)
-    for (let i = 0; i < 20; i++) {
-        const currentTopic = shuffledTopics[i];
-        
-        try {
-            const randomTotal = Math.floor(Math.random() * (120 - 30) + 30);
-            const variable = ['x', 'n', 'y', 'z'][Math.floor(Math.random() * 4)];
-            
-            const chaosInstruction = `
-            PREGUNTA ${i+1} DEL SIMULACRO (${currentTopic}):
-            - Usa la variable '${variable}'.
-            - Usa valores numéricos cercanos a ${randomTotal}.
-            - Evita repetir estructuras de preguntas anteriores.
-            `;
-            // Pedimos 1 pregunta del tema actual
-            const result = await generate(
-                currentTopic, 
-                config.grade, 
-                config.stage, 
-                // En simulacro, la dificultad suele ser variada o la que elijas. 
-                // Aquí usamos 'Intermedio' o 'Avanzado' según la etapa.
-                config.stage === 'final' ? 'Avanzado' : 'Intermedio', 
-                config.model, 
-                1, 
-                chaosInstruction
-            );
+    for (let i = 0; topicsToUse.length; i++) {
+      const currentTopic = topicsToUse[i];
 
-            if (result) {
-                const newProblems = Array.isArray(result) ? result : [result];
-                setProblems(prev => {
-                    // Si es la primera, la mostramos en grande (opcional)
-                    if (prev.length === 0 && newProblems.length > 0) setGlobalProblem(newProblems[0]);
-                    return [...prev, ...newProblems];
-                });
-                
-                // Scroll suave para que el profe vea que van llegando
-                setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
-            }
-        } catch (e) {
-            console.error(`Error en pregunta ${i+1} del simulacro:`, e);
+      try {
+        const randomTotal = Math.floor(Math.random() * (120 - 30) + 30);
+        const variable = ["x", "n", "y", "z"][Math.floor(Math.random() * 4)];
+
+        const chaosInstruction = `
+    PREGUNTA ${i + 1} DEL SIMULACRO (${currentTopic}):
+    - Usa la variable '${variable}'.
+    - Usa valores numéricos cercanos a ${randomTotal}.
+    - Evita repetir estructuras de preguntas anteriores.
+    `;
+
+        const result = await generate(
+          currentTopic,
+          config.grade,
+          config.stage,
+          config.stage === "final" ? "Avanzado" : "Intermedio",
+          config.model,
+          1,
+          chaosInstruction,
+        );
+
+        if (result) {
+          const newProblems = Array.isArray(result) ? result : [result];
+          setProblems((prev) => {
+            if (prev.length === 0 && newProblems.length > 0)
+              setGlobalProblem(newProblems[0]);
+            return [...prev, ...newProblems];
+          });
+
+          setTimeout(
+            () =>
+              window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: "smooth",
+              }),
+            100,
+          );
         }
-        
-        // Pausa técnica
-        await new Promise(r => setTimeout(r, 50));
+      } catch (e) {
+        console.error(`Error en pregunta ${i + 1} del simulacro:`, e);
+      }
+
+      await new Promise((r) => setTimeout(r, 50));
     }
 
     setIsGenerating(false);
-  };
+  };;
   
   const renderVisualEmbed = (visualData: any, mathData?: any) => {
-    // 1. Filtro básico de existencia
+   console.log(
+     "📊 renderVisualEmbed visualData:",
+     JSON.stringify(visualData, null, 2),
+   );
+   console.log("📊 renderVisualEmbed visualData:", visualData);
+    
     if (!visualData || visualData.type === "none") return null;
 
-    // 2. 🔥 FILTRO ANTI-BASURA (Nuevo)
-    // Si es geometry_mafs, verificamos que tenga elementos VÁLIDOS.
     if (visualData.type === "geometry_mafs") {
-      // Si no hay params (nuevo) NI elements (viejo), es basura.
       const tieneDataNueva = mathData && mathData.params;
       const tieneDataVieja =
         visualData.elements && visualData.elements.length > 0;
-
       if (!tieneDataNueva && !tieneDataVieja) return null;
+      return (
+        <div className="my-3 flex justify-center w-full select-none">
+          <div className="w-full md:max-w-[500px] h-[300px] bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden relative">
+            <MafsGeometryRenderer datosMatematicos={mathData || visualData} />
+          </div>
+        </div>
+      );
     }
 
-    return (  
-      <div className="my-3 flex justify-center w-full select-none">
-        <div className="w-full md:max-w-[500px] h-[300px] bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden relative">
-          {visualData.type === "geometry_mafs" ? (
-            /* 🔥 CLAVE: Le damos prioridad a mathData porque tiene los PARAMS que necesita el nuevo Mafs */
-            <MafsGeometryRenderer datosMatematicos={mathData || visualData} />
-          ) : visualData.type === "physics_ariana" ? (
+    if (visualData.type === "frequency_table") {
+      return (
+        <div className="my-3 flex justify-center w-full select-none">
+          <div className="w-full md:max-w-[500px] bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+            <StatisticsTable data={visualData.data} />
+          </div>
+        </div>
+      );
+    }
+
+    if (visualData.type === "physics_ariana") {
+      return (
+        <div className="my-3 flex justify-center w-full select-none">
+          <div className="w-full md:max-w-[500px] h-[300px] bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden relative">
             <PureSvgPhysicsRenderer visualData={visualData} />
-          ) : (
-            <div className="flex items-center justify-center h-full text-xs text-slate-400">
-              Gráfico: {visualData.type}
-            </div>
-          )}
+          </div>
+        </div>
+      );
+    }
+
+    if (visualData.type === "chart_bar" || visualData.type === "chart_pie") {
+      return (
+        <div className="my-3 flex justify-center w-full select-none">
+          <div className="w-full md:max-w-[500px] h-[300px] bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden relative">
+            <StatisticsChart type={visualData.type} data={visualData.data} />
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="my-3 flex justify-center w-full select-none">
+        <div className="w-full md:max-w-[500px] h-[300px] bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden relative flex items-center justify-center text-xs text-slate-400">
+          Gráfico: {visualData.type}
         </div>
       </div>
     );
@@ -376,34 +420,33 @@ export const GeneratorPage = () => {
         {/* CENTRO: BARRA DE HERRAMIENTAS (Sin Título gigante) */}
         <div className="flex-1 flex flex-wrap md:flex-nowrap items-center gap-2 w-full">
           {/* GRADO / ETAPA / DIFICULTAD */}
-          <select
-            value={config.grade}
-            onChange={(e) => handleChange("grade", e.target.value)}
-            className={`h-8 text-xs font-bold rounded-lg px-2 outline-none border ${theme === "dark" ? "bg-slate-700 border-slate-600 text-white" : "bg-slate-50 border-slate-200 text-slate-700"}`}
-          >
-            <option value="5to">5to</option>
-            <option value="6to">6to</option>
-          </select>
-          <select
-            value={config.stage}
-            onChange={(e) => handleChange("stage", e.target.value)}
-            className={`h-8 text-xs font-bold rounded-lg px-2 outline-none border ${theme === "dark" ? "bg-slate-700 border-slate-600 text-white" : "bg-slate-50 border-slate-200 text-slate-700"}`}
-          >
-            <option value="clasificatoria">Clasificatoria</option>
-            <option value="final">Final</option>
-          </select>
-          <select
-            value={config.difficulty}
-            onChange={(e) => handleChange("difficulty", e.target.value)}
-            className={`h-8 text-xs font-bold rounded-lg px-2 outline-none border w-24 ${theme === "dark" ? "bg-slate-700 border-slate-600 text-white" : "bg-slate-50 border-slate-200 text-slate-700"}`}
-          >
-            <option value="Básico" disabled={config.stage === "final"}>
-              Básico
-            </option>
-            <option value="Intermedio">Intermedio</option>
-            <option value="Avanzado">Avanzado</option>
-            <option value="Concurso">Nivel Dios</option>
-          </select>
+          <header className="h-14 border-b flex items-center px-4 gap-2">
+            <select
+              value={config.grade}
+              onChange={(e) => handleChange("grade", e.target.value)}
+            >
+              <option value="3ro">3ro</option>
+              <option value="4to">4to</option>
+              <option value="5to">5to</option>
+              <option value="6to">6to</option>
+            </select>
+            <select
+              value={config.stage}
+              onChange={(e) => handleChange("stage", e.target.value)}
+            >
+              <option value="clasificatoria">Clasificatoria</option>
+              <option value="final">Final</option>
+            </select>
+            <select
+              value={config.difficulty}
+              onChange={(e) => handleChange("difficulty", e.target.value)}
+            >
+              <option value="Básico">Básico</option>
+              <option value="Intermedio">Intermedio</option>
+              <option value="Avanzado">Avanzado</option>
+              <option value="Concurso">Concurso</option>
+            </select>
+          </header>
 
           {/* 🔥 SELECTOR DE MODELO (RECUPERADO) */}
           <div
@@ -628,6 +671,34 @@ export const GeneratorPage = () => {
                         strong: ({ children }) => (
                           <strong className="font-bold">{children}</strong>
                         ),
+                        table: ({ children }) => (
+                          <div className="overflow-x-auto my-2">
+                            <table className="min-w-full border-collapse border border-slate-300 dark:border-slate-700 text-sm">
+                              {children}
+                            </table>
+                          </div>
+                        ),
+                        thead: ({ children }) => (
+                          <thead className="bg-slate-100 dark:bg-slate-800">
+                            {children}
+                          </thead>
+                        ),
+                        tbody: ({ children }) => <tbody>{children}</tbody>,
+                        tr: ({ children }) => (
+                          <tr className="border-b border-slate-200 dark:border-slate-700">
+                            {children}
+                          </tr>
+                        ),
+                        th: ({ children }) => (
+                          <th className="px-3 py-2 text-left font-semibold border-r border-slate-200 dark:border-slate-700 last:border-r-0">
+                            {children}
+                          </th>
+                        ),
+                        td: ({ children }) => (
+                          <td className="px-3 py-2 border-r border-slate-200 dark:border-slate-700 last:border-r-0">
+                            {children}
+                          </td>
+                        ),
                       }}
                     >
                       {/* Renderizamos pregunta o solución usando las mismas reglas */}
@@ -658,7 +729,7 @@ export const GeneratorPage = () => {
                           {/* Círculo de la letra (A, B...) más pequeño */}
                           <span
                             className={clsx(
-                              "w-4 h-4 flex items-center justify-center rounded-full text-[9px] font-bold shrink-0",
+                              "w-4 h-4 flex items-center justify-center rounded-full font-bold shrink-0",
                               key === prob.correct_answer
                                 ? "bg-emerald-600 text-white"
                                 : theme === "dark"

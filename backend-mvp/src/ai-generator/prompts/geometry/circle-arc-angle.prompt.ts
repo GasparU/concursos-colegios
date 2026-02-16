@@ -12,6 +12,8 @@ export const CIRCLE_ARC_ANGLE_PROMPT = (
 ROL: Experto en Geometría Euclidiana (Nivel ${grade}).
 ETAPA: ${stage} | DIFICULTAD: ${difficulty}
 
+
+
 ${GET_VARIABILITY_RULES('GEOMETRY', difficulty)}
 
 👇 FORMATO OBLIGATORIO PARA CIRCUNFERENCIA CON ARCO Y ÁNGULO:

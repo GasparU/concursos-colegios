@@ -1,6 +1,7 @@
 import { RenderizadorSegmentos } from "./especializados/RenderizadorSegmentos";
 import { RenderizadorAngulos } from "./especializados/RenderizadorAngulos";
 import { RenderizadorPoligonos } from "./especializados/RenderizadorPoligonos";
+import { StatisticsChart } from "./StatisticsChart";
 
 export const MafsGeometryRenderer = (props: any) => {
   // 1. RECUPERACIÓN DE DATOS
@@ -34,11 +35,20 @@ export const MafsGeometryRenderer = (props: any) => {
           case "collinear_segments":
             return <RenderizadorSegmentos parametros={parametros} />;
           case "consecutive_angles":
-        
             return <RenderizadorAngulos parametros={parametros} />;
           case "polygon_regular":
           case "triangle":
             return <RenderizadorPoligonos parametros={parametros} />;
+
+          case "chart_bar":
+          case "chart_pie":
+            return <StatisticsChart type={tipoFigura} data={parametros} />;
+
+
+
+
+            // Añadir aqui las graficas que se van a generar tanto para geometria, estadistica u otros.
+
           default:
             return (
               <div className="p-10 text-center text-red-500">

@@ -28,62 +28,79 @@ const UNIVERSAL_PROTOCOLS = `
 // ============================================================================
 // 🧠 GENERADOR DE REGLAS DINÁMICAS (NUMÉRICAS)
 // ============================================================================
-export const GET_VARIABILITY_RULES = (subject: 'GEOMETRY' | 'ALGEBRA' | 'ARITHMETIC', difficulty: string) => {
+export const GET_VARIABILITY_RULES = (
+  subject: 'GEOMETRY' | 'ALGEBRA' | 'ARITHMETIC' | 'STATISTICS',
+  difficulty: string,
+) => {
+  const isBasic =
+    difficulty.toLowerCase().includes('basic') ||
+    difficulty.toLowerCase().includes('básico');
+  const isInter = difficulty.toLowerCase().includes('inter');
+  // Si no es básico ni intermedio, asumimos avanzado
 
-    const isBasic = difficulty.toLowerCase().includes('basic') || difficulty.toLowerCase().includes('básico');
-    const isInter = difficulty.toLowerCase().includes('inter');
-    // Si no es básico ni intermedio, asumimos avanzado
+  let numberRules = '';
 
-    let numberRules = "";
-
-    // -------------------------------------------------------------------------
-    // 📐 GEOMETRÍA
-    // -------------------------------------------------------------------------
-    if (subject === 'GEOMETRY') {
-        if (isBasic) {
-            numberRules = `
+  // -------------------------------------------------------------------------
+  // 📐 GEOMETRÍA
+  // -------------------------------------------------------------------------
+  if (subject === 'GEOMETRY') {
+    if (isBasic) {
+      numberRules = `
             1. DEFINIR OBJETIVO (BÁSICO):
                - ✅ USA SOLO ENTEROS PEQUEÑOS: Tu variable 'x' y los resultados deben ser enteros positivos (2 a 12).
                - ⛔ PROHIBIDO: Decimales, fracciones o raíces.
                - ⛔ PROHIBIDO: Inventar un 'Total' al azar. Calcula el total sumando tus segmentos.
                - EJEMPLO: x=5, x=10.`;
-        } else if (isInter) {
-            numberRules = `
+    } else if (isInter) {
+      numberRules = `
             1. DEFINIR OBJETIVO (INTERMEDIO):
                - ✅ USA ENTEROS MEDIANOS: Tu variable 'x' debe ser un entero entre 13 y 19.
                - ⛔ PROHIBIDO: Decimales inexactos (ej: 17.253).
                - RETO: Aumenta la dificultad de la ECUACIÓN (algebraica), no de los NÚMEROS.`;
-        } else {
-            numberRules = `
+    } else {
+      numberRules = `
             1. DEFINIR OBJETIVO (AVANZADO):
                - ✅ NIVEL RETADOR: Puedes usar enteros grandes (12-50) O decimales "limpios" (0.5, 2.5) o fracciones (1/3, 7/9).
                - OPCIONAL: Fracciones simples si el renderizado lo permite.
                - IMPORTANTE: Si la respuesta es decimal (ej: 17.5), asegúrate de que las alternativas también lo sean.`;
-        }
     }
+  }
 
-    // -------------------------------------------------------------------------
-    // ✖️ ÁLGEBRA
-    // -------------------------------------------------------------------------
-    else if (subject === 'ALGEBRA') {
-        if (isBasic) {
-            numberRules = `1. DEFINIR OBJETIVO (BÁSICO): Usa coeficientes enteros (-10 a 10). Evita fracciones.`;
-        } else if (isInter) {
-            numberRules = `1. DEFINIR OBJETIVO (INTERMEDIO): Introduce fracciones simples (1/2, 3/4).`;
-        } else {
-            numberRules = `1. DEFINIR OBJETIVO (AVANZADO): Usa radicales (√2, √3) y fracciones complejas.`;
-        }
+  // -------------------------------------------------------------------------
+  // ✖️ ÁLGEBRA
+  // -------------------------------------------------------------------------
+  else if (subject === 'ALGEBRA') {
+    if (isBasic) {
+      numberRules = `1. DEFINIR OBJETIVO (BÁSICO): Usa coeficientes enteros (-10 a 10). Evita fracciones.`;
+    } else if (isInter) {
+      numberRules = `1. DEFINIR OBJETIVO (INTERMEDIO): Introduce fracciones simples (1/2, 3/4).`;
+    } else {
+      numberRules = `1. DEFINIR OBJETIVO (AVANZADO): Usa radicales (√2, √3) y fracciones complejas.`;
     }
+  }
 
-    // -------------------------------------------------------------------------
-    // 🔢 ARITMÉTICA
-    // -------------------------------------------------------------------------
-    else {
-        numberRules = `1. DEFINIR OBJETIVO: Usa números acordes al nivel (Enteros para básico, Decimales para avanzado).`;
+  // -------------------------------------------------------------------------
+  // 📊 ESTADÍSTICA
+  // -------------------------------------------------------------------------
+  else if (subject === 'STATISTICS') {
+    if (isBasic) {
+      numberRules = `1. DEFINIR OBJETIVO (BÁSICO): Usa datos enteros pequeños (1-10), pocas categorías (3-4). Ejemplo: ventas de lunes a viernes.`;
+    } else if (isInter) {
+      numberRules = `1. DEFINIR OBJETIVO (INTERMEDIO): Introduce decimales simples (0.5, 1.2) y más categorías (5-6). Ejemplo: temperaturas medias.`;
+    } else {
+      numberRules = `1. DEFINIR OBJETIVO (AVANZADO): Usa datos con decimales, porcentajes, frecuencias relativas. Ejemplo: distribución de edades.`;
     }
+  }
 
-    // 🔥 FUSIÓN: REGLAS DINÁMICAS + REGLAS ESTÁTICAS DE SEGURIDAD
-    return `
+  // -------------------------------------------------------------------------
+  // 🔢 ARITMÉTICA
+  // -------------------------------------------------------------------------
+  else {
+    numberRules = `1. DEFINIR OBJETIVO: Usa números acordes al nivel (Enteros para básico, Decimales para avanzado).`;
+  }
+
+  // 🔥 FUSIÓN: REGLAS DINÁMICAS + REGLAS ESTÁTICAS DE SEGURIDAD
+  return `
     🔥 REGLAS MAESTRAS DE GENERACIÓN (${subject} - ${difficulty.toUpperCase()}):
     Para evitar errores de cálculo o incoherencias, sigue este algoritmo SIEMPRE:
 

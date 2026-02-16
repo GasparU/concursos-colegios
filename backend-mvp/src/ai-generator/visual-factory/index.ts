@@ -26,43 +26,49 @@ export function VisualFactory(mathData: any) {
     let result: any = null;
 
     switch (mathData.type) {
-        case 'collinear_segments':
-            result = buildCollinearVisual(mathData.params);
-            break;
-        case 'solid_cube':
-            result = buildCubeVisual(mathData.params);
-            break;
-        case 'consecutive_angles':
-            result = buildConsecutiveAnglesVisual(mathData.params);
-            break;
-        case 'circle_sectors':
-            result = buildCircleSectorsVisual(mathData.params);
-            break;
-        case 'circle_arc_angle':
-            result = buildCircleArcAngleVisual(mathData.params);
-            break;
-        case 'parallel_lines_bisector':
-            result = buildParallelLinesBisectorVisual(mathData.params);
-            break;
-        case 'composite_squares':
-            result = buildCompositeSquaresVisual(mathData.params);
-            break;
-        case 'net_box':
-            result = buildNetBoxVisual(mathData.params);
-            break;
-        case 'chain_links':
-            result = buildChainLinksVisual(mathData.params);
-            break;
-        case 'composite_3d_solid':
-            result = buildComposite3DSolidVisual(mathData.params);
-            break;
-        case 'polygon_regular':
-            result = buildPolygonRegularVisual(mathData.params);
-            break;
+      case 'collinear_segments':
+        result = buildCollinearVisual(mathData.params);
+        break;
+      case 'solid_cube':
+        result = buildCubeVisual(mathData.params);
+        break;
+      case 'consecutive_angles':
+        result = buildConsecutiveAnglesVisual(mathData.params);
+        break;
+      case 'circle_sectors':
+        result = buildCircleSectorsVisual(mathData.params);
+        break;
+      case 'circle_arc_angle':
+        result = buildCircleArcAngleVisual(mathData.params);
+        break;
+      case 'parallel_lines_bisector':
+        result = buildParallelLinesBisectorVisual(mathData.params);
+        break;
+      case 'composite_squares':
+        result = buildCompositeSquaresVisual(mathData.params);
+        break;
+      case 'net_box':
+        result = buildNetBoxVisual(mathData.params);
+        break;
+      case 'chain_links':
+        result = buildChainLinksVisual(mathData.params);
+        break;
+      case 'composite_3d_solid':
+        result = buildComposite3DSolidVisual(mathData.params);
+        break;
+      case 'polygon_regular':
+        result = buildPolygonRegularVisual(mathData.params);
+        break;
 
-        default:
-            console.error(`❌ [VisualFactory] Tipo NO SOPORTADO: ${mathData.type}`);
-            return null;
+      case 'chart_bar':
+      case 'chart_pie':
+      case 'frequency_table':
+        result = mathData;
+        break;
+
+      default:
+        console.error(`❌ [VisualFactory] Tipo NO SOPORTADO: ${mathData.type}`);
+        return null;
     }
 
     if (!result) {
