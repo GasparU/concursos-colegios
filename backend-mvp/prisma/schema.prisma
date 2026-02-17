@@ -1,14 +1,84 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- ENUMS ---
+
+enum Role {
+  DOCENTE
+  ESTUDIANTE
+}
+
+enum ExamType {
+  FECHA_LIMITE
+  DURACION_FIJA
+}
+
+// --- MODELOS ---
+
+model User {
+  id              String       @id @default(uuid())
+  email           String?      @unique
+  password        String?
+  role            Role
+  nombre          String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relaciones
+  // 🔥 He dejado solo 'examsCreated' para evitar la duplicidad que causaba el error
+  examsCreated    Exam[]       @relation("DocenteExams")
+  examResults     ExamResult[]
+}
+
+model Exam {
+  id              String       @id @default(uuid())
+  title           String
+  description     String?
+  type            ExamType
+  deadline        DateTime?
+  durationMinutes Int?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  docenteId       String
+  docente         User         @relation("DocenteExams", fields: [docenteId], references: [id])
+
+  questions       Question[]
+  examResults     ExamResult[]
+}
+
+model Question {
+  id               String   @id @default(uuid())
+  examId           String
+  exam             Exam     @relation(fields: [examId], references: [id])
+  order            Int
+  questionMarkdown String
+  options          Json
+  correctAnswer    String
+  solutionMarkdown String
+  mathData         Json?
+  visualData       Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ExamResult {
+  id          String    @id @default(uuid())
+  examId      String
+  exam        Exam      @relation(fields: [examId], references: [id])
+  studentId   String
+  student     User      @relation(fields: [studentId], references: [id])
+  startTime   DateTime
+  endTime     DateTime?
+  score       Int
+  total       Int
+  answers     Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

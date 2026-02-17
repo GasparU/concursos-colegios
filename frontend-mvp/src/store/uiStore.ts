@@ -1,27 +1,28 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-interface UiState {
-    fontSize: number; // 0 = normal, 1 = grande, 2 = extra grande
-    theme: 'light' | 'dark';
-    sidebarOpen: boolean;
-    increaseFont: () => void;
-    decreaseFont: () => void;
-    toggleTheme: () => void;
-    toggleSidebar: () => void;
+interface UIState {
+  fontSize: number; // 0,1,2,3
+  theme: "light" | "dark"; // pero el modo oscuro ya lo manejamos aparte, podemos sincronizar o dejarlo independiente
+  sidebarOpen: boolean;
+  increaseFont: () => void;
+  decreaseFont: () => void;
+  toggleSidebar: () => void;
 }
 
-export const useUiStore = create<UiState>()(
-    persist(
-        (set) => ({
-            fontSize: 0,
-            theme: 'light',
-            sidebarOpen: false, // En móvil empieza cerrado
-            increaseFont: () => set((state) => ({ fontSize: Math.min(state.fontSize + 1, 3) })),
-            decreaseFont: () => set((state) => ({ fontSize: Math.max(state.fontSize - 1, 0) })),
-            toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
-            toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
-        }),
-        { name: 'ui-settings' } // Persistencia en LocalStorage
-    )
+export const useUiStore = create<UIState>()(
+  persist(
+    (set) => ({
+      fontSize: 2, // valor por defecto (text-base)
+      theme: "light", // podría ser 'light' por defecto, pero el modo oscuro lo maneja themeStore
+      sidebarOpen: true,
+      increaseFont: () =>
+        set((state) => ({ fontSize: Math.min(state.fontSize + 1, 3) })),
+      decreaseFont: () =>
+        set((state) => ({ fontSize: Math.max(state.fontSize - 1, 0) })),
+      toggleSidebar: () =>
+        set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+    }),
+    { name: "ui-storage" },
+  ),
 );

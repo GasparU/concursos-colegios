@@ -1,11 +1,15 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface ExamState {
-    currentProblem: any | null; // El JSON del problema generado
-    setProblem: (problem: any) => void;
+  problems: any[];
+  currentProblem: any | null;
+  setProblems: (problems: any[]) => void;
+  setProblem: (problem: any) => void;
 }
 
 export const useExamStore = create<ExamState>((set) => ({
-    currentProblem: null,
-    setProblem: (problem) => set({ currentProblem: problem }),
+  problems: [],
+  currentProblem: null,
+  setProblems: (problems) => set({ problems }),
+  setProblem: (problem) => set({ currentProblem: problem }), // <-- Y SU IMPLEMENTACIÓN
 }));

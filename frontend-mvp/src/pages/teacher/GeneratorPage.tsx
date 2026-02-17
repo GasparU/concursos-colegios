@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useProblemGenerator } from '../../hooks/useProblemGenerator';
 import { useExamStore } from '../../store/examStore';
-import { useUiStore } from '../../store/uiStore';
 import { MafsGeometryRenderer } from '../../components/canvas/renderers/MafsGeometryRenderer';
 import { PureSvgPhysicsRenderer } from '../../components/canvas/renderers/PureSvgPhysicsRenderer';
 import ReactMarkdown from 'react-markdown';
@@ -27,13 +26,14 @@ import { getTopicsByGrade } from "../../lib/topics";
 import 'katex/dist/katex.min.css'; 
 import { StatisticsChart } from '../../components/canvas/renderers/StatisticsChart';
 import { StatisticsTable } from '../../components/canvas/renderers/StatisticsTable';
+import { useUiStore } from '../../store/uiStore';
+
 
 type Grade = "3ro" | "4to" | "5to" | "6to";
 type Stage = "clasificatoria" | "final";
 
 export const GeneratorPage = () => {
   const { generate } = useProblemGenerator();
-  const setGlobalProblem = useExamStore((state) => state.setProblem);
   const { fontSize, theme, increaseFont, decreaseFont, sidebarOpen, toggleSidebar } = useUiStore();
   const navigate = useNavigate();
   
@@ -47,6 +47,7 @@ export const GeneratorPage = () => {
   const [isDraggingPanel, setIsDraggingPanel] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const abortControllerRef = useRef(false); 
+  const setGlobalProblem = useExamStore((state) => state.setProblem);
 
   const fontSizes = { 0: 'text-xs', 1: 'text-sm', 2: 'text-base', 3: 'text-lg' };
   const currentFont = fontSizes[fontSize as keyof typeof fontSizes];
@@ -415,7 +416,11 @@ export const GeneratorPage = () => {
     >
       {/* HEADER COMPACTO Y FUNCIONAL */}
       <header
-        className={`h-auto md:h-14 border-b flex flex-col md:flex-row items-center px-4 gap-2 shrink-0 shadow-sm z-40 sticky top-0 transition-colors ${theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200"}`}
+        className={`h-auto md:h-14 border-b flex flex-col md:flex-row items-center px-4 gap-2 shrink-0 shadow-sm z-40 sticky top-0 transition-colors ${
+          theme === "dark"
+            ? "bg-gray-800 border-gray-700 text-white"
+            : "bg-white border-gray-200 text-gray-900"
+        }`}
       >
         {/* CENTRO: BARRA DE HERRAMIENTAS (Sin Título gigante) */}
         <div className="flex-1 flex flex-wrap md:flex-nowrap items-center gap-2 w-full">
@@ -449,20 +454,24 @@ export const GeneratorPage = () => {
           </header>
 
           {/* 🔥 SELECTOR DE MODELO (RECUPERADO) */}
-          <div
-            className={`flex rounded-lg border p-0.5 gap-0.5 h-8 items-center ${theme === "dark" ? "bg-slate-700 border-slate-600" : "bg-slate-100 border-slate-200"}`}
-          >
+          <div className="flex rounded-lg border p-0.5 gap-0.5 h-8 items-center bg-gray-100 border-gray-200">
             <button
               onClick={() => handleChange("model", "deepseek")}
-              className={`h-full px-2 rounded-md transition-all flex items-center gap-1 text-[10px] font-bold ${config.model === "deepseek" ? "bg-white text-indigo-700 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
-              title="DeepSeek (Razonamiento)"
+              className={`h-full px-2 rounded-md transition-all flex items-center gap-1 text-[10px] font-bold ${
+                config.model === "deepseek"
+                  ? "bg-white text-indigo-700 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
             >
               <Brain size={14} /> DS
             </button>
             <button
               onClick={() => handleChange("model", "gemini")}
-              className={`h-full px-2 rounded-md transition-all flex items-center gap-1 text-[10px] font-bold ${config.model === "gemini" ? "bg-white text-orange-600 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
-              title="Gemini (Velocidad)"
+              className={`h-full px-2 rounded-md transition-all flex items-center gap-1 text-[10px] font-bold ${
+                config.model === "gemini"
+                  ? "bg-white text-orange-600 shadow-sm"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
             >
               <Zap size={14} /> GM
             </button>
@@ -477,20 +486,18 @@ export const GeneratorPage = () => {
             <input
               value={topic}
               onChange={handleInput}
-              className={`w-full h-8 pl-8 pr-2 text-xs border rounded-lg outline-none ${theme === "dark" ? "bg-slate-700 border-slate-600 text-white" : "bg-slate-50 border-slate-200"}`}
+              className="w-full h-8 pl-8 pr-2 text-xs border rounded-lg outline-none bg-white border-gray-200 text-gray-900"
               placeholder="Tema..."
               onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
               autoComplete="off"
             />
             {suggestions.length > 0 && (
-              <div
-                className={`absolute top-full left-0 w-full border rounded-lg shadow-xl mt-1 max-h-60 overflow-y-auto z-[100] ${theme === "dark" ? "bg-slate-800 border-slate-600" : "bg-white border-slate-200"}`}
-              >
+              <div className="absolute top-full left-0 w-full border rounded-lg shadow-xl mt-1 max-h-60 overflow-y-auto z-[100] bg-white border-gray-200">
                 {suggestions.map((s, i) => (
                   <div
                     key={i}
                     onClick={() => selectTopic(s)}
-                    className={`px-3 py-2 text-xs cursor-pointer border-b last:border-0 ${theme === "dark" ? "text-slate-300 hover:bg-slate-700" : "text-slate-700 hover:bg-indigo-50"}`}
+                    className="px-3 py-2 text-xs cursor-pointer border-b last:border-0 text-gray-700 hover:bg-indigo-50"
                   >
                     {s}
                   </div>
@@ -514,7 +521,7 @@ export const GeneratorPage = () => {
           <button
             onClick={handleGenerate}
             disabled={isGenerating || !topic}
-            className="bg-indigo-600 text-white px-4 h-8 rounded-lg text-xs font-bold hover:bg-indigo-700 transition shadow-sm disabled:opacity-50 flex items-center gap-1 shrink-0"
+            className="bg-blue-600 text-white px-4 h-8 rounded-lg text-xs font-bold hover:bg-blue-700 transition shadow-sm disabled:opacity-50 flex items-center gap-1 shrink-0"
           >
             {isGenerating ? (
               <span className="animate-spin">↻</span>
@@ -527,7 +534,7 @@ export const GeneratorPage = () => {
           <button
             onClick={handleSimulacro}
             disabled={isGenerating}
-            className="bg-slate-700 text-white px-3 h-8 rounded-lg text-xs font-bold hover:bg-slate-800 transition shadow-sm flex items-center gap-1 shrink-0"
+            className="bg-gray-700 text-white px-3 h-8 rounded-lg text-xs font-bold hover:bg-gray-800 transition shadow-sm flex items-center gap-1 shrink-0"
           >
             <Dices size={14} />
           </button>
@@ -551,7 +558,7 @@ export const GeneratorPage = () => {
               </button>
               <button
                 onClick={() => navigate("/student/exam")}
-                className="text-xs border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 px-3 h-8 rounded-lg font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-1"
+                className="text-xs border border-gray-300 text-gray-700 px-3 h-8 rounded-lg font-bold hover:bg-gray-100 transition flex items-center gap-1"
                 title="Ver como Alumno"
               >
                 <Eye size={14} />
@@ -561,13 +568,13 @@ export const GeneratorPage = () => {
           <div className="w-px h-4 bg-slate-300 dark:bg-slate-700 mx-1"></div>
           <button
             onClick={decreaseFont}
-            className="p-1.5 text-slate-400 hover:text-indigo-500"
+            className="p-1.5 text-gray-500 hover:text-indigo-600"
           >
             <ZoomOut size={16} />
           </button>
           <button
             onClick={increaseFont}
-            className="p-1.5 text-slate-400 hover:text-indigo-500"
+            className="p-1.5 text-gray-500 hover:text-indigo-600"
           >
             <ZoomIn size={16} />
           </button>
@@ -788,15 +795,9 @@ export const GeneratorPage = () => {
         {/* 🔥 BARRA DE PROGRESO FLOTANTE Y ARRASTRABLE 🔥 */}
         {isGenerating && (
           <div
-            // Evento para iniciar el arrastre
             onMouseDown={startDrag}
-            className={`fixed w-80 bg-white p-4 rounded-xl shadow-2xl border border-indigo-100 z-[9999] select-none transition-shadow ${isDraggingPanel ? "cursor-grabbing shadow-inner" : "cursor-grab hover:shadow-lg"}`}
-            // Aquí aplicamos las coordenadas X e Y dinámicas
-            style={{
-              left: dragPos.x,
-              top: dragPos.y,
-              touchAction: "none", // Evita scroll en móviles al arrastrar
-            }}
+            className="fixed w-80 bg-white p-4 rounded-xl shadow-2xl border border-indigo-100 z-[9999] select-none transition-shadow cursor-grab hover:shadow-lg"
+            style={{ left: dragPos.x, top: dragPos.y, touchAction: "none" }}
           >
             {/* Cabecera del Widget */}
             <div className="flex justify-between items-center mb-2 pointer-events-none">
@@ -824,7 +825,7 @@ export const GeneratorPage = () => {
             <button
               onClick={() => {
                 abortControllerRef.current = true;
-              }} // ⚡ Activa la señal
+              }}
               className="px-3 py-1 bg-rose-50 text-rose-600 text-[10px] font-bold rounded-md hover:bg-rose-100 transition-colors border border-rose-100"
             >
               CANCELAR
