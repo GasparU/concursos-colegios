@@ -5,6 +5,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ExamsModule } from './exam/exams.module';
 import { AiGeneratorModule } from './ai-generator/ai-generator.module';
+import { SimpleGeneratorModule } from './ai-generator/simple-generator/simple-generator.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AiGeneratorModule } from './ai-generator/ai-generator.module';
     AuthModule,
     ExamsModule,
     AiGeneratorModule,
+    SimpleGeneratorModule,
   ],
   controllers: [],
   providers: [],

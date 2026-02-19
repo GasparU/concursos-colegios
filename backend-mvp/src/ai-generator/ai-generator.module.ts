@@ -4,10 +4,11 @@ import { GeminiProvider } from './providers/gemini.provider';
 import { DeepSeekProvider } from './providers/deepseek.provider';
 import { AiGeneratorController } from './ai-generator.controller';
 import { AiGeneratorService } from './ai-generator.service';
+import { ParametricGeneratorModule } from './parametric-generator/parametric-generator.module';
 
 @Module({
-    imports: [ConfigModule],
-    controllers: [AiGeneratorController],
-    providers: [AiGeneratorService, DeepSeekProvider, GeminiProvider,],
+  imports: [ConfigModule, ParametricGeneratorModule],
+  controllers: [AiGeneratorController],
+  providers: [AiGeneratorService, DeepSeekProvider, GeminiProvider],
 })
-export class AiGeneratorModule { }
+export class AiGeneratorModule {}

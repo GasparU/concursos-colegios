@@ -17,6 +17,10 @@ enum Role {
 enum ExamType {
   FECHA_LIMITE
   DURACION_FIJA
+  CLASE
+  TAREA
+  SIMULACRO
+  REFUERZO
 }
 
 // --- MODELOS ---
@@ -41,6 +45,12 @@ model Exam {
   title           String
   description     String?
   type            ExamType
+
+  grade           String?      
+  stage           String?      
+  difficulty      String?     
+  questionsCount  Int?         
+
   deadline        DateTime?
   durationMinutes Int?
   createdAt       DateTime     @default(now())
@@ -62,6 +72,7 @@ model Question {
   options          Json
   correctAnswer    String
   solutionMarkdown String
+  hint             String?
   mathData         Json?
   visualData       Json?
   createdAt        DateTime @default(now())

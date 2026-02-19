@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/authStore";
 
+
 // Teacher pages (importaciones con nombres exactos)
 import ExamListPage from "./pages/teacher/ExamListPage";
 import ExamDetail from "./pages/teacher/ExamDetail";
@@ -15,9 +16,12 @@ import ResultsPage from "./pages/student/ResultsPage";
 import DocenteLayout from "./layout/DocenteLayout";
 import StudentLayout from "./layout/StudentLayout";
 import Login from "./pages/Login";
-import { GeneratorPage } from "./pages/teacher/GeneratorPage";
+
 import ExamPlayerPage from "./pages/student/ExamPlayerPage";
 import ClassDashboard from "./pages/teacher/ClassDashboard";
+import { GeneratorPage } from "./pages/teacher/generator-page";
+import ParametricTestPage from "./pages/teacher/ParametricTestPage";
+import SimpleTestPage from "./pages/teacher/SimpleTestPage";
 
 function App() {
   const { user, loading, checkAuth } = useAuthStore();
@@ -41,6 +45,11 @@ function App() {
               <Route path="/teacher" element={<ClassDashboard />} />{" "}
               {/* 👈 ahora sí es la primera */}
               <Route path="/teacher/dashboard" element={<ClassDashboard />} />
+              <Route
+                path="/teacher/parametric-test"
+                element={<ParametricTestPage />}
+              />
+              <Route path="/teacher/simple-test" element={<SimpleTestPage />} />
               <Route path="/teacher/exams" element={<ExamListPage />} />
               <Route path="/teacher/exam/:id" element={<GeneratorPage />} />
               <Route

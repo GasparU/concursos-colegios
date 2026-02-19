@@ -1,0 +1,573 @@
+[
+  {
+    "id": "canje_monetario_01",
+    "tema": "canje_monetario",
+    "subtipo": "vuelto_compra",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
+    "bidireccional": true,
+    "enunciado": "{nombre} tiene {cant_b} billetes de S/{val_b}, {cant_m} monedas de S/{val_m} y {cant_u} monedas de S/{val_u}. Si {nombre} quiere comprar un {objeto} de S/{precio}, ",
+    "variables": {
+      "nombre": {
+        "type": "string",
+        "opciones": [
+          "Mariana",
+          "Luciana",
+          "Camila",
+          "Ariana",
+          "Valeria",
+          "Ximena",
+          "Cinthya",
+          "Adriana",
+          "Valentina",
+          "Micaela",
+          "Daniela",
+          "Gabriela",
+          "Jimena",
+          "Sebastian",
+          "Joaquín",
+          "Mateo",
+          "Diego",
+          "Alonso",
+          "Rodrigo",
+          "Facundo",
+          "Gonzalo",
+          "Thiago",
+          "Álvaro",
+          "Nicolás",
+          "Gabriel",
+          "Santiago",
+          "Leonardo",
+          "Mathías"
+        ]
+      },
+      "cant_b": { "type": "number", "min": 1, "max": 7, "step": 1 },
+      "val_b": { "type": "number", "opciones": [10, 20, 30, 40, 50] },
+      "cant_m": { "type": "number", "min": 1, "max": 9, "step": 1 },
+      "val_m": { "type": "number", "opciones": [2, 5] },
+      "cant_u": { "type": "number", "min": 1, "max": 10, "step": 1 },
+      "val_u": { "type": "number", "min": 0.1, "max": 0.9, "step": 0.1 },
+      "objeto": {
+        "type": "string",
+        "opciones": ["juguete", "libro", "reloj", "mochila", "pelota"]
+      },
+      "precio": { "type": "number", "min": 20, "max": 200, "step": 5 }
+    },
+    "relaciones": [
+      "total = cant_b * val_b + cant_m * val_m + cant_u * val_u",
+      "diferencia = total - precio"
+    ],
+    "restricciones": ["total > 0", "precio > 0"],
+    "incognita_directa": "diferencia",
+    "incognitas_inversa": ["cant_b", "cant_m", "cant_u", "precio"],
+    "formato_respuesta": { "tipo": "numero_entero", "rango": [-200, 200] },
+    "metadata": {
+      "habilidades": ["suma", "multiplicación", "resta", "dinero"],
+      "tiempo_estimado": 120,
+      "requiere_calculadora": false,
+      "fuente": "Adaptado de problemas de canje"
+    }
+  },
+  {
+    "id": "canje_monetario_02",
+    "tema": "canje_monetario",
+    "subtipo": "presupuesto_gastos",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": true,
+    "variables": {
+      "nombre": {
+        "type": "string",
+        "opciones": [
+          "Mariana",
+          "Luciana",
+          "Camila",
+          "Ariana",
+          "Valeria",
+          "Ximena",
+          "Cinthya",
+          "Adriana",
+          "Valentina",
+          "Micaela",
+          "Daniela",
+          "Gabriela",
+          "Jimena",
+          "Sebastian",
+          "Joaquín",
+          "Mateo",
+          "Diego",
+          "Alonso",
+          "Rodrigo",
+          "Facundo",
+          "Gonzalo",
+          "Thiago",
+          "Álvaro",
+          "Nicolás",
+          "Gabriel",
+          "Santiago",
+          "Leonardo",
+          "Mathías"
+        ]
+      },
+      "cant_h": { "type": "number", "min": 0.5, "max": 3, "step": 0.25 },
+      "p_h": { "type": "number", "min": 2, "max": 5, "step": 0.5 },
+      "cant_a": { "type": "number", "min": 0.5, "max": 2, "step": 0.1 },
+      "p_a": { "type": "number", "min": 3, "max": 6, "step": 0.1 },
+      "cant_l": { "type": "number", "min": 0.5, "max": 2, "step": 0.5 },
+      "p_l": { "type": "number", "min": 3, "max": 5, "step": 0.1 },
+      "cant_m": { "type": "number", "min": 0.1, "max": 1, "step": 0.1 },
+      "p_m": { "type": "number", "min": 10, "max": 18, "step": 0.5 },
+      "cant_hue": { "type": "number", "min": 2, "max": 12, "step": 1 },
+      "p_hue": { "type": "number", "min": 0.5, "max": 1.5, "step": 0.1 },
+      "dinero_total": { "type": "number", "min": 30, "max": 200, "step": 5 }
+    },
+    "relaciones": [
+      "gasto = (cant_h * p_h) + (cant_a * p_a) + (cant_l * p_l) + (cant_m * p_m) + (cant_hue * p_hue)",
+      "vuelto = dinero_total - gasto"
+    ],
+    "restricciones": ["gasto > 0", "vuelto > -100", "vuelto < 200"],
+    "incognita_directa": "vuelto",
+    "incognitas_inversa": [
+      "cant_h",
+      "p_h",
+      "cant_a",
+      "p_a",
+      "cant_l",
+      "p_l",
+      "cant_m",
+      "p_m",
+      "cant_hue",
+      "p_hue",
+      "dinero_total"
+    ],
+    "formato_respuesta": {
+      "tipo": "decimal",
+      "decimales": 2,
+      "rango": [-100, 200]
+    },
+    "metadata": {
+      "habilidades": ["multiplicación decimal", "suma", "resta", "presupuesto"],
+      "tiempo_estimado": 240,
+      "requiere_calculadora": true,
+      "fuente": "Adaptado de problemas de compras"
+    }
+  },
+  {
+    "id": "fraccion_fraccion_01",
+    "tema": "fraccion_de_una_fraccion",
+    "subtipo": "reparto_sucesivo",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["intermedio"],
+    "bidireccional": true,
+    "enunciado": "En un taller se recibió una caja de papel. La profesora repartió {f_reparto_num}/{f_reparto_den} de la caja. De esa cantidad, los estudiantes usaron {f_uso1_num}/{f_uso1_den} para afiches y {f_uso2_num}/{f_uso2_den} para manualidades. ¿Qué fracción del total de la caja se utilizó en total?",
+    "variables": {
+      "f_reparto_num": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "f_reparto_den": { "type": "number", "min": 3, "max": 6, "step": 1 },
+      "f_uso1_num": { "type": "number", "min": 1, "max": 4, "step": 1 },
+      "f_uso1_den": { "type": "number", "min": 3, "max": 7, "step": 1 },
+      "f_uso2_num": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "f_uso2_den": { "type": "number", "min": 4, "max": 8, "step": 1 }
+    },
+    "relaciones": [
+      "f_reparto = f_reparto_num / f_reparto_den",
+      "f_uso1 = f_uso1_num / f_uso1_den",
+      "f_uso2 = f_uso2_num / f_uso2_den",
+      "parte1 = f_reparto * f_uso1",
+      "parte2 = f_reparto * f_uso2",
+      "total_frac = parte1 + parte2",
+      "respuesta_num = numerador(total_frac)",
+      "respuesta_den = denominador(total_frac)"
+    ],
+    "restricciones": [
+      "f_uso1_num / f_uso1_den + f_uso2_num / f_uso2_den <= 1",
+      "f_uso1_num < f_uso1_den",
+      "f_uso2_num < f_uso2_den",
+      "f_reparto_num < f_reparto_den"
+    ],
+    "incognita_directa": ["respuesta_num", "respuesta_den"],
+    "incognitas_inversa": [
+      "f_reparto_num",
+      "f_reparto_den",
+      "f_uso1_num",
+      "f_uso1_den",
+      "f_uso2_num",
+      "f_uso2_den"
+    ],
+    "formato_respuesta": { "tipo": "fraccion", "simplificar": true },
+    "metadata": {
+      "habilidades": [
+        "fracciones",
+        "multiplicación",
+        "suma de fracciones",
+        "simplificación"
+      ],
+      "tiempo_estimado": 180,
+      "requiere_calculadora": false,
+      "fuente": "Adaptado de problemas de reparto"
+    }
+  },
+  {
+    "id": "fraccion_fraccion_02",
+    "tema": "fraccion_de_una_fraccion",
+    "subtipo": "consumo_volumen",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": true,
+    "enunciado": "{nombre} compró una botella de {vol} ml. Consumió la {f_cons1_num}/{f_cons1_den} parte del contenido. Luego, consumió las {f_cons2_num}/{f_cons2_den} partes del volumen que quedaba. ¿Qué fracción del volumen total consumió en total?",
+    "variables": {
+      "nombre": {
+        "type": "string",
+        "opciones": ["Alejandra", "Luis", "Sofía", "Martín", "Valeria"]
+      },
+      "vol": { "type": "number", "min": 500, "max": 1000, "step": 50 },
+      "f_cons1_num": { "type": "number", "min": 1, "max": 2, "step": 1 },
+      "f_cons1_den": { "type": "number", "min": 4, "max": 6, "step": 1 },
+      "f_cons2_num": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "f_cons2_den": { "type": "number", "min": 5, "max": 8, "step": 1 }
+    },
+    "relaciones": [
+      "f_cons1 = f_cons1_num / f_cons1_den",
+      "f_cons2 = f_cons2_num / f_cons2_den",
+      "queda1 = 1 - f_cons1",
+      "parte2 = f_cons2 * queda1",
+      "total_frac = f_cons1 + parte2",
+      "respuesta_num = numerador(total_frac)",
+      "respuesta_den = denominador(total_frac)"
+    ],
+    "restricciones": ["f_cons1_num < f_cons1_den", "f_cons2_num < f_cons2_den"],
+    "incognita_directa": ["respuesta_num", "respuesta_den"],
+    "incognitas_inversa": [
+      "f_cons1_num",
+      "f_cons1_den",
+      "f_cons2_num",
+      "f_cons2_den"
+    ],
+    "formato_respuesta": { "tipo": "fraccion", "simplificar": true },
+    "metadata": {
+      "habilidades": [
+        "fracciones",
+        "resta",
+        "multiplicación",
+        "suma de fracciones"
+      ],
+      "tiempo_estimado": 200,
+      "requiere_calculadora": false,
+      "fuente": "Adaptado de problemas de consumo"
+    }
+  },
+ {
+   "id": "mcm_coincidencia_01",
+   "tema": "mcm",
+   "subtipo": "coincidencia_tiempo",
+   "grado": "5to",
+   "etapa": ["clasificatoria"],
+   "dificultad": ["intermedio"],
+   "bidireccional": true,
+   "enunciado": "Tres grupos de tamborileros tocan con distintos ritmos: cada {t1} s, cada {t2} s y cada {t3} s. Si comienzan al mismo tiempo y el desfile dura {duracion} minutos, ¿cuántas veces en total coincidirán tocando juntos?",
+   "variables": {
+     "t1": { "type": "number", "min": 2, "max": 6, "step": 1 },
+     "t2": { "type": "number", "min": 3, "max": 7, "step": 1 },
+     "t3": { "type": "number", "min": 4, "max": 8, "step": 1 },
+     "duracion": { "type": "number", "min": 2, "max": 5, "step": 1 }
+   },
+   "relaciones": [
+     "ciclo = MCM(t1, t2, t3)",
+     "tiempo_total = duracion * 60",
+     "coincidencias = floor(tiempo_total / ciclo) + 1"
+   ],
+   "restricciones": [
+     "ciclo <= 200",
+     "coincidencias >= 2",
+     "coincidencias <= 20"
+   ],
+   "incognita_directa": "coincidencias",
+   "incognitas_inversa": ["t1", "t2", "t3", "duracion"],
+   "formato_respuesta": { "tipo": "entero", "rango": [2, 20] },
+   "metadata": {
+     "habilidades": ["mcm", "división entera", "conversión de unidades"],
+     "tiempo_estimado": 180,
+     "requiere_calculadora": false,
+     "fuente": "Adaptado de problemas de coincidencia"
+   }
+ },
+ {
+   "id": "mcm_encuentro_02",
+   "tema": "mcm",
+   "subtipo": "encuentro_amigos",
+   "grado": "5to",
+   "etapa": ["clasificatoria", "final"],
+   "dificultad": ["intermedio", "avanzado"],
+   "bidireccional": true,
+   "enunciado": "Tres amigos visitan una biblioteca: el primero cada {dias1} días, el segundo cada {dias2} días y el tercero cada {dias3} días. Si hoy coinciden, ¿cuántas veces volverán a coincidir en los próximos {total_dias} días (incluyendo hoy)?",
+   "variables": {
+     "dias1": { "type": "number", "min": 2, "max": 8, "step": 1 },
+     "dias2": { "type": "number", "min": 3, "max": 9, "step": 1 },
+     "dias3": { "type": "number", "min": 4, "max": 10, "step": 1 },
+     "total_dias": { "type": "number", "min": 30, "max": 200, "step": 10 }
+   },
+   "relaciones": [
+     "ciclo = MCM(dias1, dias2, dias3)",
+     "veces = floor(total_dias / ciclo) + 1"
+   ],
+   "restricciones": ["ciclo >= 2", "ciclo <= 200", "veces >= 2", "veces <= 10"],
+   "incognita_directa": "veces",
+   "incognitas_inversa": ["dias1", "dias2", "dias3", "total_dias"],
+   "formato_respuesta": { "tipo": "entero", "rango": [2, 10] },
+   "metadata": {
+     "habilidades": ["mcm", "división entera"],
+     "tiempo_estimado": 150,
+     "requiere_calculadora": false,
+     "fuente": "Adaptado de problemas de encuentro"
+   }
+ },
+  {
+    "id": "mcd_reparto_01",
+    "tema": "mcd",
+    "subtipo": "reparto_equitativo",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["intermedio"],
+    "bidireccional": true,
+    "enunciado": "Se tienen {cant1} manzanas, {cant2} naranjas y {cant3} peras. Se quieren repartir en bolsas con la misma cantidad de cada fruta sin que sobre ninguna. ¿Cuál es el mayor número de bolsas que se pueden formar?",
+    "variables": {
+      "cant1": { "type": "number", "min": 24, "max": 60, "step": 6 },
+      "cant2": { "type": "number", "min": 36, "max": 84, "step": 6 },
+      "cant3": { "type": "number", "min": 48, "max": 96, "step": 6 }
+    },
+    "relaciones": ["mcd_valor = MCD(cant1, cant2, cant3)"],
+    "restricciones": ["mcd_valor >= 2", "mcd_valor <= 24"],
+    "incognita_directa": "mcd_valor",
+    "incognitas_inversa": ["cant1", "cant2", "cant3"],
+    "formato_respuesta": { "tipo": "entero", "rango": [2, 24] },
+    "metadata": {
+      "habilidades": ["mcd", "divisibilidad"],
+      "tiempo_estimado": 150,
+      "requiere_calculadora": false,
+      "fuente": "Adaptado de problemas de reparto"
+    }
+  },
+  {
+    "id": "mcd_baldosas_02",
+    "tema": "mcd",
+    "subtipo": "baldosas_piso",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": true,
+    "enunciado": "Se quiere embaldosar un piso rectangular de {largo} cm de largo y {ancho} cm de ancho con baldosas cuadradas del mayor tamaño posible. ¿Cuánto debe medir el lado de cada baldosa?",
+    "variables": {
+      "largo": { "type": "number", "min": 120, "max": 300, "step": 10 },
+      "ancho": { "type": "number", "min": 80, "max": 200, "step": 10 }
+    },
+    "relaciones": ["lado_maximo = MCD(largo, ancho)"],
+    "restricciones": ["lado_maximo >= 10", "lado_maximo <= 60"],
+    "incognita_directa": "lado_maximo",
+    "incognitas_inversa": ["largo", "ancho"],
+    "formato_respuesta": { "tipo": "entero", "rango": [10, 60] },
+    "metadata": {
+      "habilidades": ["mcd", "medidas", "divisibilidad"],
+      "tiempo_estimado": 180,
+      "requiere_calculadora": false,
+      "fuente": "Adaptado de problemas de baldosas"
+    }
+  },
+  {
+    "id": "proporcionalidad_compuesta_01",
+    "tema": "proporcionalidad_compuesta",
+    "subtipo": "rendimiento_equipo",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": true,
+    "enunciado": "Un grupo de {n_v} varones siembra {obj} árboles en {d1} días trabajando {h1} h/día. Un grupo de {n_d} damas hace lo mismo en {d2} días trabajando {h2} h/día. Si se forma un equipo de {n_v_n} varones y {n_d_n} damas, trabajando {h1} h/día, ¿cuántos días necesitarán para sembrar los mismos {obj} árboles?",
+    "variables": {
+      "n_v": { "type": "number", "min": 2, "max": 8, "step": 1 },
+      "d1": { "type": "number", "min": 3, "max": 8, "step": 1 },
+      "h1": { "type": "number", "opciones": [6, 8] },
+      "n_d": { "type": "number", "min": 4, "max": 12, "step": 1 },
+      "d2": { "type": "number", "min": 4, "max": 10, "step": 1 },
+      "h2": { "type": "number", "opciones": [6, 8] },
+      "obj": { "type": "number", "min": 100, "max": 300, "step": 50 },
+      "n_v_n": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "n_d_n": { "type": "number", "min": 2, "max": 8, "step": 1 }
+    },
+    "relaciones": [
+      "eff_v = obj / (n_v * d1 * h1)",
+      "eff_d = obj / (n_d * d2 * h2)",
+      "dias = obj / ((n_v_n * eff_v + n_d_n * eff_d) * h1)"
+    ],
+    "restricciones": ["dias > 0", "dias < 20", "eff_v > 0", "eff_d > 0"],
+    "incognita_directa": "dias",
+    "incognitas_inversa": [
+      "n_v",
+      "d1",
+      "h1",
+      "n_d",
+      "d2",
+      "h2",
+      "obj",
+      "n_v_n",
+      "n_d_n"
+    ],
+    "formato_respuesta": {
+      "tipo": "decimal",
+      "decimales": 2,
+      "rango": [1, 20]
+    },
+    "metadata": {
+      "habilidades": ["proporcionalidad", "eficiencia", "ecuaciones"],
+      "tiempo_estimado": 300,
+      "requiere_calculadora": true,
+      "fuente": "Adaptado de problemas de trabajo en equipo"
+    }
+  },
+  {
+    "id": "porcentaje_01",
+    "tema": "porcentajes",
+    "subtipo": "descuento",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
+    "bidireccional": true,
+    "enunciado": "Una tienda ofrece un {descuento}% de descuento en un artículo que cuesta S/{precio_original}. ¿Cuál es el precio final después del descuento?",
+    "variables": {
+      "precio_original": { "type": "number", "min": 50, "max": 200, "step": 5 },
+      "descuento": { "type": "number", "min": 10, "max": 60, "step": 5 },
+      "precio_final": { "type": "number", "min": 20, "max": 180 }
+    },
+    "relaciones": ["precio_final = precio_original * (1 - descuento / 100)"],
+    "restricciones": ["precio_final > 0", "precio_final < precio_original"],
+    "incognita_directa": "precio_final",
+    "incognitas_inversa": ["precio_original", "descuento"],
+    "formato_respuesta": {
+      "tipo": "decimal",
+      "decimales": 2,
+      "rango": [20, 180]
+    },
+    "metadata": {
+      "habilidades": ["porcentajes", "multiplicación decimal"],
+      "tiempo_estimado": 150,
+      "requiere_calculadora": true,
+      "fuente": "Adaptado de problemas de descuento"
+    }
+  },
+  {
+    "id": "porcentaje_02",
+    "tema": "porcentajes",
+    "subtipo": "aumento",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": true,
+    "enunciado": "El precio de un producto era S/{precio_base} y sufrió un aumento del {aumento}%. ¿Cuál es el nuevo precio?",
+    "variables": {
+      "precio_base": { "type": "number", "min": 40, "max": 150, "step": 5 },
+      "aumento": { "type": "number", "min": 10, "max": 60, "step": 5 },
+      "precio_final": { "type": "number", "min": 44, "max": 240 }
+    },
+    "relaciones": ["precio_final = precio_base * (1 + aumento / 100)"],
+    "restricciones": ["precio_final > precio_base"],
+    "incognita_directa": "precio_final",
+    "incognitas_inversa": ["precio_base", "aumento"],
+    "formato_respuesta": {
+      "tipo": "decimal",
+      "decimales": 2,
+      "rango": [44, 240]
+    },
+    "metadata": {
+      "habilidades": ["porcentajes", "multiplicación decimal"],
+      "tiempo_estimado": 150,
+      "requiere_calculadora": true,
+      "fuente": "Adaptado de problemas de aumento"
+    }
+  },
+  {
+    "id": "regla_tres_simple_01",
+    "tema": "regla_de_tres_simple",
+    "subtipo": "directa",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["intermedio"],
+    "bidireccional": true,
+    "enunciado": "Si {cant1} kg de manzanas cuestan S/{precio1}, ¿cuánto costarán {cant2} kg?",
+    "variables": {
+      "cant1": { "type": "number", "min": 2, "max": 10, "step": 1 },
+      "precio1": { "type": "number", "min": 10, "max": 50, "step": 5 },
+      "cant2": { "type": "number", "min": 3, "max": 15, "step": 1 },
+      "precio2": { "type": "number", "min": 15, "max": 150 }
+    },
+    "relaciones": ["precio2 = (cant2 * precio1) / cant1"],
+    "restricciones": ["precio2 >= precio1", "precio2 <= 150"],
+    "incognita_directa": "precio2",
+    "incognitas_inversa": ["cant1", "precio1", "cant2"],
+    "formato_respuesta": {
+      "tipo": "decimal",
+      "decimales": 2,
+      "rango": [15, 150]
+    },
+    "metadata": {
+      "habilidades": ["regla de tres", "proporcionalidad"],
+      "tiempo_estimado": 120,
+      "requiere_calculadora": true,
+      "fuente": "Adaptado de problemas de proporcionalidad"
+    }
+  },
+  {
+    "id": "regla_tres_compuesta_01",
+    "tema": "regla_de_tres_compuesta",
+    "subtipo": "rendimiento",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": true,
+    "enunciado": "Para construir {obra1} metros de carretera, {obreros1} obreros trabajaron {dias1} días durante {horas1} horas diarias. ¿Cuántos días necesitarán {obreros2} obreros trabajando {horas2} horas diarias para hacer {obra2} metros de la misma carretera?",
+    "variables": {
+      "obra1": { "type": "number", "min": 100, "max": 500, "step": 50 },
+      "obreros1": { "type": "number", "min": 5, "max": 20, "step": 1 },
+      "dias1": { "type": "number", "min": 10, "max": 30, "step": 1 },
+      "horas1": { "type": "number", "min": 6, "max": 10, "step": 1 },
+      "obra2": { "type": "number", "min": 100, "max": 500, "step": 50 },
+      "obreros2": { "type": "number", "min": 5, "max": 20, "step": 1 },
+      "horas2": { "type": "number", "min": 6, "max": 10, "step": 1 }
+    },
+    "relaciones": [
+      "dias2 = (obra2 * obreros1 * dias1 * horas1) / (obra1 * obreros2 * horas2)"
+    ],
+    "restricciones": ["dias2 > 0", "dias2 < 60"],
+    "incognita_directa": "dias2",
+    "incognitas_inversa": [],
+    "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
+    "metadata": {}
+  },
+  {
+    "id": "ecuacion_simple_unificada",
+    "tema": "ecuaciones_simples",
+    "subtipo": "lineal",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio", "avanzado"],
+    "bidireccional": true,
+    "variables": {
+      "a": { "type": "number", "min": 5, "max": 50, "step": 1 },
+      "b": { "type": "number", "min": 2, "max": 20, "step": 1 },
+      "c": { "type": "number", "min": 2, "max": 20, "step": 1 },
+      "x": { "type": "number", "min": 2, "max": 100 }
+    },
+    "relaciones": [], 
+    "restricciones": ["x > 0", "x <= 100"],
+    "incognita_directa": "x",
+    "incognitas_inversa": ["a", "b", "c"],
+    "formato_respuesta": { "tipo": "entero", "rango": [2, 100] },
+    "metadata": {
+      "habilidades": ["ecuaciones"],
+      "tiempo_estimado": 120,
+      "requiere_calculadora": false,
+      "fuente": "Adaptado de problemas de ecuaciones"
+    }
+  }
+  
+]

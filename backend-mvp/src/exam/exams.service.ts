@@ -5,26 +5,40 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ExamsService {
   constructor(private prisma: PrismaService) {}
 
-  // Obtener todos los exámenes (para la lista)
-  async findAll() {
-    return this.prisma.exam.findMany({
-      include: {
-        // 🔥 Cambiamos 'teacher' por 'docente' para que coincida con tu esquema
-        docente: {
-          select: { nombre: true, email: true },
+  async create(data: any, userId: string) {
+    // 1. Separa los datos del examen de las preguntas
+    const { questions, ...examData } = data;
+
+    // 2. Crea todo en una sola operación (Exam + Questions)
+    return this.prisma.exam.create({
+      data: {
+        ...examData,
+        docenteId: userId,
+        questions: {
+          create: questions.map((q: any, index: number) => ({
+            order: index + 1,
+            // Mapeo exacto: snake_case (IA) -> camelCase (Prisma)
+            questionMarkdown: q.question_markdown,
+            options: q.options,
+            correctAnswer: q.correct_answer,
+            solutionMarkdown: q.solution_markdown,
+            mathData: q.math_data || q.mathData,
+            visualData: q.visual_data || q.visualData,
+          })),
         },
+      },
+      include: {
+        questions: true, // Devuelve el examen creado con sus preguntas
       },
     });
   }
 
-  // Crear un examen (para el generador)
-  async create(data: any, userId: string) {
-    return this.prisma.exam.create({
-      data: {
-        ...data,
-        // 🔥 Cambiamos 'teacherId' por 'docenteId'
-        docenteId: userId,
+  async findAll() {
+    return this.prisma.exam.findMany({
+      include: {
+        _count: { select: { questions: true } },
       },
+      orderBy: { createdAt: 'desc' },
     });
   }
 }

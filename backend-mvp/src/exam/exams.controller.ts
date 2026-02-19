@@ -22,8 +22,16 @@ export class ExamsController {
 
   @Post()
   create(@Body() body: any, @Request() req) {
-    // Asignamos el examen al usuario logueado
-    return this.examsService.create(body, req.user.id);
+    console.log('👤 Usuario detectado:', req.user);
+
+    const userId = req.user.userId || req.user.id || req.user.sub;
+
+    if (!userId) {
+      throw new Error(
+        `No se encontró el ID del usuario. Datos recibidos: ${JSON.stringify(req.user)}`,
+      );
+    }
+    return this.examsService.create(body, userId);
   }
   
   @Post(':id/start')
