@@ -1,7 +1,7 @@
-import { Polygon, Point, Text, Theme } from "mafs";
+import { Polygon, Text, Theme } from "mafs";
+import { CONFIG_GEOMETRIA } from "./ConstantesVisuales";
 
 export const RenderizadorPoligonos = ({ parametros }: { parametros: any }) => {
-  // Eliminamos variables no usadas (side_expression, x_value si no se usan en el render)
   const { sides, radius, angles } = parametros;
 
   const puntos = Array.from({ length: sides }).map((_, i) => {
@@ -20,12 +20,21 @@ export const RenderizadorPoligonos = ({ parametros }: { parametros: any }) => {
         const letra = String.fromCharCode(65 + i);
         return (
           <g key={`vertice-${i}`}>
-            <Point x={punto[0]} y={punto[1]} />
-            <Text x={punto[0] * 1.2} y={punto[1] * 1.2}>
+            {/* Sin Point */}
+            <Text
+              x={punto[0] * 1.2}
+              y={punto[1] * 1.2}
+              color={CONFIG_GEOMETRIA.COLOR_TEXTO}
+            >
               {letra}
             </Text>
             {angles && (
-              <Text x={punto[0] * 0.8} y={punto[1] * 0.8} size={12}>
+              <Text
+                x={punto[0] * 0.8}
+                y={punto[1] * 0.8}
+                size={12}
+                color={CONFIG_GEOMETRIA.COLOR_TEXTO}
+              >
                 {Math.round((180 * (sides - 2)) / sides)}°
               </Text>
             )}

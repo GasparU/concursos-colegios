@@ -18,12 +18,13 @@ export const useParametricGenerator = () => {
       setProblema(response.data);
       return response.data;
     } catch (err: any) {
+      console.error("❌ Error en generarProblema:", err);
       setError(err.message || "Error al generar problema paramétrico");
       return null;
     } finally {
       setLoading(false);
     }
-  };
+  };;
 
   const listarPlantillas = async (grado?: string, tema?: string) => {
     setLoading(true);

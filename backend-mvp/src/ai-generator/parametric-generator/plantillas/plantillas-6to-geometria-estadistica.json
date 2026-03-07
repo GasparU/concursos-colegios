@@ -1,0 +1,321 @@
+[
+    {
+      "id": "geo_rectangulo_area_triangulo_01",
+      "tema": "geometria",
+      "subtipo": "rectangulo_area_triangulo",
+      "grado": "6to",
+      "etapa": ["clasificatoria", "final"],
+      "dificultad": ["intermedio"],
+      "bidireccional": true,
+      "enunciado": "En el rectángulo ABCD, AB = {ab} y PC = {pc}, donde P es un punto sobre CD. Calcula el área del triángulo ADC.",
+      "variables": {
+        "ab": { "type": "number", "min": 2, "max": 10, "step": 1 },
+        "pc": { "type": "number", "min": 2, "max": 10, "step": 1 }
+      },
+      "relaciones": ["area = (ab * pc) / 2"],
+      "restricciones": ["pc <= ab"],
+      "incognita_directa": "area",
+      "incognitas_inversa": ["ab", "pc"],
+      "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
+      "metadata": {
+        "habilidades": ["área de triángulo", "rectángulo"],
+        "tiempo_estimado": 120,
+        "requiere_calculadora": false,
+        "fuente": "Adaptado de problema 15 (6to clasificatoria)"
+      }
+    }, {
+      "id": "geo_triangulo_area_diagonales_01",
+      "tema": "geometria",
+      "subtipo": "triangulo_area_diagonales",
+      "grado": "6to",
+      "etapa": ["clasificatoria", "final"],
+      "dificultad": ["intermedio"],
+      "bidireccional": true,
+      "enunciado": "En el gráfico, BD = {bd} y AC = {ac}. Calcula el área del triángulo ABC.",
+      "variables": {
+        "bd": { "type": "number", "min": 2, "max": 10, "step": 1 },
+        "ac": { "type": "number", "min": 2, "max": 10, "step": 1 }
+      },
+      "relaciones": ["area = (bd * ac) / 2"],
+      "restricciones": [],
+      "incognita_directa": "area",
+      "incognitas_inversa": ["bd", "ac"],
+      "formato_respuesta": { "tipo": "entero" },
+      "metadata": {
+        "habilidades": ["área de triángulo", "diagonales"],
+        "tiempo_estimado": 120,
+        "requiere_calculadora": false,
+        "fuente": "Adaptado de problema 16 (6to clasificatoria)"
+      }
+    }, {
+      "id": "geo_cuadrados_superpuestos_area_01",
+      "tema": "geometria",
+      "subtipo": "cuadrados_superpuestos_area",
+      "grado": "6to",
+      "etapa": ["final"],
+      "dificultad": ["avanzado"],
+      "bidireccional": true,
+      "enunciado": "Los cuadrados ABCD y EFGD están dispuestos como en la figura. Si AF = {af} y el área del cuadrado EFGD es {area_pequeno}, calcula el área del cuadrado ABCD.",
+      "variables": {
+        "af": { "type": "number", "min": 2, "max": 10, "step": 1 },
+        "area_pequeno": { "type": "number", "min": 4, "max": 36, "step": 1 }
+      },
+      "relaciones": [
+        "lado_pequeno = sqrt(area_pequeno)",
+        "lado_grande = af + lado_pequeno",
+        "area_grande = lado_grande^2"
+      ],
+      "restricciones": ["lado_pequeno > 0"],
+      "incognita_directa": "area_grande",
+      "incognitas_inversa": ["af", "area_pequeno"],
+      "formato_respuesta": { "tipo": "entero" },
+      "metadata": {
+        "habilidades": ["área de cuadrado", "relaciones geométricas"],
+        "tiempo_estimado": 150,
+        "requiere_calculadora": true,
+        "fuente": "Adaptado de problema 17 (6to clasificatoria)"
+      }
+    },
+    {
+      "id": "geo_paralelas_angulos_ecuaciones_01",
+      "tema": "geometria",
+      "subtipo": "paralelas_angulos_ecuaciones",
+      "grado": "6to",
+      "etapa": ["final"],
+      "dificultad": ["avanzado"],
+      "bidireccional": true,
+      "enunciado": "En la figura, L1 y L2 son rectas paralelas. Si el ángulo α mide {a}x + {b}° y el ángulo β mide {c}x + {d}°, halla el valor de x.",
+      "variables": {
+        "a": { "type": "number", "min": 2, "max": 5, "step": 1 },
+        "b": { "type": "number", "min": 0, "max": 20, "step": 1 },
+        "c": { "type": "number", "min": 2, "max": 5, "step": 1 },
+        "d": { "type": "number", "min": 0, "max": 20, "step": 1 }
+      },
+      "relaciones": ["x = (d - b) / (a - c)"],
+      "restricciones": ["a != c", "x > 0", "a*x + b > 0", "c*x + d > 0"],
+      "incognita_directa": "x",
+      "incognitas_inversa": ["a", "b", "c", "d"],
+      "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
+      "metadata": {
+        "habilidades": ["ángulos entre paralelas", "ecuaciones"],
+        "tiempo_estimado": 150,
+        "requiere_calculadora": true,
+        "fuente": "Adaptado de problema 18 (6to clasificatoria)"
+      }
+    },
+    {
+      "id": "geo_volumen_prisma_cubo_01",
+      "tema": "geometria",
+      "subtipo": "volumen_prisma_cubo",
+      "grado": "6to",
+      "etapa": ["final"],
+      "dificultad": ["intermedio"],
+      "bidireccional": true,
+      "enunciado": "Un cubo de arista {arista_cubo} cm está completamente lleno de agua. Si se vierte el agua en un prisma regular de base cuadrada con lado de base {lado_base} cm, ¿qué altura debe tener el prisma para que quede completamente lleno?",
+      "variables": {
+        "arista_cubo": { "type": "number", "min": 4, "max": 10, "step": 1 },
+        "lado_base": { "type": "number", "min": 3, "max": 8, "step": 1 }
+      },
+      "relaciones": [
+        "volumen_cubo = arista_cubo^3",
+        "altura_prisma = volumen_cubo / (lado_base^2)"
+      ],
+      "restricciones": ["lado_base < arista_cubo"],
+      "incognita_directa": "altura_prisma",
+      "incognitas_inversa": ["arista_cubo", "lado_base"],
+      "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
+      "metadata": {
+        "habilidades": ["volumen de cubo", "volumen de prisma"],
+        "tiempo_estimado": 120,
+        "requiere_calculadora": true,
+        "fuente": "Adaptado de problema 19 (6to clasificatoria)"
+      }
+    },
+    {
+      "id": "geo_circunferencia_angulos_01",
+      "tema": "geometria",
+      "subtipo": "circunferencia_angulos",
+      "grado": "6to",
+      "etapa": ["final"],
+      "dificultad": ["avanzado"],
+      "bidireccional": true,
+      "enunciado": "En la circunferencia mostrada, los arcos AB y BC miden {arcoAB}° y {arcoBC}° respectivamente. Calcula la medida del ángulo x.",
+      "variables": {
+        "arcoAB": { "type": "number", "min": 30, "max": 120, "step": 5 },
+        "arcoBC": { "type": "number", "min": 30, "max": 120, "step": 5 }
+      },
+      "relaciones": ["x = (arcoAB + arcoBC) / 2"],
+      "restricciones": ["arcoAB + arcoBC < 360"],
+      "incognita_directa": "x",
+      "incognitas_inversa": ["arcoAB", "arcoBC"],
+      "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
+      "metadata": {
+        "habilidades": ["ángulos en circunferencia", "ángulo inscrito"],
+        "tiempo_estimado": 150,
+        "requiere_calculadora": true,
+        "fuente": "Adaptado de problema 20 (6to clasificatoria)"
+      }
+    },
+    {
+      "id": "geo_area_terreno_compuesto_01",
+      "tema": "geometria",
+      "subtipo": "area_terreno_compuesto",
+      "grado": "6to",
+      "etapa": ["final"],
+      "dificultad": ["avanzado"],
+      "bidireccional": true,
+      "enunciado": "Un terreno está formado por un rectángulo y cuatro triángulos rectángulos. Las dimensiones del rectángulo son {largo} m y {ancho} m, y los triángulos tienen catetos de {cateto1} m y {cateto2} m. Calcula el área total del terreno.",
+      "variables": {
+        "largo": { "type": "number", "min": 5, "max": 20, "step": 1 },
+        "ancho": { "type": "number", "min": 3, "max": 15, "step": 1 },
+        "cateto1": { "type": "number", "min": 2, "max": 8, "step": 1 },
+        "cateto2": { "type": "number", "min": 2, "max": 8, "step": 1 }
+      },
+      "relaciones": [
+        "area_rect = largo * ancho",
+        "area_tri = (cateto1 * cateto2) / 2",
+        "area_total = area_rect + 4 * area_tri"
+      ],
+      "restricciones": ["cateto1 <= largo/2", "cateto2 <= ancho/2"],
+      "incognita_directa": "area_total",
+      "incognitas_inversa": ["largo", "ancho", "cateto1", "cateto2"],
+      "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
+      "metadata": {
+        "habilidades": ["área de rectángulo", "área de triángulo"],
+        "tiempo_estimado": 180,
+        "requiere_calculadora": true,
+        "fuente": "Adaptado de problema 15 (6to final)"
+      }
+    },
+    {
+      "id": "geo_cuadrados_superpuestos_perimetro_01",
+      "tema": "geometria",
+      "subtipo": "cuadrados_superpuestos_perimetro",
+      "grado": "6to",
+      "etapa": ["final"],
+      "dificultad": ["avanzado"],
+      "bidireccional": true,
+      "enunciado": "La suma de los perímetros de los cuadrados ABCD y QDMN es {suma_perimetros}. El área de la región sombreada es {area_sombreada}. Calcula el lado del cuadrado mayor.",
+      "variables": {
+        "suma_perimetros": {
+          "type": "number",
+          "min": 40,
+          "max": 100,
+          "step": 5
+        },
+        "area_sombreada": { "type": "number", "min": 20, "max": 60, "step": 5 }
+      },
+      "relaciones": [
+        "lado_mayor = (suma_perimetros / 4 + sqrt((suma_perimetros/4)^2 - 8*area_sombreada)) / 2"
+      ],
+      "restricciones": ["(suma_perimetros/4)^2 - 8*area_sombreada >= 0"],
+      "incognita_directa": "lado_mayor",
+      "incognitas_inversa": ["suma_perimetros", "area_sombreada"],
+      "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
+      "metadata": {
+        "habilidades": [
+          "perímetro de cuadrado",
+          "área",
+          "ecuaciones cuadráticas"
+        ],
+        "tiempo_estimado": 200,
+        "requiere_calculadora": true,
+        "fuente": "Adaptado de problema 16 (6to final)"
+      }
+    },
+    {
+  "id": "geo_circunferencias_tangentes_arco_01",
+  "tema": "geometria",
+  "subtipo": "circunferencias_tangentes_arco",
+  "grado": "6to",
+  "etapa": ["final"],
+  "dificultad": ["avanzado"],
+  "bidireccional": true,
+  "enunciado": "En la figura, A y B son centros de las circunferencias. El arco PD de la circunferencia mayor mide {arcoPD}°. Calcula la medida del arco DQ.",
+  "variables": {
+    "arcoPD": { "type": "number", "min": 40, "max": 120, "step": 5 }
+  },
+  "relaciones": [
+    "arcoDQ = 180 - arcoPD/2"
+  ],
+  "restricciones": [],
+  "incognita_directa": "arcoDQ",
+  "incognitas_inversa": ["arcoPD"],
+  "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
+  "metadata": {
+    "habilidades": ["circunferencias tangentes", "ángulos"],
+    "tiempo_estimado": 150,
+    "requiere_calculadora": false,
+    "fuente": "Adaptado de problema 17 (6to final)"
+  }
+},
+{
+  "id": "geo_cubo_agua_01",
+  "tema": "geometria",
+  "subtipo": "cubo_agua",
+  "grado": "6to",
+  "etapa": ["final"],
+  "dificultad": ["intermedio"],
+  "bidireccional": true,
+  "enunciado": "Un recipiente cúbico de volumen {volumen_total} contiene agua hasta cierta altura. Si el volumen de agua es {volumen_agua}, calcula la altura del agua.",
+  "variables": {
+    "volumen_total": { "type": "number", "min": 8, "max": 64, "step": 1 },
+    "volumen_agua": { "type": "number", "min": 1, "max": "{volumen_total-1}", "step": 1 }
+  },
+  "relaciones": [
+    "arista = volumen_total^(1/3)",
+    "altura = volumen_agua / (arista^2)"
+  ],
+  "restricciones": [
+    "volumen_agua < volumen_total"
+  ],
+  "incognita_directa": "altura",
+  "incognitas_inversa": ["volumen_total", "volumen_agua"],
+  "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
+  "metadata": {
+    "habilidades": ["volumen de cubo", "área de base"],
+    "tiempo_estimado": 120,
+    "requiere_calculadora": true,
+    "fuente": "Adaptado de problema 18 (6to final)"
+  }
+},
+{
+  "id": "geo_triangulo_cuadrado_inscrito_01",
+  "tema": "geometria",
+  "subtipo": "triangulo_cuadrado_inscrito",
+  "grado": "5to",
+  "etapa": ["final"],
+  "dificultad": ["avanzado"],
+  "bidireccional": true,
+  "enunciado": "En un triángulo ABC, se inscribe un cuadrado PQRS de modo que el lado PQ está sobre la base AC. Si el área del triángulo ABC es {area_triangulo} m² y la altura del triángulo es {altura} m, calcula el área del cuadrado.",
+  "variables": {
+    "area_triangulo": { "type": "number", "min": 18, "max": 50, "step": 2 },
+    "altura": { "type": "number", "min": 6, "max": 15, "step": 1 }
+  },
+  "relaciones": [
+    "base = 2 * area_triangulo / altura",
+    "lado_cuadrado = (base * altura) / (base + altura)",
+    "area_cuadrado = lado_cuadrado * lado_cuadrado"
+  ],
+  "restricciones": [
+    "lado_cuadrado > 0",
+    "lado_cuadrado < altura",
+    "lado_cuadrado < base"
+  ],
+  "incognita_directa": "area_cuadrado",
+  "incognitas_inversa": ["area_triangulo", "altura"],
+  "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
+  "metadata": {
+    "habilidades": ["área de triángulo", "cuadrado inscrito", "semejanza"],
+    "tiempo_estimado": 200,
+    "requiere_calculadora": true,
+    "fuente": "Adaptado de problema 19 (clasificatoria)"
+  }
+}
+
+
+
+
+
+
+]

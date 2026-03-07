@@ -20,8 +20,26 @@ export class ParametricGeneratorController {
   }
 
   @Post('generar')
-  generarProblema(@Body() body: { plantillaId: string; valoresFijos?: any }) {
-    console.log('📦 Body recibido:', body);
-    return this.service.generarProblema(body.plantillaId, body.valoresFijos);
+  async generarProblema(@Body() body: { plantillaId: string; valoresFijos?: any }) {
+     console.log('📥 [Controller] Recibido plantillaId:', body.plantillaId);
+    try {
+      // Intentamos ejecutar el motor
+      const resultado = await this.service.generarProblema(
+        body.plantillaId,
+        body.valoresFijos,
+      );
+      return resultado;
+    } catch (error: any) {
+      // 🔥 ATRAPAMOS EL ERROR SILENCIOSO Y LO EXPONEMOS 🔥
+      console.error('\n🔥🔥🔥 ERROR CRÍTICO EN EL MOTOR PARAMÉTRICO 🔥🔥🔥');
+      console.error('Plantilla que falló:', body.plantillaId);
+      console.error('Mensaje del Error:', error.message);
+      console.error('Stack Trace:', error.stack);
+      console.error('🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥\n');
+
+      // Volvemos a lanzar el error para que NestJS responda el 400 al frontend,
+      // pero ahora ya tenemos el chisme completo en la terminal.
+      throw error;
+    }
   }
 }

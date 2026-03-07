@@ -28,7 +28,6 @@ function App() {
 
 
   useEffect(() => {
-    console.log("Ejecutando checkAuth...");
     checkAuth().finally(() => console.log("checkAuth finalizado"));
   }, []);
 

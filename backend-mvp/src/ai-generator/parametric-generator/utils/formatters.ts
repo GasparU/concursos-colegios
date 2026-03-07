@@ -12,6 +12,16 @@ export const formatRespuesta = (respuesta: any, formato: any): any => {
   } else if (formato.tipo === 'decimal') {
     return parseFloat(respuesta.toFixed(formato.decimales || 2));
   } else if (formato.tipo === 'fraccion') {
+    // Si ya es un objeto con numerador y denominador, lo devolvemos directamente
+    if (
+      respuesta &&
+      typeof respuesta === 'object' &&
+      'numerador' in respuesta &&
+      'denominador' in respuesta
+    ) {
+      return respuesta;
+    }
+    // Si es un número, lo convertimos a fracción
     const frac = new Fraction(respuesta);
     return { numerador: Number(frac.n), denominador: Number(frac.d) };
   }

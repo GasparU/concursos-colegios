@@ -13,8 +13,7 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  // Esto imprimirá en la consola del navegador la URL exacta antes de salir
-  console.log(`📡 Petición saliendo a: ${config.baseURL}${config.url}`);
+  
   return config;
 });
 

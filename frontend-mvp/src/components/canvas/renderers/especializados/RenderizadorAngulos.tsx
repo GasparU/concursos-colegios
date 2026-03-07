@@ -185,16 +185,6 @@ export const RenderizadorAngulos = ({ parametros }: { parametros: any }) => {
       preserveAspectRatio="contain"
     >
       <g>
-        {/* Vértice O */}
-        {/* <Text
-          x={0}
-          y={0}
-          size={ANGULOS_CONFIG.TAMANO_LETRAS_PUNTOS}
-          color={ANGULOS_CONFIG.COLOR_TEXTO}
-        >
-          {vertex?.label === "0" ? "O" : vertex?.label || "O"}
-        </Text> */}
-
         {/* Sectores rellenos (ángulos) con rotación */}
         {dataVisual.map((dato: any, i: number) => {
           const isRightAngle = Math.abs(dato.anguloReal - 90) < 1.5;

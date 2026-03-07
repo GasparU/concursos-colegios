@@ -5,9 +5,7 @@ import {
 } from '@nestjs/common';
 import * as math from 'mathjs';
 import * as plantillas5to from './plantillas/plantillas-5to.json';
-// import * as plantillas6to from './plantillas/plantillas-6to.json';
-// Importa más grados si los tienes
-
+import * as plantillas5toGeoEst from './plantillas/plantillas-5to-geometria-estadistica.json';
 
 import { QuintoGradoService } from './grados/quinto.grado.service';
 import { SextoGradoService } from './grados/sexto.grado.service';
@@ -44,7 +42,7 @@ export interface Plantilla {
 export class ParametricGeneratorService {
   private plantillas: Plantilla[] = [
     ...((plantillas5to as any).default || plantillas5to),
-
+    ...((plantillas5toGeoEst as any).default || plantillas5toGeoEst),
   ];
 
   constructor(
@@ -81,6 +79,11 @@ export class ParametricGeneratorService {
 
   generarProblema(plantillaId: string, valoresFijos: Record<string, any> = {}) {
     const plantilla = this.obtenerPlantillaPorId(plantillaId);
+    console.log(
+      '📦 [Service] Plantilla encontrada:',
+      plantilla.id,
+      plantilla.tema,
+    );
     const gradoService = this.getGradoService(plantilla.grado);
     const maxIntentos = 200;
 
@@ -118,6 +121,8 @@ export class ParametricGeneratorService {
           math.evaluate(rel, scope);
         }
 
+        Object.assign(valores, scope);
+
         // 3. Verificar restricciones
         if (plantilla.restricciones && plantilla.restricciones.length > 0) {
           for (const rest of plantilla.restricciones) {
@@ -141,18 +146,40 @@ export class ParametricGeneratorService {
         }
 
         // 5. Construir enunciado
-        const enunciadoFinal = gradoService.construirEnunciado(
+        let enunciadoFinal = gradoService.construirEnunciado(
           plantilla,
           valores,
           scope,
           respuesta,
         );
 
-        // 6. Procesar respuesta (solo se pasan respuesta y formato)
-        const respuestaFinal = gradoService.procesarRespuesta(
+        // 6. Generar visual_data (si aplica)
+        const visualData = gradoService.generarVisualData(plantilla, valores);
+        console.log(`[Intento ${intento}] Visual data generado:`, visualData);
+
+        // 7. Procesar la respuesta según el formato
+        let respuestaFinal = gradoService.procesarRespuesta(
           respuesta,
           plantilla.formato_respuesta,
         );
+        console.log(`[Intento ${intento}] Valores generados:`, valores);
+
+        // 🔥 FIX CRÍTICO: Si el visualData calculó su propia respuesta (como en Triángulos), la sobreescribimos.
+        if (
+          visualData &&
+          (visualData as any).respuestaSobreescrita !== undefined
+        ) {
+          respuestaFinal = (visualData as any).respuestaSobreescrita;
+          // Opcional: limpiar la propiedad para no enviarla al frontend innecesariamente
+          delete (visualData as any).respuestaSobreescrita;
+        }
+
+        if (visualData && (visualData as any).enunciadoForzado) {
+          enunciadoFinal = (visualData as any).enunciadoForzado;
+          delete (visualData as any).enunciadoForzado;
+        }
+
+        console.log(`[Intento ${intento}] Valores generados:`, valores);
 
         return {
           plantillaId: plantilla.id,
@@ -160,6 +187,7 @@ export class ParametricGeneratorService {
           enunciado: enunciadoFinal,
           valores,
           respuesta: respuestaFinal,
+          visual_data: visualData,
         };
       } catch (error) {
         if (intento === maxIntentos - 1) {
@@ -169,8 +197,10 @@ export class ParametricGeneratorService {
         }
       }
     }
+    
     throw new BadRequestException('Error inesperado en la generación');
   }
+  
 
   private generarNumero(def: VariableDef): number {
     const { min = 1, max = 10, step = 1 } = def;

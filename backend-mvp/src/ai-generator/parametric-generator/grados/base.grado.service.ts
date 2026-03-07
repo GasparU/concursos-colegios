@@ -16,4 +16,8 @@ export abstract class BaseGradoService {
   procesarRespuesta(respuesta: any, formato: any): any {
     return formatRespuesta(respuesta, formato);
   }
+
+  generarVisualData(plantilla: Plantilla, valores: Record<string, any>): any {
+    return null; // Por defecto, sin visualización
+  }
 }

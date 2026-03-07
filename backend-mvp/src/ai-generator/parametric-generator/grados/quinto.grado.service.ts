@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { BaseGradoService } from './base.grado.service';
 import { Plantilla } from '../parametric-generator.service';
 import Fraction from 'fraction.js';
+import { obtenerAngulosArco } from '../utils/geometriaHelpers';
 
 @Injectable()
 export class QuintoGradoService extends BaseGradoService {
@@ -52,6 +53,328 @@ export class QuintoGradoService extends BaseGradoService {
       }
     }
 
+    if (plantilla.subtipo === 'area_rombo') {
+      if (plantilla.dificultad.includes('basico')) {
+        return `Calcula el área del rombo mostrado en la figura.`;
+      }
+      return `Calcula el valor de "x" sabiendo que el área del rombo mostrado es ${valores.area} cm².`;
+    }
+
+    // 🔥 NARRATIVA: ÁREA DE TRAPECIO
+    if (plantilla.subtipo === 'area_trapecio') {
+      // Formateador local para leer la altura experta si existe
+      const formatAlgLocal = (coef: any, cte: any) => {
+        const c = Number(coef) || 0;
+        const k = Number(cte) || 0;
+        if (c === 0 && k === 0) return '0';
+        if (c === 0) return `${k}`;
+        let pre = c === 1 ? 'x' : c === -1 ? '-x' : `${c}x`;
+        if (k === 0) return pre;
+        return k > 0 ? `${pre} + ${k}` : `${pre} - ${Math.abs(k)}`;
+      };
+
+      // Obtenemos la altura limpia para el texto
+      let txtH = `${valores.h}`;
+      if (plantilla.dificultad.includes('experto')) {
+        txtH = formatAlgLocal(valores.e, valores.f);
+      }
+
+      if (plantilla.dificultad.includes('basico')) {
+        return `Calcula el área del trapecio mostrado, sabiendo que su altura es ${txtH} cm.`;
+      }
+      return `Calcula el valor de "x" sabiendo que el área del trapecio mostrado es ${valores.area} cm² y su altura es ${txtH} cm.`;
+    }
+
+    // 🔥 NARRATIVA: ÁREA DE PARALELOGRAMO (Con datos explícitos)
+    if (plantilla.subtipo === 'area_paralelogramo') {
+      const formatAlgLocal = (coef: any, cte: any, fallback: any) => {
+        const valA = Number(coef) || 0;
+        const valB = Number(cte) || 0;
+        if (valA === 0 && valB === 0) return `${fallback}`;
+        if (valA === 0) return `${valB}`;
+        let pre = valA === 1 ? 'x' : valA === -1 ? '-x' : `${valA}x`;
+        if (valB === 0) return pre;
+        return valB > 0 ? `${pre} + ${valB}` : `${pre} - ${Math.abs(valB)}`;
+      };
+
+      const B_real = Number(valores.B) || 15;
+      const L_real = Number(valores.L) || 10;
+
+      let txtB = '',
+        txtL = '';
+      if (plantilla.dificultad.includes('basico')) {
+        txtB = `${B_real}`;
+        txtL = `${L_real}`;
+      } else if (plantilla.dificultad.includes('intermedio')) {
+        txtB = formatAlgLocal(valores.a, valores.b, B_real);
+        txtL = `${L_real}`;
+      } else {
+        txtB = formatAlgLocal(valores.a, valores.b, B_real);
+        txtL = formatAlgLocal(valores.c, valores.d, L_real);
+      }
+
+      if (valores.area) {
+        valores.area = Number(Math.round(valores.area * 100) / 100);
+      }
+      if (valores.respuesta) {
+        valores.respuesta = Number(Math.round(valores.respuesta * 100) / 100);
+      }
+
+      if (plantilla.dificultad.includes('basico'))
+        return `Calcula el área del paralelogramo ABCD sabiendo que AB = ${txtB} cm y AD = ${txtL} cm.`;
+      if (plantilla.dificultad.includes('experto'))
+        return `El perímetro del paralelogramo ABCD es ${valores.perimetro} cm. Si AB = ${txtB} cm y AD = ${txtL} cm, calcula su área total.`;
+
+      return `Calcula el valor de "x" sabiendo que el área del paralelogramo ABCD es ${valores.area} cm², AB = ${txtB} cm y AD = ${txtL} cm.`;
+    }
+
+    if (plantilla.subtipo === 'area_sombreada') {
+      const tipo = valores.tipo_fig;
+
+      if (plantilla.dificultad.includes('basico')) {
+        if (tipo === 0)
+          return `Calcula el área de la región sombreada si ABCD es un cuadrado de lado ${valores.v1} cm y la base del triángulo blanco inferior mide ${valores.v2} cm.`;
+        if (tipo === 1)
+          return `Calcula el área de la región sombreada si ABCD es un cuadrado de lado ${valores.v1} cm y el cuadrado blanco de la esquina tiene lado ${valores.v2} cm.`;
+        if (tipo === 2)
+          return `Calcula el área sombreada si ABCD es un cuadrado de lado ${valores.v1} cm y la base del triángulo blanco superior mide ${valores.v2} cm.`;
+        if (tipo === 3)
+          return `Calcula el área de la región sombreada si ABCD es un rectángulo con base ${valores.v1} cm y altura ${valores.v2} cm, el cual contiene un rombo inscrito.`;
+        if (tipo === 4)
+          return `En el cuadrado ABCD de lado ${valores.v1} cm, se han recortado dos triángulos blancos en las esquinas cuyas bases inferiores miden ${valores.v2} cm. Halla el área de la región sombreada.`;
+      }
+
+      if (plantilla.dificultad.includes('intermedio')) {
+        if (tipo === 0)
+          return `Calcula el área de la corona circular sabiendo que el radio mayor es R = ${valores.R} cm y el radio menor es r = ${valores.r} cm. Considera pi = 3.14.`;
+        if (tipo === 1)
+          return `En el cuadrado ABCD de lado ${valores.R} cm se ha inscrito un círculo de radio "r". Calcula el área de las esquinas sombreadas. Considera pi = 3.14.`;
+        if (tipo === 2)
+          return `Calcula el área de la región sombreada (mitad de una corona circular) si R = ${valores.R} cm y r = ${valores.r} cm. Considera pi = 3.14.`;
+        if (tipo === 3)
+          return `Calcula el área del cuadrante de corona circular mostrado, sabiendo que R = ${valores.R} cm y r = ${valores.r} cm. Considera pi = 3.14.`;
+      }
+
+      // 🔥 DENTRO DE construirEnunciado (Nivel Avanzado)
+      if (plantilla.dificultad.includes('avanzado')) {
+        const k = valores.k || 1;
+        const x = valores.x || 3;
+
+        // Generador de álgebra perfecta (Inverso)
+        const fExp = (target: number, coef: number) => {
+          const cte = target - coef * x;
+          return cte === 0
+            ? `${coef}x`
+            : cte < 0
+              ? `${coef}x - ${Math.abs(cte)}`
+              : `${coef}x + ${cte}`;
+        };
+
+        if (tipo === 0)
+          return `En la figura (A), dos triángulos comparten una altura común. En el triángulo izquierdo (45°), la altura mide ${fExp(12 * k, 2)} cm y la base mide ${fExp(12 * k, 3)} cm. Usando la relación de catetos, halla "x" y calcula el área total sombreada sabiendo que la base derecha mide ${9 * k} cm.`;
+        if (tipo === 1)
+          return `Calcula el área del romboide mostrado sabiendo que su base inferior mide ${15 * k} cm. Su lado lateral inclinado mide ${10 * k} cm y forma un ángulo de 53°.`;
+        if (tipo === 2)
+          return `Calcula el área del polígono irregular en forma de L. Asume que todas sus esquinas forman ángulos rectos (90°).`;
+        if (tipo === 3)
+          return `Halla el área del polígono compuesto (Triángulo + Rectángulo). El triángulo posee una hipotenusa real de ${17 * k} cm y una base de ${8 * k} cm (Triada 8-15-17). El rectángulo adyacente tiene base ${10 * k} cm.`;
+        if (tipo === 4)
+          return `Se tiene un rectángulo de base ${14 * k} cm y altura ${10 * k} cm, del cual se ha recortado un triángulo blanco en la base. Calcula el área de la región sombreada azul.`;
+        if (tipo === 5)
+          return `Calcula el área del trapecio sombreado sabiendo que su base mayor mide ${16 * k} cm, su base menor ${10 * k} cm y su altura ${8 * k} cm.`;
+        if (tipo === 6)
+          return `Halla el área de la figura (Rombo inscrito en rectángulo), sabiendo que las dimensiones totales son ${16 * k} cm de ancho y ${12 * k} cm de alto.`;
+        if (tipo === 7)
+          return `Calcula el área total de la región sombreada en forma de "corbata". Las dos figuras son idénticas, con bases de ${10 * k} cm y una altura compartida de ${15 * k} cm.`;
+      }
+
+      if (plantilla.dificultad.includes('experto')) {
+        const eqExt =
+          valores.b === 0 ? `${valores.a}x` : `${valores.a}x + ${valores.b}`;
+        // 🔥 Limpia los decimales infinitos
+        const areaLimpia = Number(Math.round(valores.area * 100) / 100);
+
+        if (tipo === 0 || tipo === 2) {
+          return `En la corona circular mostrada, el radio mayor es R = ${eqExt} cm y el radio menor es r = x + 1 cm. Si el área de la región sombreada es ${areaLimpia} cm², determina el valor de x. (Considera pi = 3.14).`;
+        } else {
+          return `La figura muestra una cadena de ${valores.num_aros} aros circulares entrelazados. Cada aro tiene un radio mayor R = ${eqExt} cm y un radio menor r = x + 1 cm. Si al desenlazar la cadena, la suma total de las áreas de los aros individuales es ${areaLimpia} cm², halla el valor de x. (Considera pi = 3.14).`;
+        }
+      }
+    }
+
+    // 🔥 NARRATIVA: VOLUMEN DE PRISMA (Con fix de decimales)
+    if (plantilla.subtipo === 'volumen_prisma') {
+      const volLimpio = parseFloat(Number(valores.volumen).toFixed(2));
+      if (plantilla.dificultad.includes('basico'))
+        return `Calcula el volumen del prisma rectangular mostrado.`;
+      return `Calcula el valor de "x" sabiendo que el volumen del prisma mostrado es ${volLimpio} cm³.`;
+    }
+
+    if (plantilla.subtipo === 'volumen_prisma_triangular') {
+      const volLimpio = parseFloat(Number(valores.volumen).toFixed(2));
+      if (plantilla.dificultad.includes('basico'))
+        return `Calcula el volumen del prisma triangular mostrado.`;
+      return `Calcula el valor de "x" sabiendo que el volumen del prisma triangular es ${volLimpio} cm³.`;
+    }
+
+    // 🔥 NARRATIVA: VOLUMEN DE PIRÁMIDE (Fix de "Generado dinámicamente")
+    if (plantilla.subtipo === 'volumen_piramide') {
+      const volLimpio = parseFloat(Number(valores.volumen).toFixed(2));
+
+      if (plantilla.dificultad.includes('basico')) {
+        return `Calcula el volumen de una pirámide cuadrangular cuyo lado de la base mide ${valores.lado} cm y su altura es de ${valores.h} cm.`;
+      }
+
+      return `Halla el valor de "x" si se sabe que el volumen de la pirámide cuadrangular mostrada es ${volLimpio} cm³.`;
+    }
+
+    if (plantilla.subtipo === 'perimetro_escalera') {
+      let enunciado = plantilla.enunciado;
+      const v = valores;
+      const tipo = v.tipo_fig !== undefined ? v.tipo_fig : 0;
+
+      const fPoly = (a: number, c: number) => {
+        const aStr = a === 1 ? `x²` : `${a}x²`;
+        if (c === 0) return aStr;
+        return c < 0 ? `${aStr} - ${Math.abs(c)}` : `${aStr} + ${c}`;
+      };
+
+      if (plantilla.dificultad.includes('experto')) {
+        enunciado = enunciado.replace(
+          '{perimetro}',
+          `( ${fPoly(v.p_a, v.cte_p)} )`,
+        );
+      } else {
+        enunciado = enunciado.replace('{perimetro}', String(v.perimetro));
+      }
+
+      // 🔥 BLINDAJE PEDAGÓGICO AUTOMÁTICO
+      if (tipo === 1 && !enunciado.includes('tramos verticales')) {
+        enunciado +=
+          ' (Nota: Asume que todos los tramos verticales miden exactamente lo mismo).'; // <-- Sin el "4"
+      }
+      if (tipo === 3 && !enunciado.includes('profundidad')) {
+        enunciado +=
+          ' (Nota: Asume que ambos recortes verticales tienen la misma profundidad).';
+      }
+
+      return enunciado;
+    }
+
+   // 🔥 ESTE BLOQUE AHORA CONTROLA AMBOS TEMAS DE LA CIRCUNFERENCIA
+    if (plantilla.subtipo === 'angulos_circunferencia' || plantilla.subtipo === 'propiedades_circunferencia') {
+      let enunciado = plantilla.enunciado;
+      const dif = plantilla.dificultad[0];
+
+      // Formateador algebraico para el TEXTO
+      const getTextAlg = (varName: string) => {
+        if (dif === 'basico') {
+           if (plantilla.variables && !plantilla.variables[varName]) return 'x';
+           // Retorna el número limpio (El JSON ya incluye la 'u' o el '°' en el texto)
+           return valores[varName] !== undefined ? `${valores[varName]}` : 'x';
+        }
+        
+        const rel = plantilla.relaciones?.find((r: string) => r.startsWith(varName + ' ='));
+        if (!rel) return valores[varName] !== undefined ? `${valores[varName]}` : 'x';
+
+        let expr = rel.split('=')[1].trim();
+
+        const tokens = expr.match(/[a-zA-Z_]\w*/g) || [];
+        tokens.forEach(token => {
+           if (token === 'x') return; 
+           if (valores[token] !== undefined) {
+              const regex = new RegExp(`\\b${token}\\b`, 'g');
+              expr = expr.replace(regex, valores[token]);
+           }
+        });
+
+        // Limpieza matemática visual
+        expr = expr.replace(/x\s*\*\s*x/g, 'x²')
+                   .replace(/\s*\*\s*/g, '')
+                   .replace(/\+\s*-/g, '- ')
+                   .replace(/\s+/g, ' ')
+                   .trim();
+
+        if (expr.includes('undefined')) return 'x';
+        return expr;
+      };
+
+      // Reemplazo dinámico de las llaves {} en el texto del JSON
+      enunciado = enunciado.replace(/\{([^}]+)\}/g, (match, varName) => {
+        const val = getTextAlg(varName);
+        return val !== 'undefined' ? val : match;
+      });
+
+      return enunciado;
+    }
+
+    if (plantilla.subtipo === 'perimetro_aislado') {
+      const x = valores.x;
+      const coef = valores.coef;
+      const id = plantilla.id;
+
+      const fExp = (target: number, c: number) => {
+        const cte = target - c * x;
+        return cte === 0
+          ? `${c}x`
+          : cte < 0
+            ? `${c}x - ${Math.abs(cte)}`
+            : `${c}x + ${cte}`;
+      };
+
+      if (id === 'geo_perimetro_isosceles_basico') {
+        return `Halla el perímetro del triángulo isósceles mostrado. Sus lados iguales miden ${fExp(13 * valores.k, coef)} cm y su base mide ${10 * valores.k} cm. (Sabiendo que x = ${x}).`;
+      }
+      if (id === 'geo_perimetro_casita_intermedio') {
+        return `Calcula el perímetro del contorno exterior de la "casita". El rectángulo inferior tiene base ${10 * valores.k} cm y altura ${6 * valores.k} cm. Los lados inclinados del techo miden ${fExp(13 * valores.k, coef)} cm. (Sabiendo que x = ${x}).`;
+      }
+    }
+
+    // 🔥 NARRATIVA: SEGMENTOS EN CIRCUNFERENCIA (Teoremas)
+    if (plantilla.subtipo === 'segmentos_circunferencia') {
+      if (plantilla.dificultad.includes('basico')) {
+        return `En la figura se muestran dos cuerdas secantes. Si los segmentos de una cuerda miden ${valores.a} cm y ${valores.b} cm, y un segmento de la otra mide ${valores.c} cm, ¿cuánto mide el segmento restante "x"?`;
+      }
+      if (plantilla.dificultad.includes('intermedio')) {
+        return `En la circunferencia, dos cuerdas se intersecan. Los segmentos de la primera miden ${valores.a} cm y ${valores.b}x cm, y los de la segunda miden ${valores.c} cm y ${valores.d} cm. Halla el valor de "x".`;
+      }
+      if (plantilla.dificultad.includes('avanzado')) {
+        return `Desde el punto exterior **"P"** se trazan dos secantes. La primera corta a la circunferencia en **"A"** y **"B"** (PA = ${valores.a} cm, AB = ${valores.b} cm). La segunda corta en **"C"** y **"D"** (PC = ${valores.c} cm, CD = x cm). Calcula el valor de "x".`;
+      }
+      if (plantilla.dificultad.includes('experto')) {
+        return `Desde el punto exterior **"P"** se traza una tangente **"PT"** que mide ${valores.t} cm y una secante que corta a la circunferencia en **"A"** y **"B"**. Si PA = ${valores.a} cm y AB = x cm, calcula el valor de "x".`;
+      }
+    }
+
+    if (plantilla.subtipo === 'propiedades_circunferencia') {
+      if (plantilla.dificultad.includes('basico'))
+        return `Si "P" y "Q" son puntos de tangencia desde un punto exterior "R", calcula el valor de "x".`;
+      if (plantilla.dificultad.includes('intermedio'))
+        return `Calcula "x" si "O" es el centro de la circunferencia y la línea vertical es perpendicular a la cuerda **AB**.`;
+      if (plantilla.dificultad.includes('avanzado'))
+        return `En la figura, la cuerda **AB** es paralela a la cuerda **CD** (AB // CD). Calcula el valor de "x".`;
+      if (plantilla.dificultad.includes('experto'))
+        return `Calcula "x", si "O" es centro y "T" es punto de tangencia.`;
+    }
+
+    // 🔥 NARRATIVA HÍBRIDA Y TEÓRICA
+    if (plantilla.subtipo === 'angulos_teoricos') {
+      if (plantilla.dificultad.includes('avanzado')) {
+        // Diversidad en la pregunta teórica (Suma, Diferencia y Exceso)
+        if (valores.tipo === 0)
+          return `Se sabe que la suma del complemento de ${valores.a}x y el suplemento de ${valores.b}x resulta ${valores.c}°. Halla el valor de x.`;
+        if (valores.tipo === 1)
+          return `La diferencia entre el suplemento de ${valores.b}x y el complemento de ${valores.a}x es ${valores.c}°. Determina x.`;
+        if (valores.tipo === 2)
+          return `El suplemento de ${valores.b}x excede al doble del complemento de ${valores.a}x en ${valores.c}°. Calcula x.`;
+      }
+
+      // Para Básico e Intermedio: Construimos la pregunta final teórica
+      const eqReq = valores.req_coef === 1 ? `x` : `${valores.req_coef}x`;
+      const opReq = valores.req_tipo === 0 ? `el complemento` : `el suplemento`;
+      return `En la figura geométrica mostrada, halla ${opReq} de ${eqReq}.`;
+    }
+
     // Caso 3: Fracción de una fracción
     if (plantilla.tema === 'fraccion_de_una_fraccion') {
       if (plantilla.subtipo === 'reparto_sucesivo') {
@@ -69,66 +392,5495 @@ export class QuintoGradoService extends BaseGradoService {
       }
       throw new BadRequestException('Subtipo de fracción no reconocido');
     }
+   
+    // 🔥 NARRATIVA: PERÍMETROS (SISTEMA DE 16 FIGURAS AISLADAS)
+    if (plantilla.subtipo === 'triangulo_perimetro') {
+      const v = valores;
+      const id = plantilla.id;
+      let enunciado = plantilla.enunciado;
 
-      // Dentro de construirEnunciado, después de los casos especiales (canje, fracciones)
-        if (plantilla.tema === 'ecuaciones_simples' && plantilla.subtipo === 'lineal') {
-          const variantes = ['suma_resta', 'resta_suma', 'mul_div', 'div_mul'];
-          const variante = variantes[Math.floor(Math.random() * variantes.length)];
-          
-          let enunciado = '';
-          let x: number; // declarada sin inicializar
-
-          const a = valores.a;
-          const b = valores.b;
-          const c = valores.c;
-
-          switch (variante) {
-            case 'suma_resta':
-              x = a - b + c;
-              enunciado = `Si a un número le sumamos ${b} y luego le restamos ${c}, obtenemos ${a}. ¿Cuál es el número?`;
-              break;
-            case 'resta_suma':
-              x = a + b - c;
-              enunciado = `Si a un número le restamos ${b} y luego le sumamos ${c}, obtenemos ${a}. ¿Cuál es el número?`;
-              break;
-            case 'mul_div':
-              if ((c * b) % a !== 0) {
-                throw new Error('Resultado no entero');
-              }
-              x = (c * b) / a;
-              enunciado = `Si multiplicamos un número por ${a} y luego lo dividimos entre ${b}, obtenemos ${c}. ¿Cuál es el número?`;
-              break;
-            case 'div_mul':
-              if ((c * a) % b !== 0) {
-                throw new Error('Resultado no entero');
-              }
-              x = (c * a) / b;
-              enunciado = `Si dividimos un número entre ${a} y luego lo multiplicamos por ${b}, obtenemos ${c}. ¿Cuál es el número?`;
-              break;
-            default:
-              throw new Error('Variante no reconocida');
-          }
-
-          // Validar rango
-          if (x < 2 || x > 100) {
-            throw new Error('x fuera de rango');
-          }
-
-          // Guardar en scope para que el orquestador lo use como respuesta
-          scope.x = x;
-
-          return enunciado;
+      // 1. Auto-Reemplazo: Busca {h_techo}, {base}, etc. en el JSON y los cambia por sus valores reales
+      Object.keys(v).forEach((key) => {
+        if (v[key] !== undefined && typeof v[key] !== 'function') {
+          enunciado = enunciado.replace(new RegExp(`\\{${key}\\}`, 'g'), String(v[key]));
         }
+      });
 
-    // Caso genérico: reemplazar placeholders
-    let enunciado = plantilla.enunciado;
-    for (const key of Object.keys(plantilla.variables)) {
-      const val = valores[key];
+      // 2. Formateador de Polinomios exacto para el nivel Experto (ax² + c)
+      const fPoly = (a: number, c: number) => {
+         const aStr = a === 1 ? `x²` : `${a}x²`;
+         if (c === 0) return aStr;
+         return c < 0 ? `${aStr} - ${Math.abs(c)}` : `${aStr} + ${c}`;
+      };
+
+      // 3. Inyección directa de álgebra para los 4 casos Expertos
+      if (id === 'geo_perim_ninja_exp') {
+         return `La "Estrella Ninja" tiene 8 lados externos de igual longitud. Calcula su perímetro numérico y halla "x" sabiendo que dicho perímetro equivale a la expresión ( ${fPoly(v.a, v.b_cte)} ).`;
+      }
+      if (id === 'geo_perim_cometa_exp') {
+         return `La cometa está formada por dos triángulos isósceles. Deduce los lados usando las diagonales mostradas. Si su perímetro total es ( ${fPoly(v.a, v.b_cte)} ), halla "x".`;
+      }
+      if (id === 'geo_perim_corona_tri_exp') {
+         return `Calcula el perímetro total de la figura (borde exterior más el borde del hueco interior). Si dicho perímetro equivale a la expresión ( ${fPoly(v.a, v.b_cte)} ), determina el valor positivo de "x".`;
+      }
+      if (id === 'geo_perim_hex_hueco_exp') {
+         return `La figura es un hexágono regular de lado ${v.lado_hex} cm con un recorte rectangular en la base inferior. Deduce el contorno exterior final y halla "x" si el perímetro total se expresa como ( ${fPoly(v.a, v.b_cte)} ).`;
+      }
+
+      // 4. Si es Básico, Intermedio o Avanzado, simplemente retorna el texto ya reemplazado en el Paso 1
+      return enunciado;
+    }
+
+    if (plantilla.subtipo === 'thales') {
+      const dif = plantilla.dificultad[0];
+      const tipo = valores.tipo_fig;
+
+      let baseTexto = '';
+      if (tipo === 0)
+        baseTexto =
+          'En el sistema de 3 rectas horizontales paralelas cortadas por secantes, ';
+      if (tipo === 1)
+        baseTexto =
+          'En el triángulo trazado con una recta paralela a su base, ';
+      if (tipo === 2)
+        baseTexto = "En la figura tipo 'reloj de arena' con bases paralelas, ";
+
+      if (dif === 'basico')
+        return (
+          baseTexto +
+          "aplica el Teorema de Thales para calcular el valor de 'x'."
+        );
+      if (dif === 'intermedio')
+        return (
+          baseTexto +
+          "emplea la proporción de los segmentos colineales para hallar 'x'."
+        );
+      if (dif === 'avanzado')
+        return (
+          baseTexto +
+          "formula la ecuación racional cruzada para determinar 'x'."
+        );
+      if (dif === 'experto')
+        return (
+          baseTexto +
+          "plantea la proporción de Thales, desarrolla los productos de binomios y halla el valor entero de 'x'."
+        );
+    }
+
+    // Caso: Ecuaciones simples
+    if (
+      plantilla.tema === 'ecuaciones_simples' &&
+      plantilla.subtipo === 'lineal'
+    ) {
+      const variantes = ['suma_resta', 'resta_suma', 'mul_div', 'div_mul'];
+      const variante = variantes[Math.floor(Math.random() * variantes.length)];
+
+      let enunciado = '';
+      let x: number;
+
+      const a = valores.a;
+      const b = valores.b;
+      const c = valores.c;
+
+      switch (variante) {
+        case 'suma_resta':
+          x = a - b + c;
+          enunciado = `Si a un número le sumamos ${b} y luego le restamos ${c}, obtenemos ${a}. ¿Cuál es el número?`;
+          break;
+        case 'resta_suma':
+          x = a + b - c;
+          enunciado = `Si a un número le restamos ${b} y luego le sumamos ${c}, obtenemos ${a}. ¿Cuál es el número?`;
+          break;
+        case 'mul_div':
+          if ((c * b) % a !== 0) {
+            throw new Error('Resultado no entero');
+          }
+          x = (c * b) / a;
+          enunciado = `Si multiplicamos un número por ${a} y luego lo dividimos entre ${b}, obtenemos ${c}. ¿Cuál es el número?`;
+          break;
+        case 'div_mul':
+          if ((c * a) % b !== 0) {
+            throw new Error('Resultado no entero');
+          }
+          x = (c * a) / b;
+          enunciado = `Si dividimos un número entre ${a} y luego lo multiplicamos por ${b}, obtenemos ${c}. ¿Cuál es el número?`;
+          break;
+        default:
+          throw new Error('Variante no reconocida');
+      }
+
+      if (x < 2 || x > 100) {
+        throw new Error('x fuera de rango');
+      }
+
+      scope.x = x;
+      return enunciado;
+    }
+
+    if (plantilla.id === 'estadistica_probabilidad_01') {
+      const total = valores.rojas + valores.azules + valores.verdes;
+      let numerador;
+      if (valores.color === 'roja') numerador = valores.rojas;
+      else if (valores.color === 'azul') numerador = valores.azules;
+      else numerador = valores.verdes;
+      const frac = new Fraction(numerador, total);
+      scope.probabilidad = {
+        numerador: Number(frac.n),
+        denominador: Number(frac.d),
+      };
+      let enunciado = plantilla.enunciado;
+      for (const key of Object.keys(plantilla.variables)) {
+        const val = valores[key];
+        if (val !== undefined) {
+          enunciado = enunciado.replace(
+            new RegExp(`{${key}}`, 'g'),
+            String(val),
+          );
+        }
+      }
+      return enunciado;
+    }
+
+    // Caso especial: estadística circular con dos modos
+    if (plantilla.id === 'estadistica_circular_01') {
+      const porcentaje = valores.porcentaje;
+      const angulo = porcentaje * 3.6;
+      const modo = Math.random() < 0.5 ? 'angulo' : 'porcentaje';
+      let enunciado: string;
+      if (modo === 'angulo') {
+        enunciado = `En un gráfico circular, un sector representa el ${porcentaje}% del total. ¿Cuál es la medida de su ángulo central?`;
+        scope.respuesta = angulo;
+      } else {
+        enunciado = `En un gráfico circular, un sector tiene un ángulo central de ${angulo}°. ¿Qué porcentaje del total representa?`;
+        scope.respuesta = porcentaje;
+      }
+      return enunciado;
+    }
+
+    // Caso: Simetría
+    if (plantilla.id === 'geo_simetria_01') {
+      let enunciado = plantilla.enunciado;
+      enunciado = enunciado.replace('{figura}', valores.figura);
+      return enunciado;
+    }
+
+    if (plantilla.id === 'geo_simetria_01') {
+      let enunciado = plantilla.enunciado;
+      enunciado = enunciado.replace('{figura}', valores.figura);
+      return enunciado;
+    }
+
+    // 🔥 BORRA LO QUE HAYA DEBAJO DE SIMETRÍA Y PEGA TODO ESTO:
+
+    // 🔥 1. Formateador Algebraico Inteligente (Limpia los "1x" y los "+ -")
+    const formatAlg = (coef: any, cte: any) => {
+      if (coef === undefined || cte === undefined) return null;
+      const c = Number(coef);
+      const k = Number(cte);
+      const cStr = c === 1 ? 'x' : c === -1 ? '-x' : `${c}x`;
+      if (k === 0) return cStr;
+      return k > 0 ? `${cStr} + ${k}` : `${cStr} - ${Math.abs(k)}`;
+    };
+
+    // 🔥 Lógica inyectora para la fracción de los cuadrados superpuestos
+    if (plantilla.id === 'geo_cuadrados_superpuestos_01') {
+      const diccionarioFracciones: Record<number, string> = {
+        2: 'la mitad',
+        3: 'la tercera parte',
+        4: 'la cuarta parte',
+        5: 'la quinta parte',
+        6: 'la sexta parte',
+        7: 'la séptima parte',
+        8: 'la octava parte',
+        9: 'la novena parte',
+      };
+      // Inyectamos "la cuarta parte", etc., para que reemplace {texto_fraccion}
+      scope.texto_fraccion = diccionarioFracciones[valores.divisor];
+    }
+
+    if (plantilla.id === 'geo_radiales_suplementarios_01') {
+      const c1 = valores.coef_1;
+      const c2 = valores.coef_2;
+      const k2 = valores.const_2;
+      scope.texto_angulo_1 = c1 === 1 ? `x` : `${c1}x`;
+      scope.texto_angulo_2 = c2 === 1 ? `x + ${k2}°` : `${c2}x + ${k2}°`;
+    }
+
+    // 🔥 Formateador para ángulos algebraicos
+    if (plantilla.id === 'geo_angulos_bisectriz_01') {
+      const c = valores.coef_x;
+      const b = valores.const_b;
+      scope.texto_angulo_1 = c === 1 ? `x + ${b}°` : `${c}x + ${b}°`;
+      scope.texto_angulo_2 = `${valores.val_c}°`;
+    }
+
+    let enunciadoBase = plantilla.enunciado;
+
+    // 🔥 2. Narrativa dinámica para la posición del punto P (Rectángulo Diagonal)
+    if (plantilla.id === 'geo_rectangulo_punto_diagonal_01') {
+      const textosPosicion = [
+        'se marca un punto P sobre el lado superior',
+        'se marca un punto P sobre el lado inferior',
+        'se marca un punto P sobre el lado derecho',
+        'se marca un punto P sobre el lado izquierdo',
+      ];
+      scope.texto_posicion = textosPosicion[valores.pos_p];
+    }
+
+    // 🔥 3. Limpiamos los textos crudos algebraicos en el enunciado
+    enunciadoBase = enunciadoBase.replace(
+      '{a}x + {b}',
+      formatAlg(valores.a, valores.b) || '{a}x + {b}',
+    );
+    enunciadoBase = enunciadoBase.replace(
+      '{c}x + {d}',
+      formatAlg(valores.c, valores.d) || '{c}x + {d}',
+    );
+    enunciadoBase = enunciadoBase.replace(
+      '{coefA}x + {constA}',
+      formatAlg(valores.coefA, valores.constA) || '{coefA}x + {constA}',
+    );
+    enunciadoBase = enunciadoBase.replace(
+      '{coefB}x + {constB}',
+      formatAlg(valores.coefB, valores.constB) || '{coefB}x + {constB}',
+    );
+    enunciadoBase = enunciadoBase.replace(
+      '{coefC}x + {constC}',
+      formatAlg(valores.coefC, valores.constC) || '{coefC}x + {constC}',
+    );
+
+    // 🔥 4. Caso genérico: iterar sobre todo el SCOPE para atrapar TODAS las variables
+    for (const key of Object.keys(scope)) {
+      const val = scope[key];
       if (val !== undefined) {
+        // Formatear el número si es numérico (sin decimales infinitos)
         const strVal = typeof val === 'number' ? formatNum(val) : String(val);
-        enunciado = enunciado.replace(new RegExp(`{${key}}`, 'g'), strVal);
+        enunciadoBase = enunciadoBase.replace(
+          new RegExp(`\\{${key}\\}`, 'g'),
+          strVal,
+        );
       }
     }
-    return enunciado;
+
+    return enunciadoBase;
+  }
+
+  generarVisualData(plantilla: Plantilla, valores: Record<string, any>): any {
+    console.log(`\n🔍 [DEBUG] Evaluando en switch:`, plantilla.subtipo);
+    // ========== ESTADÍSTICA ==========
+    if (plantilla.tema === 'estadistica') {
+      switch (plantilla.subtipo) {
+        case 'grafico_barras':
+          return {
+            type: 'chart_bar',
+            data: [
+              { label: 'Lunes', value: valores.lun },
+              { label: 'Martes', value: valores.mar },
+              { label: 'Miércoles', value: valores.mie },
+              { label: 'Jueves', value: valores.jue },
+              { label: 'Viernes', value: valores.vie },
+            ],
+          };
+        case 'grafico_circular':
+          const porcentaje = valores.porcentaje;
+          const resto = 100 - porcentaje;
+          return {
+            type: 'chart_pie',
+            data: [
+              {
+                label: 'Sector principal',
+                value: porcentaje,
+                color: '#3b82f6',
+              },
+              { label: 'Resto', value: resto, color: '#e5e7eb' },
+            ],
+          };
+        case 'pictograma':
+          return {
+            type: 'pictogram_table',
+            data: [
+              { nombre: 'Ana', simbolos: valores.simbolos_ana },
+              { nombre: 'Bruno', simbolos: valores.simbolos_bruno },
+              { nombre: 'Carlos', simbolos: valores.simbolos_carlos },
+            ],
+            valorPorSimbolo: valores.valor_libros,
+          };
+        case 'probabilidad_basica':
+          return {
+            type: 'probabilidad_table',
+            data: [
+              { color: 'Rojo', cantidad: valores.rojas },
+              { color: 'Azul', cantidad: valores.azules },
+              { color: 'Verde', cantidad: valores.verdes },
+            ],
+          };
+        case 'tabla_frecuencias':
+          const data = [
+            { edad: valores.edad1, frecuencia: valores.frec1 },
+            { edad: valores.edad2, frecuencia: valores.frec2 },
+            { edad: valores.edad3, frecuencia: valores.frec3 },
+            { edad: valores.edad4, frecuencia: valores.frec4 },
+          ];
+          return { type: 'frequency_table', data };
+        default:
+          return null;
+      }
+    }
+
+    // ========== GEOMETRÍA ==========
+    if (plantilla.tema === 'geometria') {
+      switch (plantilla.subtipo) {
+        case 'triangulo_ecuaciones': {
+          console.log('🎨 Generando visual para triángulo con ecuaciones');
+          const angA = valores.angA;
+          const angB = valores.angB;
+          const angC = valores.angC;
+
+          if (
+            typeof angA !== 'number' ||
+            typeof angB !== 'number' ||
+            typeof angC !== 'number'
+          ) {
+            console.error('Ángulos no numéricos');
+            return null;
+          }
+
+          const ladoAB = 10;
+          const angARad = (angA * Math.PI) / 180;
+          const angBRad = (angB * Math.PI) / 180;
+          const angCRad = Math.PI - angARad - angBRad;
+
+          const ladoAC = (ladoAB * Math.sin(angBRad)) / Math.sin(angCRad);
+          const C: [number, number] = [
+            ladoAC * Math.cos(angARad),
+            ladoAC * Math.sin(angARad),
+          ];
+
+          const vertices: [number, number][] = [[0, 0], [ladoAB, 0], C];
+
+          // 🔥 AÑADE ESTO: Retorna puramente datos matemáticos y etiquetas, cero estilos
+          const angulosArco = [
+            {
+              centro: [0, 0],
+              inicio: 0,
+              fin: angA,
+              etiqueta: `${valores.coefA}x${valores.constA > 0 ? ` + ${valores.constA}` : ''}°`,
+            },
+            {
+              centro: [ladoAB, 0],
+              inicio: 180 - angB,
+              fin: 180,
+              etiqueta: `${valores.coefB}x${valores.constB > 0 ? ` + ${valores.constB}` : ''}°`,
+            },
+            {
+              centro: C,
+              inicio: 180 + angA,
+              fin: 360 - angB,
+              etiqueta: `${valores.coefC}x${valores.constC > 0 ? ` + ${valores.constC}` : ''}°`,
+            },
+          ];
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'triangulo_angulos',
+            vertices,
+            etiquetasVertices: ['A', 'B', 'C'],
+            angulos: angulosArco,
+          };
+        }
+
+        case 'rectangulo_ecuaciones': {
+          const largo = valores.largo;
+          const ancho = valores.ancho;
+          const largoExpr = `${valores.a}x + ${valores.b} cm`;
+          const anchoExpr = `${valores.c}x + ${valores.d} cm`;
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'rectangulo',
+            esquina: [0, 0],
+            ancho: largo,
+            alto: ancho,
+            labels: ['A', 'B', 'C', 'D'],
+            etiquetasLados: [
+              { posicion: 'abajo', texto: largoExpr },
+              { posicion: 'derecha', texto: anchoExpr },
+              { posicion: 'arriba', texto: largoExpr },
+              { posicion: 'izquierda', texto: anchoExpr },
+            ],
+            color: '#2563eb',
+          };
+        }
+
+        case 'perimetro_rectangulo':
+          return {
+            type: 'geometry_mafs',
+            theme: 'rectangulo',
+            esquina: [0, 0],
+            ancho: valores.largo,
+            alto: valores.ancho,
+            labels: ['A', 'B', 'C', 'D'],
+            color: '#2563eb',
+          };
+
+        case 'area_sombreada': {
+          const v = valores;
+          const id = plantilla.id;
+          const tipo = v.tipo_fig;
+
+          let poligonosBase: any[] = [];
+          let poligonosHueco: any[] = [];
+          let poligonosBorde: any[] = [];
+          let circulosBase: any[] = [];
+          let circulosHueco: any[] = [];
+          let circulosBorde: any[] = [];
+          let parchesBase: any[] = [];
+          let parchesLineas: any[] = [];
+          let parchesArcos: any[] = [];
+          let lineas: any[] = [];
+          let angulos: any[] = [];
+          let etiquetas: any[] = [];
+
+          const L = 10;
+
+          // 🔥 GENERADORES TOPOLÓGICOS PERFECTOS (Donas sin fondo)
+          const createDonut = (
+            cx: number,
+            cy: number,
+            R: number,
+            r: number,
+          ) => {
+            const pts: [number, number][] = [];
+            for (let i = 0; i <= 360; i += 5)
+              pts.push([
+                cx + R * Math.cos((i * Math.PI) / 180),
+                cy + R * Math.sin((i * Math.PI) / 180),
+              ]);
+            for (let i = 360; i >= 0; i -= 5)
+              pts.push([
+                cx + r * Math.cos((i * Math.PI) / 180),
+                cy + r * Math.sin((i * Math.PI) / 180),
+              ]);
+            return pts;
+          };
+          const createDonutArc = (
+            cx: number,
+            cy: number,
+            R: number,
+            r: number,
+            startA: number,
+            endA: number,
+          ) => {
+            const pts: [number, number][] = [];
+            for (let i = startA; i <= endA; i += 2)
+              pts.push([
+                cx + R * Math.cos((i * Math.PI) / 180),
+                cy + R * Math.sin((i * Math.PI) / 180),
+              ]);
+            for (let i = endA; i >= startA; i -= 2)
+              pts.push([
+                cx + r * Math.cos((i * Math.PI) / 180),
+                cy + r * Math.sin((i * Math.PI) / 180),
+              ]);
+            return pts;
+          };
+
+          // =====================================
+          // 1. NIVEL BÁSICO (Sincronización Total)
+          // =====================================
+          if (id.includes('basico')) {
+            const h_vis = L * (v.v2 / v.v1);
+            const fondoCuad = [
+              [0, 0],
+              [L, 0],
+              [L, L],
+              [0, L],
+            ];
+            poligonosBase.push(fondoCuad);
+            poligonosBorde.push(fondoCuad);
+
+            if (tipo === 0 || tipo === 2) {
+              // Vértice P o Triángulo interior: El hueco es UN triángulo
+              // Base superior AB (y=L), Vértice P a distancia v2 hacia abajo
+              const pP: [number, number] = [L / 2, L - h_vis];
+              const triBlanco = [[0, L], [L, L], pP];
+              poligonosHueco.push(triBlanco);
+              poligonosBorde.push(triBlanco);
+              lineas.push({
+                p1: [L / 2, L],
+                p2: pP,
+                punteada: true,
+                resaltada: true,
+              });
+              etiquetas.push({
+                pos: [L / 2 + 0.4, L - h_vis / 2],
+                texto: `${v.v2}`,
+              });
+            } else if (tipo === 1) {
+              // Cuadrado blanco en la esquina (v2 es el lado del cuadradito)
+              const cuadBlanco = [
+                [0, L - h_vis],
+                [h_vis, L - h_vis],
+                [h_vis, L],
+                [0, L],
+              ];
+              poligonosHueco.push(cuadBlanco);
+              poligonosBorde.push(cuadBlanco);
+              etiquetas.push({ pos: [h_vis / 2, L + 0.6], texto: `${v.v2}` });
+            } else if (tipo === 3) {
+              // Rombo: Área sombreada es la mitad.
+              const rombo = [
+                [L / 2, 0],
+                [L, L / 2],
+                [L / 2, L],
+                [0, L / 2],
+              ];
+              poligonosHueco.push(rombo);
+              poligonosBorde.push(rombo);
+            } else if (tipo === 4) {
+              // Reloj de Arena: v2 es la suma de las bases de los dos triángulos laterales
+              // Dibujamos dos triángulos blancos en los costados
+              const tIzq = [
+                [0, 0],
+                [h_vis / 2, L / 2],
+                [0, L],
+              ];
+              const tDer = [
+                [L, 0],
+                [L - h_vis / 2, L / 2],
+                [L, L],
+              ];
+              poligonosHueco.push(tIzq, tDer);
+              poligonosBorde.push(tIzq, tDer);
+              etiquetas.push({ pos: [h_vis / 4, -0.6], texto: `${v.v2}` });
+            }
+          }
+
+          // =====================================
+          // 2. INTERMEDIO
+          // =====================================
+          else if (id.includes('intermedio')) {
+            const R_vis = 8;
+            const r_vis = R_vis * (v.r / v.R);
+
+            if (tipo === 0) {
+              poligonosBase.push(createDonut(0, 0, R_vis, r_vis));
+              circulosBorde.push(
+                { centro: [0, 0], r: R_vis },
+                { centro: [0, 0], r: r_vis },
+              );
+              lineas.push(
+                {
+                  p1: [0, 0],
+                  p2: [
+                    R_vis * Math.cos(Math.PI / 6),
+                    R_vis * Math.sin(Math.PI / 6),
+                  ],
+                  punteada: true,
+                },
+                {
+                  p1: [0, 0],
+                  p2: [
+                    r_vis * Math.cos((Math.PI * 5) / 6),
+                    r_vis * Math.sin((Math.PI * 5) / 6),
+                  ],
+                  punteada: true,
+                },
+              );
+              etiquetas.push(
+                { pos: [-0.4, -0.4], texto: 'O', esVertice: true },
+                { pos: [R_vis / 2 + 1, R_vis / 4], texto: `R` },
+                { pos: [-r_vis / 2 - 0.5, r_vis / 4], texto: `r` },
+              );
+            } else if (tipo === 1) {
+              poligonosBase.push([
+                [-R_vis, -R_vis],
+                [R_vis, -R_vis],
+                [R_vis, R_vis],
+                [-R_vis, R_vis],
+              ]);
+              poligonosBorde.push([
+                [-R_vis, -R_vis],
+                [R_vis, -R_vis],
+                [R_vis, R_vis],
+                [-R_vis, R_vis],
+              ]);
+              circulosHueco.push({ centro: [0, 0], r: R_vis });
+              circulosBorde.push({ centro: [0, 0], r: R_vis });
+              lineas.push({ p1: [0, 0], p2: [R_vis, 0], punteada: true });
+              etiquetas.push(
+                { pos: [-0.4, -0.4], texto: 'O', esVertice: true },
+                {
+                  pos: [-R_vis - 0.6, -R_vis - 0.6],
+                  texto: 'A',
+                  esVertice: true,
+                },
+                {
+                  pos: [R_vis + 0.6, -R_vis - 0.6],
+                  texto: 'B',
+                  esVertice: true,
+                },
+                { pos: [R_vis / 2, 0.6], texto: `r` },
+              );
+            } else if (tipo === 2) {
+              parchesBase.push(createDonutArc(0, 0, R_vis, r_vis, 0, 180));
+              parchesArcos.push(
+                { centro: [0, 0], r: R_vis, inicio: 0, fin: 180 },
+                { centro: [0, 0], r: r_vis, inicio: 0, fin: 180 },
+              );
+              parchesLineas.push(
+                [
+                  [-R_vis, 0],
+                  [-r_vis, 0],
+                ],
+                [
+                  [r_vis, 0],
+                  [R_vis, 0],
+                ],
+              );
+              lineas.push(
+                {
+                  p1: [0, 0],
+                  p2: [
+                    R_vis * Math.cos(Math.PI / 4),
+                    R_vis * Math.sin(Math.PI / 4),
+                  ],
+                  punteada: true,
+                },
+                {
+                  p1: [0, 0],
+                  p2: [
+                    r_vis * Math.cos((Math.PI * 3) / 4),
+                    r_vis * Math.sin((Math.PI * 3) / 4),
+                  ],
+                  punteada: true,
+                },
+              );
+              etiquetas.push(
+                { pos: [0, -0.6], texto: 'O', esVertice: true },
+                { pos: [R_vis / 2 + 0.5, R_vis / 2], texto: `R` },
+                { pos: [-r_vis / 2 - 0.5, r_vis / 2], texto: `r` },
+              );
+            } else if (tipo === 3) {
+              parchesBase.push(createDonutArc(0, 0, R_vis, r_vis, 0, 90));
+              parchesArcos.push(
+                { centro: [0, 0], r: R_vis, inicio: 0, fin: 90 },
+                { centro: [0, 0], r: r_vis, inicio: 0, fin: 90 },
+              );
+              parchesLineas.push(
+                [
+                  [r_vis, 0],
+                  [R_vis, 0],
+                ],
+                [
+                  [0, r_vis],
+                  [0, R_vis],
+                ],
+              );
+              lineas.push(
+                {
+                  p1: [0, 0],
+                  p2: [
+                    R_vis * Math.cos(Math.PI / 3),
+                    R_vis * Math.sin(Math.PI / 3),
+                  ],
+                  punteada: true,
+                },
+                {
+                  p1: [0, 0],
+                  p2: [
+                    r_vis * Math.cos(Math.PI / 6),
+                    r_vis * Math.sin(Math.PI / 6),
+                  ],
+                  punteada: true,
+                },
+              );
+              etiquetas.push(
+                { pos: [-0.4, -0.4], texto: 'O', esVertice: true },
+                { pos: [R_vis / 2, R_vis / 2 + 0.5], texto: `R` },
+                { pos: [r_vis / 2 + 0.5, r_vis / 4], texto: `r` },
+              );
+            }
+          }
+
+          // =====================================
+          // 3. AVANZADO (8 Figuras de Reto Geométrico)
+          // =====================================
+          else if (id.includes('avanzado')) {
+            const k = v.k || 1;
+            const x = v.x || 3;
+            const fExp = (target: number, coef: number) => {
+              const cte = target - coef * x;
+              return cte === 0
+                ? `${coef}x`
+                : cte < 0
+                  ? `${coef}x - ${Math.abs(cte)}`
+                  : `${coef}x + ${cte}`;
+            };
+
+            if (tipo === 0) {
+              // DOBLE TRIÁNGULO ALGEBRAICO
+              const pA = [0, 0],
+                pB = [21 * k, 0],
+                pP = [12 * k, 12 * k];
+              poligonosBase.push([pA, pB, pP]);
+              poligonosBorde.push([pA, pB, pP]);
+              lineas.push({
+                p1: [12 * k, 0],
+                p2: pP,
+                punteada: true,
+                resaltada: true,
+              });
+              angulos.push(
+                { centro: pA, r: 1.5 * k, inicio: 0, fin: 45 },
+                { centro: pB, r: 1.5 * k, inicio: 143, fin: 180 },
+              );
+              etiquetas.push(
+                { pos: [6 * k, -1.5 * k], texto: fExp(12 * k, 3) }, // Base con 3x
+                { pos: [12 * k + 1.5 * k, 6 * k], texto: fExp(12 * k, 2) }, // Altura con 2x
+                { pos: [16.5 * k, -1.5 * k], texto: `${9 * k}` }, // Base 2
+                { pos: [2.5 * k, 1 * k], texto: `45°` },
+                { pos: [21 * k - 2.5 * k, 1 * k], texto: `53°` },
+              );
+            } else if (tipo === 1) {
+              // ROMBOIDE
+              const p0 = [0, 0],
+                p1 = [15 * k, 0],
+                p2 = [21 * k, 8 * k],
+                p3 = [6 * k, 8 * k];
+              poligonosBase.push([p0, p1, p2, p3]);
+              poligonosBorde.push([p0, p1, p2, p3]);
+              lineas.push({
+                p1: [6 * k, 0],
+                p2: p3,
+                punteada: true,
+                resaltada: true,
+              });
+              angulos.push({ centro: p0, r: 1.5 * k, inicio: 0, fin: 53 });
+              etiquetas.push(
+                { pos: [7.5 * k, -1.5 * k], texto: `${15 * k}` },
+                { pos: [3 * k - 1, 4 * k + 1], texto: `${10 * k}` },
+                { pos: [6 * k + 1, 4 * k], texto: `h = ?` },
+                { pos: [2 * k, 1 * k], texto: `53°` },
+              );
+            } else if (tipo === 2) {
+              // POLÍGONO L (De tu imagen)
+              const pts = [
+                [0, 12 * k],
+                [4 * k, 12 * k],
+                [4 * k, 4 * k],
+                [12 * k, 4 * k],
+                [12 * k, 0],
+                [0, 0],
+              ];
+              poligonosBase.push(pts);
+              poligonosBorde.push(pts);
+              lineas.push({
+                p1: [4 * k, 0],
+                p2: [4 * k, 4 * k],
+                punteada: true,
+              });
+              etiquetas.push(
+                { pos: [-1.5 * k, 6 * k], texto: `${12 * k}` },
+                { pos: [6 * k, -1.5 * k], texto: `${12 * k}` },
+                { pos: [8 * k, 5.5 * k], texto: `${8 * k}` },
+                { pos: [5.5 * k, 8 * k], texto: `${8 * k}` },
+              );
+            } else if (tipo === 3) {
+              // TRAPECIO COMPUESTO (Rect + Tri) - Triada 8-15-17 Perfecta
+              const pts = [
+                [0, 0],
+                [8 * k, 0],
+                [18 * k, 0],
+                [18 * k, 15 * k],
+                [8 * k, 15 * k],
+              ];
+              poligonosBase.push([pts[0], pts[2], pts[3], pts[4]]);
+              poligonosBorde.push([pts[0], pts[2], pts[3], pts[4]]);
+              lineas.push({
+                p1: [8 * k, 0],
+                p2: [8 * k, 15 * k],
+                punteada: true,
+                resaltada: true,
+              });
+              etiquetas.push(
+                { pos: [4 * k, -1.5 * k], texto: `${8 * k}` },
+                { pos: [13 * k, -1.5 * k], texto: `${10 * k}` },
+                { pos: [3 * k, 8 * k], texto: `${17 * k}` }, // Hipotenusa
+                { pos: [19.5 * k, 7.5 * k], texto: `${15 * k}` },
+              );
+            } else if (tipo === 4) {
+              // TIENDA DE CAMPAÑA
+              const pts = [
+                [0, 10 * k],
+                [14 * k, 10 * k],
+                [14 * k, 0],
+                [0, 0],
+              ];
+              poligonosBase.push(pts);
+              poligonosBorde.push(pts);
+              const hueco = [
+                [0, 0],
+                [14 * k, 0],
+                [7 * k, 10 * k],
+              ];
+              poligonosHueco.push(hueco);
+              poligonosBorde.push(hueco);
+              etiquetas.push(
+                { pos: [7 * k, -1.5 * k], texto: `${14 * k}` },
+                { pos: [-1.5 * k, 5 * k], texto: `${10 * k}` },
+              );
+            } else if (tipo === 5) {
+              // TRAPECIO CLÁSICO
+              const pts = [
+                [0, 0],
+                [16 * k, 0],
+                [13 * k, 8 * k],
+                [3 * k, 8 * k],
+              ];
+              poligonosBase.push(pts);
+              poligonosBorde.push(pts);
+              lineas.push({
+                p1: [3 * k, 0],
+                p2: [3 * k, 8 * k],
+                punteada: true,
+                resaltada: true,
+              });
+              etiquetas.push(
+                { pos: [8 * k, -1.5 * k], texto: `${16 * k}` },
+                { pos: [8 * k, 9.5 * k], texto: `${10 * k}` },
+                { pos: [1.5 * k, 4 * k], texto: `${8 * k}` },
+              );
+            } else if (tipo === 6) {
+              // ROMBO EN RECTÁNGULO
+              const pts = [
+                [8 * k, 0],
+                [16 * k, 6 * k],
+                [8 * k, 12 * k],
+                [0, 6 * k],
+              ];
+              poligonosBase.push(pts);
+              poligonosBorde.push(pts);
+              lineas.push(
+                { p1: [0, 6 * k], p2: [16 * k, 6 * k], punteada: true },
+                { p1: [8 * k, 0], p2: [8 * k, 12 * k], punteada: true },
+              );
+              etiquetas.push(
+                { pos: [10 * k, 2 * k], texto: `d=${12 * k}` },
+                { pos: [3 * k, 7.5 * k], texto: `D=${16 * k}` },
+              );
+            } else if (tipo === 7) {
+              // CORBATA DE MOÑO
+              const t1 = [
+                [0, 0],
+                [10 * k, 7.5 * k],
+                [0, 15 * k],
+              ];
+              const t2 = [
+                [20 * k, 0],
+                [10 * k, 7.5 * k],
+                [20 * k, 15 * k],
+              ];
+              poligonosBase.push(t1, t2);
+              poligonosBorde.push(t1, t2);
+              lineas.push({
+                p1: [10 * k, 0],
+                p2: [10 * k, 15 * k],
+                punteada: true,
+              });
+              lineas.push({
+                p1: [0, 15 * k],
+                p2: [20 * k, 15 * k],
+                punteada: true,
+              }); // Techo
+              lineas.push({ p1: [0, 0], p2: [20 * k, 0], punteada: true }); // Piso
+              etiquetas.push(
+                { pos: [5 * k, -1.5 * k], texto: `${10 * k}` },
+                { pos: [15 * k, -1.5 * k], texto: `${10 * k}` },
+                { pos: [11.5 * k, 3.5 * k], texto: `${15 * k}` },
+              );
+            }
+          }
+
+          // =====================================
+          // 4. EXPERTO (Cadenas Entrelazadas Topológicas Flawless)
+          // =====================================
+          else if (id.includes('experto')) {
+            const ext_vis = 10;
+            const int_vis = 6.5;
+
+            if (tipo === 0 || tipo === 2) {
+              poligonosBase.push(createDonut(0, 0, ext_vis / 2, int_vis / 2));
+              circulosBorde.push(
+                { centro: [0, 0], r: ext_vis / 2 },
+                { centro: [0, 0], r: int_vis / 2 },
+              );
+              lineas.push(
+                { p1: [0, 0], p2: [ext_vis / 2, 0], punteada: true },
+                { p1: [0, 0], p2: [0, int_vis / 2], punteada: true },
+              );
+              etiquetas.push({
+                pos: [-0.4, -0.4],
+                texto: 'O',
+                esVertice: true,
+              });
+            } else if (tipo === 1 || tipo === 3) {
+              const numAros = v.num_aros || 3;
+              const r_big = 8;
+              const r_sma = 5.5;
+              const sep = 9.0;
+              const startX = (-(numAros - 1) * sep) / 2;
+
+              for (let i = 0; i < numAros; i++) {
+                const cx = startX + i * sep;
+                poligonosBase.push(createDonut(cx, 0, r_big, r_sma));
+                circulosBorde.push(
+                  { centro: [cx, 0], r: r_big },
+                  { centro: [cx, 0], r: r_sma },
+                );
+
+                if (i > 0) {
+                  const prevCx = startX + (i - 1) * sep;
+                  parchesBase.push(
+                    createDonutArc(prevCx, 0, r_big, r_sma, 0, 90),
+                  );
+                  parchesArcos.push(
+                    { centro: [prevCx, 0], r: r_big, inicio: 0, fin: 90 },
+                    { centro: [prevCx, 0], r: r_sma, inicio: 0, fin: 90 },
+                  );
+                }
+              }
+            }
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'area_sombreada',
+            poligonosBase,
+            poligonosHueco,
+            poligonosBorde,
+            parchesBase,
+            parchesLineas,
+            parchesArcos,
+            circulosBase,
+            circulosHueco,
+            circulosBorde,
+            angulos,
+            lineas,
+            etiquetas,
+          };
+        }
+
+        case 'teorema_pitagoras': {
+          const v = valores;
+          const tipo = v.tipo_fig !== undefined ? v.tipo_fig : 0;
+          const dif = plantilla.dificultad[0];
+
+          // 🔥 DECLARACIÓN DE VARIABLES PURAS PARA TYPESCRIPT (Sin errores)
+          let vertices: [number, number][] = [];
+          let lados: any[] = [];
+          let lineasPunteadas: any[] = [];
+          let etiquetas: any[] = [];
+          let trazosRojos: any[] = [];
+          let vectores: any[] = [];
+
+          // Helper estricto para valores (evita undefined)
+          const f = (val: any) => (val !== undefined ? `${val}` : 'x');
+
+          if (tipo === 0) {
+            // 🔹 FIG 0: Triángulo Rectángulo Rotado
+            vertices = [
+              [0, 4],
+              [0, 0],
+              [5, 0],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[0] },
+            ];
+            etiquetas = [
+              { texto: 'A', pos: [-0.5, 4.2] },
+              { texto: 'C', pos: [-0.5, -0.5] },
+              { texto: 'B', pos: [5.2, -0.5] },
+              { texto: `${f(v.cat1)}`, pos: [-0.8, 2] },
+              { texto: `${f(v.cat2)}`, pos: [2.5, -0.8] },
+              { texto: `x`, pos: [3, 2.5] },
+            ];
+          } else if (tipo === 1) {
+            // 🔹 FIG 1: El Rombo
+            vertices = [
+              [0, 4],
+              [3, 0],
+              [0, -4],
+              [-3, 0],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[3] },
+              { inicio: vertices[3], fin: vertices[0] },
+            ];
+            lineasPunteadas = [
+              { inicio: vertices[0], fin: vertices[2] },
+              { inicio: vertices[3], fin: vertices[1] },
+            ];
+            etiquetas = [
+              { texto: 'A', pos: [0, 4.5] },
+              { texto: 'B', pos: [3.5, 0] },
+              { texto: 'C', pos: [0, -4.5] },
+              { texto: 'D', pos: [-3.5, 0] },
+              { texto: `${f(v.d2)}`, pos: [-0.6, 2] },
+              { texto: `${f(v.d1)}`, pos: [1.5, -0.6] },
+              { texto: `x`, pos: [2.2, 2.2] },
+            ];
+          } else if (tipo === 2) {
+            // 🔹 FIG 2: Triángulo Isósceles
+            vertices = [
+              [0, 4],
+              [-4, 0],
+              [4, 0],
+            ];
+            lados = [
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[1], fin: vertices[0] },
+              { inicio: vertices[2], fin: vertices[0] },
+            ];
+            lineasPunteadas = [{ inicio: [0, 4], fin: [0, 0] }];
+            etiquetas = [
+              { texto: 'B', pos: [0, 4.5] },
+              { texto: 'A', pos: [-4.5, -0.5] },
+              { texto: 'C', pos: [4.5, -0.5] },
+              { texto: `${f(v.base)}`, pos: [0, -0.8] },
+              { texto: `x`, pos: [-2.5, 2.5] },
+              { texto: `x`, pos: [2.5, 2.5] },
+              { texto: `${f(v.h)}`, pos: [0.5, 2] },
+            ];
+          } else if (tipo === 3) {
+            // 🔹 FIG 3: Trapecio Rectángulo
+            vertices = [
+              [-3, 4],
+              [1, 4],
+              [4, 0],
+              [-3, 0],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[3] },
+              { inicio: vertices[3], fin: vertices[0] },
+            ];
+            lineasPunteadas = [{ inicio: [1, 4], fin: [1, 0] }];
+            etiquetas = [
+              { texto: 'A', pos: [-3.5, 4.5] },
+              { texto: 'B', pos: [1.5, 4.5] },
+              { texto: 'C', pos: [4.5, -0.5] },
+              { texto: 'D', pos: [-3.5, -0.5] },
+              { texto: `${f(v.b_menor)}`, pos: [-1, 4.6] },
+              { texto: `${f(v.b_mayor)}`, pos: [0.5, -0.8] },
+              { texto: `${f(v.h)}`, pos: [-3.8, 2] },
+              { texto: `x`, pos: [3.2, 2.5] },
+              { texto: `${f(v.h)}`, pos: [1.5, 2] },
+            ];
+          } else if (tipo === 4) {
+            // 🔹 FIG 4: Pared y Escalera
+            vertices = [
+              [0, 5],
+              [0, 0],
+              [4, 0],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[0] },
+            ];
+            etiquetas = [
+              { texto: 'P', pos: [-0.5, 5.5] },
+              { texto: 'O', pos: [-0.5, -0.5] },
+              { texto: 'E', pos: [4.5, -0.5] },
+              { texto: `${f(v.h)}`, pos: [-0.8, 2.5] },
+              { texto: `${f(v.distancia)}`, pos: [2, -0.8] },
+              { texto: `x`, pos: [2.5, 3] },
+            ];
+          } else if (tipo === 5) {
+            // 🔹 FIG 5: Rectángulo con Diagonal (Intermedio)
+            vertices = [
+              [-4, 3],
+              [4, 3],
+              [4, -3],
+              [-4, -3],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[3] },
+              { inicio: vertices[3], fin: vertices[0] },
+            ];
+            lineasPunteadas = [{ inicio: vertices[3], fin: vertices[1] }];
+            etiquetas = [
+              { texto: `${f(v.base)}`, pos: [0, -3.8] },
+              { texto: `${f(v.diag)}`, pos: [-0.8, 0.5] },
+              { texto: `x`, pos: [4.5, 0] },
+            ];
+          } else if (tipo === 6) {
+            // 🔹 FIG 6: Rombo con Lado y media diagonal (Intermedio)
+            vertices = [
+              [0, 4],
+              [3, 0],
+              [0, -4],
+              [-3, 0],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[3] },
+              { inicio: vertices[3], fin: vertices[0] },
+            ];
+            lineasPunteadas = [
+              { inicio: vertices[0], fin: vertices[2] },
+              { inicio: vertices[3], fin: vertices[1] },
+            ];
+            etiquetas = [
+              { texto: `${f(v.lado)}`, pos: [2, 2.5] },
+              { texto: `${f(v.d1)}`, pos: [-1.5, -0.5] },
+              { texto: `x`, pos: [-0.5, 2] },
+            ];
+          } else if (tipo === 7) {
+            // 🔹 FIG 7: Triángulo Isósceles (Intermedio)
+            vertices = [
+              [0, 4],
+              [-3, -2],
+              [3, -2],
+            ];
+            lados = [
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[1], fin: vertices[0] },
+              { inicio: vertices[2], fin: vertices[0] },
+            ];
+            lineasPunteadas = [{ inicio: [0, 4], fin: [0, -2] }];
+            etiquetas = [
+              { texto: `${f(v.lado)}`, pos: [-2, 1.5] },
+              { texto: `${f(v.h)}`, pos: [0.5, 1] },
+              { texto: `x`, pos: [0, -2.8] },
+            ];
+          } else if (tipo === 8) {
+            // 🔹 FIG 8: Trapecio Rectángulo Inverso (Intermedio)
+            vertices = [
+              [-3, 3],
+              [1, 3],
+              [4, -2],
+              [-3, -2],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[3] },
+              { inicio: vertices[3], fin: vertices[0] },
+            ];
+            lineasPunteadas = [{ inicio: [1, 3], fin: [1, -2] }];
+            etiquetas = [
+              { texto: `${f(v.b_menor)}`, pos: [-1, 3.8] },
+              { texto: `${f(v.b_mayor)}`, pos: [0.5, -2.8] },
+              { texto: `${f(v.oblicuo)}`, pos: [3.2, 1] },
+              { texto: `x`, pos: [1.5, 0.5] },
+            ];
+          } else if (tipo === 9) {
+            // 🔹 FIG 9: Dos Postes (Intermedio)
+            vertices = [
+              [-3, -3],
+              [-3, 1],
+              [3, -3],
+              [3, 4],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[2] },
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[2], fin: vertices[3] },
+              { inicio: vertices[1], fin: vertices[3] },
+            ];
+            lineasPunteadas = [{ inicio: [-3, 1], fin: [3, 1] }];
+            etiquetas = [
+              { texto: `${f(v.h1)}`, pos: [-3.8, -1] },
+              { texto: `${f(v.h2)}`, pos: [3.8, 0.5] },
+              { texto: `${f(v.dist)}`, pos: [0, -3.8] },
+              { texto: `x`, pos: [0, 3] },
+            ];
+          } else if (tipo === 10) {
+            // 🔹 FIG 10: Doble Triángulo con Lado Común (Avanzado)
+            vertices = [
+              [0, 0],
+              [4, 0],
+              [0, 3],
+              [-3, 0],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[0] },
+              { inicio: vertices[2], fin: vertices[3] },
+              { inicio: vertices[3], fin: vertices[0] },
+            ];
+            etiquetas = [
+              { texto: `${f(v.cat1A)}`, pos: [2, -0.8] },
+              { texto: `${f(v.hip1)}`, pos: [2.5, 2] },
+              { texto: `${f(v.cat2A)}`, pos: [-1.5, -0.8] },
+              { texto: `x`, pos: [-2, 2] },
+            ];
+          } else if (tipo === 11) {
+            // 🔹 FIG 11: Trapecio Isósceles (Avanzado)
+            vertices = [
+              [-2, 3],
+              [2, 3],
+              [4, -3],
+              [-4, -3],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[3] },
+              { inicio: vertices[3], fin: vertices[0] },
+            ];
+            lineasPunteadas = [
+              { inicio: [-2, 3], fin: [-2, -3] },
+              { inicio: [2, 3], fin: [2, -3] },
+            ];
+            etiquetas = [
+              { texto: `${f(v.b_menor)}`, pos: [0, 3.8] },
+              { texto: `${f(v.b_mayor)}`, pos: [0, -3.8] },
+              { texto: `${f(v.h)}`, pos: [2.5, 0] },
+              { texto: `x`, pos: [-3.8, 0] },
+            ];
+          } else if (tipo === 12) {
+            // 🔹 FIG 12: Poste Quebrado (Avanzado)
+            vertices = [
+              [-3, -3],
+              [-3, 1],
+              [2, -3],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[0], fin: vertices[2] },
+              { inicio: vertices[1], fin: vertices[2] },
+            ];
+            etiquetas = [
+              { texto: `x`, pos: [-3.5, -1] },
+              { texto: `${f(v.dist)}`, pos: [-0.5, -3.8] },
+            ];
+          } else if (tipo === 13) {
+            // 🔹 FIG 13: Antena y dos tensores (Avanzado)
+            vertices = [
+              [0, 4],
+              [-3, -2],
+              [3, -2],
+            ];
+            lados = [
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[0], fin: vertices[2] },
+            ];
+            lineasPunteadas = [{ inicio: [0, 4], fin: [0, -2] }];
+            etiquetas = [
+              { texto: `${f(v.h)}`, pos: [0.5, 1] },
+              { texto: `${f(v.dist)}`, pos: [1.5, -2.5] },
+              { texto: `x/2`, pos: [2, 1.5] },
+            ];
+          } else if (tipo === 14) {
+            // 🔹 FIG 14: Cuadrante de circunferencia (Avanzado)
+            vertices = [
+              [-4, -4],
+              [0, -4],
+              [0, -1],
+              [-4, -1],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[3] },
+              { inicio: vertices[3], fin: vertices[0] },
+            ];
+            lineasPunteadas = [
+              { inicio: [-4, -4], fin: [0, -1] },
+              { inicio: [-4, -4], fin: [-4, 3] },
+              { inicio: [-4, -4], fin: [3, -4] },
+            ];
+            etiquetas = [
+              { texto: `${f(v.base)}`, pos: [-2, -4.5] },
+              { texto: `${f(v.alt)}`, pos: [0.5, -2.5] },
+              { texto: `x`, pos: [-2, -2] },
+            ];
+          } else if (tipo === 15) {
+            // 🔹 FIG 15: La Escalera Quebrada (Experto - LÍNEAS Y ETIQUETAS PERFECCIONADAS)
+            vertices = [
+              [-3, -3],
+              [-3, -1],
+              [-1, -1],
+              [-1, 1],
+              [1, 1],
+              [1, 3],
+              [3, 3],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[3] },
+              { inicio: vertices[3], fin: vertices[4] },
+              { inicio: vertices[4], fin: vertices[5] },
+              { inicio: vertices[5], fin: vertices[6] },
+              { inicio: [-3, -3], fin: [3, 3] }, // Hipotenusa 'x' en línea sólida
+            ];
+
+            // Proyecciones de los catetos para armar el triángulo gigante visualmente
+            lineasPunteadas = [
+              { inicio: [-3, -3], fin: [3, -3] },
+              { inicio: [3, -3], fin: [3, 3] },
+            ];
+
+            etiquetas = [
+              { texto: `${f(v.suma_x)}`, pos: [0, -3.8] },
+              { texto: `${f(v.suma_y)}`, pos: [3.8, 0] },
+              { texto: `A`, pos: [-3.5, -3.5] },
+              { texto: `C`, pos: [3.5, 3.5] },
+              { texto: `x = AC`, pos: [-2.5, 1.5] }, // Alejado de los peldaños, en el espacio vacío
+            ];
+          } else if (tipo === 16) {
+            // 🔹 FIG 16: Prisma Diagonal (Experto)
+            vertices = [
+              [-3, -2],
+              [2, -2],
+              [4, 0],
+              [-1, 0],
+              [-3, 2],
+              [2, 2],
+              [4, 4],
+              [-1, 4],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[3], fin: vertices[0] },
+              { inicio: vertices[4], fin: vertices[5] },
+              { inicio: vertices[5], fin: vertices[6] },
+              { inicio: vertices[6], fin: vertices[7] },
+              { inicio: vertices[7], fin: vertices[4] },
+              { inicio: vertices[0], fin: vertices[4] },
+              { inicio: vertices[1], fin: vertices[5] },
+              { inicio: vertices[2], fin: vertices[6] },
+            ];
+            lineasPunteadas = [
+              { inicio: vertices[3], fin: vertices[2] },
+              { inicio: vertices[3], fin: vertices[7] },
+              { inicio: vertices[0], fin: vertices[2] },
+              { inicio: vertices[0], fin: vertices[6] },
+            ];
+            etiquetas = [
+              { texto: `${f(v.a)}`, pos: [-0.5, -2.5] },
+              { texto: `${f(v.b)}`, pos: [3.5, -1] },
+              { texto: `${f(v.c)}`, pos: [2.5, 0] },
+              { texto: `x`, pos: [0.5, 1.5] },
+            ];
+          } else if (tipo === 17) {
+            // 🔹 FIG 17: Ejes Cardinales (Experto)
+            vertices = [
+              [0, 0],
+              [0, 4],
+              [3, 0],
+            ];
+            lados = [{ inicio: vertices[1], fin: vertices[2] }];
+
+            vectores = [
+              { inicio: [0, 0], fin: [0, 5] },
+              { inicio: [0, 0], fin: [4, 0] },
+            ];
+            etiquetas = [
+              { texto: `P`, pos: [-0.5, -0.5] },
+              { texto: `${f(v.norte)}`, pos: [-0.8, 2] },
+              { texto: `${f(v.este)}`, pos: [1.5, -0.8] },
+              { texto: `x`, pos: [2, 2.5] },
+              { texto: 'N', pos: [0, 5.5] },
+              { texto: 'E', pos: [4.5, 0] },
+            ];
+          } else if (tipo === 18) {
+            // 🔹 FIG 18: Triángulo en esquina de cuadrado (Experto)
+            vertices = [
+              [-3, -3],
+              [3, -3],
+              [3, 3],
+              [-3, 3],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[3] },
+              { inicio: vertices[3], fin: vertices[0] },
+              { inicio: [-3, 1], fin: [2, -3] },
+            ];
+            etiquetas = [
+              { texto: `${f(v.lado)}`, pos: [0, 3.5] },
+              { texto: `${f(v.c1)}`, pos: [-3.5, -1] },
+              { texto: `${f(v.c2)}`, pos: [-0.5, -3.8] },
+              { texto: `A`, pos: [-3.5, -3.5] },
+              { texto: `B`, pos: [2.5, -3.5] },
+              { texto: `C`, pos: [-3.5, 1.5] },
+              { texto: `Perímetro(ABC) = x`, pos: [0.5, 1.8] }, // Etiqueta descriptiva ajustada
+            ];
+          } else if (tipo === 19) {
+            // 🔹 FIG 19: Equilátero 30-60-90 (Experto)
+            vertices = [
+              [0, 4],
+              [-2.3, 0],
+              [2.3, 0],
+            ];
+            lados = [
+              { inicio: vertices[0], fin: vertices[1] },
+              { inicio: vertices[1], fin: vertices[2] },
+              { inicio: vertices[2], fin: vertices[0] },
+            ];
+            trazosRojos = [{ inicio: [0, 4], fin: [0, 0] }];
+            etiquetas = [
+              { texto: `${f(v.lado)}`, pos: [-1.5, 2.5] },
+              { texto: `x√3`, pos: [1.0, 1.5] }, // Representación Unicode limpia, flotando lejos de la línea roja
+            ];
+          }
+
+          // 🔥 RETURN FINAL: Inyección perfecta hacia el frontend de React
+          return {
+            type: 'geometry_mafs',
+            theme: 'triangulo_completo',
+            variante: dif,
+            vertices,
+            etiquetas,
+            lados,
+            lineasAzulesPunteadas: lineasPunteadas,
+            trazosRojos,
+            vectores,
+          };
+        }
+
+        case 'circulo':
+          return {
+            type: 'geometry_mafs',
+            theme: 'circulo',
+            centro: [0, 0],
+            radio: valores.radio,
+            label: `r = ${valores.radio}`,
+            color: '#2563eb',
+          };
+        case 'poligono_regular':
+          return {
+            type: 'geometry_mafs',
+            theme: 'poligono_regular',
+            lados: valores.lados,
+            radio: valores.lado / (2 * Math.sin(Math.PI / valores.lados)),
+            centro: [0, 0],
+            labels: Array.from({ length: valores.lados }, (_, i) =>
+              String.fromCharCode(65 + i),
+            ),
+            color: '#2563eb',
+          };
+        case 'volumen_cubo': {
+          const lado = valores.arista;
+          const p: [number, number][] = [
+            [0, 0],
+            [lado, 0],
+            [lado, lado],
+            [0, lado],
+            [lado * 0.5, lado * 0.3],
+            [lado * 1.5, lado * 0.3],
+            [lado * 1.5, lado * 1.3],
+            [lado * 0.5, lado * 1.3],
+          ];
+          return {
+            type: 'geometry_mafs',
+            theme: 'cubo',
+            puntos: p,
+            color: '#2563eb',
+          };
+        }
+        case 'angulo_inscrito':
+          return {
+            type: 'geometry_mafs',
+            theme: 'angulo_circulo',
+            radio: 5,
+            central: valores.central,
+            inscrito: valores.inscrito,
+          };
+        case 'ejes_simetria':
+          return {
+            type: 'geometry_mafs',
+            theme: 'simetria',
+            figura: valores.figura,
+            ejes: valores.ejes,
+          };
+        case 'rectangulo_punto_diagonal': {
+          const { ancho, alto, dist, pos_p } = valores;
+
+          const rectVertices: [number, number][] = [
+            [0, 0],
+            [ancho, 0],
+            [ancho, alto],
+            [0, alto],
+          ];
+          const diagonal: [number, number][] = [
+            [0, 0],
+            [ancho, alto],
+          ];
+
+          let punto: [number, number] = [0, 0];
+          // 🔥 Ubicación dinámica basada en la variable pos_p
+          if (pos_p === 0)
+            punto = [ancho - dist, alto]; // Superior (midiendo desde C)
+          else if (pos_p === 1)
+            punto = [dist, 0]; // Inferior (midiendo desde A)
+          else if (pos_p === 2)
+            punto = [ancho, alto - dist]; // Derecho (midiendo desde C)
+          else if (pos_p === 3) punto = [0, dist]; // Izquierdo (midiendo desde A)
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'rectangulo_punto_diagonal',
+            rectangulo: rectVertices,
+            punto: punto,
+            diagonal: diagonal,
+            pos_p: pos_p, // Le avisamos al frontend dónde está
+          };
+        }
+
+        case 'cuadrados_superpuestos': {
+          const ladoG = valores.lado_grande;
+          const ladoP = valores.lado_pequeno;
+          const offset = (ladoG - ladoP) / 2;
+          const grande: [number, number][] = [
+            [0, 0],
+            [ladoG, 0],
+            [ladoG, ladoG],
+            [0, ladoG],
+          ];
+          const pequeno: [number, number][] = [
+            [offset, offset],
+            [offset + ladoP, offset],
+            [offset + ladoP, offset + ladoP],
+            [offset, offset + ladoP],
+          ];
+          return {
+            type: 'geometry_mafs',
+            theme: 'cuadrados_superpuestos',
+            cuadradoGrande: grande,
+            cuadradoPequeno: pequeno,
+            perimetro: valores.perimetro_sombreado,
+          };
+        }
+
+        case 'triangulo_cuadrado_inscrito': {
+          const area = valores.area;
+          const base = valores.base;
+          const altura = (2 * area) / base; // La altura es el lado del cuadrado (SB)
+
+          // Coordenadas basadas en la imagen del libro (S es el origen 0,0)
+          // S = (0,0), B = (0, altura)
+          // El cuadrado SBPQ va hacia la derecha: P = (altura, altura), Q = (altura, 0)
+          const cuadrado: [number, number][] = [
+            [0, 0], // S
+            [0, altura], // B
+            [altura, altura], // P
+            [altura, 0], // Q
+          ];
+
+          // El triángulo ABC. AC es la base.
+          // Para que se vea como el libro, A está a la izquierda de S, y C está a la derecha de S.
+          // Haremos que la distancia de S a C sea el 60% de la base, y de S a A el 40%.
+          const distC = base * 0.6;
+          const distA = base * 0.4;
+          const triangulo: [number, number][] = [
+            [-distA, 0], // A (Izquierda)
+            [0, altura], // B (Arriba)
+            [distC, 0], // C (Derecha)
+          ];
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'triangulo_cuadrado_inscrito',
+            triangulo: triangulo,
+            cuadrado: cuadrado,
+            baseAC: base, // Enviamos la longitud de la base para pintarla abajo
+          };
+        }
+
+        case 'paralelas_multiples': {
+          // Generar tres paralelas horizontales y dos transversales
+          const y1 = 0;
+          const y2 = 2.5;
+          const y3 = 5;
+          const pendiente1 = (Math.random() * 1.5 - 0.75) * 0.5; // menos inclinadas
+          const pendiente2 = (Math.random() * 1.5 - 0.75) * 0.5;
+          const intercepto1 = Math.random() * 3 - 1.5;
+          const intercepto2 = Math.random() * 3 - 1.5;
+          const xMin = -5;
+          const xMax = 5;
+
+          const lineas = [
+            {
+              puntos: [
+                [xMin, y1],
+                [xMax, y1],
+              ] as [[number, number], [number, number]],
+              label: 'L1',
+            },
+            {
+              puntos: [
+                [xMin, y2],
+                [xMax, y2],
+              ] as [[number, number], [number, number]],
+              label: 'L2',
+            },
+            {
+              puntos: [
+                [xMin, y3],
+                [xMax, y3],
+              ] as [[number, number], [number, number]],
+              label: 'L3',
+            },
+            {
+              puntos: [
+                [xMin, pendiente1 * xMin + intercepto1],
+                [xMax, pendiente1 * xMax + intercepto1],
+              ] as [[number, number], [number, number]],
+              label: 'T1',
+            },
+            {
+              puntos: [
+                [xMin, pendiente2 * xMin + intercepto2],
+                [xMax, pendiente2 * xMax + intercepto2],
+              ] as [[number, number], [number, number]],
+              label: 'T2',
+            },
+          ];
+
+          // Calcular intersecciones para ángulos (simplificado, tomamos algunos)
+          const angulos: any[] = [];
+          // Intersección de T1 con L2
+          const xT1L2 = (y2 - intercepto1) / pendiente1;
+          if (xT1L2 >= xMin && xT1L2 <= xMax) {
+            const A: [number, number] = [xT1L2 - 1, y2];
+            const B: [number, number] = [xT1L2, y2];
+            const C: [number, number] = [
+              xT1L2 + 1,
+              pendiente1 * (xT1L2 + 1) + intercepto1,
+            ];
+            const { inicio, fin } = obtenerAngulosArco(A, B, C);
+            angulos.push({
+              centro: B,
+              inicio,
+              fin,
+              etiqueta: `${valores.a}x+${valores.b}°`,
+            });
+          }
+          // Intersección de T2 con L2
+          const xT2L2 = (y2 - intercepto2) / pendiente2;
+          if (xT2L2 >= xMin && xT2L2 <= xMax) {
+            const A: [number, number] = [xT2L2 - 1, y2];
+            const B: [number, number] = [xT2L2, y2];
+            const C: [number, number] = [
+              xT2L2 + 1,
+              pendiente2 * (xT2L2 + 1) + intercepto2,
+            ];
+            const { inicio, fin } = obtenerAngulosArco(A, B, C);
+            angulos.push({
+              centro: B,
+              inicio,
+              fin,
+              etiqueta: `${valores.c}x+${valores.d}°`,
+            });
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'paralelas_avanzado', // Reutilizamos el avanzado que soporta múltiples líneas
+            lineas,
+            angulos,
+            labelsAdicionales: [],
+          };
+        }
+
+        case 'bisectriz_angulos': {
+          const angAOB = valores.angulo_AOB;
+          const angMOB = valores.angulo_MOB;
+          const centro: [number, number] = [0, 0];
+          const rayos = [
+            { angulo: 0, etiqueta: 'OA' },
+            { angulo: angAOB, etiqueta: 'OB' },
+            { angulo: angAOB / 2, etiqueta: 'OM' },
+          ];
+          return {
+            type: 'geometry_mafs',
+            theme: 'bisectriz_angulos',
+            centro,
+            rayos,
+            angulo_entre: angMOB,
+          };
+        }
+
+        case 'regiones_sombreadas': {
+          const v = valores;
+          const id = plantilla.id;
+          const lineasExtra: any[] = [];
+          const puntos: [number, number][] = [];
+
+          if (id.includes('basico')) {
+            // Cuadrado con círculo inscrito
+            const r = v.lado / 2;
+            const pts: [number, number][] = [
+              [0, 0],
+              [v.lado, 0],
+              [v.lado, v.lado],
+              [0, v.lado],
+            ];
+            return {
+              type: 'geometry_mafs',
+              theme: 'triangulos',
+              puntos: pts,
+              esArea: true, // Fondo celeste para el cuadrado
+              circuloInscrito: { centro: [r, r], radio: r, sombreado: false },
+              etiquetasLados: [{ pos: [v.lado / 2, -0.6], texto: `${v.lado}` }],
+            };
+          }
+
+          if (id.includes('avanzado')) {
+            // 🔥 TRASLADO DE ÁREAS (Visual)
+            // Dibujamos un cuadrado dividido en 4, sombreado de forma "caótica"
+            const L = v.lado;
+            const ptsCuadrado: [number, number][] = [
+              [0, 0],
+              [L, 0],
+              [L, L],
+              [0, L],
+            ];
+
+            // Sombreamos dos triángulos opuestos para que Ariana vea que forman la mitad
+            const region1: [number, number][] = [
+              [0, 0],
+              [L / 2, L / 2],
+              [0, L],
+            ];
+            const region2: [number, number][] = [
+              [L, 0],
+              [L / 2, L / 2],
+              [L, L],
+            ];
+
+            return {
+              type: 'geometry_mafs',
+              theme: 'triangulos',
+              puntos: ptsCuadrado,
+              regionesSombreadas: [region1, region2],
+              lineasExtra: [
+                {
+                  puntos: [
+                    [0, 0],
+                    [L, L],
+                  ],
+                },
+                {
+                  puntos: [
+                    [L, 0],
+                    [0, L],
+                  ],
+                }, // Diagonales
+              ],
+              etiquetasLados: [{ pos: [L / 2, -0.6], texto: `${L}` }],
+            };
+          }
+
+          return null;
+        }
+
+        // Para "poligono_regular" (ya existe pero verificar que devuelva el theme correcto)
+        case 'poligono_regular': {
+          // Asegúrate de que en la plantilla se calculen lados y lado (longitud del lado)
+          // Aquí necesitamos el radio circunscrito. Si solo tenemos el lado, calcular radio:
+          const n = valores.lados;
+          const lado = valores.lado;
+          const radio = lado / (2 * Math.sin(Math.PI / n));
+          return {
+            type: 'geometry_mafs',
+            theme: 'poligono_regular',
+            lados: n,
+            radio: radio,
+            centro: [0, 0],
+            labels: Array.from({ length: n }, (_, i) =>
+              String.fromCharCode(65 + i),
+            ),
+            color: '#2563eb',
+          };
+        }
+
+        // Para "regiones_sombreadas_compuestas"
+        case 'regiones_sombreadas_compuestas': {
+          const area1 = valores.area1;
+          const area2 = valores.area2;
+          const area3 = valores.area3;
+
+          // 🔥 MAGIA MATEMÁTICA INTACTA
+          const S_sum = area1 + area2 + area3;
+          const discriminante = Math.pow(S_sum, 2) - 4 * area1 * area3;
+          const S = S_sum + Math.sqrt(discriminante);
+
+          // 🔥 TRUCO VISUAL: Relación de aspecto dinámica
+          // Si A3 es muy grande, hacemos el rectángulo ancho. Si A1 es grande, alto.
+          const proporcion = area3 / area1;
+          const W = 10 * Math.sqrt(proporcion);
+          const H = S / W;
+
+          // Coordenadas exactas
+          const y_M = (2 * area1) / W;
+          const x_N = (2 * area3) / H;
+
+          const A: [number, number] = [0, 0];
+          const B: [number, number] = [W, 0];
+          const C: [number, number] = [W, H];
+          const D: [number, number] = [0, H];
+
+          const M: [number, number] = [W, y_M];
+          const N: [number, number] = [x_N, H];
+
+          const reg1 = [A, B, M];
+          const reg2 = [M, C, N];
+          const reg3 = [N, D, A];
+
+          const cx1 = (A[0] + B[0] + M[0]) / 3;
+          const cy1 = (A[1] + B[1] + M[1]) / 3;
+          const cx2 = (M[0] + C[0] + N[0]) / 3;
+          const cy2 = (M[1] + C[1] + N[1]) / 3;
+          const cx3 = (N[0] + D[0] + A[0]) / 3;
+          const cy3 = (N[1] + D[1] + A[1]) / 3;
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'regiones_sombreadas_compuestas',
+            rectangulo: [A, B, C, D],
+            trianguloAMN: [A, M, N],
+            regiones: [
+              { puntos: reg1, texto: `A₁ = ${area1}`, cx: cx1, cy: cy1 },
+              { puntos: reg2, texto: `A₂ = ${area2}`, cx: cx2, cy: cy2 },
+              { puntos: reg3, texto: `A₃ = ${area3}`, cx: cx3, cy: cy3 },
+            ],
+          };
+        }
+
+        // 🔥 INICIO DEL BLOQUE PARA ÁNGULOS RADIALES
+        case 'angulos_radiales': {
+          const v = valores;
+          // 🔥 DECLARACIONES EXPLÍCITAS PARA TYPESCRIPT (Para que no de error TS2304)
+          const x = valores.x;
+          let rayos: any[] = [];
+          let arcos: any[] = [];
+
+          // 🔥 HELPER FX GLOBAL PARA TODO EL CASE
+          const fx = (c: any, k: any) => {
+            if (c === undefined && k === undefined) return '';
+            let eq = c === 1 ? 'x' : c === 0 ? '' : `${c}x`;
+            if (k && k !== 0) eq += eq === '' ? `${k}` : ` + ${k}`;
+            return eq + '°';
+          };
+
+          // ---------------------------------------------------------
+          // 🚀 LÓGICA 1: RADIALES (90, 180, 360)
+          // ---------------------------------------------------------
+          if (plantilla.id.startsWith('geo_radiales_')) {
+            const val1 = (v.a || 0) * x + (v.b || 0);
+            const val2 = (v.c || 0) * x + (v.d || 0);
+
+            rayos.push({ angulo: 0, etiqueta: 'A' });
+            arcos.push({ inicio: 0, fin: val1, etiqueta: fx(v.a, v.b) });
+            rayos.push({ angulo: val1, etiqueta: 'B' });
+
+            if (plantilla.id.includes('basico')) {
+              arcos.push({ inicio: val1, fin: 90, etiqueta: fx(v.c, v.d) });
+              rayos.push({ angulo: 90, etiqueta: 'C' });
+              arcos.push({ inicio: 0, fin: 90, esRecto: true });
+            } else if (plantilla.id.includes('intermedio')) {
+              arcos.push({ inicio: val1, fin: 180, etiqueta: fx(v.c, v.d) });
+              rayos.push({ angulo: 180, etiqueta: 'C' });
+            } else {
+              const val3 = (v.e || 0) * x + (v.f || 0);
+              arcos.push({
+                inicio: val1,
+                fin: val1 + val2,
+                etiqueta: fx(v.c, v.d),
+              });
+              rayos.push({ angulo: val1 + val2, etiqueta: 'C' });
+
+              arcos.push({
+                inicio: val1 + val2,
+                fin: val1 + val2 + val3,
+                etiqueta: fx(v.e, v.f),
+              });
+              rayos.push({ angulo: val1 + val2 + val3, etiqueta: 'D' });
+
+              if (plantilla.id.includes('experto')) {
+                arcos.push({
+                  inicio: val1 + val2 + val3,
+                  fin: 360,
+                  etiqueta: fx(v.g, v.h),
+                });
+              } else {
+                arcos.push({
+                  inicio: val1 + val2 + val3,
+                  fin: 360,
+                  etiqueta: `${v.k}°`,
+                });
+              }
+              rayos.push({ angulo: 360 });
+            }
+          }
+
+          // ---------------------------------------------------------
+          // 🚀 LÓGICA 2: BISECTRIZ (Reto Lógico CONAMAT)
+          // ---------------------------------------------------------
+          else if (plantilla.id.startsWith('geo_bisectriz_')) {
+            if (plantilla.id.includes('basico')) {
+              const realAOM = v.val_c;
+              // 🔥 FORZAMOS APERTURA VISUAL: Mínimo 35 grados en pantalla
+              const visAOM = Math.max(realAOM, 35);
+              const visAOB = visAOM * 2;
+
+              rayos.push(
+                { angulo: 0, etiqueta: 'A' },
+                { angulo: visAOM, etiqueta: 'M', esBisectriz: true },
+                { angulo: visAOB, etiqueta: 'B' },
+              );
+
+              arcos.push({ inicio: 0, fin: visAOM, etiqueta: `${realAOM}°` });
+              arcos.push({
+                inicio: 0,
+                fin: visAOB,
+                etiqueta: fx(v.coef_x, v.const_b),
+                radio: 1.8,
+              });
+            } else if (plantilla.id.includes('intermedio')) {
+              const realAOM = v.coef_x * x + v.const_b;
+              const realBOC = v.val_c;
+
+              // Apertura obligatoria para que los textos respiren
+              const visAOM = Math.max(realAOM, 30);
+              const visAOB = visAOM * 2;
+              const visBOC = Math.max(realBOC, 35);
+
+              rayos.push(
+                { angulo: 0, etiqueta: 'A' },
+                { angulo: visAOM, etiqueta: 'M', esBisectriz: true },
+                { angulo: visAOB, etiqueta: 'B' },
+                { angulo: visAOB + visBOC, etiqueta: 'C' },
+              );
+
+              arcos.push({
+                inicio: 0,
+                fin: visAOM,
+                etiqueta: fx(v.coef_x, v.const_b),
+              });
+              arcos.push({
+                inicio: visAOB,
+                fin: visAOB + visBOC,
+                etiqueta: `${realBOC}°`,
+              });
+            } else if (plantilla.id.includes('avanzado')) {
+              const realAOB = v.a * x + v.b;
+              const realBOC = realAOB * v.relacion;
+
+              // Mínimo 25° para la mitad, haciendo que el total sea al menos 50°
+              const visAOM = Math.max(realAOB / 2, 25);
+              const visAOB = visAOM * 2;
+              const visBOC = Math.max(realBOC, 40);
+
+              rayos.push(
+                { angulo: 0, etiqueta: 'A' },
+                { angulo: visAOM, etiqueta: 'M', esBisectriz: true },
+                { angulo: visAOB, etiqueta: 'B' },
+                { angulo: visAOB + visBOC, etiqueta: 'C' },
+              );
+
+              arcos.push({ inicio: 0, fin: visAOB, etiqueta: fx(v.a, v.b) });
+              arcos.push({
+                inicio: 0,
+                fin: visAOB + visBOC,
+                etiqueta: `${v.total}°`,
+                radio: 2.2,
+              });
+            } else if (plantilla.id.includes('experto')) {
+              const realAOB = v.a * x + v.b;
+              const realBOC = v.c * x + v.d;
+
+              // Mínimo 50° enteros para que las bisectrices tengan 25° de espacio
+              const visAOB = Math.max(realAOB, 50);
+              const visBOC = Math.max(realBOC, 50);
+
+              rayos.push({ angulo: 0, etiqueta: 'A' });
+              rayos.push({
+                angulo: visAOB / 2,
+                etiqueta: 'M',
+                esBisectriz: true,
+              });
+              rayos.push({ angulo: visAOB, etiqueta: 'B' });
+              rayos.push({
+                angulo: visAOB + visBOC / 2,
+                etiqueta: 'N',
+                esBisectriz: true,
+              });
+              rayos.push({ angulo: visAOB + visBOC, etiqueta: 'C' });
+
+              arcos.push({ inicio: 0, fin: visAOB, etiqueta: fx(v.a, v.b) });
+              arcos.push({
+                inicio: visAOB,
+                fin: visAOB + visBOC,
+                etiqueta: fx(v.c, v.d),
+              });
+              arcos.push({
+                inicio: visAOB / 2,
+                fin: visAOB + visBOC / 2,
+                etiqueta: `${v.k}°`,
+                radio: 2.2,
+              });
+            }
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'angulos_radiales',
+            idPlantilla: plantilla.id,
+            rayos,
+            arcos,
+            centro: [0, 0],
+            origenEtiqueta: 'O',
+          };
+        }
+        // 🔥 FIN DEL BLOQUE PARA ÁNGULOS RADIALES
+
+        // ========== RECTAS SECANTES ==========
+        case 'rectas_secantes': {
+          const v = valores;
+
+          const xMin = -5;
+          const xMax = 5;
+          const lineas: any[] = [];
+          const angulos: any[] = [];
+
+          // Recta base (L1) horizontal
+          lineas.push({
+            puntos: [
+              [xMin, 0],
+              [xMax, 0],
+            ],
+            label: 'L1',
+          });
+
+          // Recta transversal (L2) con ángulo 'ang1'
+          const pend1 = Math.tan((v.ang1 * Math.PI) / 180);
+          lineas.push({
+            puntos: [
+              [xMin, pend1 * xMin],
+              [xMax, pend1 * xMax],
+            ],
+            label: 'L2',
+          });
+
+          // Etiquetas opuestas
+          angulos.push(
+            {
+              centro: [0, 0],
+              inicio: 0,
+              fin: v.ang1,
+              etiqueta: `${v.a}x+${v.b}°`,
+            },
+            {
+              centro: [0, 0],
+              inicio: 180,
+              fin: 180 + v.ang1,
+              etiqueta: `${v.c}x+${v.d}°`,
+            },
+          );
+
+          // Si es avanzado, añadimos una tercera recta y ángulo
+          if (plantilla.id === 'geo_secantes_avanzado') {
+            const pend2 = Math.tan(((v.ang1 + v.ang2) * Math.PI) / 180);
+            lineas.push({
+              puntos: [
+                [xMin, pend2 * xMin],
+                [xMax, pend2 * xMax],
+              ],
+              label: 'L3',
+            });
+
+            angulos.push({
+              centro: [0, 0],
+              inicio: v.ang1,
+              fin: v.ang1 + v.ang2,
+              etiqueta: `${v.e}x+${v.f}°`,
+            });
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'rectas_secantes',
+            idPlantilla: plantilla.id,
+            lineas,
+            angulos,
+            centro: [0, 0],
+          };
+        }
+
+        case 'angulos_radiales': {
+          const v = valores;
+          let rayos: any[] = [];
+          let arcos: any[] = [];
+
+          // 1. Lógica para Radiales Consecutivos (Basico, Intermedio, Avanzado)
+          if (plantilla.id.startsWith('geo_radiales_')) {
+            // 🔥 ESTOS SE QUEDAN COMO ESTABAN ANTES (Siempre existen A, B y C)
+            rayos = [
+              { angulo: 0, etiqueta: 'A' },
+              { angulo: v.ang1, etiqueta: 'B' },
+              { angulo: v.ang1 + v.ang2, etiqueta: 'C' },
+            ];
+
+            arcos.push(
+              {
+                inicio: 0,
+                fin: v.ang1,
+                etiqueta: `${v.a}x${v.b > 0 ? '+' + v.b : ''}°`,
+              },
+              {
+                inicio: v.ang1,
+                fin: v.ang1 + v.ang2,
+                etiqueta: `${v.c}x${v.d > 0 ? '+' + v.d : ''}°`,
+              },
+            );
+
+            if (plantilla.id === 'geo_radiales_avanzado') {
+              const numAngulos = v.num_angulos;
+              // ... (cálculo de rayos y arcos previos)
+              if (numAngulos === 3) {
+                arcos.push({
+                  inicio: v.ang1 + v.ang2,
+                  fin: 360,
+                  etiqueta: `${v.e}x${v.f > 0 ? '+' + v.f : ''}°`,
+                });
+              } else {
+                const posD = v.ang1 + v.ang2 + v.ang3;
+                rayos.push({ angulo: posD, etiqueta: 'D' });
+                arcos.push({
+                  inicio: v.ang1 + v.ang2,
+                  fin: posD,
+                  etiqueta: `${v.e}x${v.f > 0 ? '+' + v.f : ''}°`,
+                });
+                arcos.push({
+                  inicio: posD,
+                  fin: 360,
+                  etiqueta: `${v.ang4}°`, // ahora v.ang4 existe
+                });
+              }
+            }
+
+            if (plantilla.id === 'geo_radiales_basico') {
+              arcos.push({ inicio: 0, fin: 90, esRecto: true });
+            }
+          }
+
+          // 2. Lógica para Bisectrices
+          else if (plantilla.id.startsWith('geo_bisectriz_')) {
+            // 🔥 ESTO SE QUEDA COMO ESTABA ANTES
+            rayos = [
+              { angulo: 0, etiqueta: 'A' },
+              { angulo: v.angAOM, etiqueta: 'M', esBisectriz: true },
+              { angulo: v.angAOB, etiqueta: 'B' },
+            ];
+
+            if (v.angBOC !== undefined && v.angBOC > 0) {
+              rayos.push({ angulo: v.angAOB + v.angBOC, etiqueta: 'C' });
+            }
+
+            if (plantilla.id === 'geo_bisectriz_basico') {
+              arcos = [
+                { inicio: 0, fin: v.angAOM, etiqueta: `${v.val_c}°` },
+                {
+                  inicio: v.angAOM,
+                  fin: v.angAOB,
+                  etiqueta: `${v.coef_x}x + ${v.const_b}°`,
+                },
+              ];
+            } else if (plantilla.id === 'geo_bisectriz_intermedio') {
+              arcos.push(
+                {
+                  inicio: 0,
+                  fin: v.angAOM,
+                  etiqueta: `${v.coef_x}x + ${v.const_b}°`,
+                },
+                {
+                  inicio: v.angAOB,
+                  fin: v.angAOB + v.angBOC,
+                  etiqueta: `${v.val_c}°`,
+                },
+              );
+            } else if (plantilla.id === 'geo_bisectriz_avanzado') {
+              arcos.push(
+                { inicio: 0, fin: v.angAOM, etiqueta: '' },
+                { inicio: 0, fin: v.angAOB, etiqueta: `${v.a}x + ${v.b}°` },
+                { inicio: v.angAOB, fin: v.angAOB + v.angBOC, etiqueta: '' },
+                {
+                  inicio: 0,
+                  fin: v.angAOB + v.angBOC,
+                  etiqueta: `${v.total}°`,
+                  radio: 2.2,
+                },
+              );
+            }
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'angulos_radiales',
+            idPlantilla: plantilla.id,
+            rayos,
+            arcos,
+            centro: [0, 0],
+            origenEtiqueta: 'O',
+          };
+        }
+
+        // REEMPLAZA TODO ESTE CASE:
+        case 'paralelas_ecuaciones': {
+          const esBasico = plantilla.id === 'geo_paralelas_basico';
+          const esIntermedio = plantilla.id === 'geo_paralelas_intermedio';
+          const esAvanzado = plantilla.id === 'geo_paralelas_avanzado';
+          const esExperto = plantilla.id === 'geo_paralelas_experto';
+
+          if (!esBasico && !esIntermedio && !esAvanzado && !esExperto) break;
+
+          const v = valores;
+          const tipo = v.tipo_relacion;
+          const a = v.a;
+          const b = v.b;
+          const c = v.c;
+          const d = v.d;
+
+          // 1. CONSTRUCCIÓN BASE (Sistema perfectamente horizontal centrado en 0,0)
+          // Esto garantiza que Mafs NUNCA falle al dibujar los arcos.
+          const y1 = -2; // L1 inferior
+          const y2 = 2; // L2 superior
+
+          // Pendiente estable para evitar rectas casi verticales u horizontales
+          const pendiente = 0.8 + Math.random() * 0.7;
+          const angT_rad = Math.atan(pendiente);
+          const angT = angT_rad * (180 / Math.PI);
+
+          // Cruces en X (como intersectan en y, x = y / m)
+          const xCruc1 = y1 / pendiente;
+          const xCruc2 = y2 / pendiente;
+
+          // Limitar la longitud de las paralelas para un diseño limpio y minimalista
+          const xMin = Math.min(xCruc1, xCruc2) - 3.5;
+          const xMax = Math.max(xCruc1, xCruc2) + 3.5;
+
+          // Limitar la longitud de la secante (Transversal) con un radio exacto desde el origen
+          const radioT = 6;
+          const pIzqT = [
+            -radioT * Math.cos(angT_rad),
+            -radioT * Math.sin(angT_rad),
+          ];
+          const pDerT = [
+            radioT * Math.cos(angT_rad),
+            radioT * Math.sin(angT_rad),
+          ];
+
+          // 2. DICCIONARIO DE ÁNGULOS (Mapeo estricto por cuadrantes)
+          // L1 (y=-2): Ángulos internos apuntan arriba, externos apuntan abajo
+          // L2 (y= 2): Ángulos externos apuntan arriba, internos apuntan abajo
+          const angulosBase = {
+            L1_Q1: { inicio: 0, fin: angT }, // Interno Derecha
+            L1_Q2: { inicio: angT, fin: 180 }, // Interno Izquierda
+            L1_Q3: { inicio: 180, fin: 180 + angT }, // Externo Izquierda
+            L1_Q4: { inicio: 180 + angT, fin: 360 }, // Externo Derecha
+            L2_Q1: { inicio: 0, fin: angT }, // Externo Derecha
+            L2_Q2: { inicio: angT, fin: 180 }, // Externo Izquierda
+            L2_Q3: { inicio: 180, fin: 180 + angT }, // Interno Izquierda
+            L2_Q4: { inicio: 180 + angT, fin: 360 }, // Interno Derecha
+          };
+
+          const exp = esExperto ? '²' : '';
+
+          const fx = (coef: number, cte: number, isMinus: boolean) => {
+            let eq = '';
+            if (coef) eq = coef === 1 ? `x${exp}` : `${coef}x${exp}`;
+            if (cte) {
+              if (eq) eq += isMinus ? ` - ${cte}` : ` + ${cte}`;
+              else eq = isMinus ? `-${cte}` : `${cte}`;
+            }
+            return eq + '°';
+          };
+
+          let lbl1 = '';
+          let lbl2 = '';
+
+          // Mapeo exacto según el JSON de cada nivel
+          if (esBasico || esIntermedio) {
+            lbl1 = fx(a, b, false);
+            lbl2 = fx(c, d, false);
+          } else if (esAvanzado) {
+            lbl1 = fx(a, b, true); // Avanzado usa: ax - b
+            lbl2 = fx(c, d, false); // Avanzado usa: cx + d
+          } else if (esExperto) {
+            lbl1 = fx(a, b, true); // Experto usa: ax² - b
+            // Experto intercala el signo del segundo según la relación (Z o C)
+            lbl2 = fx(c, d, tipo !== 0);
+          }
+
+          let configAngulos: any[] = [];
+          const pCruc1Base = [xCruc1, y1];
+          const pCruc2Base = [xCruc2, y2];
+
+          // Asignación de ángulos según el caso matemático
+          switch (tipo) {
+            case 0: // Correspondientes
+              configAngulos.push({
+                p: pCruc1Base,
+                ...angulosBase.L1_Q1,
+                lbl: lbl1,
+              });
+              configAngulos.push({
+                p: pCruc2Base,
+                ...angulosBase.L2_Q1,
+                lbl: lbl2,
+              });
+              break;
+            case 1: // Alternos Internos
+              configAngulos.push({
+                p: pCruc1Base,
+                ...angulosBase.L1_Q2,
+                lbl: lbl1,
+              });
+              configAngulos.push({
+                p: pCruc2Base,
+                ...angulosBase.L2_Q4,
+                lbl: lbl2,
+              });
+              break;
+            case 2: // Alternos Externos
+              configAngulos.push({
+                p: pCruc1Base,
+                ...angulosBase.L1_Q3,
+                lbl: lbl1,
+              });
+              configAngulos.push({
+                p: pCruc2Base,
+                ...angulosBase.L2_Q1,
+                lbl: lbl2,
+              });
+              break;
+            case 3: // Conjugados Internos (Suman 180)
+              configAngulos.push({
+                p: pCruc1Base,
+                ...angulosBase.L1_Q2,
+                lbl: lbl1,
+              });
+              configAngulos.push({
+                p: pCruc2Base,
+                ...angulosBase.L2_Q3,
+                lbl: lbl2,
+              });
+              break;
+            case 4: // Conjugados Externos (Suman 180)
+              configAngulos.push({
+                p: pCruc1Base,
+                ...angulosBase.L1_Q3,
+                lbl: lbl1,
+              });
+              configAngulos.push({
+                p: pCruc2Base,
+                ...angulosBase.L2_Q2,
+                lbl: lbl2,
+              });
+              break;
+          }
+
+          // 3. 🔥 ROTACIÓN QUIRÚRGICA (El reto cognitivo) 🔥
+          // Básico: 0° (Cómodo). Intermedio/Avanzado: 15° a 35° de giro aleatorio.
+          let alfa = 0;
+          if (!esBasico) {
+            const signo = Math.random() > 0.5 ? 1 : -1;
+            alfa = signo * (15 + Math.random() * 20); // Reto visual para la estudiante
+          }
+          const alfaRad = alfa * (Math.PI / 180);
+
+          // Función pura para rotar un punto 2D
+          const rotar = (x: number, y: number): [number, number] => {
+            return [
+              x * Math.cos(alfaRad) - y * Math.sin(alfaRad),
+              x * Math.sin(alfaRad) + y * Math.cos(alfaRad),
+            ];
+          };
+
+          // 4. APLICAR TRANSFORMACIONES FINALES
+          const angulosFinales = configAngulos.map((cfg) => ({
+            centro: rotar(cfg.p[0], cfg.p[1]),
+            inicio: cfg.inicio + alfa, // La belleza de las matemáticas: solo sumamos el offset
+            fin: cfg.fin + alfa,
+            etiqueta: cfg.lbl,
+          }));
+
+          const lineas = [
+            { puntos: [rotar(xMin, y1), rotar(xMax, y1)], label: 'L1' },
+            { puntos: [rotar(xMin, y2), rotar(xMax, y2)], label: 'L2' },
+            {
+              puntos: [rotar(pIzqT[0], pIzqT[1]), rotar(pDerT[0], pDerT[1])],
+              label: 'T',
+            },
+          ];
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'paralelas_ecuaciones',
+            idPlantilla: plantilla.id,
+            lineas,
+            angulos: angulosFinales,
+            labelsAdicionales: [],
+          };
+        }
+
+        case 'paralelas_serrucho': {
+          const esBasico = plantilla.id === 'geo_paralelas_serrucho_basico';
+          const esIntermedio =
+            plantilla.id === 'geo_paralelas_serrucho_intermedio';
+          const esAvanzado = plantilla.id === 'geo_paralelas_serrucho_avanzado';
+          const esExperto = plantilla.id === 'geo_paralelas_serrucho_experto';
+
+          if (!esBasico && !esIntermedio && !esAvanzado && !esExperto) break;
+
+          const numAngulosTotales = valores.num_angulos || 3;
+          const numVerticesInternos = numAngulosTotales - 2;
+
+          const y1 = 4; // L1
+          const y2 = -4; // L2
+          const xMin = -6;
+          const xMax = 6;
+
+          const puntos: [number, number][] = [];
+          const pasoY = (y2 - y1) / (numVerticesInternos + 1);
+
+          let esDerecha = Math.random() > 0.5;
+
+          puntos.push([(Math.random() - 0.5) * 1.5, y1]);
+
+          for (let i = 1; i <= numVerticesInternos; i++) {
+            const y = y1 + i * pasoY;
+            const amplitudX = 2.5 + Math.random();
+            const x = esDerecha ? amplitudX : -amplitudX;
+            puntos.push([x, y]);
+            esDerecha = !esDerecha;
+          }
+
+          puntos.push([(Math.random() - 0.5) * 1.5, y2]);
+
+          // 🔥 MAGIA ARQUITECTÓNICA: Direcciones exactas de los Puntos Fantasma
+          // Asegura que SIEMPRE se seleccione la "punta" interior aguda.
+          let pFantasmaL1: [number, number] = [
+            puntos[1][0] > puntos[0][0] ? xMax : xMin,
+            y1,
+          ];
+          let pFantasmaL2: [number, number] = [
+            puntos[puntos.length - 2][0] < puntos[puntos.length - 1][0]
+              ? xMin
+              : xMax,
+            y2,
+          ];
+
+          const puntosParaArcos = [pFantasmaL1, ...puntos, pFantasmaL2];
+
+          // 🔥 FORMATO EXPERTO: Ángulos directos en su posición correcta
+          const exp = esExperto ? '²' : '';
+          const coef1 = valores.a1 === 1 ? '' : valores.a1;
+          const coef2 = valores.a2 === 1 ? '' : valores.a2;
+          const coef3 = valores.a3 === 1 ? '' : valores.a3;
+          const coef4 = valores.a4 === 1 ? '' : valores.a4;
+          const coef5 = valores.a5 === 1 ? '' : valores.a5;
+
+          const formulas = [
+            esAvanzado
+              ? `${valores.b1}° - ${coef1}x`
+              : esExperto
+                ? `${coef1}x${exp} + ${valores.b1}°` // <-- Valor directo en el punto ROJO
+                : `${coef1}x + ${valores.b1}°`,
+
+            esAvanzado
+              ? `${valores.b2}° - ${coef2}x`
+              : esExperto
+                ? `${coef2}x${exp} + ${valores.b2}°`
+                : `${coef2}x + ${valores.b2}°`,
+
+            esAvanzado
+              ? `${valores.b3}° - ${coef3}x`
+              : esExperto
+                ? `${valores.b3}°`
+                : `${coef3}x + ${valores.b3}°`,
+
+            esExperto
+              ? `${valores.b4}°`
+              : valores.k
+                ? `${valores.k}°`
+                : `${coef4 || 1}x + ${valores.b4 || 0}°`,
+
+            esExperto && valores.a5 ? `${coef5}x${exp}` : '',
+          ];
+
+          const angulosVis: any[] = [];
+
+          for (let i = 0; i < numAngulosTotales; i++) {
+            const vertice = puntosParaArcos[i + 1];
+            let { inicio, fin } = obtenerAngulosArco(
+              puntosParaArcos[i],
+              vertice,
+              puntosParaArcos[i + 2],
+            );
+
+            // 🔥 FILTRO ABSOLUTO DE SEGURIDAD (No lo borres)
+            // Fuerza a que Mafs dibuje el ángulo cerrado, no el reflejo.
+            if (fin - inicio > 180) {
+              const temp = inicio;
+              inicio = fin;
+              fin = temp + 360;
+            }
+
+            angulosVis.push({
+              centro: vertice,
+              inicio,
+              fin,
+              etiqueta: formulas[i],
+            });
+          }
+
+          const lineasParalelas = [
+            {
+              puntos: [
+                [xMin, y1],
+                [xMax, y1],
+              ] as [[number, number], [number, number]],
+              label: 'L1',
+            },
+            {
+              puntos: [
+                [xMin, y2],
+                [xMax, y2],
+              ] as [[number, number], [number, number]],
+              label: 'L2',
+            },
+          ];
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'paralelas_serrucho',
+            lineasParalelas,
+            puntosQuebrada: puntos,
+            angulos: angulosVis,
+            idPlantilla: plantilla.id,
+          };
+        }
+
+        case 'angulos_teoricos': {
+          if (plantilla.dificultad.includes('avanzado')) return null;
+
+          const esComplemento = valores.T === 90;
+          const angulosList: { valor: number; etiqueta: string }[] = [];
+
+          // Helper robusto para armar ecuaciones como "3x + 15°" o "4x - 5°"
+          const armarEq = (coef: any, k?: any) => {
+            const c = Number(coef) || 1; // Blindaje contra undefined
+            let eq = c === 1 ? `x` : `${c}x`;
+            if (k !== undefined && k !== 0 && !isNaN(Number(k))) {
+              eq += Number(k) > 0 ? ` + ${k}°` : ` - ${Math.abs(Number(k))}°`;
+            }
+            return eq;
+          };
+          // Validamos que existan las variables, si no, las recalculamos de emergencia
+          const valA = valores.a || 1;
+          const valB = valores.b || 1;
+          const valC = valores.c || 1;
+
+          // Si k3 falló en calcularse en el JSON, lo salvamos aquí
+          let valK3 = valores.k3;
+          if (valK3 === undefined) {
+            valK3 =
+              valores.T -
+              (valA + valB + valC) * (valores.x || 10) -
+              (valores.k1 || 0) -
+              (valores.k2 || 0);
+          }
+
+          // Inyectamos los 3 ángulos con coeficientes vivos para que X no se cancele
+          angulosList.push({
+            valor: valores.ang1 || 30,
+            etiqueta: armarEq(valA, valores.k1),
+          });
+          angulosList.push({
+            valor: valores.ang2 || 30,
+            etiqueta: armarEq(valB, valores.k2),
+          });
+          angulosList.push({
+            valor: valores.ang3 || 30,
+            etiqueta: armarEq(valC, valK3),
+          });
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'angulos_teoricos_multiples',
+            esComplemento,
+            angulosList,
+          };
+        }
+
+        case 'triangulo_perimetro': {
+          const v = valores;
+          const k = v.k || 1;
+          const id = plantilla.id;
+
+          let poligonosBase: any[] = [];
+          let poligonosHueco: any[] = [];
+          let poligonosBorde: any[] = [];
+          let lineas: any[] = [];
+          let angulos: any[] = [];
+          let etiquetas: any[] = [];
+
+          // Formateador Algebraico (Adiós a los 1x y a los +- horribles)
+          const fExp = (target: number, c: number) => {
+            const x = v.x || 0;
+            const cte = target - c * x;
+            const cStr = c === 1 ? 'x' : c === -1 ? '-x' : `${c}x`;
+            if (cte === 0) return cStr;
+            return cte < 0 ? `${cStr} - ${Math.abs(cte)}` : `${cStr} + ${cte}`;
+          };
+
+          // Formateador Polinomial para Nivel Experto (ax^2 + c)
+          const fPoly = (a: number, b: number) => {
+            const aStr = a === 1 ? `x²` : `${a}x²`;
+            if (b === 0) return aStr;
+            return b < 0 ? `${aStr} - ${Math.abs(b)}` : `${aStr} + ${b}`;
+          };
+
+          // ================= BÁSICOS =================
+          if (id === 'geo_perim_isosc_bas') {
+            const pts: [number, number][] = [
+              [0, 0],
+              [10 * k, 0],
+              [5 * k, 12 * k],
+            ];
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+            etiquetas.push(
+              { pos: [5 * k, -1.2 * k], texto: `${10 * k} cm` },
+              { pos: [1.5 * k, 6 * k], texto: fExp(13 * k, v.coef) },
+            );
+          } else if (id === 'geo_perim_equi_bas') {
+            const pts: [number, number][] = [
+              [0, 0],
+              [10 * k, 0],
+              [5 * k, 8.66 * k],
+            ];
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+            etiquetas.push({
+              pos: [5 * k, -1.2 * k],
+              texto: fExp(10 * k, v.coef),
+            });
+          } else if (id === 'geo_perim_rombo_bas') {
+            const rombo = [
+              [10 * k, 0],
+              [20 * k, 8 * k],
+              [10 * k, 16 * k],
+              [0, 8 * k],
+            ];
+            poligonosBase.push(rombo);
+            poligonosBorde.push(rombo);
+            etiquetas.push({
+              pos: [3.5 * k, 3.5 * k],
+              texto: fExp(5 * k, v.coef),
+            });
+          } else if (id === 'geo_perim_escaleno_bas') {
+            const pts: [number, number][] = [
+              [0, 0],
+              [4 * k, 0],
+              [0, 3 * k],
+            ];
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+            lineas.push(
+              { p1: [0, 0.5 * k], p2: [0.5 * k, 0.5 * k] },
+              { p1: [0.5 * k, 0.5 * k], p2: [0.5 * k, 0] },
+            ); // Ángulo recto
+            etiquetas.push(
+              { pos: [2 * k, -0.8 * k], texto: `${4 * k} cm` },
+              { pos: [-1 * k, 1.5 * k], texto: `${3 * k} cm` },
+              { pos: [2.5 * k, 2 * k], texto: fExp(5 * k, v.coef) },
+            );
+          }
+
+          // ================= INTERMEDIOS =================
+          else if (id === 'geo_perim_casita_int') {
+            const rect: [number, number][] = [
+              [0, 0],
+              [10 * k, 0],
+              [10 * k, 6 * k],
+              [0, 6 * k],
+            ];
+            const techo: [number, number][] = [
+              [0, 6 * k],
+              [10 * k, 6 * k],
+              [5 * k, 18 * k],
+            ];
+            poligonosBase.push(rect, techo);
+            poligonosBorde.push(rect, techo);
+            lineas.push(
+              { p1: [0, 6 * k], p2: [10 * k, 6 * k], punteada: true },
+              { p1: [5 * k, 6 * k], p2: [5 * k, 18 * k], punteada: true },
+            );
+            etiquetas.push(
+              { pos: [5 * k, -1.2 * k], texto: `${10 * k} cm` },
+              { pos: [-1.5 * k, 3 * k], texto: `${6 * k} cm` },
+              { pos: [6 * k, 12 * k], texto: `h=${12 * k}` },
+            );
+          } else if (id === 'geo_perim_flecha_int') {
+            const rect = [
+              [0, 0],
+              [10 * k, 0],
+              [10 * k, 6 * k],
+              [0, 6 * k],
+            ];
+            const tri = [
+              [10 * k, 0],
+              [10 * k, 6 * k],
+              [14 * k, 3 * k],
+            ];
+            poligonosBase.push(rect, tri);
+            poligonosBorde.push(rect, tri);
+            lineas.push({
+              p1: [10 * k, 0],
+              p2: [10 * k, 6 * k],
+              punteada: true,
+            });
+            etiquetas.push(
+              { pos: [5 * k, -1.2 * k], texto: `${10 * k} cm` },
+              { pos: [-1.5 * k, 3 * k], texto: `${6 * k} cm` },
+              { pos: [12.5 * k, 5.5 * k], texto: `${5 * k} cm` }, // <-- Sin el "->"
+            );
+          } else if (id === 'geo_perim_trap_rect_int') {
+            const pts = [
+              [0, 0],
+              [15 * k, 0],
+              [10 * k, 12 * k],
+              [0, 12 * k],
+            ];
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+            lineas.push(
+              { p1: [0, 1 * k], p2: [1 * k, 1 * k] },
+              { p1: [1 * k, 1 * k], p2: [1 * k, 0] },
+              { p1: [10 * k, 0], p2: [10 * k, 12 * k], punteada: true },
+            );
+            etiquetas.push(
+              { pos: [7.5 * k, -1.2 * k], texto: `${15 * k} cm` },
+              { pos: [5 * k, 13.2 * k], texto: `${10 * k} cm` },
+              { pos: [-1.5 * k, 6 * k], texto: `${12 * k} cm` },
+            );
+          } else if (id === 'geo_perim_cruz_int') {
+            const pts = [
+              [4 * k, 0],
+              [12 * k, 0],
+              [12 * k, 4 * k],
+              [16 * k, 4 * k],
+              [16 * k, 12 * k],
+              [12 * k, 12 * k],
+              [12 * k, 16 * k],
+              [4 * k, 16 * k],
+              [4 * k, 12 * k],
+              [0, 12 * k],
+              [0, 4 * k],
+              [4 * k, 4 * k],
+            ];
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+            // 🔥 El Cuadrado de Traslación (Visual para el estudiante)
+            lineas.push(
+              { p1: [0, 0], p2: [16 * k, 0], punteada: true },
+              { p1: [16 * k, 0], p2: [16 * k, 16 * k], punteada: true },
+              { p1: [16 * k, 16 * k], p2: [0, 16 * k], punteada: true },
+              { p1: [0, 16 * k], p2: [0, 0], punteada: true },
+            );
+            etiquetas.push(
+              { pos: [8 * k, -1.2 * k], texto: `${8 * k} cm` },
+              { pos: [17.5 * k, 8 * k], texto: `${8 * k} cm` },
+            );
+          }
+
+          // ================= AVANZADOS =================
+          else if (id === 'geo_perim_reloj_avz') {
+            const tTop: [number, number][] = [
+              [0, 24 * k],
+              [32 * k, 24 * k],
+              [16 * k, 12 * k],
+            ];
+            const tBot: [number, number][] = [
+              [0, 0],
+              [32 * k, 0],
+              [16 * k, 12 * k],
+            ];
+            poligonosBase.push(tTop, tBot);
+            poligonosBorde.push(tTop, tBot);
+            lineas.push({
+              p1: [16 * k, 0],
+              p2: [16 * k, 24 * k],
+              punteada: true,
+            });
+            angulos.push({
+              centro: [32 * k, 24 * k],
+              r: 2.5 * k,
+              inicio: 180,
+              fin: 217,
+            });
+            etiquetas.push(
+              { pos: [27 * k, 22.5 * k], texto: `37°` },
+              { pos: [17.5 * k, 6 * k], texto: `h = ${12 * k}` },
+            );
+          } else if (id === 'geo_perim_romboide_30_avz') {
+            // Base 18, h=5, Lado = 10 (por triángulo 30-60-90)
+            const pts = [
+              [0, 0],
+              [18 * k, 0],
+              [26.66 * k, 5 * k],
+              [8.66 * k, 5 * k],
+            ];
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+            lineas.push({
+              p1: [8.66 * k, 0],
+              p2: [8.66 * k, 5 * k],
+              punteada: true,
+            });
+            angulos.push({ centro: [0, 0], r: 2.5 * k, inicio: 0, fin: 30 });
+            etiquetas.push(
+              { pos: [9 * k, -1.2 * k], texto: `${18 * k} cm` },
+              { pos: [4 * k, 1 * k], texto: `30°` },
+              { pos: [10.5 * k, 2.5 * k], texto: `h = ${5 * k}` },
+            );
+          } else if (id === 'geo_perim_trap_isosc_avz') {
+            const pts = [
+              [0, 0],
+              [28 * k, 0],
+              [19 * k, 12 * k],
+              [9 * k, 12 * k],
+            ];
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+            lineas.push({
+              p1: [9 * k, 0],
+              p2: [9 * k, 12 * k],
+              punteada: true,
+            });
+            angulos.push({ centro: [0, 0], r: 2 * k, inicio: 0, fin: 53 });
+            etiquetas.push(
+              { pos: [14 * k, 13.5 * k], texto: `${10 * k} cm` },
+              { pos: [3.5 * k, 1.5 * k], texto: `53°` },
+              { pos: [10.5 * k, 6 * k], texto: `h = ${12 * k}` },
+            );
+          } else if (id === 'geo_perim_paralelogramo_avz') {
+            // 🔥 CORREGIDO: Base = 25k, Altura = 10k (Ángulo 45° -> desplazamiento horizontal de 10k)
+            const pts: [number, number][] = [
+              [0, 0],
+              [25 * k, 0],
+              [35 * k, 10 * k],
+              [10 * k, 10 * k],
+            ];
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+
+            // La línea de altura cae exactamente en x = 10k
+            lineas.push({
+              p1: [10 * k, 0],
+              p2: [10 * k, 10 * k],
+              punteada: true,
+            });
+            angulos.push({ centro: [0, 0], r: 3 * k, inicio: 0, fin: 45 });
+
+            etiquetas.push(
+              { pos: [12.5 * k, -1.2 * k], texto: `${25 * k} cm` }, // Base centrada
+              { pos: [4.5 * k, 1.5 * k], texto: `45°` },
+              { pos: [12 * k, 5 * k], texto: `h = ${10 * k}` }, // Altura alineada
+            );
+          } else if (id === 'geo_perim_escudo_avz') {
+            const tri = [
+              [0, 0],
+              [16 * k, 0],
+              [8 * k, 15 * k],
+            ];
+            const rombo = [
+              [8 * k, 2 * k],
+              [12 * k, 5 * k],
+              [8 * k, 8 * k],
+              [4 * k, 5 * k],
+            ];
+            poligonosBase.push(tri);
+            poligonosHueco.push(rombo);
+            poligonosBorde.push(tri, rombo);
+            etiquetas.push(
+              { pos: [8 * k, -1.2 * k], texto: `${16 * k} cm` },
+              { pos: [1 * k, 8 * k], texto: `${17 * k} cm` },
+              { pos: [11.5 * k, 3.5 * k], texto: `${5 * k} cm` },
+            );
+          }
+
+          // ================= EXPERTOS =================
+          else if (id === 'geo_perim_ninja_exp') {
+            const pts = [
+              [4 * k, 4 * k],
+              [7 * k, 0],
+              [10 * k, 4 * k],
+              [14 * k, 7 * k],
+              [10 * k, 10 * k],
+              [7 * k, 14 * k],
+              [4 * k, 10 * k],
+              [0, 7 * k],
+            ];
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+            lineas.push(
+              { p1: [4 * k, 4 * k], p2: [10 * k, 4 * k], punteada: true },
+              { p1: [10 * k, 4 * k], p2: [10 * k, 10 * k], punteada: true },
+              { p1: [10 * k, 10 * k], p2: [4 * k, 10 * k], punteada: true },
+              { p1: [4 * k, 10 * k], p2: [4 * k, 4 * k], punteada: true },
+            );
+            etiquetas.push({ pos: [2 * k, 2.5 * k], texto: `${5 * k} cm` });
+          } else if (id === 'geo_perim_cometa_exp') {
+            const pts = [
+              [24 * k, 0],
+              [48 * k, 18 * k],
+              [24 * k, 25 * k],
+              [0, 18 * k],
+            ];
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+            lineas.push(
+              { p1: [24 * k, 0], p2: [24 * k, 25 * k], punteada: true },
+              { p1: [0, 18 * k], p2: [48 * k, 18 * k], punteada: true },
+            );
+            etiquetas.push(
+              { pos: [12 * k, 19.5 * k], texto: `${24 * k}` },
+              { pos: [25.5 * k, 22 * k], texto: `${7 * k}` },
+              { pos: [26 * k, 9 * k], texto: `${18 * k}` },
+            );
+          } else if (id === 'geo_perim_corona_tri_exp') {
+            const outer = [
+              [0, 0],
+              [24 * k, 0],
+              [12 * k, 20.7 * k],
+            ];
+            const inner = [
+              [6 * k, 6.9 * k],
+              [18 * k, 6.9 * k],
+              [12 * k, 17.3 * k],
+            ]; // Triángulo invertido
+            poligonosBase.push(outer);
+            poligonosHueco.push(inner);
+            poligonosBorde.push(outer, inner);
+            etiquetas.push(
+              { pos: [12 * k, -1.5 * k], texto: `${24 * k} cm` },
+              { pos: [12 * k, 5 * k], texto: `${12 * k} cm` },
+            );
+          } else if (id === 'geo_perim_hex_hueco_exp') {
+            const R = 10 * k; // Radio y lado del hexágono regular
+            const alt = R * 0.866; // R * sen(60)
+            // Vértices Hexágono Regular (Centrado en O)
+            const v0 = [R / 2, -alt],
+              v1 = [R, 0],
+              v2 = [R / 2, alt],
+              v3 = [-R / 2, alt],
+              v4 = [-R, 0],
+              v5 = [-R / 2, -alt];
+
+            // Recorte en la base inferior (entre v5 y v0)
+            const hueco_b = 4 * k,
+              hueco_h = 3 * k;
+            const hx1 = -hueco_b / 2,
+              hx2 = hueco_b / 2;
+
+            const pts = [
+              v1,
+              v2,
+              v3,
+              v4,
+              v5,
+              [hx1, -alt],
+              [hx1, -alt + hueco_h],
+              [hx2, -alt + hueco_h],
+              [hx2, -alt], // El recorte sube
+              v0,
+            ];
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+            lineas.push({ p1: [hx1, -alt], p2: [hx2, -alt], punteada: true }); // Base fantasma
+
+            etiquetas.push(
+              { pos: [(R / 2 + R) / 2 + 1.5 * k, alt / 2], texto: `${R} cm` }, // Etiqueta Lado exterior
+              { pos: [0, -alt + hueco_h + 1.5 * k], texto: `${hueco_b} cm` }, // Ancho del hueco
+              {
+                pos: [hx2 + 2 * k, -alt + hueco_h / 2],
+                texto: `${hueco_h} cm`,
+              }, // Alto del hueco
+            );
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'area_sombreada',
+            poligonosBase,
+            poligonosHueco,
+            poligonosBorde,
+            lineas,
+            angulos,
+            etiquetas,
+          };
+        }
+
+        case 'perimetro_aislado': {
+          const v = valores;
+          const k = v.k || 1;
+          const x = v.x || 3;
+          const id = plantilla.id;
+
+          let poligonosBase: any[] = [];
+          let poligonosHueco: any[] = [];
+          let poligonosBorde: any[] = [];
+          let lineas: any[] = [];
+          let etiquetas: any[] = [];
+
+          const fExp = (target: number, coef: number) => {
+            const cte = target - coef * x;
+            return cte === 0
+              ? `${coef}x`
+              : cte < 0
+                ? `${coef}x - ${Math.abs(cte)}`
+                : `${coef}x + ${cte}`;
+          };
+
+          if (id === 'geo_perimetro_isosceles_basico') {
+            const pts: [number, number][] = [
+              [0, 0],
+              [10 * k, 0],
+              [5 * k, 12 * k],
+            ]; // Altura pitagórica 12 para base 10 y lado 13
+            poligonosBase.push(pts);
+            poligonosBorde.push(pts);
+            etiquetas.push(
+              { pos: [5 * k, -1.2 * k], texto: `${10 * k} cm` },
+              { pos: [1.5 * k, 6 * k], texto: fExp(13 * k, v.coef) },
+            );
+          } else if (id === 'geo_perimetro_casita_intermedio') {
+            const rect: [number, number][] = [
+              [0, 0],
+              [10 * k, 0],
+              [10 * k, 6 * k],
+              [0, 6 * k],
+            ];
+            const techo: [number, number][] = [
+              [0, 6 * k],
+              [10 * k, 6 * k],
+              [5 * k, 18 * k],
+            ]; // Altura 12 desde la base del techo
+            poligonosBase.push(rect, techo);
+            poligonosBorde.push(rect, techo);
+            lineas.push({
+              p1: [0, 6 * k],
+              p2: [10 * k, 6 * k],
+              punteada: true,
+            }); // Línea fantasma interior
+            etiquetas.push(
+              { pos: [5 * k, -1.2 * k], texto: `${10 * k} cm` },
+              { pos: [-1.5 * k, 3 * k], texto: `${6 * k} cm` },
+              { pos: [1.5 * k, 12 * k], texto: fExp(13 * k, v.coef) },
+            );
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'area_sombreada',
+            poligonosBase,
+            poligonosHueco,
+            poligonosBorde,
+            lineas,
+            etiquetas,
+          };
+        }
+
+        case 'thales': {
+          const v = valores;
+          const tipo = v.tipo_fig !== undefined ? v.tipo_fig : 0;
+
+          // Formateador Seguro
+          const fExp = (c: any, k: any) => {
+            const coef = Number(c) || 0;
+            const cte = Number(k) || 0;
+            if (coef === 0 && cte === 0) return '0';
+            if (coef === 0) return `${cte}`;
+            const cStr = coef === 1 ? 'x' : coef === -1 ? '-x' : `${coef}x`;
+            if (cte === 0) return cStr;
+            return cte > 0 ? `${cStr} + ${cte}` : `${cStr} - ${Math.abs(cte)}`;
+          };
+
+          const txt_TL = fExp(v.c_TL, v.k_TL);
+          const txt_BL = fExp(v.c_BL, v.k_BL);
+          const txt_TR = fExp(v.c_TR, v.k_TR);
+          const txt_BR = fExp(v.c_BR, v.k_BR);
+
+          let paralelas: any[] = [];
+          let transversales: any[] = [];
+          let segmentos: any[] = [];
+
+          if (tipo === 0) {
+            // 🔹 DISEÑO 1: CLÁSICO (Escalado para no cortarse)
+            paralelas = [
+              {
+                puntos: [
+                  [-4, 3],
+                  [4, 3],
+                ],
+              },
+              {
+                puntos: [
+                  [-4, 0],
+                  [4, 0],
+                ],
+              },
+              {
+                puntos: [
+                  [-4, -3],
+                  [4, -3],
+                ],
+              },
+            ];
+            transversales = [
+              {
+                puntos: [
+                  [-1.5, 4],
+                  [-3.5, -4],
+                ],
+              },
+              {
+                puntos: [
+                  [1.5, 4],
+                  [3.5, -4],
+                ],
+              },
+            ];
+            // Empujados en X para no pisar la línea
+            segmentos = [
+              {
+                inicio: [-1.75, 3],
+                fin: [-2.5, 0],
+                etiqueta: txt_TL,
+                etiquetaX: -3.5,
+                etiquetaY: 1.5,
+              },
+              {
+                inicio: [-2.5, 0],
+                fin: [-3.25, -3],
+                etiqueta: txt_BL,
+                etiquetaX: -4.2,
+                etiquetaY: -1.5,
+              },
+              {
+                inicio: [1.75, 3],
+                fin: [2.5, 0],
+                etiqueta: txt_TR,
+                etiquetaX: 3.5,
+                etiquetaY: 1.5,
+              },
+              {
+                inicio: [2.5, 0],
+                fin: [3.25, -3],
+                etiqueta: txt_BR,
+                etiquetaX: 4.2,
+                etiquetaY: -1.5,
+              },
+            ];
+          } else if (tipo === 1) {
+            // 🔹 DISEÑO 2: TRIÁNGULO (Escalado y centrado)
+            paralelas = [
+              {
+                puntos: [
+                  [-4, -2],
+                  [4, -2],
+                ],
+              }, // Base inferior
+              {
+                puntos: [
+                  [-2, 1],
+                  [2, 1],
+                ],
+              }, // Corte medio
+            ];
+            transversales = [
+              {
+                puntos: [
+                  [0, 4],
+                  [-4, -2],
+                ],
+              }, // Lado Izq
+              {
+                puntos: [
+                  [0, 4],
+                  [4, -2],
+                ],
+              }, // Lado Der
+            ];
+            segmentos = [
+              {
+                inicio: [0, 4],
+                fin: [-2, 1],
+                etiqueta: txt_TL,
+                etiquetaX: -2.2,
+                etiquetaY: 2.5,
+              },
+              {
+                inicio: [-2, 1],
+                fin: [-4, -2],
+                etiqueta: txt_BL,
+                etiquetaX: -4.2,
+                etiquetaY: -0.5,
+              },
+              {
+                inicio: [0, 4],
+                fin: [2, 1],
+                etiqueta: txt_TR,
+                etiquetaX: 2.2,
+                etiquetaY: 2.5,
+              },
+              {
+                inicio: [2, 1],
+                fin: [4, -2],
+                etiqueta: txt_BR,
+                etiquetaX: 4.2,
+                etiquetaY: -0.5,
+              },
+            ];
+          } else if (tipo === 2) {
+            // 🔹 DISEÑO 3: RELOJ DE ARENA (Con SWAP Visual para líneas rectas)
+            paralelas = [
+              {
+                puntos: [
+                  [-3, 3],
+                  [3, 3],
+                ],
+              }, // Base Superior
+              {
+                puntos: [
+                  [-3, -3],
+                  [3, -3],
+                ],
+              }, // Base Inferior
+            ];
+            transversales = [
+              {
+                puntos: [
+                  [-2, 3],
+                  [2, -3],
+                ],
+              }, // Diagonal A (Izq a Der)
+              {
+                puntos: [
+                  [2, 3],
+                  [-2, -3],
+                ],
+              }, // Diagonal B (Der a Izq)
+            ];
+
+            // 🔥 SWAP VISUAL: txt_BR va a la izquierda y txt_BL a la derecha.
+            // Esto alinea la matemática con las líneas colineales perfectas.
+            segmentos = [
+              {
+                inicio: [-2, 3],
+                fin: [0, 0],
+                etiqueta: txt_TL,
+                etiquetaX: -1.8,
+                etiquetaY: 1.5,
+              },
+              {
+                inicio: [0, 0],
+                fin: [-2, -3],
+                etiqueta: txt_BR,
+                etiquetaX: -1.8,
+                etiquetaY: -1.5,
+              }, // Swap
+              {
+                inicio: [2, 3],
+                fin: [0, 0],
+                etiqueta: txt_TR,
+                etiquetaX: 1.8,
+                etiquetaY: 1.5,
+              },
+              {
+                inicio: [0, 0],
+                fin: [2, -3],
+                etiqueta: txt_BL,
+                etiquetaX: 1.8,
+                etiquetaY: -1.5,
+              }, // Swap
+            ];
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'thales',
+            paralelas,
+            transversales,
+            segmentos,
+          };
+        }
+
+        case 'perimetro_escalera': {
+          const v = valores;
+          const tipo = v.tipo_fig !== undefined ? v.tipo_fig : 0;
+          const dif = plantilla.dificultad[0];
+
+          let polPoints: [number, number][] = [];
+          let segmentos: any[] = [];
+
+          // Variables reales (Longitudes matemáticas perfectas)
+          const r1 = Number(v.r1);
+          const r2 = Number(v.r2);
+          const r3 = Number(v.r3);
+          const r4 = Number(v.r4);
+
+          const fX = (c: any, k: any) => {
+            const coef = Number(c) || 0;
+            const cte = Number(k) || 0;
+            if (coef === 0) return `${cte}`;
+            const cx = coef === 1 ? 'x' : `${coef}x`;
+            return cte === 0
+              ? cx
+              : cte > 0
+                ? `${cx} + ${cte}`
+                : `${cx} - ${Math.abs(cte)}`;
+          };
+
+          let t1 = `${r1}`,
+            t2 = `${r2}`,
+            t3 = `${r3}`,
+            t4 = `${r4}`;
+          if (dif === 'basico') {
+            if (tipo === 0) t2 = 'x';
+            if (tipo === 1) t1 = 'x';
+            if (tipo === 2) t1 = 'x';
+            if (tipo === 3) t3 = 'x';
+          } else {
+            t1 = fX(v.c1, v.k1);
+            t2 = fX(v.c2, v.k2);
+            t3 = fX(v.c3, v.k3);
+            t4 = fX(v.c4, v.k4);
+          }
+
+          // Distancia para despegar el texto de la línea
+          const PUSH = 1.0;
+
+          if (tipo === 0) {
+            // 🔹 FIGURA 0: ESCALERA
+            // r1 = Techo (Horiz), r2 = Pared Int (Vert), r3 = Piso Int (Horiz), r4 = Pared Der (Vert)
+            polPoints = [
+              [0, r2 + r4],
+              [r1, r2 + r4],
+              [r1, r4],
+              [r1 + r3, r4],
+              [r1 + r3, 0],
+              [0, 0],
+            ];
+            segmentos = [
+              { etiqueta: t1, mx: r1 / 2, my: r2 + r4, nx: 0, ny: PUSH }, // Techo: empuja arriba
+              { etiqueta: t2, mx: r1, my: r4 + r2 / 2, nx: -PUSH, ny: 0 }, // Pared Int: empuja izq (adentro)
+              { etiqueta: t3, mx: r1 + r3 / 2, my: r4, nx: 0, ny: -PUSH }, // Piso Int: empuja abajo (adentro)
+              { etiqueta: t4, mx: r1 + r3, my: r4 / 2, nx: PUSH, ny: 0 }, // Pared Der: empuja derecha
+            ];
+          } else if (tipo === 1) {
+            // 🔹 FIGURA 1: EL PODIO
+            // r1 = Altura de TODOS los muros verticales, r2 = Piso Izq, r3 = Techo Central, r4 = Piso Der
+            polPoints = [
+              [0, 0],
+              [0, r1],
+              [r2, r1],
+              [r2, r1 * 2],
+              [r2 + r3, r1 * 2],
+              [r2 + r3, r1],
+              [r2 + r3 + r4, r1],
+              [r2 + r3 + r4, 0],
+            ];
+            segmentos = [
+              { etiqueta: t1, mx: 0, my: r1 / 2, nx: -PUSH, ny: 0 }, // Pared Izq: empuja izq
+              { etiqueta: t2, mx: r2 / 2, my: r1, nx: 0, ny: -PUSH }, // Piso Izq: empuja abajo (adentro)
+              { etiqueta: t3, mx: r2 + r3 / 2, my: r1 * 2, nx: 0, ny: PUSH }, // Techo: empuja arriba
+              { etiqueta: t4, mx: r2 + r3 + r4 / 2, my: r1, nx: 0, ny: -PUSH }, // Piso Der: empuja abajo (adentro)
+            ];
+          } else if (tipo === 2) {
+            // 🔹 FIGURA 2: HABITACIÓN (Recorte Superior Derecho)
+            // r1 = Piso Total (Horiz), r2 = Pared Izq (Vert), r3 = Techo Int (Horiz), r4 = Pared Int (Vert)
+            polPoints = [
+              [0, r2],
+              [r1 - r3, r2],
+              [r1 - r3, r2 - r4],
+              [r1, r2 - r4],
+              [r1, 0],
+              [0, 0],
+            ];
+            segmentos = [
+              { etiqueta: t1, mx: r1 / 2, my: 0, nx: 0, ny: -PUSH }, // Piso Total: empuja abajo
+              { etiqueta: t2, mx: 0, my: r2 / 2, nx: -PUSH, ny: 0 }, // Pared Izq: empuja izq
+              { etiqueta: t3, mx: r1 - r3 / 2, my: r2 - r4, nx: 0, ny: -PUSH }, // Techo Int: empuja abajo (adentro)
+              { etiqueta: t4, mx: r1 - r3, my: r2 - r4 / 2, nx: -PUSH, ny: 0 }, // Pared Int: empuja izq (adentro)
+            ];
+          } else if (tipo === 3) {
+            // 🔹 FIGURA 3: TETRIS
+            const side = (r1 - r4) / 2;
+            polPoints = [
+              [0, r2],
+              [side, r2],
+              [side, r2 - r3],
+              [side + r4, r2 - r3],
+              [side + r4, r2],
+              [r1, r2],
+              [r1, 0],
+              [0, 0],
+            ];
+            segmentos = [
+              { etiqueta: t1, mx: r1 / 2, my: 0, nx: 0, ny: -PUSH },
+              { etiqueta: t2, mx: 0, my: r2 / 2, nx: -PUSH, ny: 0 },
+              { etiqueta: t3, mx: side, my: r2 - r3 / 2, nx: PUSH, ny: 0 }, // 🔥 CAMBIO: Ahora es nx: PUSH positivo (empuja hacia el hueco)
+              {
+                etiqueta: t4,
+                mx: side + r4 / 2,
+                my: r2 - r3,
+                nx: 0,
+                ny: -PUSH,
+              },
+            ];
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'perimetro_escalera',
+            polPoints,
+            segmentos,
+          };
+        }
+
+        // ========== ÁREA DE TRAPECIO ==========
+        case 'area_trapecio': {
+          const v = valores || {};
+          const id = plantilla.id || '';
+
+          const B_val = Number(v.B) || 12;
+          const b_val = Number(v.b || v.bmenor) || 6;
+          const h_val = Number(v.h) || 4;
+
+          const fx = (a: any, b: any, fallback: number) => {
+            const valA = Number(a) || 0;
+            const valB = Number(b) || 0;
+            if (valA === 0 && valB === 0) return `${fallback}`;
+            if (valA === 0) return `${valB}`;
+            let pre = valA === 1 ? 'x' : valA === -1 ? '-x' : `${valA}x`;
+            if (valB === 0) return pre;
+            return valB > 0 ? `${pre} + ${valB}` : `${pre} - ${Math.abs(valB)}`;
+          };
+
+          let BStr = '',
+            bStr = '',
+            hStr = '';
+
+          if (id.includes('basico')) {
+            BStr = `${B_val}`;
+            bStr = `${b_val}`;
+            hStr = `${h_val}`;
+          } else if (id.includes('intermedio')) {
+            BStr = fx(v.a, 0, B_val);
+            bStr = `${b_val}`;
+            hStr = `${h_val}`;
+          } else if (id.includes('avanzado')) {
+            BStr = fx(v.a, v.b, B_val);
+            bStr = fx(v.c, v.d, b_val);
+            hStr = `${h_val}`;
+          } else {
+            BStr = fx(v.a, v.b, B_val);
+            bStr = fx(v.c, v.d, b_val);
+            hStr = fx(v.e, v.f, h_val);
+          }
+
+          // 🔥 NORMALIZACIÓN VISUAL (Anti-Achatado)
+          // Forzamos que la base mayor ocupe 10 unidades en pantalla siempre
+          const B_vis = 10;
+          const b_vis = B_vis * (b_val / B_val);
+          let h_vis = B_vis * (h_val / B_val);
+
+          // Clamping: Evita que sea una línea plana o una torre rascacielos
+          if (h_vis < 4.0) h_vis = 4.0;
+          if (h_vis > 7.0) h_vis = 7.0;
+
+          // Coordenadas Centradas
+          const puntos: [number, number][] = [
+            [-B_vis / 2, -h_vis / 2], // Inferior Izquierdo
+            [B_vis / 2, -h_vis / 2], // Inferior Derecho
+            [b_vis / 2, h_vis / 2], // Superior Derecho
+            [-b_vis / 2, h_vis / 2], // Superior Izquierdo
+          ];
+
+          const lineasExtra: any[] = [];
+
+          // La línea de la Altura
+          lineasExtra.push({
+            puntos: [
+              [b_vis / 2, h_vis / 2],
+              [b_vis / 2, -h_vis / 2],
+            ],
+          });
+
+          // Cuadradito de 90 grados en la base de la altura
+          lineasExtra.push({
+            puntos: [
+              [b_vis / 2 - 0.4, -h_vis / 2],
+              [b_vis / 2 - 0.4, -h_vis / 2 + 0.4],
+            ],
+          });
+          lineasExtra.push({
+            puntos: [
+              [b_vis / 2 - 0.4, -h_vis / 2 + 0.4],
+              [b_vis / 2, -h_vis / 2 + 0.4],
+            ],
+          });
+
+          // Etiquetas con posiciones amplias para que no choquen
+          const etiquetasLados = [
+            { pos: [0, -h_vis / 2 - 0.8], texto: BStr }, // Base mayor (Abajo)
+            { pos: [0, h_vis / 2 + 0.8], texto: bStr }, // Base menor (Arriba)
+            { pos: [b_vis / 2 - 1.2, 0], texto: hStr }, // Altura (Izquierda de la línea)
+          ];
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'triangulos', // 🔥 ENRUTAMOS AL RENDERIZADOR UNIVERSAL
+            puntos,
+            esArea: false, // Fondo celeste
+            etiquetasLados,
+            lineasExtra,
+            arcos: [], // Previene bugs
+          };
+        }
+
+        // ========== ÁREA DE PARALELOGRAMO (ESTILO OLIMPIADA) ==========
+        case 'area_paralelogramo': {
+          const v = valores || {};
+          const id = plantilla.id || '';
+          const esExperto = id.includes('experto');
+
+          const B_real = Number(v.B) || 15;
+          const L_real = Number(v.L) || 10;
+          const ang_real = Number(v.angulo) || 53;
+
+          const fx = (a: any, b: any, fallback: number) => {
+            const valA = Number(a) || 0;
+            const valB = Number(b) || 0;
+            if (valA === 0 && valB === 0) return `${fallback}`;
+            if (valA === 0) return `${valB}`;
+            let pre = valA === 1 ? 'x' : valA === -1 ? '-x' : `${valA}x`;
+            if (valB === 0) return pre;
+            return valB > 0 ? `${pre} + ${valB}` : `${pre} - ${Math.abs(valB)}`;
+          };
+
+          let txtB = '',
+            txtL = '';
+          if (id.includes('basico')) {
+            txtB = `${B_real}`;
+            txtL = `${L_real}`;
+          } else if (id.includes('intermedio')) {
+            txtB = fx(v.a, v.b, B_real);
+            txtL = `${L_real}`;
+          } else {
+            txtB = fx(v.a, v.b, B_real);
+            txtL = fx(v.c, v.d, L_real);
+          }
+
+          // Matemática visual
+          const B_vis = 10;
+          const h_real = L_real * Math.sin((ang_real * Math.PI) / 180);
+          let h_vis = B_vis * (h_real / B_real);
+
+          if (h_vis < 4.0) h_vis = 4.0;
+          if (h_vis > 7.0) h_vis = 7.0;
+
+          const offset_x = h_vis / Math.tan((ang_real * Math.PI) / 180);
+          const shiftX = -(B_vis + offset_x) / 2;
+          const shiftY = -h_vis / 2;
+
+          // Vértices A (inf-izq), B (inf-der), C (sup-der), D (sup-izq)
+          const p0: [number, number] = [shiftX, shiftY];
+          const p1: [number, number] = [shiftX + B_vis, shiftY];
+          const p2: [number, number] = [
+            shiftX + B_vis + offset_x,
+            shiftY + h_vis,
+          ];
+          const p3: [number, number] = [shiftX + offset_x, shiftY + h_vis];
+          const puntos = [p0, p1, p2, p3];
+
+          // Proyección de la altura
+          const pBaseH: [number, number] = [shiftX + offset_x, shiftY];
+          const lineasExtra = [
+            { puntos: [p3, pBaseH] },
+            {
+              puntos: [
+                [pBaseH[0] - 0.4, pBaseH[1]],
+                [pBaseH[0] - 0.4, pBaseH[1] + 0.4],
+              ],
+            },
+            {
+              puntos: [
+                [pBaseH[0] - 0.4, pBaseH[1] + 0.4],
+                [pBaseH[0], pBaseH[1] + 0.4],
+              ],
+            },
+          ];
+
+          const arcos = [
+            {
+              centro: p0,
+              inicio: 0,
+              fin: ang_real,
+              etiqueta: `${ang_real}°`,
+              colorIdx: 0,
+              labelVertice: '',
+            },
+          ];
+
+          // 🔥 ETIQUETAS ANTI-AMBIGÜEDAD (A, B, C, D y "AB = ...")
+          const etiquetasLados = [
+            // Vértices
+            { pos: [shiftX - 0.4, shiftY - 0.4], texto: 'A' },
+            { pos: [shiftX + B_vis + 0.4, shiftY - 0.4], texto: 'B' },
+            {
+              pos: [shiftX + B_vis + offset_x + 0.4, shiftY + h_vis + 0.4],
+              texto: 'C',
+            },
+            {
+              pos: [shiftX + offset_x - 0.4, shiftY + h_vis + 0.4],
+              texto: 'D',
+            },
+            // Lados (Valores crudos empujados hacia afuera)
+            { pos: [shiftX + B_vis / 2, shiftY - 1.2], texto: txtB },
+            // Acercamos un poco 'txtL' a la línea ya que le quitamos el prefijo "AD ="
+            {
+              pos: [shiftX + offset_x / 2 - 1.5, shiftY + h_vis / 2 + 0.3],
+              texto: txtL,
+            },
+          ];
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'triangulos',
+            puntos,
+            esArea: true, // 🔥 AHORA TODOS LOS NIVELES TIENEN FONDO CELESTE
+            etiquetasLados,
+            lineasExtra,
+            arcos,
+          };
+        }
+
+        // ========== VOLUMEN DE PRISMA RECTANGULAR ==========
+        case 'volumen_prisma': {
+          const { a, b, c, d, e, f } = valores;
+
+          const largo_val = valores.largo || valores.l;
+          const ancho_val = valores.ancho || valores.a; // Profundidad
+          const alto_val = valores.alto || valores.h;
+
+          // Helper algebraico ("3x + 5")
+          const fx = (coef: number, cte?: number, isNeg?: boolean) => {
+            let eq = coef === 1 ? 'x' : `${coef}x`;
+            if (cte) eq += isNeg ? ` - ${cte}` : ` + ${cte}`;
+            return eq;
+          };
+
+          let largoStr = '',
+            anchoStr = '',
+            altoStr = '';
+
+          // Mapeo dinámico del álgebra según el nivel
+          if (plantilla.dificultad.includes('basico')) {
+            largoStr = `${largo_val}`;
+            anchoStr = `${ancho_val}`;
+            altoStr = `${alto_val}`;
+          } else if (plantilla.dificultad.includes('intermedio')) {
+            largoStr = fx(a);
+            anchoStr = `${b}`;
+            altoStr = `${c}`;
+          } else if (plantilla.dificultad.includes('avanzado')) {
+            largoStr = fx(a, b, false);
+            anchoStr = fx(c, d, false);
+            altoStr = `${e}`;
+          } else {
+            // Experto
+            largoStr = fx(a, b, false);
+            anchoStr = fx(c, d, false);
+            altoStr = fx(e, f, false);
+          }
+
+          // 🔥 MATEMÁTICA ISOMÉTRICA
+          // Calculamos el desplazamiento visual de la profundidad (Ángulo de 45 grados aprox)
+          const despX = ancho_val * 0.6;
+          const despY = ancho_val * 0.5;
+
+          // Vértices de la cara frontal (Z=0)
+          const v0 = [0, 0] as [number, number];
+          const v1 = [largo_val, 0] as [number, number];
+          const v2 = [largo_val, alto_val] as [number, number];
+          const v3 = [0, alto_val] as [number, number];
+
+          // Vértices de la cara posterior (Z=Profundidad)
+          const v4 = [despX, despY] as [number, number]; // Oculto (Atrás izquierda abajo)
+          const v5 = [largo_val + despX, despY] as [number, number];
+          const v6 = [largo_val + despX, alto_val + despY] as [number, number];
+          const v7 = [despX, alto_val + despY] as [number, number];
+
+          // 🔥 SEPARACIÓN DE ARISTAS (El secreto del 3D realista)
+          const aristasSolidas = [
+            { inicio: v0, fin: v1 },
+            { inicio: v1, fin: v2 },
+            { inicio: v2, fin: v3 },
+            { inicio: v3, fin: v0 }, // Frontal
+            { inicio: v1, fin: v5 },
+            { inicio: v2, fin: v6 },
+            { inicio: v3, fin: v7 }, // Conectores Visibles
+            { inicio: v5, fin: v6 },
+            { inicio: v6, fin: v7 }, // Posterior Visibles
+          ];
+
+          const aristasOcultas = [
+            { inicio: v0, fin: v4 }, // Conector inferior izquierdo
+            { inicio: v4, fin: v5 }, // Posterior inferior
+            { inicio: v4, fin: v7 }, // Posterior izquierdo
+          ];
+
+          // Vectores de empuje para textos algebraicos
+          const etiquetas = [
+            // Largo: Borde frontal inferior (Empuje hacia abajo)
+            { texto: largoStr, mx: largo_val / 2, my: 0, nx: 0, ny: -1 },
+            // Alto: Borde frontal izquierdo (Empuje hacia la izquierda)
+            { texto: altoStr, mx: 0, my: alto_val / 2, nx: -1, ny: 0 },
+            // Ancho (Profundidad): Borde conector derecho inferior (Empuje diagonal abajo-derecha)
+            {
+              texto: anchoStr,
+              mx: largo_val + despX / 2,
+              my: despY / 2,
+              nx: 1,
+              ny: -1,
+            },
+          ];
+
+          // Mandamos todos los puntos para calcular el Viewbox en el frontend
+          const todosLosPuntos = [v0, v1, v2, v3, v4, v5, v6, v7];
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'prisma_rectangular',
+            todosLosPuntos,
+            aristasSolidas,
+            aristasOcultas,
+            etiquetas,
+            volumen: valores.volumen,
+          };
+        }
+
+        case 'volumen_prisma_triangular': {
+          const { a, b, c, d, e, f } = valores;
+
+          const base_val = valores.base_tri;
+          const alt_tri_val = valores.altura_tri;
+          const prof_val = valores.profundidad;
+
+          const fx = (coef: number, cte?: number, isNeg?: boolean) => {
+            let eq = coef === 1 ? 'x' : `${coef}x`;
+            if (cte) eq += isNeg ? ` - ${cte}` : ` + ${cte}`;
+            return eq;
+          };
+
+          let baseStr = '',
+            altStr = '',
+            profStr = '';
+
+          if (plantilla.dificultad.includes('basico')) {
+            baseStr = `${base_val}`;
+            altStr = `${alt_tri_val}`;
+            profStr = `${prof_val}`;
+          } else if (plantilla.dificultad.includes('intermedio')) {
+            baseStr = fx(a);
+            altStr = `${alt_tri_val}`;
+            profStr = `${prof_val}`;
+          } else if (plantilla.dificultad.includes('avanzado')) {
+            baseStr = fx(a, b, false);
+            altStr = fx(c, d, false);
+            profStr = `${prof_val}`;
+          } else {
+            baseStr = fx(a, b, false);
+            altStr = fx(c, d, false);
+            profStr = fx(e, f, false);
+          }
+
+          // 🔥 CÁMARA ISOMÉTRICA MEJORADA (Más empinada y profunda)
+          // Ángulo de 45° para que la figura se levante visualmente.
+          const anguloRad = 45 * (Math.PI / 180);
+          // Usamos el valor REAL de la profundidad. Si es 15, se verá muy profundo.
+          const despX = prof_val * Math.cos(anguloRad);
+          const despY = prof_val * Math.sin(anguloRad);
+
+          // --- VÉRTICES ---
+          // Cara Frontal
+          const v0 = [-base_val / 2, 0] as [number, number];
+          const v1 = [base_val / 2, 0] as [number, number];
+          const v2 = [0, alt_tri_val] as [number, number];
+
+          // Cara Posterior (Proyectada)
+          const v3 = [v0[0] + despX, v0[1] + despY] as [number, number]; // OCULTO
+          const v4 = [v1[0] + despX, v1[1] + despY] as [number, number];
+          const v5 = [v2[0] + despX, v2[1] + despY] as [number, number];
+
+          // --- ARISTAS VISIBLES ---
+          const aristasSolidas = [
+            { inicio: v0, fin: v1 }, // Base frontal
+            { inicio: v1, fin: v2 }, // Lado derecho frontal
+            { inicio: v2, fin: v0 }, // Lado izquierdo frontal
+            { inicio: v1, fin: v4 }, // Conector inferior derecho
+            { inicio: v2, fin: v5 }, // Conector superior (techo)
+            { inicio: v4, fin: v5 }, // Base posterior visible
+          ];
+
+          // --- ARISTAS OCULTAS (Clasificación rigurosa) ---
+          const aristasOcultas = [
+            { inicio: v0, fin: v3 }, // Conector inferior izquierdo (profundidad)
+            { inicio: v3, fin: v4 }, // Base posterior oculta
+            { inicio: v3, fin: v5 }, // Lado izquierdo posterior oculto
+          ];
+
+          // Línea de altura frontal
+          const lineaAlturaFrontal = {
+            inicio: v2,
+            fin: [0, 0] as [number, number],
+          };
+
+          // Vectores de Empuje (Ajustados para la nueva perspectiva de 45°)
+          const etiquetas = [
+            { texto: baseStr, mx: 0, my: 0, nx: 0, ny: -1.3 }, // Base frontal (Más abajo)
+            { texto: altStr, mx: 0, my: alt_tri_val / 2, nx: -0.8, ny: 0 }, // Altura
+            // Profundidad: En la arista conectora inferior derecha
+            {
+              texto: profStr,
+              mx: (v1[0] + v4[0]) / 2,
+              my: (v1[1] + v4[1]) / 2,
+              nx: 1,
+              ny: -0.5,
+            },
+          ];
+
+          const todosLosPuntos = [v0, v1, v2, v3, v4, v5];
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'prisma_triangular',
+            todosLosPuntos,
+            aristasSolidas,
+            aristasOcultas,
+            lineaAlturaFrontal,
+            etiquetas,
+            volumen: valores.volumen,
+          };
+        }
+
+        case 'volumen_piramide': {
+          const { a, b, c, d, x } = valores;
+          const lado_val = valores.lado;
+          const h_val = valores.h;
+
+          const fx = (coef: number, cte?: number, isNeg?: boolean) => {
+            let eq = coef === 1 ? 'x' : `${coef}x`;
+            if (cte) eq += isNeg ? ` - ${cte}` : ` + ${cte}`;
+            return eq;
+          };
+
+          let ladoStr = '',
+            hStr = '';
+
+          if (plantilla.dificultad.includes('basico')) {
+            ladoStr = `${lado_val}`;
+            hStr = `${h_val}`;
+          } else if (plantilla.dificultad.includes('intermedio')) {
+            ladoStr = fx(a);
+            hStr = `${h_val}`;
+          } else if (plantilla.dificultad.includes('avanzado')) {
+            ladoStr = fx(a, b, false);
+            hStr = `${h_val}`;
+          } else {
+            // Experto
+            ladoStr = fx(a, b, false);
+            hStr = fx(c, d, false);
+          }
+
+          // 🔥 MATEMÁTICA ISOMÉTRICA DE LA PIRÁMIDE
+          const anguloRad = 45 * (Math.PI / 180);
+          const profVisual = lado_val * 0.5; // Profundidad de la base
+          const despX = profVisual * Math.cos(anguloRad);
+          const despY = profVisual * Math.sin(anguloRad);
+
+          // Vértices de la Base (Paralelogramo en el piso)
+          const p0 = [-lado_val / 2, 0] as [number, number]; // Inferior Izquierdo (Frontal)
+          const p1 = [lado_val / 2, 0] as [number, number]; // Inferior Derecho (Frontal)
+          const p2 = [lado_val / 2 + despX, despY] as [number, number]; // Inferior Derecho (Posterior)
+          const p3 = [-lado_val / 2 + despX, despY] as [number, number]; // Inferior Izquierdo (Posterior) - OCULTO
+
+          // Ápice (Punta superior centrada sobre la base)
+          const apiceX = despX / 2;
+          const apiceY = h_val + despY / 2;
+          const vApice = [apiceX, apiceY] as [number, number];
+
+          const aristasSolidas = [
+            { inicio: p0, fin: p1 },
+            { inicio: p1, fin: p2 }, // Base visible
+            { inicio: p0, fin: vApice },
+            { inicio: p1, fin: vApice },
+            { inicio: p2, fin: vApice }, // Caras visibles
+          ];
+
+          const aristasOcultas = [
+            { inicio: p0, fin: p3 },
+            { inicio: p3, fin: p2 }, // Base posterior oculta
+            { inicio: p3, fin: vApice }, // Arista posterior oculta
+          ];
+
+          // Línea de altura (desde el centro de la base al ápice)
+          const lineaAltura = {
+            inicio: [apiceX, despY / 2] as [number, number],
+            fin: vApice,
+          };
+
+          const etiquetas = [
+            { texto: ladoStr, mx: 0, my: 0, nx: 0, ny: -1.2 }, // Lado base
+            { texto: hStr, mx: apiceX, my: apiceY / 2, nx: -1, ny: 0 }, // Altura pirámide
+          ];
+
+          const todosLosPuntos = [p0, p1, p2, p3, vApice];
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'piramide_cuadrangular',
+            todosLosPuntos,
+            aristasSolidas,
+            aristasOcultas,
+            lineaAltura,
+            etiquetas,
+            volumen: valores.volumen,
+          };
+        }
+
+        // ========== ÁNGULOS EN CIRCUNFERENCIA ==========
+        case 'angulos_circunferencia': {
+          const v = valores;
+          const tipo = v.tipo_fig !== undefined ? v.tipo_fig : 0;
+          const dif = plantilla.dificultad[0];
+
+          const radio = 5;
+          const puntosPivote: [number, number][] = [];
+          const lineasAzules: any[] = [];
+          const lineasAzulesPunteadas: any[] = [];
+          const arcosVerdes: [number, number][][] = [];
+          const etiquetas: any[] = [];
+
+          // 🔥 HELPER 1: Coordenadas del círculo
+          const getP = (
+            grados: number,
+            isLabel: boolean = false,
+          ): [number, number] => {
+            const rad = grados * (Math.PI / 180);
+            const r = isLabel ? radio + 0.9 : radio;
+            return [r * Math.cos(rad), r * Math.sin(rad)];
+          };
+
+          // 🔥 HELPER 2: Empuje semántico de textos
+          const getInnerP = (
+            grados: number,
+            offset: number,
+          ): [number, number] => {
+            const rad = grados * (Math.PI / 180);
+            return [
+              (radio - offset) * Math.cos(rad),
+              (radio - offset) * Math.sin(rad),
+            ];
+          };
+          const getOuterP = (
+            grados: number,
+            offset: number,
+          ): [number, number] => {
+            const rad = grados * (Math.PI / 180);
+            return [
+              (radio + offset) * Math.cos(rad),
+              (radio + offset) * Math.sin(rad),
+            ];
+          };
+
+          // 🔥 HELPER 3: EL CREADOR DE ARCOS DE ÁNGULOS (La magia visual)
+          const getArcBetweenPoints = (
+            v: [number, number],
+            p1: [number, number],
+            p2: [number, number],
+            r: number = 0.8,
+          ): [number, number][] => {
+            let a1 = Math.atan2(p1[1] - v[1], p1[0] - v[0]) * (180 / Math.PI);
+            let a2 = Math.atan2(p2[1] - v[1], p2[0] - v[0]) * (180 / Math.PI);
+            if (a1 < 0) a1 += 360;
+            if (a2 < 0) a2 += 360;
+
+            // Forzar el camino más corto (el ángulo interno, no el reflejo)
+            let diff = a2 - a1;
+            if (diff > 180) a1 += 360;
+            else if (diff < -180) a2 += 360;
+
+            const start = Math.min(a1, a2);
+            const end = Math.max(a1, a2);
+
+            const points: [number, number][] = [];
+            const steps = 15; // Suavidad del arco
+            for (let i = 0; i <= steps; i++) {
+              const ang = start + (end - start) * (i / steps);
+              const rad = ang * (Math.PI / 180);
+              points.push([v[0] + r * Math.cos(rad), v[1] + r * Math.sin(rad)]);
+            }
+            return points;
+          };
+
+          // 🔥 HELPER 4: Extractor Algebraico Protegido
+          const getAlg = (varNames: string[]) => {
+            const varName = varNames.find(
+              (name) =>
+                v[name] !== undefined ||
+                plantilla.relaciones?.some((r: string) =>
+                  r.startsWith(name + ' ='),
+                ),
+            );
+            if (!varName) return 'x';
+
+            if (dif === 'basico') {
+              if (plantilla.variables && !plantilla.variables[varName])
+                return 'x';
+              return v[varName] !== undefined ? `${v[varName]}°` : 'x';
+            }
+
+            const rel = plantilla.relaciones?.find((r: string) =>
+              r.startsWith(varName + ' ='),
+            );
+            if (!rel) return 'x';
+
+            let expr = rel.split('=')[1].trim();
+
+            const tokens = expr.match(/[a-zA-Z_]\w*/g) || [];
+            tokens.forEach((token) => {
+              if (token === 'x') return;
+              if (v[token] !== undefined) {
+                const regex = new RegExp(`\\b${token}\\b`, 'g');
+                expr = expr.replace(regex, v[token]);
+              }
+            });
+
+            expr = expr
+              .replace(/x\s*\*\s*x/g, 'x²')
+              .replace(/\s*\*\s*/g, '')
+              .replace(/\+\s*-/g, '- ')
+              .replace(/\s+/g, ' ')
+              .trim();
+
+            if (expr.includes('undefined')) return 'x';
+            return expr + '°';
+          };
+
+          // --- DIBUJADOR DE LAS 5 FIGURAS ---
+
+          const O = [0, 0] as [number, number];
+          etiquetas.push({ texto: 'O', pos: [0, -0.7], esPunto: true });
+          puntosPivote.push(O);
+
+          if (tipo === 0) {
+            // 🔹 FIG 0: CENTRAL E INSCRITO
+            const C = getP(90);
+            const A = getP(230);
+            const B = getP(310);
+            puntosPivote.push(A, B, C);
+            lineasAzules.push({ inicio: O, fin: A }, { inicio: O, fin: B });
+            lineasAzulesPunteadas.push(
+              { inicio: C, fin: A },
+              { inicio: C, fin: B },
+            );
+
+            // 🔥 INYECCIÓN DE ARCOS VERDES
+            arcosVerdes.push(getArcBetweenPoints(O, A, B, 0.8)); // Arco Central
+            arcosVerdes.push(getArcBetweenPoints(C, A, B, 1.2)); // Arco Inscrito
+
+            etiquetas.push(
+              { texto: getAlg(['central']), pos: [0, -1.2], esPunto: false },
+              {
+                texto: getAlg(['inscrito']),
+                pos: getInnerP(90, 1.7),
+                esPunto: false,
+              },
+              { texto: 'C', pos: getP(90, true), esPunto: true },
+              { texto: 'A', pos: getP(230, true), esPunto: true },
+              { texto: 'B', pos: getP(310, true), esPunto: true },
+            );
+          } else if (tipo === 1) {
+            // 🔹 FIG 1: ÁNGULO INTERIOR (Cruz)
+            const A = getP(210);
+            const B = getP(330);
+            const C = getP(30);
+            const D = getP(150);
+            puntosPivote.push(A, B, C, D);
+            lineasAzules.push({ inicio: A, fin: C }, { inicio: B, fin: D });
+
+            // 🔥 INYECCIÓN DE ARCOS VERDES (Ángulo superior en el cruce)
+            arcosVerdes.push(getArcBetweenPoints(O, C, D, 0.8));
+
+            etiquetas.push(
+              {
+                texto: getAlg(['ang', 'angulo']),
+                pos: [0, 1.2],
+                esPunto: false,
+              },
+              {
+                texto: getAlg(['arco1', 'arcoAB']),
+                pos: getOuterP(270, 0.8),
+                esPunto: false,
+              },
+              {
+                texto: getAlg(['arco2', 'arcoCD']),
+                pos: getOuterP(90, 0.8),
+                esPunto: false,
+              },
+              { texto: 'A', pos: getP(210, true), esPunto: true },
+              { texto: 'B', pos: getP(330, true), esPunto: true },
+              { texto: 'C', pos: getP(30, true), esPunto: true },
+              { texto: 'D', pos: getP(150, true), esPunto: true },
+            );
+          } else if (tipo === 2) {
+            // 🔹 FIG 2: ÁNGULO EXTERIOR (Secantes)
+            const P = [-11, 0] as [number, number];
+            const A = getP(155);
+            const C = getP(205);
+            const B = getP(35);
+            const D = getP(325);
+            puntosPivote.push(P, A, B, C, D);
+            lineasAzules.push({ inicio: P, fin: B }, { inicio: P, fin: D });
+
+            // 🔥 INYECCIÓN DE ARCOS VERDES (Ángulo en el vértice P exterior)
+            arcosVerdes.push(getArcBetweenPoints(P, B, D, 1.5));
+
+            etiquetas.push(
+              {
+                texto: getAlg(['ang', 'angulo']),
+                pos: [-8.8, 0],
+                esPunto: false,
+              },
+              {
+                texto: getAlg(['arcoM']),
+                pos: getOuterP(0, 0.8),
+                esPunto: false,
+              },
+              {
+                texto: getAlg(['arcom']),
+                pos: getOuterP(180, 0.8),
+                esPunto: false,
+              },
+              { texto: 'P', pos: [-11.8, 0], esPunto: true },
+              { texto: 'A', pos: getP(155, true), esPunto: true },
+              { texto: 'C', pos: getP(205, true), esPunto: true },
+              { texto: 'B', pos: getP(35, true), esPunto: true },
+              { texto: 'D', pos: getP(325, true), esPunto: true },
+            );
+          } else if (tipo === 3) {
+            // 🔹 FIG 3: ÁNGULO EXTERIOR (Tangentes)
+            const distP = 11;
+            const P = [-distP, 0] as [number, number];
+            const angTangency = Math.acos(radio / distP) * (180 / Math.PI);
+            const A = getP(180 - angTangency);
+            const B = getP(180 + angTangency);
+
+            puntosPivote.push(P, A, B);
+            lineasAzules.push({ inicio: P, fin: A }, { inicio: P, fin: B });
+            lineasAzulesPunteadas.push(
+              { inicio: O, fin: A },
+              { inicio: O, fin: B },
+            );
+
+            // 🔥 INYECCIÓN DE ARCOS VERDES (Ángulo en el vértice P exterior)
+            arcosVerdes.push(getArcBetweenPoints(P, A, B, 1.5));
+
+            etiquetas.push(
+              {
+                texto: getAlg(['ang', 'angulo', 'anguloP']),
+                pos: [-8.8, 0],
+                esPunto: false,
+              },
+              {
+                texto: getAlg(['arco', 'arcoMenor']),
+                pos: getOuterP(180, 0.8),
+                esPunto: false,
+              },
+              { texto: 'P', pos: [-distP - 0.8, 0], esPunto: true },
+              { texto: 'A', pos: getP(180 - angTangency, true), esPunto: true },
+              { texto: 'B', pos: getP(180 + angTangency, true), esPunto: true },
+            );
+          } else if (tipo === 4) {
+            // 🔹 FIG 4: CUADRILÁTERO INSCRITO
+            const A = getP(230);
+            const B = getP(310);
+            const C = getP(50);
+            const D = getP(130);
+            puntosPivote.push(A, B, C, D);
+            lineasAzules.push(
+              { inicio: A, fin: B },
+              { inicio: B, fin: C },
+              { inicio: C, fin: D },
+              { inicio: D, fin: A },
+            );
+
+            // 🔥 INYECCIÓN DE ARCOS VERDES (En las esquinas A y C)
+            arcosVerdes.push(getArcBetweenPoints(A, D, B, 1.0));
+            arcosVerdes.push(getArcBetweenPoints(C, B, D, 1.0));
+
+            etiquetas.push(
+              {
+                texto: getAlg(['ang1', 'angulo']),
+                pos: getInnerP(230, 1.8),
+                esPunto: false,
+              },
+              {
+                texto: getAlg(['ang2', 'opuesto']),
+                pos: getInnerP(50, 1.8),
+                esPunto: false,
+              },
+              { texto: 'A', pos: getP(230, true), esPunto: true },
+              { texto: 'B', pos: getP(310, true), esPunto: true },
+              { texto: 'C', pos: getP(50, true), esPunto: true },
+              { texto: 'D', pos: getP(130, true), esPunto: true },
+            );
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'angulos_circunferencia',
+            radio,
+            puntosPivote,
+            lineasAzules,
+            lineasAzulesPunteadas,
+            arcosVerdes,
+            etiquetas,
+          };
+        }
+
+        case 'segmentos_circunferencia': {
+          const R = 5;
+          let lineasAzules: any[] = [];
+          let etiquetas: any[] = [];
+          let puntosPivote: [number, number][] = [[0, 0]];
+
+          const fx = (coef: number, cte?: number, isNeg?: boolean) => {
+            let eq = coef === 1 ? 'x' : `${coef}x`;
+            if (cte) eq += isNeg ? ` - ${cte}` : ` + ${cte}`;
+            return eq;
+          };
+
+          if (
+            plantilla.dificultad.includes('basico') ||
+            plantilla.dificultad.includes('intermedio')
+          ) {
+            // 🔥 TEOREMA DE CUERDAS: Una "X" perfecta cruzando cerca del centro
+            const p1: [number, number] = [-3, 4];
+            const p2: [number, number] = [4, -3];
+            const p3: [number, number] = [-4, -3];
+            const p4: [number, number] = [3, 4];
+
+            lineasAzules = [
+              { inicio: p1, fin: p2 },
+              { inicio: p3, fin: p4 },
+            ];
+
+            let val1, val2, val3, val4;
+            if (plantilla.dificultad.includes('basico')) {
+              val1 = `${valores.a}`;
+              val2 = `${valores.b}`;
+              val3 = `${valores.c}`;
+              val4 = `x`;
+            } else {
+              val1 = `${valores.a}`;
+              val2 = fx(valores.b);
+              val3 = `${valores.c}`;
+              val4 = `${valores.d}`;
+            }
+
+            etiquetas = [
+              { texto: val1, pos: [-1.5, 2.8], esPunto: false },
+              { texto: val2, pos: [2.0, -1.0], esPunto: false },
+              { texto: val3, pos: [-2.0, -1.0], esPunto: false },
+              { texto: val4, pos: [1.5, 2.8], esPunto: false },
+            ];
+            puntosPivote.push(p1, p2, p3, p4);
+          } else if (plantilla.dificultad.includes('avanzado')) {
+            // 🔥 TEOREMA DE SECANTES
+            const P: [number, number] = [0, -8];
+            const A: [number, number] = [-2.4, -4.4];
+            const B: [number, number] = [-4.6, 1.95];
+            const C: [number, number] = [2.4, -4.4];
+            const D: [number, number] = [4.6, 1.95];
+
+            // Extendemos la línea visualmente para que se vean como auténticas secantes
+            const extB: [number, number] = [
+              -4.6 - 2.2 * 0.15,
+              1.95 + 6.35 * 0.15,
+            ];
+            const extD: [number, number] = [
+              4.6 + 2.2 * 0.15,
+              1.95 + 6.35 * 0.15,
+            ];
+
+            lineasAzules = [
+              { inicio: P, fin: extB },
+              { inicio: P, fin: extD },
+            ];
+
+            etiquetas = [
+              { texto: `${valores.a}`, pos: [-1.8, -6.5], esPunto: false }, // PA
+              { texto: `${valores.b}`, pos: [-4.2, -1.0], esPunto: false }, // AB
+              { texto: `${valores.c}`, pos: [1.8, -6.5], esPunto: false }, // PC
+              { texto: `x`, pos: [4.2, -1.0], esPunto: false }, // CD
+              { texto: 'P', pos: [0, -8.8], esPunto: true },
+              { texto: 'A', pos: [-1.3, -4.4], esPunto: true },
+              { texto: 'B', pos: [-5.1, 1.95], esPunto: true },
+              { texto: 'C', pos: [1.3, -4.4], esPunto: true },
+              { texto: 'D', pos: [5.1, 1.95], esPunto: true },
+            ];
+            puntosPivote.push(P, B, D);
+          } else {
+            // 🔥 TEOREMA DE LA TANGENTE Y LA SECANTE
+            const P: [number, number] = [0, -8];
+            const A: [number, number] = [-2.4, -4.4];
+            const B: [number, number] = [-4.6, 1.95];
+
+            // Calculamos el punto T exacto usando arccos(R/distancia)
+            const angT = Math.acos(R / 8);
+            const T: [number, number] = [
+              R * Math.sin(angT),
+              -R * Math.cos(angT),
+            ]; // [3.905, -3.125]
+
+            const extB: [number, number] = [
+              -4.6 - 2.2 * 0.15,
+              1.95 + 6.35 * 0.15,
+            ];
+            const extT: [number, number] = [
+              T[0] + T[0] * 0.4,
+              T[1] + (T[1] + 8) * 0.4,
+            ]; // Extensión perfecta
+
+            lineasAzules = [
+              { inicio: P, fin: extB },
+              { inicio: P, fin: extT },
+            ];
+
+            etiquetas = [
+              { texto: `${valores.t}`, pos: [2.5, -6.5], esPunto: false },
+              { texto: `${valores.a}`, pos: [-1.8, -6.5], esPunto: false },
+              { texto: `x`, pos: [-4.2, -1.0], esPunto: false },
+              { texto: 'P', pos: [0, -8.8], esPunto: true },
+              { texto: 'T', pos: [T[0] + 0.5, T[1] + 0.5], esPunto: true },
+              { texto: 'A', pos: [-1.3, -4.4], esPunto: true },
+              { texto: 'B', pos: [-5.1, 1.95], esPunto: true },
+            ];
+            puntosPivote.push(P, B, T, extT, extB);
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'segmentos_circunferencia',
+            radio: R,
+            puntosPivote,
+            lineasAzules,
+            etiquetas,
+          };
+        }
+
+        case 'propiedades_circunferencia': {
+          const v = valores;
+          const tipo = v.tipo_fig !== undefined ? v.tipo_fig : 0;
+          const dif = plantilla.dificultad[0];
+
+          const radio = 5;
+          const puntosPivote: [number, number][] = [];
+          const lineasAzules: any[] = [];
+          const lineasAzulesPunteadas: any[] = [];
+          const arcosVerdes: any[] = [];
+          const etiquetas: any[] = [];
+
+          const getP = (
+            grados: number,
+            offset: number = 0,
+          ): [number, number] => {
+            const rad = grados * (Math.PI / 180);
+            return [
+              (radio + offset) * Math.cos(rad),
+              (radio + offset) * Math.sin(rad),
+            ];
+          };
+
+          const getCircularArc = (
+            startAng: number,
+            endAng: number,
+            offset: number = 0.3,
+          ): [number, number][] => {
+            const points: [number, number][] = [];
+            const steps = 20;
+            const r = radio + offset;
+            for (let i = 0; i <= steps; i++) {
+              const ang = startAng + (endAng - startAng) * (i / steps);
+              points.push([
+                r * Math.cos((ang * Math.PI) / 180),
+                r * Math.sin((ang * Math.PI) / 180),
+              ]);
+            }
+            return points;
+          };
+
+          // 🔥 FIX 2: ALGORITMO BLINDADO (Ya no concatena números)
+          const getAlg = (varNames: string[], isAngle: boolean = false) => {
+            const varName = varNames.find(
+              (name) =>
+                v[name] !== undefined ||
+                plantilla.relaciones?.some((r: string) =>
+                  r.startsWith(name + ' ='),
+                ),
+            );
+            if (!varName) return 'x';
+
+            const rel = plantilla.relaciones?.find((r: string) =>
+              r.startsWith(varName + ' ='),
+            );
+
+            // Si no hay relación, o es nivel básico, o la relación NO tiene 'x' (como los catetos de Pitágoras)
+            // Tomamos el valor final matemático que el motor ya calculó, evitando que la Regex concatene números
+            if (!rel || dif === 'basico' || !rel.includes('x')) {
+              const valorFinal = v[varName];
+              if (valorFinal !== undefined) {
+                return isAngle ? `${valorFinal}°` : `${valorFinal}`;
+              }
+              return 'x';
+            }
+
+            let expr = rel.split('=')[1].trim();
+            const tokens = expr.match(/[a-zA-Z_]\w*/g) || [];
+            tokens.forEach((token) => {
+              if (token === 'x') return;
+              if (v[token] !== undefined) {
+                const regex = new RegExp(`\\b${token}\\b`, 'g');
+                expr = expr.replace(regex, v[token]);
+              }
+            });
+
+            expr = expr
+              .replace(/x\s*\*\s*x/g, 'x²')
+              .replace(/(\d+)\s*\*\s*x/g, '$1x') // Solo junta el número con la x (ej: 3 * x -> 3x)
+              .replace(/\+\s*-/g, '- ')
+              .replace(/\s+/g, ' ')
+              .trim();
+
+            if (expr.includes('undefined')) {
+              return v[varName] !== undefined
+                ? isAngle
+                  ? `${v[varName]}°`
+                  : `${v[varName]}`
+                : 'x';
+            }
+
+            return isAngle ? `${expr}°` : expr;
+          };
+
+          const O = [0, 0] as [number, number];
+          etiquetas.push({ texto: 'O', pos: [-0.6, -0.6], esPunto: true });
+          puntosPivote.push(O);
+
+          if (tipo === 0) {
+            // 🔹 FIG 0: Radio y Tangente
+            const T = [5, 0] as [number, number];
+            const P_top = [5, 4] as [number, number];
+            const P_bot = [5, -4] as [number, number];
+            puntosPivote.push(T);
+            lineasAzules.push({ inicio: P_top, fin: P_bot });
+            lineasAzules.push({ inicio: O, fin: T });
+
+            etiquetas.push({ texto: 'T', pos: [5.6, -0.6], esPunto: true });
+
+            if (dif === 'avanzado') {
+              // 🔥 FIX 1: DIBUJAMOS LA HIPOTENUSA (Usando lineasAzules para forzar el render)
+              lineasAzules.push({ inicio: O, fin: P_top });
+
+              etiquetas.push({ texto: 'P', pos: [5.6, 4.2], esPunto: true });
+              puntosPivote.push(P_top);
+
+              etiquetas.push({
+                texto: getAlg(['radio']),
+                pos: [2.5, -0.8],
+                esPunto: false,
+              });
+              etiquetas.push({ texto: 'x', pos: [5.8, 2], esPunto: false });
+              etiquetas.push({
+                texto: getAlg(['hipo']),
+                pos: [2.0, 2.5],
+                esPunto: false,
+              });
+            } else {
+              etiquetas.push({
+                texto: dif === 'basico' ? 'x' : getAlg(['ang', 'x'], true),
+                pos: [3.8, 0.8],
+                esPunto: false,
+              });
+            }
+          } else if (tipo === 1) {
+            // 🔹 FIG 1: Tangentes Exteriores
+            const R = [0, -11] as [number, number];
+            const angTang = Math.acos(5 / 11) * (180 / Math.PI);
+            const A = getP(270 - angTang);
+            const B = getP(270 + angTang);
+
+            puntosPivote.push(R, A, B);
+            lineasAzules.push({ inicio: R, fin: A }, { inicio: R, fin: B });
+
+            etiquetas.push({ texto: 'P', pos: [0, -11.8], esPunto: true });
+            etiquetas.push({
+              texto: 'A',
+              pos: getP(270 - angTang, 0.8),
+              esPunto: true,
+            });
+            etiquetas.push({
+              texto: 'B',
+              pos: getP(270 + angTang, 0.8),
+              esPunto: true,
+            });
+
+            etiquetas.push({
+              texto: getAlg(['tang1']),
+              pos: [-3.5, -8.0],
+              esPunto: false,
+            });
+            etiquetas.push({
+              texto: dif === 'basico' ? 'x' : getAlg(['tang2', 'x']),
+              pos: [3.5, -8.0],
+              esPunto: false,
+            });
+          } else if (tipo === 2) {
+            // 🔹 FIG 2: Radio y Cuerda
+            const M = [0, 3] as [number, number];
+            const A = [-4, 3] as [number, number];
+            const B = [4, 3] as [number, number];
+            const P_top = [0, 5] as [number, number];
+
+            puntosPivote.push(A, B, M);
+            lineasAzules.push({ inicio: A, fin: B });
+            lineasAzules.push({ inicio: O, fin: P_top });
+
+            etiquetas.push({ texto: 'A', pos: [-4.8, 3], esPunto: true });
+            etiquetas.push({ texto: 'B', pos: [4.8, 3], esPunto: true });
+            etiquetas.push({ texto: 'M', pos: [0.6, 2.4], esPunto: true });
+
+            if (dif === 'avanzado') {
+              // 🔥 FIX 1: DIBUJAMOS LA HIPOTENUSA (Usando lineasAzules para forzar el render)
+              lineasAzules.push({ inicio: O, fin: A });
+
+              etiquetas.push({
+                texto: getAlg(['radio']),
+                pos: [-2.5, 1.2],
+                esPunto: false,
+              });
+              etiquetas.push({
+                texto: getAlg(['dist']),
+                pos: [0.8, 1.5],
+                esPunto: false,
+              });
+              etiquetas.push({ texto: 'x', pos: [-2, 3.8], esPunto: false });
+            } else {
+              etiquetas.push({
+                texto: getAlg(['mitad1', 'mitad']),
+                pos: [-2, 3.8],
+                esPunto: false,
+              });
+              etiquetas.push({
+                texto: dif === 'basico' ? 'x' : getAlg(['mitad2', 'x']),
+                pos: [2, 3.8],
+                esPunto: false,
+              });
+            }
+          } else if (tipo === 3) {
+            // 🔹 FIG 3: Cuerdas Paralelas
+            const A = getP(140);
+            const B = getP(40);
+            const C = getP(220);
+            const D = getP(320);
+
+            puntosPivote.push(A, B, C, D);
+            lineasAzules.push({ inicio: A, fin: B });
+            lineasAzules.push({ inicio: C, fin: D });
+
+            arcosVerdes.push(getCircularArc(140, 220, 0.4));
+            arcosVerdes.push(getCircularArc(320, 400, 0.4));
+
+            etiquetas.push({
+              texto:
+                dif === 'basico' ? 'x' : getAlg(['arco1', 'arco', 'x'], true),
+              pos: getP(180, 2.0),
+              esPunto: false,
+            });
+            etiquetas.push({
+              texto: getAlg(['arco2', 'arco'], true),
+              pos: getP(0, 2.0),
+              esPunto: false,
+            });
+
+            etiquetas.push({ texto: 'A', pos: getP(140, 0.8), esPunto: true });
+            etiquetas.push({ texto: 'B', pos: getP(40, 0.8), esPunto: true });
+            etiquetas.push({ texto: 'C', pos: getP(220, 0.8), esPunto: true });
+            etiquetas.push({ texto: 'D', pos: getP(320, 0.8), esPunto: true });
+          } else if (tipo === 4) {
+            // 🔹 FIG 4: Teorema de Pitot
+            const A = [-5, -5] as [number, number];
+            const B = [5, -5] as [number, number];
+            const C = [5, 5] as [number, number];
+            const D = [-5, 5] as [number, number];
+
+            puntosPivote.push(A, B, C, D);
+            lineasAzules.push(
+              { inicio: A, fin: B },
+              { inicio: B, fin: C },
+              { inicio: C, fin: D },
+              { inicio: D, fin: A },
+            );
+
+            etiquetas.push({
+              texto: getAlg(['abajo']),
+              pos: [0, -5.5],
+              esPunto: false,
+            });
+            etiquetas.push({
+              texto: getAlg(['arriba']),
+              pos: [0, 5.5],
+              esPunto: false,
+            });
+            etiquetas.push({
+              texto: getAlg(['izq']),
+              pos: [-5.8, 0],
+              esPunto: false,
+            });
+            etiquetas.push({
+              texto: dif === 'basico' ? 'x' : getAlg(['der', 'x']),
+              pos: [5.8, 0],
+              esPunto: false,
+            });
+
+            etiquetas.push({ texto: 'A', pos: [-5.8, -5.8], esPunto: true });
+            etiquetas.push({ texto: 'B', pos: [5.8, -5.8], esPunto: true });
+            etiquetas.push({ texto: 'C', pos: [5.8, 5.8], esPunto: true });
+            etiquetas.push({ texto: 'D', pos: [-5.8, 5.8], esPunto: true });
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'propiedades_circunferencia',
+            radio,
+            puntosPivote,
+            lineasAzules,
+            lineasAzulesPunteadas,
+            arcosVerdes,
+            etiquetas,
+          };
+        }
+
+        case 'triangulo_angulos': {
+          const esBasico = plantilla.id.includes('basico');
+          const esIntermedio = plantilla.id.includes('intermedio');
+          const esAvanzado = plantilla.id.includes('avanzado');
+          const esExperto = plantilla.id.includes('experto');
+
+          if (!esBasico && !esIntermedio && !esAvanzado && !esExperto) break;
+
+          interface ArcoVisual {
+            centro: [number, number];
+            inicio: number;
+            fin: number;
+            etiqueta: string;
+            colorIdx: number;
+            labelVertice: string;
+            exterior?: boolean;
+          }
+
+          // 🔥 ALGORITMO DE INGENIERÍA INVERSA (ADIÓS VALORES ABSURDOS)
+          const x = Math.floor(Math.random() * 6) + 10; // x entre 10 y 15
+          valores.x = x;
+          valores.respuesta = x;
+
+          // 1. Generamos Ángulos Internos Sanos (entre 40° y 80°)
+          const int1 = Math.floor(Math.random() * 40) + 40;
+          const int2 = Math.floor(Math.random() * 40) + 40;
+          const int3 = 180 - int1 - int2;
+
+          let a1, b1, a2, b2, a3, b3, a4, b4;
+          let ang1 = int1;
+          let ang2 = int2;
+
+          if (esBasico || esIntermedio) {
+            // Ecuaciones para los ángulos internos
+            a1 = Math.floor(Math.random() * 3) + 1; // 1x, 2x o 3x
+            b1 = int1 - a1 * x; // Forzará negativos si a*x > int1
+
+            a2 = Math.floor(Math.random() * 3) + 1;
+            b2 = int2 - a2 * x;
+
+            a3 = Math.floor(Math.random() * 3) + 1;
+            b3 = int3 - a3 * x;
+
+            // Para intermedio: Ángulo exterior en B = int1 + int3
+            const extB = int1 + int3;
+            a4 = Math.floor(Math.random() * 2) + 2; // 2x o 3x
+            b4 = extB - a4 * x;
+          } else {
+            // Avanzado / Experto: Ángulos Externos
+            const ext1 = 180 - int1;
+            const ext2 = 180 - int2;
+            const ext3 = 180 - int3;
+
+            a1 = Math.floor(Math.random() * 3) + 1;
+            b1 = ext1 - a1 * (esExperto ? x * x : x);
+
+            a2 = Math.floor(Math.random() * 3) + 1;
+            b2 = ext2 - a2 * x;
+
+            a3 = Math.floor(Math.random() * 3) + 1;
+            b3 = ext3 - a3 * x;
+          }
+
+          const baseWidth = 7;
+          const rad1 = (ang1 * Math.PI) / 180;
+          const rad2 = (ang2 * Math.PI) / 180;
+
+          const p1: [number, number] = [0, 0];
+          const p2: [number, number] = [baseWidth, 0];
+          const p3x =
+            (baseWidth * Math.tan(rad2)) / (Math.tan(rad1) + Math.tan(rad2));
+          const p3y = Math.max(p3x * Math.tan(rad1), 4);
+          const p3: [number, number] = [p3x, p3y];
+
+          const puntos: [number, number][] = [p1, p2, p3];
+
+          const getAngle = (from: [number, number], to: [number, number]) => {
+            return (
+              Math.atan2(to[1] - from[1], to[0] - from[0]) * (180 / Math.PI)
+            );
+          };
+
+          const ang_p1_p2 = getAngle(puntos[0], puntos[1]);
+          const ang_p1_p3 = getAngle(puntos[0], puntos[2]);
+          const ang_p2_p1 = getAngle(puntos[1], puntos[0]);
+          const ang_p2_p3 = getAngle(puntos[1], puntos[2]);
+          const ang_p3_p1 = getAngle(puntos[2], puntos[0]);
+          const ang_p3_p2 = getAngle(puntos[2], puntos[1]);
+
+          const fx = (a: any, b: any, forceX2 = false) => {
+            const exp = forceX2 ? '²' : '';
+            let eq = a === 1 ? `x${exp}` : !a || a === 0 ? '' : `${a}x${exp}`;
+            if (b !== undefined && b !== 0) {
+              eq += b > 0 ? ` + ${b}` : ` - ${Math.abs(b)}`;
+            }
+            return eq === '' ? '0°' : eq + '°';
+          };
+
+          const arcos: ArcoVisual[] = [];
+          let lineasExtra: any[] = [];
+
+          if (esBasico) {
+            arcos.push({
+              centro: puntos[0],
+              inicio: ang_p1_p2,
+              fin: ang_p1_p3,
+              etiqueta: fx(a1, b1),
+              colorIdx: 0,
+              labelVertice: 'A',
+            });
+            arcos.push({
+              centro: puntos[1],
+              inicio: ang_p2_p3,
+              fin: ang_p2_p1,
+              etiqueta: fx(a2, b2),
+              colorIdx: 1,
+              labelVertice: 'B',
+            });
+            arcos.push({
+              centro: puntos[2],
+              inicio: ang_p3_p1,
+              fin: ang_p3_p2,
+              etiqueta: fx(a3, b3),
+              colorIdx: 2,
+              labelVertice: 'C',
+            });
+          } else if (esIntermedio) {
+            arcos.push({
+              centro: puntos[0],
+              inicio: ang_p1_p2,
+              fin: ang_p1_p3,
+              etiqueta: fx(a1, b1),
+              colorIdx: 0,
+              labelVertice: 'A',
+            });
+            arcos.push({
+              centro: puntos[2],
+              inicio: ang_p3_p1,
+              fin: ang_p3_p2,
+              etiqueta: fx(a2, b2),
+              colorIdx: 2,
+              labelVertice: 'C',
+            });
+            arcos.push({
+              centro: puntos[1],
+              inicio: 0,
+              fin: ang_p2_p3,
+              etiqueta: fx(a4, b4),
+              colorIdx: 1,
+              labelVertice: 'B',
+              exterior: true,
+            });
+            lineasExtra.push({ puntos: [puntos[1], [baseWidth + 2, 0]] });
+          } else {
+            // 🔥 NIVELES AVANZADOS: Arcos externos imanados correctamente
+            arcos.push({
+              centro: puntos[0],
+              inicio: ang_p1_p3,
+              fin: ang_p1_p2 + 180,
+              etiqueta: fx(a1, b1, esExperto),
+              colorIdx: 0,
+              labelVertice: 'A',
+              exterior: true,
+            });
+            arcos.push({
+              centro: puntos[1],
+              inicio: ang_p2_p1,
+              fin: ang_p2_p3 + 180,
+              etiqueta: fx(a2, b2, esExperto),
+              colorIdx: 1,
+              labelVertice: 'B',
+              exterior: true,
+            });
+            arcos.push({
+              centro: puntos[2],
+              inicio: ang_p3_p2,
+              fin: ang_p3_p1 + 180,
+              etiqueta: fx(a3, b3, esExperto),
+              colorIdx: 2,
+              labelVertice: 'C',
+              exterior: true,
+            });
+
+            // 🔥 PROYECCIONES DE SOPORTE CORREGIDAS
+            const prolongar = (pA: [number, number], pB: [number, number]) => {
+              const ang = Math.atan2(pB[1] - pA[1], pB[0] - pA[0]);
+              return [pB[0] + 2.5 * Math.cos(ang), pB[1] + 2.5 * Math.sin(ang)];
+            };
+
+            lineasExtra = [
+              { puntos: [puntos[0], prolongar(puntos[1], puntos[0])] }, // Prolongación BA -> A
+              { puntos: [puntos[1], prolongar(puntos[2], puntos[1])] }, // Prolongación CB -> B
+              { puntos: [puntos[2], prolongar(puntos[0], puntos[2])] }, // Prolongación AC -> C
+            ];
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'triangulos',
+            puntos,
+            arcos,
+            lineasExtra,
+            respuestaSobreescrita: x,
+          };
+        }
+
+        case 'triangulos_notables': {
+          const id = plantilla.id;
+          const esBasico = id.includes('basico');
+          const esIntermedio = id.includes('intermedio');
+          const esAvanzado = id.includes('avanzado');
+          const esExperto = id.includes('experto');
+
+          // 🔥 FUNCIONES DE CONTROL DE LÍMITES (M.C.M)
+          const gcd = (a: number, b: number): number =>
+            b === 0 ? a : gcd(b, a % b);
+          const lcm = (a: number, b: number): number =>
+            Math.abs(a * b) / gcd(a, b);
+
+          // DICCIONARIO DE TRIÁNGULOS NOTABLES (Opuesto, Adyacente, Hipotenusa)
+          const T = [
+            {
+              ang: [30, 60],
+              prop: [1, 'sqrt(3)', 2],
+              num: [1, 1.732, 2],
+              name: '30°-60°',
+            },
+            {
+              ang: [45, 45],
+              prop: [1, 1, 'sqrt(2)'],
+              num: [1, 1, 1.414],
+              name: '45°-45°',
+            },
+            { ang: [37, 53], prop: [3, 4, 5], num: [3, 4, 5], name: '37°-53°' },
+            {
+              ang: [16, 74],
+              prop: [7, 24, 25],
+              num: [7, 24, 25],
+              name: '16°-74°',
+            },
+            {
+              ang: [23, 67],
+              prop: [5, 12, 13],
+              num: [5, 12, 13],
+              name: '5k-12k-13k',
+            },
+          ];
+
+          let tVisual = T[Math.floor(Math.random() * T.length)];
+          const k = Math.floor(Math.random() * 5) + 2;
+
+          let respuestaFinal: string | number = '';
+          let enunciadoForzado = plantilla.enunciado;
+          let etiqLados = ['', '', ''];
+
+          // =====================================
+          // BÁSICO E INTERMEDIO
+          // =====================================
+          if (esBasico || esIntermedio) {
+            const ladoConocidoIdx = Math.floor(Math.random() * 3);
+            let ladoIncognitaIdx = Math.floor(Math.random() * 3);
+            while (ladoIncognitaIdx === ladoConocidoIdx)
+              ladoIncognitaIdx = Math.floor(Math.random() * 3);
+
+            const formatSide = (prop: any, factor: number) =>
+              typeof prop === 'string'
+                ? `${factor}√${prop.match(/\d+/)![0]}`
+                : `${prop * factor}`;
+
+            etiqLados[ladoConocidoIdx] = formatSide(
+              tVisual.prop[ladoConocidoIdx],
+              k,
+            );
+            etiqLados[ladoIncognitaIdx] = 'x';
+            respuestaFinal = formatSide(tVisual.prop[ladoIncognitaIdx], k);
+          }
+
+          // =====================================
+          // AVANZADO
+          // =====================================
+          else if (esAvanzado) {
+            let mcmVal = 0;
+            let tFantasma = T[0];
+            let intentos = 0;
+
+            // Busca un par con MCM <= 100 para evitar números gigantes
+            do {
+              tVisual = T[Math.floor(Math.random() * T.length)];
+              tFantasma = T[Math.floor(Math.random() * T.length)];
+
+              const hipFan = tFantasma.prop[2];
+              const adyVis = tVisual.prop[1];
+
+              if (typeof hipFan === 'number' && typeof adyVis === 'number') {
+                mcmVal = lcm(hipFan, adyVis);
+              } else {
+                mcmVal = 999;
+              }
+              intentos++;
+            } while ((mcmVal > 100 || tFantasma === tVisual) && intentos < 50);
+
+            // Fallback de seguridad
+            if (intentos >= 50) {
+              tVisual = T[2]; // 37-53
+              tFantasma = T[4]; // 5-12-13
+              mcmVal = 52; // LCM(13, 4)
+            }
+
+            const k_fan = mcmVal / (tFantasma.prop[2] as number);
+            const k_vis = mcmVal / (tVisual.prop[1] as number);
+
+            const catMenorFan = (tFantasma.prop[0] as number) * k_fan;
+
+            respuestaFinal =
+              typeof tVisual.prop[2] === 'string'
+                ? `${k_vis}√${(tVisual.prop[2] as string).match(/\d+/)![0]}`
+                : k_vis * (tVisual.prop[2] as number);
+
+            enunciadoForzado = `La hipotenusa de un triángulo notable de ${tFantasma.name} (cuyo cateto opuesto al ángulo menor mide ${catMenorFan}) es congruente con el cateto adyacente al ángulo de ${tVisual.ang[0]}° del triángulo mostrado. Halla la hipotenusa x.`;
+            etiqLados[2] = 'x';
+          }
+
+          // =====================================
+          // EXPERTO: ECUACIONES LIMITADAS
+          // =====================================
+          else if (esExperto) {
+            let mcmVal = 0;
+            let tFantasma = T[0];
+            let intentos = 0;
+
+            // Solo triángulos con catetos/hipotenusas enteras y que su MCM sea <= 100
+            do {
+              tVisual = [T[2], T[3], T[4]][Math.floor(Math.random() * 3)];
+              tFantasma = [T[2], T[3], T[4]][Math.floor(Math.random() * 3)];
+              mcmVal = lcm(
+                tFantasma.prop[2] as number,
+                tVisual.prop[1] as number,
+              );
+              intentos++;
+            } while ((mcmVal > 100 || tFantasma === tVisual) && intentos < 50);
+
+            if (intentos >= 50) {
+              tVisual = T[2];
+              tFantasma = T[4];
+              mcmVal = 52;
+            }
+
+            const k_fan = mcmVal / (tFantasma.prop[2] as number);
+            const k_vis = mcmVal / (tVisual.prop[1] as number);
+
+            const catMenorFan = (tFantasma.prop[0] as number) * k_fan;
+
+            const catOpuestoReal = (tVisual.prop[0] as number) * k_vis;
+            const hipotenusaReal = (tVisual.prop[2] as number) * k_vis;
+
+            const xVal = Math.floor(Math.random() * 8) + 3; // Respuesta (x) entre 3 y 10
+
+            // 🔥 CONTROL DE CONSTANTES: Asegura que b esté entre -50 y +100
+            const generateEq = (target: number, x: number) => {
+              let a, b;
+              let att = 0;
+              do {
+                a = Math.floor(Math.random() * 5) + 2; // a entre 2 y 6
+                b = target - a * x;
+                att++;
+              } while ((b < -50 || b > 100) && att < 20);
+              return { a, b };
+            };
+
+            const eq1 = generateEq(catOpuestoReal, xVal);
+            const eq2 = generateEq(hipotenusaReal, xVal);
+
+            // Formateador elegante de ecuaciones
+            const fx = (a: number, b: number) =>
+              b === 0
+                ? `${a}x`
+                : b > 0
+                  ? `${a}x + ${b}`
+                  : `${a}x - ${Math.abs(b)}`;
+
+            etiqLados[0] = fx(eq1.a, eq1.b);
+            etiqLados[2] = fx(eq2.a, eq2.b);
+            respuestaFinal = xVal;
+
+            enunciadoForzado = `La hipotenusa de un triángulo notable de ${tFantasma.name} (cuyo cateto opuesto al ángulo menor mide ${catMenorFan}) es congruente con el cateto adyacente del triángulo mostrado. Plantea la proporcionalidad y halla x.`;
+          }
+
+          // =====================================
+          // RENDERIZADO VISUAL
+          // =====================================
+          const baseVisual = 8;
+          const hVisual = (tVisual.num[0] / tVisual.num[1]) * baseVisual;
+          const puntos: [number, number][] = [
+            [0, 0],
+            [baseVisual, 0],
+            [0, hVisual],
+          ];
+
+          const etiquetasLados: { pos: [number, number]; texto: string }[] = [];
+          if (etiqLados[1])
+            etiquetasLados.push({
+              pos: [baseVisual / 2, -0.8],
+              texto: etiqLados[1],
+            });
+          if (etiqLados[0])
+            etiquetasLados.push({
+              pos: [-1.4, hVisual / 2],
+              texto: etiqLados[0],
+            });
+          if (etiqLados[2])
+            etiquetasLados.push({
+              pos: [baseVisual / 2 + 1.2, hVisual / 2 + 0.8],
+              texto: etiqLados[2],
+            });
+
+          // 🔥 Tipado explícito a any[] para que TS no llore (y el verde de siempre)
+          const arcos: any[] = [];
+          arcos.push({
+            centro: [baseVisual, 0],
+            inicio: 180 - tVisual.ang[0],
+            fin: 180,
+            etiqueta: `${tVisual.ang[0]}°`,
+            colorIdx: 2,
+            labelVertice: '',
+          });
+
+          if (esBasico) {
+            arcos.push({
+              centro: [0, hVisual],
+              inicio: 270,
+              fin: 360 - tVisual.ang[0],
+              etiqueta: `${tVisual.ang[1]}°`,
+              colorIdx: 0,
+              labelVertice: '',
+            });
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'triangulos',
+            puntos,
+            arcos,
+            esRectangulo: true,
+            etiquetasLados,
+            lineasExtra: [],
+            respuestaSobreescrita: respuestaFinal,
+            enunciadoForzado,
+          };
+        }
+
+        case 'paralelas_abanico': {
+          const id = plantilla.id;
+          const numAngulos = Math.floor(Math.random() * 2) + 4; // 4 o 5 ángulos
+
+          // 1. GENERACIÓN DE ÁNGULOS (Suma = 180°)
+          const angulosReales: number[] = [];
+          let sumaTemp = 0;
+          for (let i = 0; i < numAngulos - 1; i++) {
+            const a = Math.floor(Math.random() * 25) + 25;
+            angulosReales.push(a);
+            sumaTemp += a;
+          }
+          angulosReales.push(180 - sumaTemp);
+
+          // 2. INGENIERÍA INVERSA DE ECUACIONES
+          const xVal = Math.floor(Math.random() * 8) + 4;
+          const ecuaciones = angulosReales.map((ang) => {
+            const a = Math.floor(Math.random() * 3) + 1;
+            const b = ang - a * xVal;
+            return { a, b, real: ang };
+          });
+
+          const fx = (a: number, b: number) =>
+            b === 0
+              ? `${a}x°`
+              : b > 0
+                ? `${a}x + ${b}°`
+                : `${a}x - ${Math.abs(b)}°`;
+
+          // 3. CÁLCULO VECTORIAL DE COORDENADAS
+          const pts: [number, number][] = [];
+          let currentP: [number, number] = [0, 5];
+          pts.push(currentP);
+
+          let currentDir = 0;
+          const dirs = [0];
+
+          for (let i = 0; i < numAngulos - 1; i++) {
+            currentDir -= angulosReales[i];
+            dirs.push(currentDir);
+            const rad = currentDir * (Math.PI / 180);
+            const L = 3.5;
+            currentP = [
+              currentP[0] + L * Math.cos(rad),
+              currentP[1] + L * Math.sin(rad),
+            ];
+            pts.push(currentP);
+          }
+
+          // 🔥 CÁLCULO DEL CENTRO DE GRAVEDAD (Para alinear L1 y L2)
+          const xCoords = pts.map((p) => p[0]);
+          const minX = Math.min(...xCoords);
+          const maxX = Math.max(...xCoords);
+          const midX = (minX + maxX) / 2;
+          const L_WIDTH = 10; // Ancho total = 20 unidades (Súper largas y simétricas)
+
+          // 4. CONSTRUCCIÓN DE LÍNEAS Y PROYECCIONES REALES
+          const lineasExtra: any[] = [];
+
+          // L1 (Superior - Centrada)
+          lineasExtra.push({
+            puntos: [
+              [midX - L_WIDTH, pts[0][1]],
+              [midX + L_WIDTH, pts[0][1]],
+            ],
+          });
+          // L2 (Inferior - Centrada)
+          const lastP = pts[pts.length - 1];
+          lineasExtra.push({
+            puntos: [
+              [midX - L_WIDTH, lastP[1]],
+              [midX + L_WIDTH, lastP[1]],
+            ],
+          });
+
+          // Dibujamos los segmentos principales del abanico
+          for (let i = 0; i < pts.length - 1; i++) {
+            lineasExtra.push({ puntos: [pts[i], pts[i + 1]] });
+          }
+
+          // 🔥 PROYECCIONES FRONTALES (Para que los arcos descansen sobre una línea)
+          const PROJ_LEN = 2.5; // Largo de la "colita"
+          for (let i = 1; i < pts.length; i++) {
+            // La dirección de la línea que 'entra' al vértice
+            const dirRad = dirs[i] * (Math.PI / 180);
+            const pProj = [
+              pts[i][0] + PROJ_LEN * Math.cos(dirRad),
+              pts[i][1] + PROJ_LEN * Math.sin(dirRad),
+            ];
+            lineasExtra.push({ puntos: [pts[i], pProj] });
+          }
+
+          // Etiquetas de L1 y L2 (Alineadas a la derecha)
+          const etiquetasLados: { pos: [number, number]; texto: string }[] = [
+            { pos: [midX + L_WIDTH - 1, pts[0][1] + 0.5], texto: 'L1' },
+            { pos: [midX + L_WIDTH - 1, lastP[1] + 0.5], texto: 'L2' },
+          ];
+
+          // 5. CÁLCULO DE ARCOS
+          const arcos: any[] = [];
+          for (let i = 0; i < numAngulos; i++) {
+            const center = pts[i];
+            let startA, endA;
+
+            if (i === 0) {
+              startA = 360 + dirs[1];
+              endA = 360;
+            } else if (i === numAngulos - 1) {
+              startA = 180;
+              endA = 180 + angulosReales[i];
+            } else {
+              startA = 360 + dirs[i + 1];
+              endA = 360 + dirs[i];
+            }
+
+            arcos.push({
+              centro: center,
+              inicio: startA,
+              fin: endA,
+              etiqueta: fx(ecuaciones[i].a, ecuaciones[i].b),
+              colorIdx: i % 4,
+              labelVertice: '',
+            });
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'triangulos',
+            puntos: [],
+            arcos,
+            lineasExtra,
+            etiquetasLados,
+            respuestaSobreescrita: xVal,
+            enunciadoForzado:
+              "En la figura, las rectas L1 y L2 son paralelas. Sabiendo que se cumple la 'Propiedad del Abanico', plantea la ecuación correspondiente y determina el valor de x.",
+          };
+        }
+
+        case 'area_rombo': {
+          const v = valores || {};
+          const id = plantilla.id || '';
+          const esExperto = id.includes('experto');
+
+          const realD1 = Number(v.d1) || 12;
+          const realD2 = Number(v.d2) || 16;
+          const d1Visual = 8;
+          const d2Visual = d1Visual * (realD2 / realD1);
+
+          const pTop: [number, number] = [0, d2Visual / 2];
+          const pBot: [number, number] = [0, -d2Visual / 2];
+          const pRight: [number, number] = [d1Visual / 2, 0];
+          const pLeft: [number, number] = [-d1Visual / 2, 0];
+          const puntos: [number, number][] = [pTop, pRight, pBot, pLeft];
+
+          const lineasExtra: any[] = [
+            { puntos: [pTop, pBot] },
+            { puntos: [pLeft, pRight] },
+          ];
+
+          const etiquetasLados: any[] = [
+            { pos: [-d1Visual / 2 - 0.4, 0], texto: 'A' },
+            { pos: [0, d2Visual / 2 + 0.4], texto: 'B' },
+            { pos: [d1Visual / 2 + 0.4, 0], texto: 'C' },
+            { pos: [0, -d2Visual / 2 - 0.4], texto: 'D' },
+          ];
+
+          // 🔥 EL FORMATEADOR ANTI-CERO (Garantiza que NUNCA imprima "0")
+          const fx = (a: any, b: any, fallback: number) => {
+            const valA = Number(a) || 0;
+            const valB = Number(b) || 0;
+
+            // Si el álgebra se anula por completo, devuelve el valor real (fallback)
+            if (valA === 0 && valB === 0) return `${fallback}`;
+            if (valA === 0) return `${valB}`;
+
+            let pre = valA === 1 ? 'x' : valA === -1 ? '-x' : `${valA}x`;
+            if (valB === 0) return pre;
+            return valB > 0 ? `${pre} + ${valB}` : `${pre} - ${Math.abs(valB)}`;
+          };
+
+          let enunciadoForzado = plantilla.enunciado;
+          if (!esExperto) {
+            let txtD1 = id.includes('basico')
+              ? `${realD1}`
+              : id.includes('intermedio')
+                ? `${v.a ?? 1}x`
+                : fx(v.a, v.b, realD1);
+            // Inyectamos realD2 como salvavidas por si v.c y v.d fallan
+            let txtD2 = id.includes('basico')
+              ? `${realD2}`
+              : fx(v.c, v.d, realD2);
+
+            etiquetasLados.push(
+              { pos: [d1Visual / 4, -0.4], texto: txtD1 },
+              { pos: [0.4, d2Visual / 4], texto: txtD2 },
+            );
+            enunciadoForzado = `Calcula el área del rombo ABCD sabiendo que la diagonal AC mide ${txtD1} cm y la diagonal BD mide ${txtD2} cm.`;
+          } else {
+            etiquetasLados.push({
+              pos: [d1Visual / 4, -0.6],
+              texto: `${v.diag_dada || 10}`,
+            });
+            etiquetasLados.push({
+              pos: [d1Visual / 4 + 0.8, d2Visual / 4 + 0.8],
+              texto: `${v.lado || 13}`,
+            });
+            lineasExtra.push(
+              {
+                puntos: [
+                  [0, 0.4],
+                  [0.4, 0.4],
+                ],
+              },
+              {
+                puntos: [
+                  [0.4, 0.4],
+                  [0.4, 0],
+                ],
+              },
+            );
+            enunciadoForzado = `Calcula el área del rombo ABCD sabiendo que su lado mide ${v.lado || 13} cm y la diagonal AC mide ${v.diag_dada || 10} cm.`;
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'triangulos',
+            puntos,
+            esArea: true,
+            etiquetasLados,
+            lineasExtra,
+            arcos: [],
+            enunciadoForzado,
+          };
+        }
+
+        // ========== ÁREA DE RECTÁNGULO ==========
+        case 'area_rectangulo':
+        case 'rectangulo_area': {
+          const v = valores || {};
+          const id = plantilla.id || '';
+          const esExperto = id.includes('experto');
+
+          const valX = Number(v.x) || 5;
+          const valA = Number(v.a) || (esExperto ? 2 : 0);
+          const valB = Number(v.b) || 4;
+          const valC = Number(v.c) || (esExperto ? 1 : 0);
+          const valD = Number(v.d) || 3;
+
+          let baseReal = valA === 0 ? valX + valB : valA * valX + valB;
+          let altReal = valC === 0 ? valX + valD : valC * valX + valD;
+          if (baseReal <= 0 || isNaN(baseReal)) baseReal = 10;
+          if (altReal <= 0 || isNaN(altReal)) altReal = 5;
+
+          const baseVisual = 8;
+          const hVisual = baseVisual * (altReal / baseReal);
+          const puntos: [number, number][] = [
+            [0, 0],
+            [baseVisual, 0],
+            [baseVisual, hVisual],
+            [0, hVisual],
+          ];
+
+          const etiquetasLados: any[] = [
+            { pos: [-0.3, -0.3], texto: 'A' },
+            { pos: [baseVisual + 0.3, -0.3], texto: 'B' },
+            { pos: [baseVisual + 0.3, hVisual + 0.3], texto: 'C' },
+            { pos: [-0.3, hVisual + 0.3], texto: 'D' },
+          ];
+
+          // 🔥 EL FORMATEADOR ANTI-CERO PARA EL RECTÁNGULO
+          const fx = (a: any, b: any, fallback: number) => {
+            const valA = Number(a) || 0;
+            const valB = Number(b) || 0;
+            if (valA === 0 && valB === 0) return `${fallback}`;
+            if (valA === 0) return `${valB}`;
+            let pre = valA === 1 ? 'x' : valA === -1 ? '-x' : `${valA}x`;
+            if (valB === 0) return pre;
+            return valB > 0 ? `${pre} + ${valB}` : `${pre} - ${Math.abs(valB)}`;
+          };
+
+          const txtBase =
+            id.includes('basico') || id.includes('intermedio')
+              ? `x + ${v.b || 4}`
+              : fx(valA, valB, baseReal);
+          const txtAlt =
+            id.includes('basico') || id.includes('intermedio')
+              ? valC === 0
+                ? `${valD || 5}`
+                : `x + ${valD || 5}`
+              : fx(valC, valD, altReal);
+
+          etiquetasLados.push({ pos: [baseVisual / 2, -0.6], texto: txtBase });
+          etiquetasLados.push({ pos: [-1.4, hVisual / 2], texto: txtAlt });
+
+          const lineasExtra: any[] = [];
+          if (esExperto)
+            lineasExtra.push({
+              puntos: [
+                [0, 0],
+                [baseVisual, hVisual],
+              ],
+            });
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'triangulos',
+            puntos,
+            esArea: true,
+            etiquetasLados,
+            lineasExtra,
+            arcos: [],
+          };
+        }
+        // Añadir los demas casos
+
+        default:
+          console.log(
+            `⚠️ [DEBUG] Cayó en default. Subtipo no reconocido o case ausente:`,
+            plantilla.subtipo,
+          );
+          return null;
+      }
+    }
+    return null;
   }
 }
