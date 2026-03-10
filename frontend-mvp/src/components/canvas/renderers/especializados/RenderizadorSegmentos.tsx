@@ -73,80 +73,75 @@ export const RenderizadorSegmentos = ({ parametros }: { parametros: any }) => {
   const xFinalTotal = puntosX[puntosX.length - 1];
 
   return (
-
-  
-  <Mafs height={300} viewBox={VIEWBOX_SEGMENTOS} pan={false} zoom={false}>
-
-    <>
-      {/* 1. LÍNEA PRINCIPAL (EJE X) */}
-      <Line.Segment
-        point1={[0, 0]}
-        point2={[xFinalTotal, 0]}
-        color={CONFIG.COLOR_LINEA_PRINCIPAL}
-        weight={CONFIG.GROSOR_PRINCIPAL}
-      />
-
-      {/* 2. PUNTOS Y SUS LETRAS (A, B, C...) */}
-      {puntosX.map((posX, i) => {
-        const letra = String.fromCharCode(65 + i);
-        return (
-          <g key={`punto-${i}`}>
-            {/* Punto Azul */}
-            <Point
-              x={posX}
-              y={0}
-              color={CONFIG.COLOR_PUNTOS}
-              svgCircleProps={{ r: CONFIG.RADIO_PUNTOS }}
-            />
-
-            {/* Letra A, B, C */}
-            <Text
-              x={posX}
-              y={CONFIG.Y_LETRAS_PUNTOS}
-              attach="n"
-              size={20}
-              color={CONFIG.COLOR_LETRAS}
-              svgTextProps={{ fontWeight: "bold" }}
-            >
-              {letra}
-            </Text>
-          </g>
-        );
-      })}
-
-      {/* 3. COTAS SUPERIORES (PARTES) */}
-      {segments.map((segmento: any, i: number) => (
-        <MeasureDimension
-          key={`cota-sup-${i}`}
-          inicio={[puntosX[i], 0]}
-          fin={[puntosX[i + 1], 0]}
-          etiqueta={segmento.label}
-          // 🔥 AQUÍ SE USAN TUS VARIABLES DE CONTROL
-          alturaLinea={CONFIG.Y_COTAS_ARRIBA_LINEA}
-          alturaTexto={CONFIG.Y_COTAS_ARRIBA_TEXTO}
-          alturaPatitas={CONFIG.ALTO_PATITAS_ARRIBA}
-          color={CONFIG.COLOR_COTAS}
-          grosor={CONFIG.GROSOR_COTAS}
+    <Mafs height={300} viewBox={VIEWBOX_SEGMENTOS} pan={false} zoom={false}>
+      <>
+        {/* 1. LÍNEA PRINCIPAL (EJE X) */}
+        <Line.Segment
+          point1={[0, 0]}
+          point2={[xFinalTotal, 0]}
+          color={CONFIG.COLOR_LINEA_PRINCIPAL}
+          weight={CONFIG.GROSOR_PRINCIPAL}
         />
-      ))}
 
-      {/* 4. COTA INFERIOR (TOTAL) */}
-      {total_label && (
-        <MeasureDimension
-          inicio={[0, 0]}
-          fin={[xFinalTotal, 0]}
-          etiqueta={total_label.toString()}
-          // 🔥 AQUÍ SE USAN TUS VARIABLES DE CONTROL
-          alturaLinea={CONFIG.Y_COTA_TOTAL_LINEA}
-          alturaTexto={CONFIG.Y_COTA_TOTAL_TEXTO}
-          alturaPatitas={CONFIG.ALTO_PATITAS_ABAJO}
-          color={CONFIG.COLOR_COTAS}
-          grosor={CONFIG.GROSOR_COTAS}
-        />
-      )}
-    </>
-  
+        {/* 2. PUNTOS Y SUS LETRAS (A, B, C...) */}
+        {puntosX.map((posX, i) => {
+          const letra = String.fromCharCode(65 + i);
+          return (
+            <g key={`punto-${i}`}>
+              {/* Punto Azul */}
+              <Point
+                x={posX}
+                y={0}
+                color={CONFIG.COLOR_PUNTOS}
+                svgCircleProps={{ r: CONFIG.RADIO_PUNTOS }}
+              />
 
-  </Mafs>
-  )
+              {/* Letra A, B, C */}
+              <Text
+                x={posX}
+                y={CONFIG.Y_LETRAS_PUNTOS}
+                attach="n"
+                size={20}
+                color={CONFIG.COLOR_LETRAS}
+                svgTextProps={{ fontWeight: "bold" }}
+              >
+                {letra}
+              </Text>
+            </g>
+          );
+        })}
+
+        {/* 3. COTAS SUPERIORES (PARTES) */}
+        {segments.map((segmento: any, i: number) => (
+          <MeasureDimension
+            key={`cota-sup-${i}`}
+            inicio={[puntosX[i], 0]}
+            fin={[puntosX[i + 1], 0]}
+            etiqueta={segmento.label}
+            // 🔥 AQUÍ SE USAN TUS VARIABLES DE CONTROL
+            alturaLinea={CONFIG.Y_COTAS_ARRIBA_LINEA}
+            alturaTexto={CONFIG.Y_COTAS_ARRIBA_TEXTO}
+            alturaPatitas={CONFIG.ALTO_PATITAS_ARRIBA}
+            color={CONFIG.COLOR_COTAS}
+            grosor={CONFIG.GROSOR_COTAS}
+          />
+        ))}
+
+        {/* 4. COTA INFERIOR (TOTAL) */}
+        {total_label && (
+          <MeasureDimension
+            inicio={[0, 0]}
+            fin={[xFinalTotal, 0]}
+            etiqueta={total_label.toString()}
+            // 🔥 AQUÍ SE USAN TUS VARIABLES DE CONTROL
+            alturaLinea={CONFIG.Y_COTA_TOTAL_LINEA}
+            alturaTexto={CONFIG.Y_COTA_TOTAL_TEXTO}
+            alturaPatitas={CONFIG.ALTO_PATITAS_ABAJO}
+            color={CONFIG.COLOR_COTAS}
+            grosor={CONFIG.GROSOR_COTAS}
+          />
+        )}
+      </>
+    </Mafs>
+  );
 };

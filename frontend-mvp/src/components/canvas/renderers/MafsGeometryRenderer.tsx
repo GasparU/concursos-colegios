@@ -29,6 +29,8 @@ import { RenderizadorSegmentosCircunferencia } from "./especializados/Renderizad
 import { RenderizadorPropiedadesCircunferencia } from "./especializados/RenderizadorPropiedadesCircunferencia";
 import { RenderizadorTriangulos } from "./especializados/RenderizadorTriangulos";
 import RenderizadorTrianguloCompleto from "./especializados/RenderizadorTrianguloCompleto";
+import { RenderizadorSegmentos } from "./especializados/RenderizadorSegmentos";
+import { StatisticsTable } from "./StatisticsTable";
 
 
 export const MafsGeometryRenderer = (props: any) => {
@@ -147,6 +149,10 @@ export const MafsGeometryRenderer = (props: any) => {
     case "simetria":
       return <RenderizadorSimetria />;
 
+    case "segmentos":
+      // Aseguramos que pasamos los parámetros limpios al componente especializado
+      return <RenderizadorSegmentos parametros={parametros} />;
+
     // Nuevos casos
     case "rectangulo_punto_diagonal":
       return <RenderizadorRectanguloPuntoDiagonal parametros={parametros} />;
@@ -173,6 +179,13 @@ export const MafsGeometryRenderer = (props: any) => {
     case "chart_bar":
     case "chart_pie":
       return <StatisticsChart type={tipoFigura} data={parametros} />;
+
+    case "frequency_table":
+    case "pictogram_table":
+    case "probabilidad_table":
+      return (
+        <StatisticsTable visualData={{ type: tipoFigura, ...parametros }} />
+      );
 
     default:
       return (

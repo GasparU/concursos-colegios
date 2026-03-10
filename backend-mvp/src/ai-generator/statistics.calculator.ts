@@ -157,9 +157,12 @@ export function calculateMeanFromTable(
 
   const solutionMarkdown = steps.join('\n');
 
+  const visualUpdates = [{ rowIndex: variableIndex, value: correctValue }];
+
   return {
     solutionMarkdown,
     correctValue,
+    visualUpdates,
   };
 }
 

@@ -1522,41 +1522,6 @@
       "fuente": "Adaptado de problemas avanzados"
     }
   },
-
-  {
-    "id": "geo_angulos_teoricos_basico",
-    "tema": "geometria",
-    "subtipo": "angulos_teoricos",
-    "grado": "5to",
-    "etapa": ["clasificatoria"],
-    "dificultad": ["basico"],
-    "bidireccional": true,
-    "enunciado": "Generado dinamicamente",
-    "variables": {
-      "is_comp": { "type": "number", "min": 0, "max": 1, "step": 1 },
-      "x": { "type": "number", "min": 8, "max": 20, "step": 2 },
-      "a": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "b": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "req_tipo": { "type": "number", "min": 0, "max": 1, "step": 1 },
-      "req_coef": { "type": "number", "min": 1, "max": 3, "step": 1 }
-    },
-    "relaciones": [
-      "T = is_comp == 1 ? 90 : 180",
-      "ang1 = a * x",
-      "ang2 = b * x",
-      "ang3 = T - ang1 - ang2",
-      "respuesta_final = req_tipo == 0 ? 90 - req_coef * x : 180 - req_coef * x"
-    ],
-    "restricciones": ["ang3 > 10", "respuesta_final > 0"],
-    "incognita_directa": "respuesta_final",
-    "incognitas_inversa": ["is_comp", "a", "b", "req_tipo", "req_coef"],
-    "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["ángulos consecutivos", "complemento final"],
-      "tiempo_estimado": 60,
-      "requiere_calculadora": false
-    }
-  },
   {
     "id": "geo_angulos_teoricos_basico",
     "tema": "geometria",
@@ -3607,69 +3572,143 @@
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-  
-  
-
-  {
-    "id": "geo_regiones_sombreadas_compuestas_01",
+{
+    "id": "geo_segmentos_basico_conamat",
     "tema": "geometria",
-    "subtipo": "regiones_sombreadas_compuestas",
+    "subtipo": "segmentos",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
+    "bidireccional": true,
+    "enunciado": "En una recta se ubican los puntos consecutivos A, B, C y D. Se sabe que {texto_dinamico}. Si la longitud total AD es {total} u, calcula la longitud del segmento {incognita_texto}.",
+    "variables": {
+      "var_pos": { "type": "number", "min": 0, "max": 2, "step": 1 },
+      "x": { "type": "number", "min": 4, "max": 10, "step": 1 },
+      "cte": { "type": "number", "min": 2, "max": 6, "step": 1 },
+      "y": { "type": "number", "min": 6, "max": 14, "step": 2 }
+    },
+    "relaciones": [
+      "s1 = var_pos == 0 ? x + cte : y",
+      "s2 = var_pos == 1 ? x + cte : y",
+      "s3 = var_pos == 2 ? x + cte : y",
+      "total = s1 + s2 + s3",
+      "val_incognita = var_pos == 0 ? s1 : (var_pos == 1 ? s2 : s3)",
+      "incognita_texto = var_pos == 0 ? 'AB' : (var_pos == 1 ? 'BC' : 'CD')",
+      "respuesta = val_incognita"
+    ],
+    "incognita_directa": "respuesta",
+    "metadata": { "habilidades": ["punto medio rotativo", "deducción de segmento"] }
+  },
+  {
+    "id": "geo_segmentos_intermedio_conamat",
+    "tema": "geometria",
+    "subtipo": "segmentos",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["intermedio"],
+    "bidireccional": true,
+    "enunciado": "Sobre una recta se ubican los puntos A, B, C y D. Se sabe que {texto_dinamico}. Si AD = {total} u, calcula la medida del segmento {incognita_texto}.",
+    "variables": {
+      "var_pos": { "type": "number", "min": 0, "max": 5, "step": 1 },
+      "x": { "type": "number", "min": 4, "max": 12, "step": 1 },
+      "m": { "type": "number", "min": 2, "max": 3, "step": 1 },
+      "n": { "type": "number", "min": 4, "max": 5, "step": 1 }
+    },
+    "relaciones": [
+      "s1 = var_pos == 0 ? x : (var_pos == 1 ? x : (var_pos == 2 ? m*x : (var_pos == 3 ? n*x : (var_pos == 4 ? m*x : n*x))))",
+      "s2 = var_pos == 0 ? m*x : (var_pos == 1 ? n*x : (var_pos == 2 ? x : (var_pos == 3 ? x : (var_pos == 4 ? n*x : m*x))))",
+      "s3 = var_pos == 0 ? n*x : (var_pos == 1 ? m*x : (var_pos == 2 ? n*x : (var_pos == 3 ? m*x : (var_pos == 4 ? x : x))))",
+      "total = s1 + s2 + s3",
+      "incognita_texto = var_pos < 2 ? 'AB' : (var_pos < 4 ? 'BC' : 'CD')",
+      "respuesta = x"
+    ],
+    "incognita_directa": "respuesta",
+    "metadata": { "habilidades": ["proporciones dinámicas", "ubicación espacial"] }
+  },  
+  {
+    "id": "geo_segmentos_avanzado_conamat",
+    "tema": "geometria",
+    "subtipo": "segmentos",
     "grado": "5to",
     "etapa": ["final"],
     "dificultad": ["avanzado"],
     "bidireccional": true,
-    "enunciado": "En la figura, se tienen varias regiones. Las áreas de tres regiones sombreadas son {area1}, {area2} y {area3} respectivamente. Calcula la diferencia entre el área del rectángulo ABCD y el área del triángulo AMN.",
+    "enunciado": "En una recta se ubican los 5 puntos colineales A, B, C, D y E. Se sabe que {texto_dinamico}. Si AE = {total} u y la medida del menor segmento es 'x', halla el valor de 'x'.",
     "variables": {
-      "area1": { "type": "number", "min": 5, "max": 40, "step": 1 },
-      "area2": { "type": "number", "min": 5, "max": 40, "step": 1 },
-      "area3": { "type": "number", "min": 5, "max": 40, "step": 1 }
+      "var_pos": { "type": "number", "min": 0, "max": 3, "step": 1 },
+      "x": { "type": "number", "min": 5, "max": 10, "step": 1 },
+      "razon": { "type": "number", "min": 2, "max": 5, "step": 1 }
     },
-    "relaciones": ["diferencia = area1 + area2 + area3"],
-    "restricciones": [],
-    "incognita_directa": "diferencia",
-    "incognitas_inversa": ["area1", "area2", "area3"],
-    "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["áreas", "composición de figuras"],
-      "tiempo_estimado": 200,
-      "requiere_calculadora": true,
-      "fuente": "Adaptado de problema 17 (final)"
-    }
+    "relaciones": [
+      "s1 = var_pos == 0 ? x : x + 3*razon",
+      "s2 = var_pos == 1 ? x : x + razon",
+      "s3 = var_pos == 2 ? x : x + 2*razon",
+      "s4 = var_pos == 3 ? x : x + 4*razon",
+      "total = s1 + s2 + s3 + s4",
+      "respuesta = x"
+    ],
+    "incognita_directa": "respuesta",
+    "metadata": { "habilidades": ["sucesiones de 5 puntos", "excesos rotativos"] }
   },
+  {
+    "id": "geo_segmentos_experto_conamat",
+    "tema": "geometria",
+    "subtipo": "segmentos",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
+    "bidireccional": true,
+    "enunciado": "Sobre una recta se ubican los 5 puntos A, B, C, D y E. Se cumple que {texto_dinamico} y además AE = {total} u. Calcula la medida del segmento {texto_incognita}.",
+    "variables": {
+      "s1": { "type": "number", "min": 3, "max": 8, "step": 1 },
+      "s2": { "type": "number", "min": 4, "max": 9, "step": 1 },
+      "s3": { "type": "number", "min": 5, "max": 10, "step": 1 },
+      "s4": { "type": "number", "min": 2, "max": 7, "step": 1 },
+      "var_pos": { "type": "number", "min": 0, "max": 3, "step": 1 }
+    },
+    "relaciones": [
+      "ac = s1 + s2",
+      "bd = s2 + s3",
+      "ce = s3 + s4",
+      "total = s1 + s2 + s3 + s4",
+      "texto_incognita = var_pos == 0 ? 'AB' : (var_pos == 1 ? 'BC' : (var_pos == 2 ? 'CD' : 'DE'))",
+      "respuesta = var_pos == 0 ? s1 : (var_pos == 1 ? s2 : (var_pos == 2 ? s3 : s4))"
+    ],
+    "incognita_directa": "respuesta",
+    "metadata": { "habilidades": ["traslape quíntuple", "sistemas lineales"] }
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+
 
   {
     "id": "estadistica_barras_01",
@@ -3703,6 +3742,61 @@
       "requiere_calculadora": false,
       "fuente": "Adaptado de problemas de estadística"
     }
+  },
+  {
+    "id": "estadistica_barras_intermedio",
+    "tema": "estadistica",
+    "subtipo": "estadistica_barras_01",
+    "grado": "5to",
+    "dificultad": ["Intermedio"],
+    "variables": {
+      "lun": { "type": "number", "min": 10, "max": 20 },
+      "mar": { "type": "number", "min": 10, "max": 20 },
+      "mie": { "type": "number", "min": 10, "max": 20 },
+      "jue": { "type": "number", "min": 10, "max": 20 },
+      "vie": { "type": "number", "min": 10, "max": 20 }
+    },
+    "enunciado": "Observa el gráfico de ventas. ¿Cuál es la diferencia entre el día de mayor venta y el de menor venta?",
+    "relaciones": [
+      "lista = [lun, mar, mie, jue, vie]",
+      "ans = max(lista) - min(lista)"
+    ],
+    "incognita_directa": "ans"
+  },
+  {
+    "id": "estadistica_promedio_faltante",
+    "tema": "estadistica",
+    "subtipo": "estadistica_frecuencias_01",
+    "grado": "5to",
+    "dificultad": ["Avanzado"],
+    "variables": {
+      "nota1": { "type": "number", "min": 10, "max": 20 },
+      "nota2": { "type": "number", "min": 10, "max": 20 },
+      "promedio": { "type": "number", "min": 15, "max": 18 }
+    },
+    "enunciado": "Un alumno tiene dos notas: ${nota1} y ${nota2}. ¿Qué nota debe sacar en el tercer examen para que su promedio sea exactamente ${promedio}?",
+    "relaciones": [
+      "ans = (promedio * 3) - nota1 - nota2"
+    ],
+    "incognita_directa": "ans"
+  },
+  {
+    "id": "estadistica_barras_doble",
+    "tema": "estadistica",
+    "subtipo": "grafico_barras_doble",
+    "grado": "5to",
+    "dificultad": ["Experto"],
+    "variables": {
+      "a1": { "type": "number", "min": 5, "max": 15 },
+      "b1": { "type": "number", "min": 5, "max": 15 },
+      "a2": { "type": "number", "min": 5, "max": 15 },
+      "b2": { "type": "number", "min": 5, "max": 15 }
+    },
+    "enunciado": "El gráfico muestra las ventas de dos sedes (A y B). ¿Cuántas unidades en total vendió la Sede A en ambos días?",
+    "relaciones": [
+      "ans = a1 + a2"
+    ],
+    "incognita_directa": "ans"
   },
   {
     "id": "estadistica_circular_angulo",
@@ -3848,5 +3942,52 @@
       "requiere_calculadora": false,
       "fuente": "Adaptado de problemas de estadística"
     }
+  },
+  {
+    "id": "estadistica_barras_comparativo",
+    "tema": "estadistica",
+    "subtipo": "estadistica_barras_01",
+    "grado": "5to",
+    "variables": {
+      "dia_a": {
+        "type": "string",
+        "opciones": ["Lunes", "Martes", "Miércoles"]
+      },
+      "dia_b": { "type": "string", "opciones": ["Jueves", "Viernes"] },
+      "lun": { "type": "number", "min": 10, "max": 50 },
+      "mar": { "type": "number", "min": 10, "max": 50 },
+      "mie": { "type": "number", "min": 10, "max": 50 },
+      "jue": { "type": "number", "min": 10, "max": 50 },
+      "vie": { "type": "number", "min": 10, "max": 50 }
+    },
+    "enunciado": "En el gráfico de barras se muestran las temperaturas de la semana. ¿Cuántos grados más de diferencia hubo entre el día con mayor temperatura y el de menor temperatura?",
+    "relaciones": [
+      "lista = [lun, mar, mie, jue, vie]",
+      "max_val = max(lista)",
+      "min_val = min(lista)",
+      "ans = max_val - min_val"
+    ],
+    "incognita_directa": "ans"
+  },
+  {
+    "id": "estadistica_mediana_tabla",
+    "tema": "estadistica",
+    "subtipo": "estadistica_frecuencias_01",
+    "grado": "5to",
+    "variables": {
+      "edad1": { "type": "number", "min": 8, "max": 9 },
+      "frec1": { "type": "number", "min": 2, "max": 5 },
+      "edad2": { "type": "number", "min": 10, "max": 10 },
+      "frec2": { "type": "number", "min": 3, "max": 6 },
+      "edad3": { "type": "number", "min": 11, "max": 11 },
+      "frec3": { "type": "number", "min": 2, "max": 5 }
+    },
+    "enunciado": "La tabla muestra las edades de los niños en un taller de arte. ¿Cuál es la mediana de las edades?",
+    "relaciones": [
+      "total = frec1 + frec2 + frec3",
+      "mitad = total / 2",
+      "ans = (frec1 >= mitad) ? edad1 : ((frec1 + frec2 >= mitad) ? edad2 : edad3)"
+    ],
+    "incognita_directa": "ans"
   }
 ]

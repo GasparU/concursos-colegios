@@ -3,6 +3,7 @@ import { BaseGradoService } from './base.grado.service';
 import { Plantilla } from '../parametric-generator.service';
 import Fraction from 'fraction.js';
 import { obtenerAngulosArco } from '../utils/geometriaHelpers';
+import { MCD } from '../utils/math-helpers';
 
 @Injectable()
 export class QuintoGradoService extends BaseGradoService {
@@ -51,6 +52,64 @@ export class QuintoGradoService extends BaseGradoService {
           base + `¿cuánto dinero le falta a ${valores.nombre} para poder pagar?`
         );
       }
+    }
+
+    let enunciadoBase = String(plantilla.enunciado || '');
+
+    // 🔥 2. PEGA ESTE BLOQUE EXACTAMENTE DEBAJO DE TU VARIABLE:
+    if (plantilla.id && plantilla.id.includes('geo_segmentos')) {
+      const pos = valores.var_pos !== undefined ? valores.var_pos : 0;
+      let texto = '';
+
+      // 🚀 DECLARACIÓN SEGURA: La creamos aquí arriba para que todo el bloque la vea
+      const nombrarProp = (num: number) => {
+        const nombres: Record<number, string> = {
+          2: 'el doble',
+          3: 'el triple',
+          4: 'el cuádruple',
+          5: 'el quíntuple',
+        };
+        return nombres[num] || `${num} veces`;
+      };
+
+      if (plantilla.id.includes('basico')) {
+        texto =
+          pos === 0
+            ? `C es punto medio de BD, AB = x + ${valores.cte} y CD = ${valores.y}`
+            : pos === 1
+              ? `AB y CD son congruentes (cada uno mide ${valores.y} u) y BC = x + ${valores.cte}`
+              : `B es punto medio de AC, AB = ${valores.y} y CD = x + ${valores.cte}`;
+      } else if (plantilla.id.includes('intermedio')) {
+        // Ahora TypeScript sí encuentra la función sin problemas
+        const tm = nombrarProp(valores.m || 2);
+        const tn = nombrarProp(valores.n || 3);
+
+        texto =
+          pos === 0
+            ? `la medida de BC es ${tm} de AB, y CD es ${tn} de AB`
+            : pos === 1
+              ? `la medida de CD es ${tm} de AB, y BC es ${tn} de AB`
+              : pos === 2
+                ? `la medida de AB es ${tm} de BC, y CD es ${tn} de BC`
+                : pos === 3
+                  ? `la medida de CD es ${tm} de BC, y AB es ${tn} de BC`
+                  : pos === 4
+                    ? `la medida de AB es ${tm} de CD, y BC es ${tn} de CD`
+                    : `la medida de BC es ${tm} de CD, y AB es ${tn} de CD`;
+      } else if (plantilla.id.includes('avanzado')) {
+        texto =
+          pos === 0
+            ? `BC excede a AB en ${valores.razon} u, CD excede a AB en ${2 * valores.razon} u y DE excede a AB en ${4 * valores.razon} u`
+            : pos === 1
+              ? `AB excede a BC en ${3 * valores.razon} u, CD excede a BC en ${valores.razon} u y DE excede a BC en ${4 * valores.razon} u`
+              : pos === 2
+                ? `AB excede a CD en ${3 * valores.razon} u, BC excede a CD en ${valores.razon} u y DE excede a CD en ${4 * valores.razon} u`
+                : `AB excede a DE en ${3 * valores.razon} u, BC excede a DE en ${valores.razon} u y CD excede a DE en ${2 * valores.razon} u`;
+      } else if (plantilla.id.includes('experto')) {
+        texto = `AC = ${valores.ac} u, BD = ${valores.bd} u y CE = ${valores.ce} u`;
+      }
+
+      enunciadoBase = enunciadoBase.replace('{texto_dinamico}', texto);
     }
 
     if (plantilla.subtipo === 'area_rombo') {
@@ -614,7 +673,7 @@ export class QuintoGradoService extends BaseGradoService {
       scope.texto_angulo_2 = `${valores.val_c}°`;
     }
 
-    let enunciadoBase = plantilla.enunciado;
+   
 
     // 🔥 2. Narrativa dinámica para la posición del punto P (Rectángulo Diagonal)
     if (plantilla.id === 'geo_rectangulo_punto_diagonal_01') {
@@ -662,66 +721,160 @@ export class QuintoGradoService extends BaseGradoService {
       }
     }
 
+    if (enunciadoBase.includes('{texto_dinamico}')) {
+      enunciadoBase = enunciadoBase.replace(
+        '{texto_dinamico}',
+        'analiza la figura mostrada',
+      );
+    }
+
     return enunciadoBase;
   }
 
   generarVisualData(plantilla: Plantilla, valores: Record<string, any>): any {
-    console.log(`\n🔍 [DEBUG] Evaluando en switch:`, plantilla.subtipo);
-    // ========== ESTADÍSTICA ==========
+
+    const getTicks = (vals: number[]) => {
+      const maxVal = Math.max(...vals, 0);
+      const step = maxVal > 20 ? 5 : 2;
+      const ticks: number[] = [];
+      for (let i = 0; i <= maxVal + step; i += step) ticks.push(i);
+      return ticks;
+    };
+    
     if (plantilla.tema === 'estadistica') {
-      switch (plantilla.subtipo) {
-        case 'grafico_barras':
+
+      switch (
+        plantilla.id // 🔥 Usamos el ID para mayor precisión
+      ) {
+        case 'estadistica_barras_01':
+        case 'estadistica_barras_intermedio':
+          const bVals = [
+            valores.lun,
+            valores.mar,
+            valores.mie,
+            valores.jue,
+            valores.vie,
+          ];
           return {
             type: 'chart_bar',
+            ticks: getTicks(bVals),
             data: [
-              { label: 'Lunes', value: valores.lun },
-              { label: 'Martes', value: valores.mar },
-              { label: 'Miércoles', value: valores.mie },
-              { label: 'Jueves', value: valores.jue },
-              { label: 'Viernes', value: valores.vie },
+              { label: 'Lun', value: valores.lun },
+              { label: 'Mar', value: valores.mar },
+              { label: 'Mie', value: valores.mie },
+              { label: 'Jue', value: valores.jue },
+              { label: 'Vie', value: valores.vie },
             ],
           };
-        case 'grafico_circular':
-          const porcentaje = valores.porcentaje;
-          const resto = 100 - porcentaje;
+
+        case 'estadistica_barras_doble':
+          return {
+            type: 'chart_bar_double',
+            data: [
+              { label: 'Día 1', SedeA: valores.a1, SedeB: valores.b1 },
+              { label: 'Día 2', SedeA: valores.a2, SedeB: valores.b2 },
+            ],
+          };
+
+        case 'estadistica_circular_angulo': { // El texto te da el Porcentaje
+          // 1. Capturamos el porcentaje EXACTO del texto
+          const pctReal = Number(valores.porcentaje);
+
           return {
             type: 'chart_pie',
             data: [
-              {
-                label: 'Sector principal',
-                value: porcentaje,
-                color: '#3b82f6',
-              },
-              { label: 'Resto', value: resto, color: '#e5e7eb' },
+              { name: 'Rojo', value: pctReal }, // Dibuja la tajada roja EXACTA al texto
+              { name: 'Resto', value: 100 - pctReal }
             ],
+            // 2. Calcula la respuesta en grados y la redondea a entero
+            respuestaSobreescrita: Math.round(pctReal * 3.6) + '°'
           };
-        case 'pictograma':
+        }
+
+       case 'estadistica_circular_porcentaje': { // El texto te da el Ángulo
+          // 1. Capturamos el valor EXACTO que el motor ya imprimió en el texto
+          const anguloReal = Number(valores.angulo);
+
           return {
-            type: 'pictogram_table',
+            type: 'chart_pie',
             data: [
-              { nombre: 'Ana', simbolos: valores.simbolos_ana },
-              { nombre: 'Bruno', simbolos: valores.simbolos_bruno },
-              { nombre: 'Carlos', simbolos: valores.simbolos_carlos },
+              { name: 'Rojo', value: anguloReal }, // Dibuja la tajada roja EXACTA al texto
+              { name: 'Resto', value: 360 - anguloReal } // Dibuja el resto
             ],
-            valorPorSimbolo: valores.valor_libros,
+            // 2. Calcula la respuesta y la redondea a entero
+            respuestaSobreescrita: Math.round(anguloReal / 3.6) + '%' 
           };
-        case 'probabilidad_basica':
+        }
+        case 'estadistica_probabilidad_01': {
+          const total =
+            (valores.rojas || 0) +
+            (valores.azules || 0) +
+            (valores.verdes || 0);
+          const fav = valores.azules;
+          const comun = MCD(fav, total);
           return {
             type: 'probabilidad_table',
-            data: [
-              { color: 'Rojo', cantidad: valores.rojas },
-              { color: 'Azul', cantidad: valores.azules },
-              { color: 'Verde', cantidad: valores.verdes },
+            headers: ['Color', 'Cantidad'],
+            rows: [
+              ['Rojo', valores.rojas],
+              ['Azul', valores.azules],
+              ['Verde', valores.verdes],
             ],
+            colorAccent: '#ec4899',
+            respuestaSobreescrita: {
+              numerador: Math.round(fav / comun),
+              denominador: Math.round(total / comun),
+            },
           };
-        case 'tabla_frecuencias':
-          const data = [
-            { edad: valores.edad1, frecuencia: valores.frec1 },
-            { edad: valores.edad2, frecuencia: valores.frec2 },
-            { edad: valores.edad3, frecuencia: valores.frec3 },
-            { edad: valores.edad4, frecuencia: valores.frec4 },
-          ];
-          return { type: 'frequency_table', data };
+        }
+
+        case 'estadistica_frecuencias_01':
+        case 'estadistica_promedio_faltante': {
+          // Generamos 3 notas reales
+          const n1 = Math.floor(Math.random() * 5) + 12; // 12 a 16
+          const n2 = Math.floor(Math.random() * 5) + 10; // 10 a 14
+          const n3 = Math.floor(Math.random() * 5) + 13; // 13 a 17
+          
+          // Definimos un promedio objetivo que sea alcanzable (ej. 15)
+          const promedioObjetivo = Math.floor(Math.random() * 3) + 14; 
+          
+          // Calculamos la nota faltante para 4 notas en total
+          // Suma total necesaria = promedio * 4
+          const notaFaltante = (promedioObjetivo * 4) - n1 - n2 - n3;
+
+          // Actualizamos el objeto de valores para el motor de texto
+          valores.nota1 = n1;
+          valores.nota2 = n2;
+          valores.nota3 = n3;
+          valores.promedio = promedioObjetivo;
+
+          return {
+            type: 'frequency_table',
+            headers: ["Examen", "Nota"],
+            rows: [
+              ["1° Examen", n1],
+              ["2° Examen", n2],
+              ["3° Examen", n3],
+              ["4° Examen", "?"], // La incógnita
+            ],
+            colorAccent: "#6366f1",
+            respuestaSobreescrita: notaFaltante 
+          };
+        }
+
+        case 'estadistica_pictograma_01':
+          return {
+            type: 'pictogram_table',
+            headers: ['Estudiante', 'Símbolos'],
+            rows: [
+              ['Ana', valores.simbolos_ana],
+              ['Bruno', valores.simbolos_bruno],
+              ['Carlos', valores.simbolos_carlos],
+            ],
+            colorAccent: '#f97316',
+            valorPorSimbolo: valores.valor_libros,
+          };
+
         default:
           return null;
       }
@@ -822,6 +975,110 @@ export class QuintoGradoService extends BaseGradoService {
             labels: ['A', 'B', 'C', 'D'],
             color: '#2563eb',
           };
+
+        case 'segmentos': {
+          const v = valores;
+          const id = plantilla.id;
+          const pos = v.var_pos !== undefined ? v.var_pos : 0;
+          let params: any = {};
+
+          if (id.includes('basico')) {
+            const labels = ['', '', ''];
+            labels[pos] = `x + ${v.cte}`;
+            params = {
+              segments: [
+                {
+                  label: labels[0],
+                  coef: pos === 0 ? 1 : 0,
+                  const: pos === 0 ? v.cte : v.y,
+                },
+                {
+                  label: labels[1],
+                  coef: pos === 1 ? 1 : 0,
+                  const: pos === 1 ? v.cte : v.y,
+                },
+                {
+                  label: labels[2],
+                  coef: pos === 2 ? 1 : 0,
+                  const: pos === 2 ? v.cte : v.y,
+                },
+              ],
+              total_label: v.total.toString(),
+              x_value: v.x,
+            };
+          } else if (id.includes('intermedio')) {
+            const labels = ['', '', ''];
+            // Identifica dónde va la 'x' según las 6 posiciones
+            const idxX = pos < 2 ? 0 : pos < 4 ? 1 : 2;
+            labels[idxX] = 'x';
+
+            const m = v.m || 2;
+            const n = v.n || 3;
+
+            const coefs = [
+              [1, m, n], // pos 0
+              [1, n, m], // pos 1
+              [m, 1, n], // pos 2
+              [n, 1, m], // pos 3
+              [m, n, 1], // pos 4
+              [n, m, 1], // pos 5
+            ][pos];
+
+            params = {
+              segments: [
+                { label: labels[0], coef: coefs[0], const: 0 },
+                { label: labels[1], coef: coefs[1], const: 0 },
+                { label: labels[2], coef: coefs[2], const: 0 },
+              ],
+              total_label: v.total.toString(),
+              x_value: v.x,
+            };
+          } else if (id.includes('avanzado')) {
+            const labels = ['', '', '', ''];
+            labels[pos] = 'x';
+            params = {
+              segments: [
+                {
+                  label: labels[0],
+                  coef: 1,
+                  const: pos === 0 ? 0 : 3 * v.razon,
+                },
+                { label: labels[1], coef: 1, const: pos === 1 ? 0 : v.razon },
+                {
+                  label: labels[2],
+                  coef: 1,
+                  const: pos === 2 ? 0 : 2 * v.razon,
+                },
+                {
+                  label: labels[3],
+                  coef: 1,
+                  const: pos === 3 ? 0 : 4 * v.razon,
+                },
+              ],
+              total_label: v.total.toString(),
+              x_value: v.x,
+            };
+          } else {
+            const labels = ['', '', '', ''];
+            labels[pos] = 'x';
+            params = {
+              segments: [
+                { label: labels[0], coef: 0, const: v.s1 },
+                { label: labels[1], coef: 0, const: v.s2 },
+                { label: labels[2], coef: 0, const: v.s3 },
+                { label: labels[3], coef: 0, const: v.s4 },
+              ],
+              total_label: v.total.toString(),
+              x_value: 1,
+            };
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'segmentos',
+            params: params,
+          };
+        }
 
         case 'area_sombreada': {
           const v = valores;
@@ -5883,4 +6140,4 @@ export class QuintoGradoService extends BaseGradoService {
     }
     return null;
   }
-}
+} 
