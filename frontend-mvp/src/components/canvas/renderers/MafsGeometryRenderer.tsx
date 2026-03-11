@@ -31,6 +31,7 @@ import { RenderizadorTriangulos } from "./especializados/RenderizadorTriangulos"
 import RenderizadorTrianguloCompleto from "./especializados/RenderizadorTrianguloCompleto";
 import { RenderizadorSegmentos } from "./especializados/RenderizadorSegmentos";
 import { StatisticsTable } from "./StatisticsTable";
+import { RenderizadorAreaTriangulo } from "./especializados/RenderizadorAreaTriangulo";
 
 
 export const MafsGeometryRenderer = (props: any) => {
@@ -172,6 +173,11 @@ export const MafsGeometryRenderer = (props: any) => {
           color={parametros.color}
         />
       );
+
+      case "area_triangulo":
+      return <RenderizadorAreaTriangulo parametros={parametros} />;
+
+
     case "regiones_sombreadas_compuestas":
       return <RenderizadorRegionesCompuestas parametros={parametros} />;
 

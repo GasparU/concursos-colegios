@@ -165,14 +165,16 @@ export class ParametricGeneratorService {
         console.log(`[Intento ${intento}] Valores generados:`, valores);
 
         // 🔥 FIX CRÍTICO: Si el visualData calculó su propia respuesta (como en Triángulos), la sobreescribimos.
-        if (
-          visualData &&
-          (visualData as any).respuestaSobreescrita !== undefined
-        ) {
-          respuestaFinal = (visualData as any).respuestaSobreescrita;
-          // Opcional: limpiar la propiedad para no enviarla al frontend innecesariamente
-          delete (visualData as any).respuestaSobreescrita;
-        }
+        const sobreescrita = (visualData as any)?.respuestaSobreescrita ?? (visualData as any)?.data?.respuestaSobreescrita;
+
+          if (sobreescrita !== undefined) {
+            // 2. Si la encontramos, actualizamos la respuesta final del problema
+            respuestaFinal = sobreescrita;
+
+            // 3. Limpiamos para no ensuciar el JSON que va al frontend
+            if ((visualData as any).respuestaSobreescrita !== undefined) delete (visualData as any).respuestaSobreescrita;
+            if ((visualData as any).data?.respuestaSobreescrita !== undefined) delete (visualData as any).data.respuestaSobreescrita;
+          }
 
         if (visualData && (visualData as any).enunciadoForzado) {
           enunciadoFinal = (visualData as any).enunciadoForzado;

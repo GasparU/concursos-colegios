@@ -673,7 +673,27 @@ export class QuintoGradoService extends BaseGradoService {
       scope.texto_angulo_2 = `${valores.val_c}°`;
     }
 
-   
+
+  // 🔥 ENUNCIADOS TIPO EXAMEN (RIGUROSOS Y CLAROS) - ÁREA DE TRIÁNGULOS 🔥
+    if (plantilla.subtipo === 'area_triangulo') {
+      const v_x = Number(valores.var_x ?? 2);
+      // Sincronización perfecta del perímetro
+      const perim = (3 * v_x) + (4 * v_x) + (5 * v_x);
+
+      if (plantilla.id.includes('basico')) {
+        return "Calcula el área del triángulo rectángulo ABC mostrado. Considera los datos de la figura.";
+      } 
+      else if (plantilla.id.includes('intermedio')) {
+        return "Dado el triángulo ABC, halla su área total considerando los datos proporcionados.";
+      } 
+      else if (plantilla.id.includes('avanzado')) {
+        return "Calcula el área de la región sombreada en el triángulo obtusángulo ABC mostrado.";
+      } 
+      else if (plantilla.id.includes('experto')) {
+        // Enunciado formal y desafiante
+        return `El perímetro del triángulo rectángulo ABC mostrado es ${perim} u. Si sus lados guardan la proporción mostrada, halla el área de la región triangular.`;
+      }
+    }
 
     // 🔥 2. Narrativa dinámica para la posición del punto P (Rectángulo Diagonal)
     if (plantilla.id === 'geo_rectangulo_punto_diagonal_01') {
@@ -775,6 +795,115 @@ export class QuintoGradoService extends BaseGradoService {
               { label: 'Día 2', SedeA: valores.a2, SedeB: valores.b2 },
             ],
           };
+
+          case 'estadistica_tabla_variable_k': {
+              // Generamos un k exacto
+              const k = Math.floor(Math.random() * 5) + 5; // k entre 5 y 9
+              const total = (2 * k) + (3 * k) + (4 * k) + k; // Total = 10k
+              
+              // Sincronizamos para el enunciado
+              valores.total_personas = total;
+              valores.edad_preguntada = "11"; // Pediremos la de 3k
+
+              return {
+                type: 'frequency_table',
+                headers: ["Edad", "N° de Estudiantes (fi)"],
+                rows: [
+                  ["10 años", "2k"],
+                  ["11 años", "3k"],
+                  ["12 años", "4k"],
+                  ["13 años", "k"],
+                  ["Total", total]
+                ],
+                colorAccent: "#3b82f6",
+                // La respuesta es 3 * k
+                respuestaSobreescrita: (3 * k) 
+              };
+            }
+
+            // 🔥 CASO 2: Ecuación Textual para hallar 'm' (La imagen de los colores)
+            case 'estadistica_tabla_ecuacion_m': {
+              // Condición del problema: (Rojo + m) / 3 = (Azul + Verde) / 2
+              // Aseguramos que (Azul + Verde) sea par y múltiplo de 2
+              const azul = Math.floor(Math.random() * 5) + 16; // ej. 20
+              const verde = Math.floor(Math.random() * 5) + 16; // ej. 18
+              const sumaAV = azul + verde; // ej. 38
+              
+              // (Azul + Verde)/2 * 3 = Rojo + m
+              const valorDerecho = (sumaAV / 2) * 3; // ej. (38/2)*3 = 57
+              
+              // Elegimos un Rojo menor a valorDerecho
+              const rojo = Math.floor(Math.random() * 5) + 12; // ej. 15
+              
+              // Calculamos 'm' exacto
+              const m = valorDerecho - rojo; // ej. 57 - 15 = 42
+
+              return {
+                type: 'frequency_table',
+                headers: ["Color Favorito", "Cantidad"],
+                rows: [
+                  ["Azul", azul],
+                  ["Rojo", rojo],
+                  ["Amarillo", "m"],
+                  ["Verde", verde]
+                ],
+                colorAccent: "#f59e0b",
+                respuestaSobreescrita: m 
+              };
+            }
+
+           // 🔥 CASO 3: Gráfico Combinado (Dinámico y Exacto)
+            case 'estadistica_grafico_combinado': {
+              // 1. Datos del gráfico de Barras (Múltiplos de 100 para garantizar enteros)
+              const prod2022 = Math.floor(Math.random() * 5) * 100 + 1000; // 1000 a 1400
+              const prod2023 = Math.floor(Math.random() * 5) * 100 + 1500; // 1500 a 1900
+              const prod2024 = Math.floor(Math.random() * 5) * 100 + 2000; // 2000 a 2400
+
+              // 2. Tríos Perfectos: Porcentajes que suman 100 y son múltiplos de 5
+              const distribuciones = [
+                { r: 40, a: 35, n: 25 },
+                { r: 50, a: 30, n: 20 },
+                { r: 45, a: 35, n: 20 },
+                { r: 60, a: 25, n: 15 },
+                { r: 35, a: 45, n: 20 }
+              ];
+              // Elegimos una distribución al azar
+              const dist = distribuciones[Math.floor(Math.random() * distribuciones.length)];
+
+              // 3. Elegir el color objetivo de la pregunta al azar
+              const coloresObj = [
+                { nombre: "rojo", pct: dist.r },
+                { nombre: "azul", pct: dist.a },
+                { nombre: "negro", pct: dist.n }
+              ];
+              const objetivo = coloresObj[Math.floor(Math.random() * coloresObj.length)];
+
+              // 4. Sincronizamos el enunciado
+              valores.anio_objetivo = "2024";
+              valores.color_objetivo = objetivo.nombre;
+
+              // 5. Respuesta: El % objetivo aplicado a la producción de 2024
+              // Al ser prod2024 múltiplo de 100, la división entre 100 siempre es exacta.
+              const respuestaFinal = (objetivo.pct / 100) * prod2024;
+
+              return {
+                type: 'chart_combined',
+                data: {
+                  barData: [
+                    { name: "2022", value: prod2022 },
+                    { name: "2023", value: prod2023 },
+                    { name: "2024", value: prod2024 }
+                  ],
+                  pieData: [
+                    { name: `Rojo (${dist.r}%)`, value: Math.round(dist.r * 3.6) }, // Grados exactos
+                    { name: `Azul (${dist.a}%)`, value: Math.round(dist.a * 3.6) },
+                    { name: `Negro (${dist.n}%)`, value: Math.round(dist.n * 3.6) }
+                  ],
+                  pieLabels: [`Rojo ${dist.r}%`, `Azul ${dist.a}%`, `Negro ${dist.n}%`] 
+                },
+                respuestaSobreescrita: respuestaFinal
+              };
+            }
 
         case 'estadistica_circular_angulo': { // El texto te da el Porcentaje
           // 1. Capturamos el porcentaje EXACTO del texto
@@ -879,6 +1008,9 @@ export class QuintoGradoService extends BaseGradoService {
           return null;
       }
     }
+    
+
+    
 
     // ========== GEOMETRÍA ==========
     if (plantilla.tema === 'geometria') {
@@ -6128,6 +6260,123 @@ export class QuintoGradoService extends BaseGradoService {
             arcos: [],
           };
         }
+     
+       // 🔥 GEOMETRÍA: ÁREA DE TRIÁNGULOS (MATEMÁTICA PURA Y RIGUROSIDAD) 🔥
+        case 'geo_area_triangulo_basico':
+        case 'geo_area_triangulo_intermedio':
+        case 'geo_area_triangulo_avanzado':
+        case 'geo_area_triangulo_experto':
+        case 'area_triangulo': {
+          const id = plantilla.id || '';
+          const v = valores || {};
+          
+          // 1. Forzamos números y fallbacks blindados
+          const v_t = Number(v.var_t ?? 0);
+          const v_k = Number(v.var_k ?? 1);
+          const v_x = Number(v.var_x ?? 3); 
+          const v_flip = Number(v.var_flip ?? 0);
+          const v_hide = Number(v.var_hide ?? 0);
+
+          // 2. Lógica de Ternas Pitagóricas (Resultados siempre ENTEROS - Rigor)
+          const ternas = [ {a:3, b:4, c:5}, {a:5, b:12, c:13}, {a:8, b:15, c:17}, {a:6, b:8, c:10} ];
+          const terna = ternas[v_t % 4];
+          const cat1 = terna.a * v_k; 
+          const cat2 = terna.b * v_k; 
+          const hipo = terna.c * v_k;
+
+          const flipX = (v_flip & 1) ? -1 : 1;
+          const flipY = (v_flip & 2) ? -1 : 1;
+          const swapXY = (v_flip & 4) !== 0;
+
+          let ptsBase: [number, number][] = [];
+          const labels: any[] = [];
+          const lines: any[] = [];
+          let resFinal = 0;
+
+          // Ángulo 90 pura: Empezando del vértice (0,0) - El frontend lo orienta
+          const sym90 = { puntos: [[0, 1], [1, 1], [1, 0]], color: "red" };
+
+          if (id.includes('basico')) {
+            const b = cat1; const h = cat2;
+            ptsBase = [[0,0], [b,0], [0,h]]; // 90° en A
+            resFinal = (b * h) / 2;
+            lines.push(sym90);
+            
+            if (v_hide === 0) { // Oculta base, pide x
+              labels.push({ pos: [b/2, 0], dir: [0, -1], texto: `x`, tipo: "base" });
+              labels.push({ pos: [0, h/2], dir: [-1, 0], texto: `${h} u`, tipo: "h" });
+              labels.push({ pos: [b/2, h/2], dir: [1, 1], texto: `${hipo} u`, tipo: "hipo" });
+            } else { // Oculta altura, pide h
+              labels.push({ pos: [b/2, 0], dir: [0, -1], texto: `${b} u`, tipo: "base" });
+              labels.push({ pos: [0, h/2], dir: [-1, 0], texto: `h`, tipo: "h" });
+              labels.push({ pos: [b/2, h/2], dir: [1, 1], texto: `${hipo} u`, tipo: "hipo" });
+            }
+          } 
+          else if (id.includes('intermedio')) {
+            const bMitad = cat1; const h = cat2;
+            ptsBase = [[-bMitad, 0], [bMitad, 0], [0, h]];
+            resFinal = ((bMitad * 2) * h) / 2;
+
+            lines.push({ puntos: [[0, h], [0, 0]], color: "green", estilo: "dashed" }); // Altura
+            lines.push({ puntos: [[-0.8, 0], [-0.8, 0.8], [0, 0.8]], color: "red" }); // 90 de altura
+
+            labels.push({ pos: [0, 0], dir: [0, -1], texto: `${bMitad * 2} cm`, tipo: "base" });
+            labels.push({ pos: [0, h/2], dir: [1, 0], texto: `h`, tipo: "h" });
+            labels.push({ pos: [bMitad/2, h/2], dir: [1, 1], texto: `${hipo} cm`, tipo: "hipo" });
+          } 
+          else if (id.includes('avanzado')) {
+            const proy = cat1; const h = cat2; const baseT = 8;
+            ptsBase = [[0,0], [baseT,0], [-proy, h]];
+            resFinal = (baseT * h) / 2;
+
+            lines.push({ puntos: [[-proy, h], [-proy, 0]], color: "green", estilo: "dashed" }); // Altura ext
+            lines.push({ puntos: [[-proy, 0], [0, 0]], color: "green", estilo: "dashed" }); // Proy base
+            lines.push({ puntos: [[-proy, 0.8], [-proy+0.8, 0.8], [-proy+0.8, 0]], color: "red" }); // 90 externo
+            
+            labels.push({ pos: [baseT/2, 0], dir: [0, -1], texto: `${baseT} m`, tipo: "base" });
+            labels.push({ pos: [-proy, h/2], dir: [-1, 0], texto: `h`, tipo: "h" });
+            labels.push({ pos: [-proy/2, 0], dir: [0, -1], texto: `${proy} m`, tipo: "proy" });
+            labels.push({ pos: [-proy/2, h/2], dir: [-1, 1], texto: `${hipo} m`, tipo: "hipo_ext" });
+          } 
+          else { // EXPERTO
+            const b = 3*v_x; const h = 4*v_x;
+            ptsBase = [[0,0], [b,0], [0,h]];
+            resFinal = (b * h) / 2;
+            lines.push(sym90);
+            
+            labels.push({ pos: [b/2, 0], dir: [0, -1], texto: `3x`, tipo: "algebra" });
+            labels.push({ pos: [0, h/2], dir: [-1, 0], texto: `4x`, tipo: "algebra" });
+            labels.push({ pos: [b/2, h/2], dir: [1, 1], texto: `5x`, tipo: "algebra" });
+          }
+
+          // ROTACIONES LIMPIAS PARA PUNTOS Y VECTORES DE TEXTO
+          const rotar = (px: number, py: number): [number, number] => {
+            let nx = px * flipX; let ny = py * flipY;
+            if (swapXY) { const tmp = nx; nx = ny; ny = tmp; }
+            return [nx, ny];
+          };
+
+          const pts = ptsBase.map(([px, py]) => rotar(px, py));
+          const lineasExtra = lines.map(l => ({ ...l, puntos: l.puntos.map(([px, py]) => rotar(px, py)) }));
+          const etiquetas = labels.map(l => ({ ...l, pos: rotar(l.pos[0], l.pos[1]), dir: rotar(l.dir[0], l.dir[1]) }));
+
+          return {
+            valores: { ...v, respuesta: Math.round(resFinal) },
+            respuesta: Math.round(resFinal),
+            tipo_render: 'geometry_mafs',
+            data: {
+              type: 'geometry_mafs',
+              theme: 'area_triangulo',
+              puntos: pts,
+              esArea: true,
+              etiquetas,
+              lineasExtra,
+              arcos: [],
+              respuestaSobreescrita: Math.round(resFinal)
+            }
+          };
+        }
+
         // Añadir los demas casos
 
         default:
@@ -6136,6 +6385,535 @@ export class QuintoGradoService extends BaseGradoService {
             plantilla.subtipo,
           );
           return null;
+      }
+    }
+
+    if (plantilla.tema === 'razonamiento_matematico') {
+      switch (plantilla.id) {
+
+        case 'rm_conteo_triangulos_basico':
+        case 'rm_conteo_triangulos_intermedio':
+        case 'rm_conteo_triangulos_avanzado':
+        case 'rm_conteo_triangulos_experto': {
+          const id = plantilla.id || '';
+          let typeShape = "";
+          let params = {};
+          let total = 0;
+
+          if (id.includes('basico')) {
+            // Triángulo simple con N cevianas (Fórmula: n*(n+1)/2)
+            const n = Math.floor(Math.random() * 5) + 2; // 2 a 6 espacios
+            typeShape = "cevianas_base";
+            params = { espacios: n };
+            total = (n * (n + 1)) / 2;
+          } 
+          else if (id.includes('intermedio')) {
+            // Triángulo con cevianas Y líneas horizontales
+            const n = Math.floor(Math.random() * 4) + 2; // 2 a 5 espacios base
+            const h = Math.floor(Math.random() * 3) + 2; // 2 a 4 pisos horizontales
+            typeShape = "cevianas_malla";
+            params = { espacios: n, pisos: h };
+            total = h * ((n * (n + 1)) / 2);
+          }
+          else if (id.includes('avanzado')) {
+            // Cuadriláteros cruzados (El clásico cuadrado con 2 diagonales = 8 triángulos)
+            // Variación: Cuadrado cruzado con cruz interna (16 triángulos)
+            const varA = Math.random() > 0.5 ? 1 : 2;
+            if (varA === 1) {
+              typeShape = "cuadrado_diagonales"; // Cuadrado con X
+              total = 8;
+            } else {
+              typeShape = "cuadrado_asterisco"; // Cuadrado con X y + cruzados
+              total = 16;
+            }
+          }
+          else {
+            // Experto: Estrellas y Mallas Compuestas
+            const varE = Math.floor(Math.random() * 3);
+            if (varE === 0) {
+              typeShape = "estrella_5"; // Estrella de 5 puntas continua (siempre 10 triángulos)
+              total = 10;
+            } else if (varE === 1) {
+              typeShape = "estrella_david"; // Dos triángulos superpuestos (Estrella de 6) -> 8 triángulos
+              total = 8;
+            } else {
+              // Triángulo con cevianas y una transversal que cruza todo (Fórmula compleja, la daremos fija para evitar errores visuales)
+              typeShape = "cevianas_transversal";
+              params = { espacios: 4 }; // Fijo para el gráfico experto
+              total = 27; // 4 base, 1 transversal cruzando todos
+            }
+          }
+
+          return {
+            type: 'graphic_counting',
+            data: { shape: typeShape, params },
+            respuestaSobreescrita: total
+          };
+        }
+        
+        case 'rm_distribucion_hombrecito_basico':
+        case 'rm_distribucion_hombrecito_intermedio':
+        case 'rm_distribucion_hombrecito_avanzado':
+        case 'rm_distribucion_hombrecito_experto':
+        case 'rm_distribucion_hombrecito':
+        case 'distribucion_grafica': {
+          const id = plantilla.id || '';
+          
+          // Asignar banco de fórmulas según el nivel del ID
+          let patrones: number[] = [];
+          if (id.includes('basico')) patrones = [1, 2]; // Sumas y restas simples
+          else if (id.includes('avanzado')) patrones = [5, 6]; // Combos de Multiplicación
+          else if (id.includes('experto')) patrones = [7, 8]; // Cuadrados y combinaciones duras
+          else patrones = [3, 4]; // INTERMEDIO (Default)
+
+          const patronElegido = patrones[Math.floor(Math.random() * patrones.length)];
+
+          const generarHombrecito = () => {
+            let b1=0, b2=0, p1=0, p2=0, cabeza=0;
+            
+            if (patronElegido === 1) { // (b1+b2) + (p1+p2)
+                b1 = Math.floor(Math.random()*20)+1; b2 = Math.floor(Math.random()*20)+1;
+                p1 = Math.floor(Math.random()*15)+1; p2 = Math.floor(Math.random()*15)+1;
+                cabeza = b1 + b2 + p1 + p2;
+            } else if (patronElegido === 2) { // (b1+b2) - (p1+p2)
+                b1 = Math.floor(Math.random()*20)+10; b2 = Math.floor(Math.random()*20)+10;
+                // Blindaje: p1 y p2 suman menos que los brazos
+                const maxPiernas = b1 + b2 - 2; 
+                p1 = Math.floor(Math.random()*(maxPiernas/2))+1;
+                p2 = Math.floor(Math.random()*(maxPiernas/2))+1;
+                cabeza = (b1 + b2) - (p1 + p2);
+            } else if (patronElegido === 3) { // (b1 * b2) - (p1 + p2)
+                b1 = Math.floor(Math.random()*9)+3; b2 = Math.floor(Math.random()*9)+3;
+                const prod = b1 * b2;
+                p1 = Math.floor(Math.random()*(prod/2 - 1))+1;
+                p2 = Math.floor(Math.random()*(prod/2 - 1))+1;
+                cabeza = prod - (p1 + p2);
+            } else if (patronElegido === 4) { // (b1 * p1) + (b2 * p2)
+                b1 = Math.floor(Math.random()*8)+2; p1 = Math.floor(Math.random()*8)+2;
+                b2 = Math.floor(Math.random()*8)+2; p2 = Math.floor(Math.random()*8)+2;
+                cabeza = (b1 * p1) + (b2 * p2);
+            } else if (patronElegido === 5) { // (b1 * b2) - (p1 * p2)
+                b1 = Math.floor(Math.random()*7)+5; b2 = Math.floor(Math.random()*7)+5;
+                const prod = b1 * b2;
+                // Blindaje: p1*p2 debe ser menor que b1*b2
+                p1 = Math.floor(Math.random()*4)+2; // 2 a 5
+                p2 = Math.floor(Math.random()*4)+2; // 2 a 5
+                if(p1*p2 >= prod) { p1=2; p2=2; } // Seguro de emergencia
+                cabeza = prod - (p1 * p2);
+            } else if (patronElegido === 6) { // (b1 + b2) * (p1 + p2)
+                b1 = Math.floor(Math.random()*6)+2; b2 = Math.floor(Math.random()*6)+2;
+                p1 = Math.floor(Math.random()*5)+1; p2 = Math.floor(Math.random()*5)+1;
+                cabeza = (b1 + b2) * (p1 + p2);
+            } else if (patronElegido === 7) { // EXPERTO: (b1² + b2²) - (p1+p2)
+                b1 = Math.floor(Math.random()*5)+3; // 3 a 7
+                b2 = Math.floor(Math.random()*5)+3; // 3 a 7
+                const sumaCuadrados = (b1*b1) + (b2*b2);
+                p1 = Math.floor(Math.random()*(sumaCuadrados/2 - 2))+1;
+                p2 = Math.floor(Math.random()*(sumaCuadrados/2 - 2))+1;
+                cabeza = sumaCuadrados - (p1 + p2);
+            } else if (patronElegido === 8) { // EXPERTO: (b1² - p1) + (b2² - p2)
+                b1 = Math.floor(Math.random()*6)+4; // 4 a 9
+                b2 = Math.floor(Math.random()*6)+4; // 4 a 9
+                p1 = Math.floor(Math.random()*(b1*b1 - 2))+1;
+                p2 = Math.floor(Math.random()*(b2*b2 - 2))+1;
+                cabeza = (b1*b1 - p1) + (b2*b2 - p2);
+            }
+            return [cabeza, b1, b2, p1, p2];
+          };
+
+          const fig1 = generarHombrecito();
+          const fig2 = generarHombrecito();
+          const fig3 = generarHombrecito();
+          const respuestaFinal = fig3[0];
+          fig3[0] = "x" as any;
+
+          return {
+            type: 'graphic_distribution',
+            data: { shape: 'stickman', figures: [fig1, fig2, fig3] },
+            respuestaSobreescrita: respuestaFinal
+          };
+        }
+
+        // 🔥 RM: CRIPTOARITMÉTICA (NIVELES ESCALONADOS) 🔥
+        case 'rm_criptoaritmetica_basico':
+        case 'rm_criptoaritmetica_intermedio':
+        case 'rm_criptoaritmetica_avanzado':
+        case 'rm_criptoaritmetica_experto':
+        case 'rm_criptoaritmetica_suma':
+        case 'criptoaritmetica': {
+          const id = plantilla.id || '';
+          
+          // 1. Dificultad determina el tamaño del número
+          let min = 100, max = 899; // Básico (3 cifras)
+          let cantOcultas = 1;
+          
+          if (id.includes('intermedio')) {
+            min = 1000; max = 8999; cantOcultas = 2; // 4 cifras
+          } else if (id.includes('avanzado')) {
+            min = 10000; max = 89999; cantOcultas = 2; // 5 cifras
+          } else if (id.includes('experto')) {
+            min = 10000; max = 89999; cantOcultas = 3; // 5 cifras, más ocultas
+          }
+
+          // 2. Elegimos si es suma o resta (Básico siempre es suma)
+          const esSuma = id.includes('basico') ? true : Math.random() > 0.5;
+          
+          // 3. Generación matemática estricta (num1 > num2 siempre para evitar negativos)
+          const num1 = Math.floor(Math.random() * max) + min; 
+          const num2 = Math.floor(Math.random() * (num1 - min)) + min; 
+          
+          const resultado = esSuma ? num1 + num2 : num1 - num2;
+
+          const str1 = num1.toString().split('');
+          const str2 = num2.toString().split('');
+          const strRes = resultado.toString().split('');
+
+          let sumaOcultas = 0;
+
+          // Función segura para ocultar asteriscos sin pasarse
+          const ocultarAlAzar = (arr: string[], maxOcultas: number) => {
+            let indices = Array.from({length: arr.length}, (_, i) => i);
+            indices.sort(() => Math.random() - 0.5); 
+            // Nunca ocultar TODO el número, dejar al menos 1 pista
+            const aOcultar = Math.min(maxOcultas, arr.length - 1);
+            for(let i = 0; i < aOcultar; i++) {
+              let idx = indices[i];
+              if (arr[idx] !== "*") {
+                sumaOcultas += Number(arr[idx]);
+                arr[idx] = "*";
+              }
+            }
+          };
+
+          ocultarAlAzar(str1, cantOcultas);
+          ocultarAlAzar(str2, cantOcultas);
+          ocultarAlAzar(strRes, cantOcultas);
+
+          return {
+            type: 'crypto_grid',
+            data: { operator: esSuma ? "+" : "-", rows: [str1, str2, strRes] },
+            respuestaSobreescrita: sumaOcultas
+          };
+        }
+
+       // 🔥 RM: CRIPTOARITMÉTICA MULTIPLICACIÓN (VERSIÓN BLINDADA CONAMAT) 🔥
+        case 'rm_criptoaritmetica_mult_basico':
+        case 'rm_criptoaritmetica_mult_intermedio':
+        case 'rm_criptoaritmetica_mult_avanzado':
+        case 'rm_criptoaritmetica_mult_experto':
+        case 'rm_criptoaritmetica_mult': {
+          const id = plantilla.id || '';
+          
+          let num1 = 0, num2 = 0, cantOcultas = 1;
+          
+          // FORZAMOS RANGOS ESTRICTOS
+          if (id.includes('basico')) { 
+            num1 = Math.floor(Math.random() * 89) + 10; // 10 a 98
+            num2 = Math.floor(Math.random() * 89) + 10; // 10 a 98 -> 2 DÍGITOS SÍ O SÍ
+            cantOcultas = 4;
+          } else if (id.includes('intermedio')) { 
+            num1 = Math.floor(Math.random() * 899) + 100; // 100 a 999
+            num2 = Math.floor(Math.random() * 89) + 10;  // 10 a 99
+            cantOcultas = 5;
+          } else if (id.includes('avanzado')) { 
+            num1 = Math.floor(Math.random() * 899) + 100; 
+            num2 = Math.floor(Math.random() * 899) + 100; // 3 DÍGITOS
+            cantOcultas = 7;
+          } else if (id.includes('experto')) {
+            num1 = Math.floor(Math.random() * 8999) + 1000; 
+            num2 = Math.floor(Math.random() * 899) + 100; 
+            cantOcultas = 9;
+          } else {
+            num1 = 25; num2 = 15; // Emergencia
+          }
+
+          const productoFinal = num1 * num2;
+          let rows: string[][] = [];
+          rows.push(num1.toString().split('')); // Fila 0
+          rows.push(num2.toString().split('')); // Fila 1
+
+          // MOTOR DE SUBPRODUCTOS (Si num2 > 9, genera escalera)
+          const strNum2 = num2.toString();
+          if (num2 > 9) {
+            for (let i = strNum2.length - 1; i >= 0; i--) {
+              const digito = Number(strNum2[i]);
+              const subProd = (num1 * digito).toString().split('');
+              const cerosDesplazamiento = (strNum2.length - 1) - i;
+              for (let s = 0; s < cerosDesplazamiento; s++) subProd.push(" "); 
+              rows.push(subProd);
+            }
+          }
+          rows.push(productoFinal.toString().split(''));
+
+          // OCULTAMIENTO
+          let sumaOcultas = 0;
+          let asteriscosPuestos = 0;
+          let totalNumeros = 0;
+          rows.forEach(r => r.forEach(c => { if(c !== " " && c !== "*") totalNumeros++; }));
+          const maxAocultar = Math.min(cantOcultas, totalNumeros - 2); 
+
+          while (asteriscosPuestos < maxAocultar) {
+            const f = Math.floor(Math.random() * rows.length);
+            const c = Math.floor(Math.random() * rows[f].length);
+            if (rows[f][c] !== "*" && rows[f][c] !== " ") { 
+              sumaOcultas += Number(rows[f][c]);
+              rows[f][c] = "*";
+              asteriscosPuestos++;
+            }
+          }
+
+          return {
+            type: 'crypto_mult',
+            data: { operator: "x", rows: rows },
+            respuestaSobreescrita: sumaOcultas
+          };
+        }
+
+        case 'rm_distribucion_casita_basico':
+        case 'rm_distribucion_casita_intermedio':
+        case 'rm_distribucion_casita_avanzado':
+        case 'rm_distribucion_casita_experto':
+        case 'rm_distribucion_casita': {
+          const id = plantilla.id || '';
+          
+          let patrones: number[] = [];
+          if (id.includes('basico')) patrones = [1, 2]; // Operaciones combinadas
+          else if (id.includes('intermedio')) patrones = [3, 4]; // Cuadrados y dobles
+          else if (id.includes('avanzado')) patrones = [5, 6, 7]; // Raíces y diferencias
+          else patrones = [8, 9, 10]; // EXPERTO: Suma de cifras, potencias
+
+          const patronElegido = patrones[Math.floor(Math.random() * patrones.length)];
+
+          const generarCasita = (esIncognita = false) => {
+            let v1=0, v2=0, p=0, techo=0;
+            
+            switch (patronElegido) {
+              case 1: // (V1 * V2) - P
+                v1 = Math.floor(Math.random()*8)+3; v2 = Math.floor(Math.random()*8)+3; 
+                p = Math.floor(Math.random()*5)+1; techo = (v1 * v2) - p; break;
+              case 2: // (V1 + V2) * P
+                v1 = Math.floor(Math.random()*9)+1; v2 = Math.floor(Math.random()*9)+1;
+                p = Math.floor(Math.random()*4)+2; techo = (v1 + v2) * p; break;
+              case 3: // V1² + V2² - P
+                v1 = Math.floor(Math.random()*6)+2; v2 = Math.floor(Math.random()*6)+2;
+                p = Math.floor(Math.random()*10)+1; techo = (v1*v1) + (v2*v2) - p; break;
+              case 4: // (V1 * P) + V2²
+                v1 = Math.floor(Math.random()*6)+3; p = Math.floor(Math.random()*5)+2;
+                v2 = Math.floor(Math.random()*5)+2; techo = (v1 * p) + (v2*v2); break;
+              case 5: // √(V1) * √(V2) + P (Cuadrados perfectos)
+                let base1 = Math.floor(Math.random()*6)+2; let base2 = Math.floor(Math.random()*6)+2;
+                v1 = base1*base1; v2 = base2*base2; 
+                p = Math.floor(Math.random()*10)+1; techo = (base1 * base2) + p; break;
+              case 6: // V1² - V2² + P
+                v1 = Math.floor(Math.random()*5)+5; v2 = Math.floor(Math.random()*4)+1; // v1 > v2
+                p = Math.floor(Math.random()*15)+1; techo = (v1*v1) - (v2*v2) + p; break;
+              case 7: // (V1 * V2) / P (División exacta)
+                p = Math.floor(Math.random()*4)+2; // 2 a 5
+                v1 = p * (Math.floor(Math.random()*4)+1); v2 = Math.floor(Math.random()*6)+2;
+                techo = (v1 * v2) / p; break;
+              case 8: // V1 elevado a la V2 + P
+                v1 = Math.floor(Math.random()*4)+2; v2 = Math.floor(Math.random()*2)+2; // max 5^3
+                p = Math.floor(Math.random()*20)+1; techo = Math.pow(v1, v2) + p; break;
+              case 9: // Suma de cifras de (V1 * V2 * P)
+                v1 = Math.floor(Math.random()*9)+5; v2 = Math.floor(Math.random()*9)+5; p = Math.floor(Math.random()*5)+3;
+                let prodStr = (v1 * v2 * p).toString();
+                techo = prodStr.split('').reduce((acc, curr) => acc + Number(curr), 0); break;
+              case 10: // (V1 + P)² - V2
+                v1 = Math.floor(Math.random()*4)+1; p = Math.floor(Math.random()*4)+1;
+                v2 = Math.floor(Math.random()*10)+1; techo = Math.pow(v1 + p, 2) - v2; break;
+            }
+
+            let obj = { techo, v1, v2, p, incognitaReal: 0 };
+            if (esIncognita) {
+              // Solo pedimos puerta si es fácil de despejar
+              if (Math.random() > 0.6 && patronElegido <= 2) { 
+                obj.incognitaReal = p; obj.p = "x" as any;
+              } else {
+                obj.incognitaReal = techo; obj.techo = "x" as any;
+              }
+            }
+            return obj;
+          };
+
+          const c1 = generarCasita(); const c2 = generarCasita(); const c3 = generarCasita(true);
+          return { type: 'graphic_distribution', data: { shape: 'house', figures: [c1, c2, c3] }, respuestaSobreescrita: c3.incognitaReal };
+        }
+
+
+
+        // 🔥 RM: CRIPTOARITMÉTICA DIVISIÓN (MOTOR DE CASCADA EXACTA)
+        case 'rm_criptoaritmetica_div_basico':
+        case 'rm_criptoaritmetica_div_intermedio':
+        case 'rm_criptoaritmetica_div_avanzado':
+        case 'rm_criptoaritmetica_div_experto': {
+          const id = plantilla.id || '';
+          let dsr = 0, q = 0;
+
+          // RANGOS ESTRICTOS CONAMAT (Garantiza divisibilidad y proceso inverso)
+          if (id.includes('basico')) { dsr = Math.floor(Math.random()*7)+3; q = Math.floor(Math.random()*9)+10; } 
+          else if (id.includes('intermedio')) { dsr = Math.floor(Math.random()*8)+2; q = Math.floor(Math.random()*40)+20; }
+          else if (id.includes('avanzado')) { dsr = Math.floor(Math.random()*40)+11; q = Math.floor(Math.random()*80)+20; }
+          else { dsr = Math.floor(Math.random()*40)+11; q = Math.floor(Math.random()*80)+20; }
+
+          const dnd = dsr * q; // Exacta (puedes sumar +residuo luego si quieres inexactas)
+          const dndS = dnd.toString();
+          const dsrS = dsr.toString();
+          const qS = q.toString();
+          
+          let steps: any[] = [];
+          
+          // --- ALGORITMO DE CASCADA MATEMÁTICA ---
+          let dIdx = 0;
+          let chunk = "";
+          
+          // Buscar el primer bloque que se puede dividir
+          while (dIdx < dndS.length && Number(chunk + dndS[dIdx]) < dsr) {
+            chunk += dndS[dIdx]; dIdx++;
+          }
+          if (dIdx < dndS.length) { chunk += dndS[dIdx]; dIdx++; }
+
+          // Función para alinear a la derecha dentro de la cuadrícula
+          const alinearDerecha = (str: string, endIdx: number, length: number) => {
+            let row = Array(length).fill(" ");
+            for (let i = 0; i < str.length; i++) row[endIdx - str.length + 1 + i] = str[i];
+            return row;
+          };
+
+          for (let i = 0; i < qS.length; i++) {
+            const dq = Number(qS[i]);
+            const prod = dsr * dq;
+            const prodStr = prod.toString();
+
+            // Producto alineado con el último dígito usado (dIdx - 1)
+            const prodRow = alinearDerecha(prodStr, dIdx - 1, dndS.length);
+            const resta = Number(chunk) - prod;
+            let restaRow = Array(dndS.length).fill(" ");
+
+            if (i === qS.length - 1) { // ÚLTIMO PASO
+              if (resta === 0) {
+                // Rayitas exactas bajo el producto
+                for (let j = 0; j < prodStr.length; j++) restaRow[dIdx - 1 - j] = "-";
+              } else {
+                restaRow = alinearDerecha(resta.toString(), dIdx - 1, dndS.length);
+              }
+            } else { // PASOS INTERMEDIOS
+              let restaStr = resta === 0 ? "" : resta.toString();
+              let nextDigit = dndS[dIdx];
+              chunk = restaStr + nextDigit;
+
+              // Alinear el residuo y bajar el siguiente número
+              for (let j = 0; j < restaStr.length; j++) restaRow[dIdx - 1 - restaStr.length + 1 + j] = restaStr[j];
+              restaRow[dIdx] = nextDigit;
+              dIdx++;
+            }
+            steps.push({ producto: prodRow, resta: restaRow });
+          }
+
+          const data = {
+            dividendo: dndS.split(''),
+            divisor: dsrS.split(''),
+            cociente: qS.split(''),
+            pasos: steps
+          };
+
+          // --- SISTEMA DE OCULTAMIENTO (Cajas Rojas) ---
+          let sumaOcultas = 0;
+          const ocultar = (arr: any[]) => {
+            if (!Array.isArray(arr)) return;
+            arr.forEach((char, idx) => {
+              if (char !== " " && char !== "-" && Math.random() > 0.6) {
+                sumaOcultas += Number(char);
+                arr[idx] = "*";
+              }
+            });
+          };
+
+          // Ocultamos manteniendo siempre la primera cifra del divisor visible
+          ocultar(data.dividendo);
+          for(let i=1; i<data.divisor.length; i++) { if(Math.random()>0.5){ sumaOcultas+=Number(data.divisor[i]); data.divisor[i]="*"; } }
+          ocultar(data.cociente);
+          data.pasos.forEach(p => { ocultar(p.producto); ocultar(p.resta); });
+
+          return {
+            type: 'crypto_div',
+            data: data,
+            respuestaSobreescrita: sumaOcultas
+          };
+        }
+
+
+
+
+
+
+
+       case 'rm_distribucion_circular_basico':
+        case 'rm_distribucion_circular_intermedio':
+        case 'rm_distribucion_circular_avanzado':
+        case 'rm_distribucion_circular_experto':
+        case 'rm_distribucion_circular': {
+          const id = plantilla.id || '';
+          
+          let patronesC: number[] = [];
+          if (id.includes('basico')) patronesC = [1, 2]; 
+          else if (id.includes('intermedio')) patronesC = [3, 4, 5]; 
+          else if (id.includes('avanzado')) patronesC = [6, 7, 8]; 
+          else patronesC = [9, 10]; // EXPERTO PURO
+
+          const patronElegido = patronesC[Math.floor(Math.random() * patronesC.length)];
+
+          const generarCirculo = (esX = false) => {
+            let n1=0, n2=0, n3=0, centro=0;
+
+            switch(patronElegido) {
+              case 1: // (n1 * n2) - n3
+                n1 = Math.floor(Math.random()*8)+3; n2 = Math.floor(Math.random()*8)+3; n3 = Math.floor(Math.random()*15)+1;
+                centro = (n1 * n2) - n3; break;
+              case 2: // (n1 + n2) * n3
+                n1 = Math.floor(Math.random()*9)+2; n2 = Math.floor(Math.random()*9)+2; n3 = Math.floor(Math.random()*5)+2;
+                centro = (n1 + n2) * n3; break;
+              case 3: // n1² + (n2 * n3)
+                n1 = Math.floor(Math.random()*7)+3; n2 = Math.floor(Math.random()*9)+2; n3 = Math.floor(Math.random()*9)+2;
+                centro = (n1 * n1) + (n2 * n3); break;
+              case 4: // √(n1) * n2 + n3
+                let b1 = Math.floor(Math.random()*7)+2; n1 = b1*b1;
+                n2 = Math.floor(Math.random()*6)+2; n3 = Math.floor(Math.random()*20)+1;
+                centro = (b1 * n2) + n3; break;
+              case 5: // n1² - n2² + n3
+                n1 = Math.floor(Math.random()*6)+5; n2 = Math.floor(Math.random()*4)+1; n3 = Math.floor(Math.random()*15)+1;
+                centro = (n1 * n1) - (n2 * n2) + n3; break;
+              case 6: // (n1 * n2 * n3) / 2
+                n1 = Math.floor(Math.random()*5)*2 + 2; n2 = Math.floor(Math.random()*5)+2; n3 = Math.floor(Math.random()*5)+2;
+                centro = (n1 * n2 * n3) / 2; break;
+              case 7: // n1³ + n2 - n3
+                n1 = Math.floor(Math.random()*4)+2; n2 = Math.floor(Math.random()*20)+5; n3 = Math.floor(Math.random()*10)+1;
+                centro = Math.pow(n1, 3) + n2 - n3; break;
+              case 8: // Suma de cifras de (n1² * n2)
+                n1 = Math.floor(Math.random()*6)+4; n2 = Math.floor(Math.random()*6)+4; n3 = Math.floor(Math.random()*20)+1;
+                let calc = ((n1*n1) * n2).toString();
+                centro = calc.split('').reduce((a, b) => a + Number(b), 0) + n3; break;
+              case 9: // √(n1 + n2) * n3
+                let b2 = Math.floor(Math.random()*6)+3; let sumPerfecta = b2*b2;
+                n1 = Math.floor(Math.random()*(sumPerfecta-2))+1; n2 = sumPerfecta - n1;
+                n3 = Math.floor(Math.random()*8)+3;
+                centro = b2 * n3; break;
+              case 10: // n1 elevado a la (n2 - n3)
+                n1 = Math.floor(Math.random()*3)+2; // base 2 a 4
+                let exp = Math.floor(Math.random()*3)+1; // exp 1 a 3
+                n2 = Math.floor(Math.random()*10)+exp+1; n3 = n2 - exp;
+                centro = Math.pow(n1, exp); break;
+            }
+            return { vals: [n1, n2, n3], centro: esX ? "x" : centro, real: centro };
+          };
+
+          const f1 = generarCirculo(); const f2 = generarCirculo(); const f3 = generarCirculo(true);
+          return { type: 'graphic_distribution', data: { shape: 'circle', figures: [f1, f2, f3] }, respuestaSobreescrita: f3.real };
+        }
+
+
+
+
+
       }
     }
     return null;

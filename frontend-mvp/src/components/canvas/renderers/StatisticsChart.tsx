@@ -199,5 +199,53 @@ export const StatisticsChart: React.FC<{ type: string; data: any }> = ({
       </div>
     );
   }
+
+  // --- GRÁFICO COMBINADO (BARRAS + CIRCULAR) ---
+  if (type === "chart_combined") {
+    const { barData, pieData, pieLabels } = data.data || data;
+    const ticksCombined = [0, 1000, 1500, 2000, 2500, 3000];
+
+    return (
+      <div className="flex flex-col md:flex-row gap-4 bg-white p-2" style={{ height: "300px", width: "100%" }}>
+        {/* Lado Izquierdo: Gráfico de Barras */}
+        <div className="flex-1 border border-slate-200 rounded-md p-2">
+          <p className="text-[10px] font-bold text-center text-slate-500 mb-1">PRODUCCIÓN POR AÑO</p>
+          <ResponsiveContainer width="99%" height="85%" minWidth={1} minHeight={1}>
+            <BarChart data={barData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+              <CartesianGrid vertical={false} stroke="#E5E7EB" />
+              <XAxis dataKey="name" tick={{ fill: "#333", fontSize: 10, fontWeight: "bold" }} />
+              <YAxis ticks={ticksCombined} tick={{ fill: "#666", fontSize: 10 }} />
+              <Bar dataKey="value" barSize={30} fill={COLORS[1].f} stroke={COLORS[1].s}>
+                <LabelList dataKey="value" position="top" fill="#000" fontSize={10} fontWeight="bold" />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Lado Derecho: Gráfico Circular */}
+        <div className="flex-1 border border-slate-200 rounded-md p-2 flex flex-col items-center">
+          <p className="text-[10px] font-bold text-center text-slate-500 mb-1">DISTRIBUCIÓN 2024</p>
+          <ResponsiveContainer width="100%" height="70%" minWidth={1} minHeight={1}>
+            <PieChart>
+              <Pie data={pieData} cx="50%" cy="50%" outerRadius={60} dataKey="value" stroke="#fff" strokeWidth={2} labelLine={false} label={false}>
+                {pieData.map((entry: any, idx: number) => (
+                  <Cell key={`p-${idx}`} fill={COLORS[idx % COLORS.length].f} stroke={COLORS[idx % COLORS.length].s} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+          {/* Leyenda manual debajo de la torta para nivel Olimpiada */}
+          <div className="flex gap-2 mt-2 text-[9px] font-black">
+            {pieLabels.map((lbl: string, i: number) => (
+              <div key={i} className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i].s }}></span>
+                {lbl}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
   return null;
 };

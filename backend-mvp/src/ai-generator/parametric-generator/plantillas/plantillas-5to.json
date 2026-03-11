@@ -568,6 +568,298 @@
       "requiere_calculadora": false,
       "fuente": "Adaptado de problemas de ecuaciones"
     }
+  },
+  {
+    "id": "rm_distribucion_hombrecito_basico",
+    "tema": "razonamiento_matematico",
+    "subtipo": "distribucion_grafica",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Calcula el valor de 'x' en la siguiente distribución gráfica (Nivel Básico):",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
+    "relaciones": ["x = 1"],
+    "restricciones": [],
+    "incognita_directa": "x",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_distribucion_hombrecito_intermedio",
+    "tema": "razonamiento_matematico",
+    "subtipo": "distribucion_grafica",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "Calcula el valor de 'x' en la siguiente distribución gráfica (Nivel Intermedio):",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
+    "relaciones": ["x = 1"],
+    "restricciones": [],
+    "incognita_directa": "x",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_distribucion_hombrecito_avanzado",
+    "tema": "razonamiento_matematico",
+    "subtipo": "distribucion_grafica",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "Halla el valor que falta en la cabeza del último gráfico (Nivel Avanzado):",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
+    "relaciones": ["x = 1"],
+    "restricciones": [],
+    "incognita_directa": "x",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_distribucion_hombrecito_experto",
+    "tema": "razonamiento_matematico",
+    "subtipo": "distribucion_grafica",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "¡Reto CONAMAT! Descubre el patrón oculto y calcula el valor de 'x':",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
+    "relaciones": ["x = 1"],
+    "restricciones": [],
+    "incognita_directa": "x",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_criptoaritmetica_basico",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Ayuda a {nombre} a calcular la suma de las cifras ocultas por los asteriscos en esta operación.",
+    "variables": { "nombre": { "type": "string", "opciones": ["Carlos", "Ana", "Luis", "Sofía", "Jorge"] } },
+    "relaciones": ["suma_ocultas = 1"],
+    "restricciones": [],
+    "incognita_directa": "suma_ocultas",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_criptoaritmetica_intermedio",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "En la pizarra se borraron algunos números. Calcula la suma de las cifras ocultas.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
+    "relaciones": ["suma_ocultas = 1"],
+    "restricciones": [],
+    "incognita_directa": "suma_ocultas",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_criptoaritmetica_avanzado",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "¡Desafío! Descubre el valor de los asteriscos en esta operación y da como respuesta la suma de ellos.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
+    "relaciones": ["suma_ocultas = 1"],
+    "restricciones": [],
+    "incognita_directa": "suma_ocultas",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_criptoaritmetica_experto",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "¡Reto Final! Calcula la suma de todas las cifras ocultas por los asteriscos.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
+    "relaciones": ["suma_ocultas = 1"],
+    "restricciones": [],
+    "incognita_directa": "suma_ocultas",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_criptoaritmetica_mult_basico",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Calcula la suma de las cifras ocultas en esta multiplicación (Nivel Básico).",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["suma_ocultas = 1"], "incognita_directa": "suma_ocultas", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_criptoaritmetica_mult_intermedio",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "Descubre los asteriscos en esta multiplicación y suma sus valores (Nivel Intermedio).",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["suma_ocultas = 1"], "incognita_directa": "suma_ocultas", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_criptoaritmetica_mult_avanzado",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "¡Reto de sub-productos! Halla la suma de las cifras escondidas.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["suma_ocultas = 1"], "incognita_directa": "suma_ocultas", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_criptoaritmetica_mult_experto",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "¡Desafío CONAMAT! Reconstruye toda la multiplicación y suma los asteriscos.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["suma_ocultas = 1"], "incognita_directa": "suma_ocultas", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_distribucion_casita_basico",
+    "tema": "razonamiento_matematico",
+    "subtipo": "distribucion_grafica",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Halla el valor de 'x' ubicado en el techo de la última casita.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "x", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_distribucion_casita_intermedio",
+    "tema": "razonamiento_matematico",
+    "subtipo": "distribucion_grafica",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "Descubre qué número debe ir en la puerta de la tercera casa.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "x", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_distribucion_casita_avanzado",
+    "tema": "razonamiento_matematico",
+    "subtipo": "distribucion_grafica",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "Analiza las dos primeras casitas y calcula 'x'.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "x", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_distribucion_casita_experto",
+    "tema": "razonamiento_matematico",
+    "subtipo": "distribucion_grafica",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "¡Reto Experto! Aplica la regla de formación y calcula el valor de 'x'.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "x", "formato_respuesta": { "tipo": "entero" }
   }
+  ,
+
+  {
+    "id": "rm_conteo_triangulos_intermedio",
+    "tema": "razonamiento_matematico",
+    "subtipo": "conteo_figuras",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "¿Cuántos triángulos se pueden contar como máximo en el gráfico?",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_conteo_triangulos_avanzado",
+    "tema": "razonamiento_matematico",
+    "subtipo": "conteo_figuras",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "Aplica el método inductivo y halla el total de triángulos.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_conteo_triangulos_experto",
+    "tema": "razonamiento_matematico",
+    "subtipo": "conteo_figuras",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "¡Reto CONAMAT! Descubre el número total de triángulos en esta estructura compleja.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" }
+  },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ {
+    "id": "rm_criptoaritmetica_div_basico",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Completa los espacios vacíos en esta división exacta de 2 cifras entre 1.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["suma_ocultas = 1"], "incognita_directa": "suma_ocultas", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_criptoaritmetica_div_intermedio",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "Halla la suma de las cifras ocultas en esta división de 3 cifras entre 1.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["suma_ocultas = 1"], "incognita_directa": "suma_ocultas", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_criptoaritmetica_div_avanzado",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "Calcula la suma de los valores ocultos en la siguiente división entre 2 cifras.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["suma_ocultas = 1"], "incognita_directa": "suma_ocultas", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_criptoaritmetica_div_experto",
+    "tema": "razonamiento_matematico",
+    "subtipo": "criptoaritmetica",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "¡Desafío Experto! Reconstruye la división inexacta de 4 cifras y halla la suma de las cifras ocultas.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["suma_ocultas = 1"], "incognita_directa": "suma_ocultas", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_distribucion_circular_basico",
+    "tema": "razonamiento_matematico",
+    "subtipo": "distribucion_grafica",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Halla el valor de 'x' en el tercer gráfico circular.",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "x", "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "rm_distribucion_circular_experto",
+    "tema": "razonamiento_matematico",
+    "subtipo": "distribucion_grafica",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "Analiza la relación radial y calcula el valor de 'x' (Nivel Experto).",
+    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "x", "formato_respuesta": { "tipo": "entero" }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
 ]

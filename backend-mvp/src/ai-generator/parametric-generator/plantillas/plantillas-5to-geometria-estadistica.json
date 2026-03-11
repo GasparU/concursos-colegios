@@ -3677,6 +3677,94 @@
     "incognita_directa": "respuesta",
     "metadata": { "habilidades": ["traslape quíntuple", "sistemas lineales"] }
   },
+  {
+  "id": "geo_area_triangulo_basico",
+  "tema": "geometria",
+  "subtipo": "area_triangulo",
+  "grado": "5to",
+  "etapa": ["primaria"],
+  "dificultad": ["basico"],
+  "bidireccional": false,
+  "enunciado": "Calcula el área de la región triangular mostrada.",
+  "variables": {
+    "var_t": { "type": "number", "min": 0, "max": 3 },
+    "var_k": { "type": "number", "min": 1, "max": 3 },
+    "var_x": { "type": "number", "min": 2, "max": 6 },
+    "var_flip": { "type": "number", "min": 0, "max": 3 },
+    "var_hide": { "type": "number", "min": 0, "max": 1 }
+  },
+  "relaciones": [],
+  "restricciones": [],
+  "incognita_directa": "respuesta",
+  "formato_respuesta": { "tipo": "numero" },
+  "metadata": {}
+},
+{
+  "id": "geo_area_triangulo_intermedio",
+  "tema": "geometria",
+  "subtipo": "area_triangulo",
+  "grado": "5to",
+  "etapa": ["primaria"],
+  "dificultad": ["intermedio"],
+  "bidireccional": false,
+  "enunciado": "Halla el área del triángulo considerando la altura relativa a la base.",
+  "variables": {
+    "var_t": { "type": "number", "min": 0, "max": 3 },
+    "var_k": { "type": "number", "min": 1, "max": 3 },
+    "var_x": { "type": "number", "min": 2, "max": 6 },
+    "var_flip": { "type": "number", "min": 0, "max": 3 },
+    "var_hide": { "type": "number", "min": 0, "max": 1 }
+  },
+  "relaciones": [],
+  "restricciones": [],
+  "incognita_directa": "respuesta",
+  "formato_respuesta": { "tipo": "numero" },
+  "metadata": {}
+},
+{
+  "id": "geo_area_triangulo_avanzado",
+  "tema": "geometria",
+  "subtipo": "area_triangulo",
+  "grado": "5to",
+  "etapa": ["primaria"],
+  "dificultad": ["avanzado"],
+  "bidireccional": false,
+  "enunciado": "Calcula el área de la región triangular obtusa.",
+  "variables": {
+    "var_t": { "type": "number", "min": 0, "max": 3 },
+    "var_k": { "type": "number", "min": 1, "max": 3 },
+    "var_x": { "type": "number", "min": 2, "max": 6 },
+    "var_flip": { "type": "number", "min": 0, "max": 3 },
+    "var_hide": { "type": "number", "min": 0, "max": 1 }
+  },
+  "relaciones": [],
+  "restricciones": [],
+  "incognita_directa": "respuesta",
+  "formato_respuesta": { "tipo": "numero" },
+  "metadata": {}
+},
+{
+  "id": "geo_area_triangulo_experto",
+  "tema": "geometria",
+  "subtipo": "area_triangulo",
+  "grado": "5to",
+  "etapa": ["primaria"],
+  "dificultad": ["experto"],
+  "bidireccional": false,
+  "enunciado": "Si el área de la región triangular es {A}, halla el valor de 'x'.",
+  "variables": {
+    "var_t": { "type": "number", "min": 0, "max": 3 },
+    "var_k": { "type": "number", "min": 1, "max": 3 },
+    "var_x": { "type": "number", "min": 2, "max": 6 },
+    "var_flip": { "type": "number", "min": 0, "max": 3 },
+    "var_hide": { "type": "number", "min": 0, "max": 1 }
+  },
+  "relaciones": [],
+  "restricciones": [],
+  "incognita_directa": "respuesta",
+  "formato_respuesta": { "tipo": "numero" },
+  "metadata": {}
+},
 
 
 
@@ -3990,4 +4078,56 @@
     ],
     "incognita_directa": "ans"
   }
+  ,{
+    "id": "estadistica_tabla_variable_k",
+    "tema": "estadistica",
+    "subtipo": "frecuencia_algebraica",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": false,
+    "enunciado": "En la siguiente tabla se muestra la distribución de las edades de {total_personas} estudiantes. Calcula cuántos estudiantes tienen {edad_preguntada} años.",
+    "variables": {
+      "total_personas": { "type": "number", "min": 10, "max": 100 },
+      "edad_preguntada": { "type": "number", "min": 10, "max": 15 }
+    },
+    "relaciones": [],
+    "restricciones": [],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "estadistica_tabla_ecuacion_m",
+    "tema": "estadistica",
+    "subtipo": "ecuacion_textual",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": false,
+    "enunciado": "En la siguiente tabla se muestran los colores favoritos de un grupo de alumnos. Calcula el valor de 'm' si la tercera parte de los alumnos que prefieren los colores rojo y amarillo es igual a la mitad de los alumnos que prefieren los colores azul y verde.",
+    "variables": {},
+    "relaciones": [],
+    "restricciones": [],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "estadistica_grafico_combinado",
+    "tema": "estadistica",
+    "subtipo": "barras_y_circular",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": false,
+    "enunciado": "El gráfico de barras muestra la producción de zapatos durante 3 años. El gráfico circular muestra la distribución por color de la producción del año {anio_objetivo}. ¿Cuántos zapatos de color {color_objetivo} se produjeron en dicho año?",
+    "variables": {
+      "anio_objetivo": { "type": "number", "min": 2024, "max": 2024 },
+      "color_objetivo": { "type": "string", "opciones": ["rojo"] }
+    },
+    "relaciones": [],
+    "restricciones": [],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" }
+  }
+
 ]

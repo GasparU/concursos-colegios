@@ -527,3 +527,24 @@ export const CONSTANTES_PITAGORAS: Record<number, any> = {
     },
   },
 };
+
+// 🔥 CONSTANTES VISUALES: CONTROL TOTAL DE GEOMETRÍA 🔥
+export const ConstantsVisualesAreaTriangulo = {
+  grosorLineaFina: 1.2,
+  grosorLineaPunteada: 1.0,
+  fillOpacity: 0.1, // Relleno azul muy sutil
+  colorGeometria: "#16a34a", // green-600 (Editorial)
+  colorAngulo90: "#dc2626", // red-600
+  colorTextoHalo: "#1e293b", // slate-800
+  colorTextoAreaPerim: "#dc2626", // red-600 (Aura)
+  
+  // 🔥 AJUSTE INDEPENDIENTE DE DISTANCIAS (Aumentar para alejar)
+  offsetBase: 1.6,       // Aleja el texto de la base (x+4) hacia abajo
+  offsetAltura: 1.5,     // Aleja el texto de la altura (h=) hacia la derecha/izquierda
+  offsetHipotenusa: 1.4, // Aleja el texto de la hipotenusa (12cm) inclinada
+  offsetAlgebra: 1.3,    // Aleja los textos x+2, 4x, etc.
+  
+  // 🔥 AJUSTE INDEPENDIENTE DEL ÁNGULO DE 90°
+  sizeAngulo90: 1.2,     // ¡Agrandado! Estaba en 0.8. Súbelo a 1.5 o 2 si quieres.
+  offsetSímbolo90: 0.2   // Pequeño margen para que el cuadrado no toque el vértice
+};
