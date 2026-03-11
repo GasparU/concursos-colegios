@@ -4,7 +4,7 @@ import { VisualRenderer } from "../../components/canvas/renderers/VisualRenderer
 
 export default function ParametricTestPage() {
   const { generarProblema, problema, loading } = useParametricGenerator();
-  const [plantillaId, setPlantillaId] = useState("geo_area_triangulo_basico");
+  const [plantillaId, setPlantillaId] = useState("geo_secantes_basico");
 
   return (
     <div className="p-4 max-w-2xl mx-auto bg-white min-h-screen">
@@ -19,13 +19,16 @@ export default function ParametricTestPage() {
             className="text-[10px] border border-slate-300 rounded px-1 py-1 font-bold bg-slate-50"
           >
             <optgroup label="ESTADÍSTICA">
-              <option value="geo_area_triangulo_basico">Hombrecito 1</option>
-              <option value="geo_area_triangulo_intermedio">Hombrecito 2</option>
-              <option value="geo_area_triangulo_avanzado">Hombrecito 3</option>
-              <option value="geo_area_triangulo_experto">Hombrecito 4</option>
-              <option value="rm_conteo_triangulos_intermedio">Cripto 1</option>
-              <option value="rm_conteo_triangulos_avanzado">Cripto 2 </option>
-              <option value="rm_conteo_triangulos_experto">Cripto 3 </option>
+              <option value="geo_secantes_basico">Triangulo1</option>
+              <option value="geo_secantes_intermedio">Triangulo2</option>
+              <option value="geo_secantes_avanzado">Triangulo3</option>
+              <option value="geo_secantes_experto">Triangulo4</option>
+              <option value="geo_perim_isosc_bas">Triangulo5</option>
+              <option value="rm_conteo_cuadrilateros_experto">Triangulo6</option>
+              <option value="rm_conteo_angulos_basico">Triangulo7</option>
+              <option value="rm_conteo_sectores_basico">Triangulo8</option>
+              <option value="rm_conteo_cubos_basico">Triangulo9</option>
+              <option value="rm_conteo_cubos_experto">Triangulo10</option>
             </optgroup>
           </select>
           <button

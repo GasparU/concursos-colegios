@@ -196,9 +196,11 @@ export default function ProblemCard({
         )}
 
         {/* GRAFICO (Lienzo blanco intacto) */}
-        {!isEditing && (
-          <div className="my-4">
-            {renderVisualEmbed(problem.visual_data, problem.math_data)}
+        {!isEditing && problem.visual_data && (
+          <div className="my-4 flex justify-center bg-white rounded-lg border border-slate-100 overflow-hidden shadow-inner">
+            <div className="w-full max-w-[500px] aspect-square md:aspect-video flex items-center justify-center">
+              {renderVisualEmbed(problem.visual_data, problem.math_data)}
+            </div>
           </div>
         )}
 

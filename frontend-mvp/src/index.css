@@ -1,3 +1,36 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* =======================================================
+   🔥 VACUNA GLOBAL PARA MAFS (Cero modo oscuro) 🔥
+   ======================================================= */
+
+/* 1. Forzamos fondo blanco y líneas oscuras en todas las gráficas */
+.MafsView {
+  --mafs-bg: #ffffff !important;
+  --mafs-fg: #1e293b !important;
+  background-color: #ffffff !important;
+}
+
+/* 2. Corregimos el fondo del SVG para que no se vea negro */
+svg.MafsView {
+  background-color: white !important;
+}
+
+/* 3. Limpiamos las etiquetas de texto para que sean legibles */
+.MafsView text {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-size: 14px !important;
+}
+
+/* 4. Si el contenedor del componente tiene fondo negro, lo blanqueamos */
+.contenedor-mafs-blanco {
+  background-color: white !important;
+  color: #1e293b !important;
+}
+
+/* 5. Aseguramos que las líneas punteadas se vean bien sobre blanco */
+.MafsView [stroke-dasharray] {
+  stroke: #64748b !important; /* Gris slate para líneas de guía */
+}

@@ -155,14 +155,14 @@ export class ParametricGeneratorService {
 
         // 6. Generar visual_data (si aplica)
         const visualData = gradoService.generarVisualData(plantilla, valores);
-        console.log(`[Intento ${intento}] Visual data generado:`, visualData);
+        
 
         // 7. Procesar la respuesta según el formato
         let respuestaFinal = gradoService.procesarRespuesta(
           respuesta,
           plantilla.formato_respuesta,
         );
-        console.log(`[Intento ${intento}] Valores generados:`, valores);
+        
 
         // 🔥 FIX CRÍTICO: Si el visualData calculó su propia respuesta (como en Triángulos), la sobreescribimos.
         const sobreescrita = (visualData as any)?.respuestaSobreescrita ?? (visualData as any)?.data?.respuestaSobreescrita;

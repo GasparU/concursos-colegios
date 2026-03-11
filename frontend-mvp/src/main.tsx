@@ -2,7 +2,8 @@ import React from "react";
 // 🔥 CAMBIO CRÍTICO: React 18 requiere importar desde 'react-dom/client'
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
-import "./index.css"; // Asegúrate de tener este archivo o borra esta línea si no usas estilos globales aún
+import "./index.css"; 
+import "mafs/core.css";
 
 // Validación de seguridad para TypeScript (el signo '!')
 const rootElement = document.getElementById("root");

@@ -1428,99 +1428,97 @@
     "fuente": "CONAMAT"
   }
 },
-  {
+{
     "id": "geo_secantes_basico",
     "tema": "geometria",
     "subtipo": "rectas_secantes",
     "grado": "5to",
-    "etapa": ["clasificatoria"],
     "dificultad": ["basico"],
-    "bidireccional": true,
-    "enunciado": "En la figura, las rectas se cortan formando ángulos opuestos. Si un ángulo mide {a}x + {b}° y el otro ángulo mide {c}x + {d}°, halla el valor de x.",
-    "variables": {
-      "a": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "b": { "type": "number", "min": 0, "max": 20, "step": 2 },
-      "c": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "d": { "type": "number", "min": 0, "max": 20, "step": 2 }
+    "variables": { 
+      "a": { "type": "number", "min": 2, "max": 4 }, 
+      "c": { "type": "number", "min": 1, "max": 2 },
+      "b": { "type": "number", "min": 10, "max": 20 },
+      "x_res": { "type": "number", "min": 5, "max": 15 }
     },
-    "relaciones": ["x = (d - b) / (a - c)", "ang1 = a*x + b", "ang2 = c*x + d"],
-    "restricciones": ["a != c", "x > 0", "(d - b) % (a - c) == 0", "ang1 > 0"],
-    "incognita_directa": "x",
-    "incognitas_inversa": ["a", "b", "c", "d"],
-    "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["ángulos opuestos", "ecuaciones lineales"],
-      "tiempo_estimado": 90,
-      "requiere_calculadora": false,
-      "fuente": "Adaptado de problemas básicos"
-    }
+    "relaciones": [
+      "x = x_res",
+      "d = b + (a - c) * x",
+      "total = x"
+    ],
+    "restricciones": ["d > 0"],
+    "incognita_directa": "total",
+    "formato_respuesta": { "tipo": "entero" }
   },
   {
     "id": "geo_secantes_intermedio",
     "tema": "geometria",
     "subtipo": "rectas_secantes",
     "grado": "5to",
-    "etapa": ["clasificatoria", "final"],
     "dificultad": ["intermedio"],
-    "bidireccional": true,
-    "enunciado": "En la figura, las rectas se cortan formando ángulos opuestos. Si un ángulo mide {a}x + {b}° y el otro ángulo 2 mide {c}x + {d}°, halla el valor de x.",
-    "variables": {
-      "a": { "type": "number", "min": 1, "max": 5, "step": 1 },
-      "b": { "type": "number", "min": 0, "max": 30, "step": 5 },
-      "c": { "type": "number", "min": 1, "max": 5, "step": 1 },
-      "d": { "type": "number", "min": 0, "max": 30, "step": 5 }
+    "variables": { 
+      "a": { "type": "number", "min": 2, "max": 4 }, 
+      "c": { "type": "number", "min": 1, "max": 2 },
+      "b": { "type": "number", "min": 5, "max": 15 },
+      "x_res": { "type": "number", "min": 10, "max": 20 }
     },
-    "relaciones": ["x = (d - b) / (a - c)", "ang1 = a*x + b", "ang2 = c*x + d"],
-    "restricciones": ["a != c", "x > 0", "ang1 > 0"],
-    "incognita_directa": "x",
-    "incognitas_inversa": ["a", "b", "c", "d"],
-    "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
-    "metadata": {
-      "habilidades": ["ángulos opuestos", "ecuaciones lineales"],
-      "tiempo_estimado": 120,
-      "requiere_calculadora": true,
-      "fuente": "Adaptado de problemas intermedios"
-    }
+    "relaciones": [
+      "x = x_res",
+      "d = 180 - (a + c) * x - b",
+      "total = x"
+    ],
+    "restricciones": ["d > 5"],
+    "incognita_directa": "total",
+    "formato_respuesta": { "tipo": "entero" }
   },
   {
     "id": "geo_secantes_avanzado",
     "tema": "geometria",
     "subtipo": "rectas_secantes",
     "grado": "5to",
-    "etapa": ["final"],
     "dificultad": ["avanzado"],
-    "bidireccional": true,
-    "enunciado": "En la figura, tres rectas concurren en un punto. Si el ángulo α mide {a}x + {b}°, el ángulo β mide {c}x + {d}° y el ángulo γ mide {e}x + {f}°, sabiendo que α y β son opuestos, y γ es adyacente a β, halla el valor de x.",
-    "variables": {
-      "a": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "b": { "type": "number", "min": 0, "max": 20, "step": 2 },
-      "c": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "d": { "type": "number", "min": 0, "max": 20, "step": 2 },
-      "e": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "f": { "type": "number", "min": 0, "max": 20, "step": 2 }
+    "variables": { 
+      "a": { "type": "number", "min": 2, "max": 3 }, 
+      "c": { "type": "number", "min": 2, "max": 3 }, 
+      "e": { "type": "number", "min": 1, "max": 2 },
+      "b": { "type": "number", "min": 5, "max": 15 }, 
+      "d": { "type": "number", "min": 5, "max": 15 },
+      "f": { "type": "number", "min": 5, "max": 15 },
+      "x_res": { "type": "number", "min": 10, "max": 15 }
     },
     "relaciones": [
-      "x = (d - b) / (a - c)",
-      "ang1 = a*x + b",
-      "ang2 = c*x + d",
-      "ang3 = e*x + f"
+      "x = x_res",
+      "val_g = 360 - (a*x + b + c*x + d + e*x + f)",
+      "g = val_g",
+      "total = x"
     ],
-    "restricciones": [
-      "a != c",
-      "x > 0",
-      "abs(ang1 - ang2) < 0.1",
-      "ang1 + ang2 + ang3 < 360",
-      "ang3 > 0"
+    "restricciones": ["g > 30"],
+    "incognita_directa": "total",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "geo_secantes_experto",
+    "tema": "geometria",
+    "subtipo": "rectas_secantes",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "variables": { 
+      "a": { "type": "number", "min": 3, "max": 4 }, 
+      "c": { "type": "number", "min": 2, "max": 3 }, 
+      "e": { "type": "number", "min": 2, "max": 3 },
+      "b": { "type": "number", "min": 10, "max": 20 }, 
+      "d": { "type": "number", "min": 10, "max": 20 },
+      "ang_base": { "type": "number", "min": 70, "max": 110 },
+      "x_res": { "type": "number", "min": 12, "max": 18 }
+    },
+    "relaciones": [
+      "x = x_res",
+      "val_f = 360 - (a+c+e)*x - (b+d) - ang_base", 
+      "f = val_f",
+      "total = x"
     ],
-    "incognita_directa": "x",
-    "incognitas_inversa": ["a", "b", "c", "d", "e", "f"],
-    "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
-    "metadata": {
-      "habilidades": ["múltiples rectas", "ángulos opuestos", "ecuaciones"],
-      "tiempo_estimado": 180,
-      "requiere_calculadora": true,
-      "fuente": "Adaptado de problemas avanzados"
-    }
+    "restricciones": ["f > 40"],
+    "incognita_directa": "total",
+    "formato_respuesta": { "tipo": "entero" }
   },
   {
     "id": "geo_angulos_teoricos_basico",

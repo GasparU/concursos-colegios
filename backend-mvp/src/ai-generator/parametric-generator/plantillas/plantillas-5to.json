@@ -746,49 +746,6 @@
     "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "x", "formato_respuesta": { "tipo": "entero" }
   }
   ,
-
-  {
-    "id": "rm_conteo_triangulos_intermedio",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["intermedio"],
-    "enunciado": "¿Cuántos triángulos se pueden contar como máximo en el gráfico?",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_conteo_triangulos_avanzado",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["avanzado"],
-    "enunciado": "Aplica el método inductivo y halla el total de triángulos.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_conteo_triangulos_experto",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "¡Reto CONAMAT! Descubre el número total de triángulos en esta estructura compleja.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" }
-  },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  {
     "id": "rm_criptoaritmetica_div_basico",
     "tema": "razonamiento_matematico",
@@ -842,10 +799,36 @@
     "dificultad": ["experto"],
     "enunciado": "Analiza la relación radial y calcula el valor de 'x' (Nivel Experto).",
     "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["x = 1"], "incognita_directa": "x", "formato_respuesta": { "tipo": "entero" }
-  }
+  },
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  { "id": "rm_conteo_triangulos_basico", "tema": "razonamiento_matematico", "subtipo": "conteo_figuras", "grado": "5to", "dificultad": ["basico"], "enunciado": "Generado dinámicamente", "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["total = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" } },
+  { "id": "rm_conteo_triangulos_intermedio", "tema": "razonamiento_matematico", "subtipo": "conteo_figuras", "grado": "5to", "dificultad": ["intermedio"], "enunciado": "Generado dinámicamente", "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["total = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" } },
+  { "id": "rm_conteo_triangulos_avanzado", "tema": "razonamiento_matematico", "subtipo": "conteo_figuras", "grado": "5to", "dificultad": ["avanzado"], "enunciado": "Generado dinámicamente", "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["total = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" } },
+  { "id": "rm_conteo_triangulos_experto", "tema": "razonamiento_matematico", "subtipo": "conteo_figuras", "grado": "5to", "dificultad": ["experto"], "enunciado": "Generado dinámicamente", "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["total = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" } },
+  { "id": "rm_conteo_cuadrilateros_basico", "tema": "razonamiento_matematico", "subtipo": "conteo_figuras", "grado": "5to", "dificultad": ["basico"], "enunciado": "Generado dinámicamente", "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["total = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" } },
+  { "id": "rm_conteo_cuadrilateros_experto", "tema": "razonamiento_matematico", "subtipo": "conteo_figuras", "grado": "5to", "dificultad": ["experto"], "enunciado": "Generado dinámicamente", "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["total = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" } },
+  { "id": "rm_conteo_angulos_basico", "tema": "razonamiento_matematico", "subtipo": "conteo_figuras", "grado": "5to", "dificultad": ["basico"], "enunciado": "Generado dinámicamente", "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["total = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" } },
+  { "id": "rm_conteo_sectores_basico", "tema": "razonamiento_matematico", "subtipo": "conteo_figuras", "grado": "5to", "dificultad": ["basico"], "enunciado": "Generado dinámicamente", "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["total = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" } },
+  { "id": "rm_conteo_cubos_basico", "tema": "razonamiento_matematico", "subtipo": "conteo_figuras", "grado": "5to", "dificultad": ["basico"], "enunciado": "Generado dinámicamente", "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["total = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" } },
+  { "id": "rm_conteo_cubos_experto", "tema": "razonamiento_matematico", "subtipo": "conteo_figuras", "grado": "5to", "dificultad": ["experto"], "enunciado": "Generado dinámicamente", "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } }, "relaciones": ["total = 1"], "incognita_directa": "total", "formato_respuesta": { "tipo": "entero" } }
 
 
 

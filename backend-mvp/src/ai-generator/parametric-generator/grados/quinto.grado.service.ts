@@ -490,6 +490,29 @@ export class QuintoGradoService extends BaseGradoService {
       return enunciado;
     }
 
+    // 🔥 ENUNCIADOS: CONTEO DE FIGURAS UNIVERSAL 🔥
+    if (plantilla.subtipo === 'conteo_figuras' || plantilla.id.includes('conteo')) {
+      if (plantilla.id.includes('cuadrilatero')) {
+        return `Calcula la cantidad total de cuadriláteros que se pueden identificar en la figura.`;
+      } 
+      else if (plantilla.id.includes('angulo')) {
+        return `Determina el número total de ángulos agudos que se pueden contar en el gráfico.`;
+      } 
+      else if (plantilla.id.includes('sectores')) {
+        return `Calcula el número de sectores circulares en la figura mostrada.`;
+      } 
+      else if (plantilla.id.includes('cubos')) {
+        return `Determina el número exacto de cubitos simples que conforman la siguiente estructura 3D.`;
+      } 
+      else { // Triángulos
+        if (plantilla.id.includes('basico') || plantilla.id.includes('intermedio')) {
+          return `Determina el número total de triángulos que se pueden contar como máximo en la figura.`;
+        } else {
+          return `Aplica el método inductivo y halla la cantidad total de triángulos en el gráfico mostrado.`;
+        }
+      }
+    }
+
     if (plantilla.subtipo === 'thales') {
       const dif = plantilla.dificultad[0];
       const tipo = valores.tipo_fig;
@@ -674,26 +697,76 @@ export class QuintoGradoService extends BaseGradoService {
     }
 
 
-  // 🔥 ENUNCIADOS TIPO EXAMEN (RIGUROSOS Y CLAROS) - ÁREA DE TRIÁNGULOS 🔥
-    if (plantilla.subtipo === 'area_triangulo') {
-      const v_x = Number(valores.var_x ?? 2);
-      // Sincronización perfecta del perímetro
-      const perim = (3 * v_x) + (4 * v_x) + (5 * v_x);
+  // 🔥 ENUNCIADOS BLINDADOS (Cero undefined, Cero spoilers) 🔥
+    if (plantilla.subtipo === 'area_triangulo' || plantilla.id.includes('area_triangulo')) {
+      const v_t = Number(valores.var_t ?? 0);
+      const v_k = Number(valores.var_k ?? 1);
+      const v_x = Number(valores.var_x ?? 3);
+      const v_flip = Number(valores.var_flip ?? 0);
+      const v_hide = Number(valores.var_hide ?? 0);
+
+      const ternas = [ {a:3, b:4, c:5}, {a:5, b:12, c:13}, {a:8, b:15, c:17}, {a:6, b:8, c:10} ];
+      const t = ternas[v_t % 4];
+      const cat1 = t.a * v_k; 
+      const cat2 = t.b * v_k; 
+      const hipo = t.c * v_k;
+      const variante = (v_t + v_flip) % 3;
 
       if (plantilla.id.includes('basico')) {
-        return "Calcula el área del triángulo rectángulo ABC mostrado. Considera los datos de la figura.";
+        if (v_hide === 0) {
+          return `Calcula el área del triángulo rectángulo mostrado. Sabiendo que su altura mide ${cat2} u y su hipotenusa ${hipo} u.`;
+        } else {
+          return `Calcula el área del triángulo rectángulo mostrado. Sabiendo que su base mide ${cat1} u y su hipotenusa ${hipo} u.`;
+        }
       } 
       else if (plantilla.id.includes('intermedio')) {
-        return "Dado el triángulo ABC, halla su área total considerando los datos proporcionados.";
+        if (variante === 0) {
+           return `Dado el triángulo isósceles, cuya base mide ${cat1 * 2} cm y sus lados congruentes ${hipo} cm, calcula el área total.`;
+        } else if (variante === 1) {
+           return `Halla el área del triángulo mostrado. Considera que la altura interna mide ${hipo} cm y divide la base en dos segmentos de ${cat1} cm y ${cat2} cm.`;
+        } else {
+           return `Calcula el área del triángulo isósceles tumbado. Su base mide ${cat1 * 2} cm y sus lados congruentes ${hipo} cm.`;
+        }
       } 
       else if (plantilla.id.includes('avanzado')) {
-        return "Calcula el área de la región sombreada en el triángulo obtusángulo ABC mostrado.";
+        // 🔥 FIX: Base 100% dinámica y proporcional
+        const baseAvanzado = 8 * v_k; 
+        return `Calcula el área de la región sombreada. Sabiendo que la base del triángulo principal es ${baseAvanzado} m, además, su proyección es de ${cat1} m y la diagonal mide ${hipo} m.`;
       } 
       else if (plantilla.id.includes('experto')) {
-        // Enunciado formal y desafiante
-        return `El perímetro del triángulo rectángulo ABC mostrado es ${perim} u. Si sus lados guardan la proporción mostrada, halla el área de la región triangular.`;
+        if (variante === 0) {
+           return `El perímetro del triángulo rectángulo es ${3*v_x + 4*v_x + 5*v_x} u. Calcula el área.`;
+        } else if (variante === 1) {
+           return `El perímetro del triángulo isósceles mostrado es ${6*v_x + 5*v_x + 5*v_x} u. Calcular el área de la región triangular.`;
+        } else {
+           return `El perímetro del triángulo isósceles es ${12*v_x + 10*v_x + 10*v_x} u. Halla el área total de la figura.`;
+        }
       }
     }
+
+   if (plantilla.id.includes('geo_secantes')) {
+      const v = valores || {};
+      
+      // Formateador anti "1x"
+      const ax = v.a === 1 ? 'x' : `${v.a}x`;
+      const cx = v.c === 1 ? 'x' : `${v.c}x`;
+      const ex = v.e === 1 ? 'x' : `${v.e}x`; // Para avanzado/experto
+
+      if (plantilla.id.includes('basico')) {
+        return `En el gráfico, las rectas L1 y L2 se intersecan en el punto O. Si las medidas de los ángulos opuestos por el vértice son ${ax} + ${v.b}° y ${cx} + ${v.d}°, halle el valor de x.`;
+      } 
+      else if (plantilla.id.includes('intermedio')) {
+        return `Dados los rayos concurrentes en O que forman un par lineal sobre una recta, determine el valor de x sabiendo que los ángulos adyacentes miden ${ax} + ${v.b}° y ${cx} + ${v.d}°.`;
+      } 
+      else if (plantilla.id.includes('avanzado')) {
+        return `En la figura, se muestran rayos concurrentes en el punto O que completan una vuelta entera (360°). A partir de los datos proporcionados, calcule el valor de x.`;
+      }
+      else {
+        return `Analice la siguiente configuración geométrica de ángulos alrededor del punto O. Determine el valor entero de la incógnita x.`;
+      }
+    }
+
+
 
     // 🔥 2. Narrativa dinámica para la posición del punto P (Rectángulo Diagonal)
     if (plantilla.id === 'geo_rectangulo_punto_diagonal_01') {
@@ -2843,76 +2916,116 @@ export class QuintoGradoService extends BaseGradoService {
         }
         // 🔥 FIN DEL BLOQUE PARA ÁNGULOS RADIALES
 
-        // ========== RECTAS SECANTES ==========
-        case 'rectas_secantes': {
-          const v = valores;
+      case 'rectas_secantes': {
+          const id = plantilla.id || '';
+          const v = valores || {};
+          const lines: any[] = [];
+          const labels: any[] = [];
+          const colorCeleste = "#38bdf8"; 
+          const colorVerde = "#22c55e"; 
 
-          const xMin = -5;
-          const xMax = 5;
-          const lineas: any[] = [];
-          const angulos: any[] = [];
+          // 🔥 Helper maestro para formatear álgebra (1x -> x, 2x -> 2x)
+          const fx = (coef: number) => coef === 1 ? 'x' : `${coef}x`;
 
-          // Recta base (L1) horizontal
-          lineas.push({
-            puntos: [
-              [xMin, 0],
-              [xMax, 0],
-            ],
-            label: 'L1',
-          });
+          const addRayo = (angleDeg: number, letra: string) => {
+            const rad = (angleDeg * Math.PI) / 180;
+            const r = 10;
+            const pX = r * Math.cos(rad);
+            const pY = r * Math.sin(rad);
+            
+            if (!isNaN(pX) && !isNaN(pY)) {
+                lines.push({ puntos: [[0, 0], [pX, pY]], color: colorCeleste, weight: 2 });
+                labels.push({ pos: [pX * 1.15, pY * 1.15], dir: [0,0], texto: letra, tipo: 'vertice' });
+            }
+          };
 
-          // Recta transversal (L2) con ángulo 'ang1'
-          const pend1 = Math.tan((v.ang1 * Math.PI) / 180);
-          lineas.push({
-            puntos: [
-              [xMin, pend1 * xMin],
-              [xMax, pend1 * xMax],
-            ],
-            label: 'L2',
-          });
+          const addAnguloLabel = (angS: number, angE: number, texto: string) => {
+            const mid = ((angS + angE) / 2) * (Math.PI / 180);
+            const dist = 6.2;
+            const posX = dist * Math.cos(mid);
+            const posY = dist * Math.sin(mid);
 
-          // Etiquetas opuestas
-          angulos.push(
-            {
-              centro: [0, 0],
-              inicio: 0,
-              fin: v.ang1,
-              etiqueta: `${v.a}x+${v.b}°`,
-            },
-            {
-              centro: [0, 0],
-              inicio: 180,
-              fin: 180 + v.ang1,
-              etiqueta: `${v.c}x+${v.d}°`,
-            },
-          );
+            if (!isNaN(posX) && !isNaN(posY)) {
+               labels.push({ pos: [posX, posY], dir: [0,0], texto, tipo: 'valor', color: colorVerde });
+               const arcoPts: [number, number][] = [];
+               for(let a=angS; a<=angE; a+=2) arcoPts.push([3 * Math.cos(a*Math.PI/180), 3 * Math.sin(a*Math.PI/180)]);
+               arcoPts.push([3 * Math.cos(angE*Math.PI/180), 3 * Math.sin(angE*Math.PI/180)]);
+               lines.push({ puntos: arcoPts, color: colorVerde, weight: 2 });
+            }
+          };
 
-          // Si es avanzado, añadimos una tercera recta y ángulo
-          if (plantilla.id === 'geo_secantes_avanzado') {
-            const pend2 = Math.tan(((v.ang1 + v.ang2) * Math.PI) / 180);
-            lineas.push({
-              puntos: [
-                [xMin, pend2 * xMin],
-                [xMax, pend2 * xMax],
-              ],
-              label: 'L3',
-            });
+          labels.push({ pos: [-0.8, -0.8], dir: [0,0], texto: "O", tipo: "vertice" });
 
-            angulos.push({
-              centro: [0, 0],
-              inicio: v.ang1,
-              fin: v.ang1 + v.ang2,
-              etiqueta: `${v.e}x+${v.f}°`,
-            });
+          // ==========================================
+          // 🟢 BÁSICO / 🟡 INTERMEDIO
+          // ==========================================
+          if (id.includes('basico') || id.includes('intermedio')) {
+            const a1 = 50;
+            addRayo(0, "A");
+            addRayo(a1, "B");
+            addRayo(180, "C");
+            addRayo(180 + a1, "D");
+
+            if (id.includes('basico')) {
+              // Aplicamos fx() para limpiar las etiquetas
+              addAnguloLabel(0, a1, `${fx(v.a)} + ${v.b}°`);
+              addAnguloLabel(180, 180 + a1, `${fx(v.c)} + ${v.d}°`);
+            } else {
+              addAnguloLabel(0, a1, `${fx(v.a)} + ${v.b}°`);
+              addAnguloLabel(a1, 180, `${fx(v.c)} + ${v.d}°`);
+            }
+          } 
+          // ==========================================
+          // 🔴 AVANZADO / 💀 EXPERTO (360° Seguro)
+          // ==========================================
+          else {
+            const x = v.x || 10; 
+            const val1 = (v.a * x + v.b) || 40;
+            const val2 = (v.c * x + v.d) || 60;
+            
+            let val3 = 0, val4 = 0;
+            if (id.includes('avanzado')) {
+                val3 = (v.e * x + v.f) || 120;
+                val4 = 360 - (val1 + val2 + val3);
+            } else {
+                val3 = v.ang_base || 110;
+                val4 = 360 - (val1 + val2 + val3);
+            }
+
+            const angB = val1;
+            const angC = (val1 + val2) > 360 ? 350 : (val1 + val2);
+            const angD = (val1 + val2 + val3) > 360 ? 355 : (val1 + val2 + val3);
+
+            addRayo(0, "A");
+            addRayo(angB, "B");
+            addRayo(angC, "C");
+            addRayo(angD, "D");
+
+            // Aplicamos fx() para limpiar las etiquetas en avanzado y experto
+            addAnguloLabel(0, angB, `${fx(v.a)} + ${v.b}°`);
+            addAnguloLabel(angB, angC, `${fx(v.c)} + ${v.d}°`);
+            
+            if (id.includes('avanzado')) {
+              addAnguloLabel(angC, angD, `${fx(v.e)} + ${v.f}°`);
+              addAnguloLabel(angD, 360, `${Math.max(1, Math.round(val4))}°`); 
+            } else {
+              addAnguloLabel(angC, angD, `${Math.max(1, Math.round(val3))}°`);
+              addAnguloLabel(angD, 360, `${fx(v.e)} + ${v.f}°`);
+            }
           }
 
+          const resNum = Number(v.x) || 0;
+          v.total = resNum;
+          v.respuesta = resNum;
+
           return {
-            type: 'geometry_mafs',
-            theme: 'rectas_secantes',
-            idPlantilla: plantilla.id,
-            lineas,
-            angulos,
-            centro: [0, 0],
+            valores: v, respuesta: resNum, tipo_render: 'geometry_mafs',
+            data: {
+              type: 'geometry_mafs', theme: 'area_triangulo',
+              puntos: [], 
+              esArea: false, etiquetas: labels, lineasExtra: lines, arcos: [],
+              respuestaSobreescrita: resNum
+            }
           };
         }
 
@@ -6261,8 +6374,7 @@ export class QuintoGradoService extends BaseGradoService {
           };
         }
      
-       // 🔥 GEOMETRÍA: ÁREA DE TRIÁNGULOS (MATEMÁTICA PURA Y RIGUROSIDAD) 🔥
-        case 'geo_area_triangulo_basico':
+       case 'geo_area_triangulo_basico':
         case 'geo_area_triangulo_intermedio':
         case 'geo_area_triangulo_avanzado':
         case 'geo_area_triangulo_experto':
@@ -6270,14 +6382,12 @@ export class QuintoGradoService extends BaseGradoService {
           const id = plantilla.id || '';
           const v = valores || {};
           
-          // 1. Forzamos números y fallbacks blindados
           const v_t = Number(v.var_t ?? 0);
           const v_k = Number(v.var_k ?? 1);
           const v_x = Number(v.var_x ?? 3); 
           const v_flip = Number(v.var_flip ?? 0);
           const v_hide = Number(v.var_hide ?? 0);
 
-          // 2. Lógica de Ternas Pitagóricas (Resultados siempre ENTEROS - Rigor)
           const ternas = [ {a:3, b:4, c:5}, {a:5, b:12, c:13}, {a:8, b:15, c:17}, {a:6, b:8, c:10} ];
           const terna = ternas[v_t % 4];
           const cat1 = terna.a * v_k; 
@@ -6288,68 +6398,162 @@ export class QuintoGradoService extends BaseGradoService {
           const flipY = (v_flip & 2) ? -1 : 1;
           const swapXY = (v_flip & 4) !== 0;
 
+          // 🔥 MOTOR DE 12 ARQUETIPOS
+          const variante = (v_t + v_flip) % 3; 
+
           let ptsBase: [number, number][] = [];
           const labels: any[] = [];
           const lines: any[] = [];
           let resFinal = 0;
+          let bFin=0, hFin=0, hiFin=0;
 
-          // Ángulo 90 pura: Empezando del vértice (0,0) - El frontend lo orienta
-          const sym90 = { puntos: [[0, 1], [1, 1], [1, 0]], color: "red" };
+          const sym90 = { puntos: [[0, 1], [1, 1], [1, 0]], color: "red", tipo: 'angulo' };
 
+          // 📐 NIVEL BÁSICO
           if (id.includes('basico')) {
-            const b = cat1; const h = cat2;
-            ptsBase = [[0,0], [b,0], [0,h]]; // 90° en A
-            resFinal = (b * h) / 2;
-            lines.push(sym90);
-            
-            if (v_hide === 0) { // Oculta base, pide x
-              labels.push({ pos: [b/2, 0], dir: [0, -1], texto: `x`, tipo: "base" });
-              labels.push({ pos: [0, h/2], dir: [-1, 0], texto: `${h} u`, tipo: "h" });
-              labels.push({ pos: [b/2, h/2], dir: [1, 1], texto: `${hipo} u`, tipo: "hipo" });
-            } else { // Oculta altura, pide h
-              labels.push({ pos: [b/2, 0], dir: [0, -1], texto: `${b} u`, tipo: "base" });
-              labels.push({ pos: [0, h/2], dir: [-1, 0], texto: `h`, tipo: "h" });
-              labels.push({ pos: [b/2, h/2], dir: [1, 1], texto: `${hipo} u`, tipo: "hipo" });
+            bFin = cat1; hFin = cat2; hiFin = hipo;
+            resFinal = (bFin * hFin) / 2;
+
+            if (variante === 0) {
+              ptsBase = [[0,0], [bFin,0], [0,hFin]]; lines.push(sym90);
+              labels.push({ pos: [0, hFin], dir: [-1, 1], texto: 'A', tipo: 'vertice' });
+              labels.push({ pos: [0, 0], dir: [-1, -1], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [bFin, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
+              labels.push({ pos: [bFin/2, 0], dir: [0, -1], texto: (v_hide===0)? `x` : `${bFin} u`, tipo: "base" });
+              labels.push({ pos: [0, hFin/2], dir: [-1, 0], texto: (v_hide===0)? `${hFin} u` : `h`, tipo: "h" });
+              labels.push({ pos: [bFin/2, hFin/2], dir: [1, 1], texto: `${hiFin} u`, tipo: "hipo" });
+            } else if (variante === 1) {
+              ptsBase = [[0,hFin], [bFin,hFin], [0,0]]; lines.push({ puntos: [[0, hFin-1], [1, hFin-1], [1, hFin]], color: "red", tipo:'angulo' });
+              labels.push({ pos: [0, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
+              labels.push({ pos: [0, hFin], dir: [-1, 1], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [bFin, hFin], dir: [1, 1], texto: 'C', tipo: 'vertice' });
+              labels.push({ pos: [bFin/2, hFin], dir: [0, 1], texto: (v_hide===0)? `x` : `${bFin} u`, tipo: "base" });
+              labels.push({ pos: [0, hFin/2], dir: [-1, 0], texto: (v_hide===0)? `${hFin} u` : `h`, tipo: "h" });
+              labels.push({ pos: [bFin/2, hFin/2], dir: [1, -1], texto: `${hiFin} u`, tipo: "hipo" });
+            } else {
+              ptsBase = [[0,0], [bFin,0], [bFin,hFin]]; lines.push({ puntos: [[bFin-1, 0], [bFin-1, 1], [bFin, 1]], color: "red", tipo:'angulo' });
+              labels.push({ pos: [0, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
+              labels.push({ pos: [bFin, 0], dir: [1, -1], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [bFin, hFin], dir: [1, 1], texto: 'C', tipo: 'vertice' });
+              labels.push({ pos: [bFin/2, 0], dir: [0, -1], texto: (v_hide===0)? `x` : `${bFin} u`, tipo: "base" });
+              labels.push({ pos: [bFin, hFin/2], dir: [1, 0], texto: (v_hide===0)? `${hFin} u` : `h`, tipo: "h" });
+              labels.push({ pos: [bFin/2, hFin/2], dir: [-1, 1], texto: `${hiFin} u`, tipo: "hipo" });
             }
           } 
+          // 📐 NIVEL INTERMEDIO
           else if (id.includes('intermedio')) {
-            const bMitad = cat1; const h = cat2;
-            ptsBase = [[-bMitad, 0], [bMitad, 0], [0, h]];
-            resFinal = ((bMitad * 2) * h) / 2;
-
-            lines.push({ puntos: [[0, h], [0, 0]], color: "green", estilo: "dashed" }); // Altura
-            lines.push({ puntos: [[-0.8, 0], [-0.8, 0.8], [0, 0.8]], color: "red" }); // 90 de altura
-
-            labels.push({ pos: [0, 0], dir: [0, -1], texto: `${bMitad * 2} cm`, tipo: "base" });
-            labels.push({ pos: [0, h/2], dir: [1, 0], texto: `h`, tipo: "h" });
-            labels.push({ pos: [bMitad/2, h/2], dir: [1, 1], texto: `${hipo} cm`, tipo: "hipo" });
+            if (variante === 0) {
+              bFin = cat1 * 2; hFin = cat2; hiFin = hipo; resFinal = (bFin * hFin) / 2;
+              ptsBase = [[-cat1, 0], [cat1, 0], [0, hFin]];
+              labels.push({ pos: [-cat1, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
+              labels.push({ pos: [0, hFin], dir: [0, 1], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [cat1, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
+              lines.push({ puntos: [[0, hFin], [0, 0]], color: "green", estilo: "dashed" }); 
+              lines.push({ puntos: [[-1, 0], [-1, 1], [0, 1]], color: "red", tipo:'angulo' }); 
+              labels.push({ pos: [0, 0], dir: [0, -1], texto: `${bFin} cm`, tipo: "base" });
+              labels.push({ pos: [0, hFin/2], dir: [1, 0], texto: `h`, tipo: "h" });
+              labels.push({ pos: [cat1/2, hFin/2], dir: [1, 1], texto: `${hiFin} cm`, tipo: "hipo" });
+            } else if (variante === 1) {
+              hFin = hipo; bFin = cat1 + cat2; resFinal = (bFin * hFin) / 2;
+              ptsBase = [[-cat1, 0], [cat2, 0], [0, hFin]]; 
+              labels.push({ pos: [-cat1, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
+              labels.push({ pos: [0, hFin], dir: [0, 1], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [cat2, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
+              lines.push({ puntos: [[0, hFin], [0, 0]], color: "green", estilo: "dashed" }); 
+              lines.push({ puntos: [[-1, 0], [-1, 1], [0, 1]], color: "red", tipo:'angulo' }); 
+              labels.push({ pos: [-cat1/2, 0], dir: [0, -1], texto: `${cat1} cm`, tipo: "base" });
+              labels.push({ pos: [cat2/2, 0], dir: [0, -1], texto: `${cat2} cm`, tipo: "base" });
+              labels.push({ pos: [0, hFin/2], dir: [1, 0], texto: `h`, tipo: "h" });
+            } else {
+              bFin = cat1 * 2; hFin = cat2; hiFin = hipo; resFinal = (bFin * hFin) / 2;
+              ptsBase = [[0, -cat1], [0, cat1], [hFin, 0]];
+              labels.push({ pos: [0, cat1], dir: [-1, 1], texto: 'A', tipo: 'vertice' });
+              labels.push({ pos: [hFin, 0], dir: [1, 0], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [0, -cat1], dir: [-1, -1], texto: 'C', tipo: 'vertice' });
+              lines.push({ puntos: [[hFin, 0], [0, 0]], color: "green", estilo: "dashed" }); 
+              lines.push({ puntos: [[0, 1], [1, 1], [1, 0]], color: "red", tipo:'angulo' }); 
+              labels.push({ pos: [0, 0], dir: [-1.4, 0], texto: `${bFin} cm`, tipo: "base_tumbada" });
+              labels.push({ pos: [hFin/2, 0], dir: [0, -1.3], texto: `h`, tipo: "h_tumbada" });
+              labels.push({ pos: [hFin/2, cat1/2], dir: [1.3, 1], texto: `${hiFin} cm`, tipo: "hipo_tumbada" });
+            }
           } 
-          else if (id.includes('avanzado')) {
-            const proy = cat1; const h = cat2; const baseT = 8;
-            ptsBase = [[0,0], [baseT,0], [-proy, h]];
-            resFinal = (baseT * h) / 2;
+          // 📐 NIVEL AVANZADO
+         else if (id.includes('avanzado')) {
+            // 🔥 FIX: Base dinámica (8 * v_k) en lugar de un 8 fijo
+            bFin = 8 * v_k; 
+            hFin = cat2; 
+            hiFin = hipo; 
+            const proy = cat1;
+            resFinal = (bFin * hFin) / 2;
 
-            lines.push({ puntos: [[-proy, h], [-proy, 0]], color: "green", estilo: "dashed" }); // Altura ext
-            lines.push({ puntos: [[-proy, 0], [0, 0]], color: "green", estilo: "dashed" }); // Proy base
-            lines.push({ puntos: [[-proy, 0.8], [-proy+0.8, 0.8], [-proy+0.8, 0]], color: "red" }); // 90 externo
-            
-            labels.push({ pos: [baseT/2, 0], dir: [0, -1], texto: `${baseT} m`, tipo: "base" });
-            labels.push({ pos: [-proy, h/2], dir: [-1, 0], texto: `h`, tipo: "h" });
-            labels.push({ pos: [-proy/2, 0], dir: [0, -1], texto: `${proy} m`, tipo: "proy" });
-            labels.push({ pos: [-proy/2, h/2], dir: [-1, 1], texto: `${hipo} m`, tipo: "hipo_ext" });
+            if (variante === 0) {
+              ptsBase = [[0,0], [bFin,0], [-proy, hFin]];
+              labels.push({ pos: [0, 0], dir: [0.5, -1], texto: 'A', tipo: 'vertice' }); 
+              labels.push({ pos: [-proy, hFin], dir: [-1, 1], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [bFin, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
+              lines.push({ puntos: [[-proy, hFin], [-proy, 0], [0, 0]], color: "green", estilo: "dashed" }); 
+              lines.push({ puntos: [[-proy, 1], [-proy+1, 1], [-proy+1, 0]], color: "red", tipo:'angulo' }); 
+              labels.push({ pos: [bFin/2, 0], dir: [0, -1.2], texto: `${bFin} m`, tipo: "base" });
+              labels.push({ pos: [-proy, hFin/2], dir: [-1.2, 0], texto: `h`, tipo: "h" });
+              labels.push({ pos: [-proy/2, 0], dir: [0, -1.2], texto: `${proy} m`, tipo: "proy" });
+              labels.push({ pos: [-proy/2, hFin/2], dir: [-1, 1.2], texto: `${hiFin} m`, tipo: "hipo_ext" });
+            } else if (variante === 1) {
+              ptsBase = [[0,0], [bFin,0], [bFin + proy, hFin]];
+              labels.push({ pos: [0, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' }); 
+              labels.push({ pos: [bFin + proy, hFin], dir: [1, 1], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [bFin, 0], dir: [-0.5, -1], texto: 'C', tipo: 'vertice' });
+              lines.push({ puntos: [[bFin + proy, hFin], [bFin + proy, 0], [bFin, 0]], color: "green", estilo: "dashed" }); 
+              lines.push({ puntos: [[bFin + proy - 1, 0], [bFin + proy - 1, 1], [bFin + proy, 1]], color: "red", tipo:'angulo' }); 
+              labels.push({ pos: [bFin/2, 0], dir: [0, -1.2], texto: `${bFin} m`, tipo: "base" });
+              labels.push({ pos: [bFin + proy, hFin/2], dir: [1.2, 0], texto: `h`, tipo: "h" });
+              labels.push({ pos: [bFin + proy/2, 0], dir: [0, -1.2], texto: `${proy} m`, tipo: "proy" });
+              labels.push({ pos: [bFin + proy/2, hFin/2], dir: [1.2, 1], texto: `${hiFin} m`, tipo: "hipo_ext" });
+            } else {
+              ptsBase = [[0,0], [0, bFin], [hFin, -proy]];
+              labels.push({ pos: [0, bFin], dir: [-1, 1], texto: 'A', tipo: 'vertice' }); 
+              labels.push({ pos: [hFin, -proy], dir: [1, -1], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [0, 0], dir: [-1, 0.5], texto: 'C', tipo: 'vertice' });
+              lines.push({ puntos: [[hFin, -proy], [0, -proy], [0, 0]], color: "green", estilo: "dashed" }); 
+              lines.push({ puntos: [[0, -proy + 1], [1, -proy + 1], [1, -proy]], color: "red", tipo:'angulo' }); 
+              labels.push({ pos: [0, bFin/2], dir: [-1.2, 0], texto: `${bFin} m`, tipo: "base" });
+              labels.push({ pos: [hFin/2, -proy], dir: [0, -1.2], texto: `h`, tipo: "h" });
+              labels.push({ pos: [0, -proy/2], dir: [-1.2, 0], texto: `${proy} m`, tipo: "proy" });
+              labels.push({ pos: [hFin/2, -proy/2], dir: [1.2, -1], texto: `${hiFin} m`, tipo: "hipo_ext" });
+            }
           } 
-          else { // EXPERTO
-            const b = 3*v_x; const h = 4*v_x;
-            ptsBase = [[0,0], [b,0], [0,h]];
-            resFinal = (b * h) / 2;
-            lines.push(sym90);
-            
-            labels.push({ pos: [b/2, 0], dir: [0, -1], texto: `3x`, tipo: "algebra" });
-            labels.push({ pos: [0, h/2], dir: [-1, 0], texto: `4x`, tipo: "algebra" });
-            labels.push({ pos: [b/2, h/2], dir: [1, 1], texto: `5x`, tipo: "algebra" });
+          // 📐 NIVEL EXPERTO
+          else { 
+            if (variante === 0) {
+              bFin = 3*v_x; hFin = 4*v_x; resFinal = (bFin * hFin) / 2;
+              ptsBase = [[0,0], [bFin,0], [0,hFin]]; lines.push(sym90);
+              labels.push({ pos: [0, hFin], dir: [-1, 1], texto: 'A', tipo: 'vertice' });
+              labels.push({ pos: [0, 0], dir: [-1, -1], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [bFin, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
+              labels.push({ pos: [bFin/2, 0], dir: [0, -1], texto: `3x`, tipo: "algebra" });
+              labels.push({ pos: [0, hFin/2], dir: [-1, 0], texto: `4x`, tipo: "algebra" });
+              labels.push({ pos: [bFin/2, hFin/2], dir: [1, 1], texto: `5x`, tipo: "algebra" });
+            } else if (variante === 1) {
+              bFin = 6*v_x; hFin = 4*v_x; resFinal = (bFin * hFin) / 2;
+              ptsBase = [[-bFin/2, 0], [bFin/2, 0], [0, hFin]];
+              labels.push({ pos: [-bFin/2, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
+              labels.push({ pos: [0, hFin], dir: [0, 1], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [bFin/2, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
+              labels.push({ pos: [0, 0], dir: [0, -1], texto: `6x`, tipo: "algebra" });
+              labels.push({ pos: [-bFin/4, hFin/2], dir: [-1, 1], texto: `5x`, tipo: "algebra" });
+              labels.push({ pos: [bFin/4, hFin/2], dir: [1, 1], texto: `5x`, tipo: "algebra" });
+            } else {
+              bFin = 12*v_x; hFin = 8*v_x; resFinal = (bFin * hFin) / 2;
+              ptsBase = [[-bFin/2, 0], [bFin/2, 0], [0, hFin]];
+              labels.push({ pos: [-bFin/2, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
+              labels.push({ pos: [0, hFin], dir: [0, 1], texto: 'B', tipo: 'vertice' });
+              labels.push({ pos: [bFin/2, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
+              labels.push({ pos: [0, 0], dir: [0, -1], texto: `12x`, tipo: "algebra" });
+              labels.push({ pos: [-bFin/4, hFin/2], dir: [-1, 1], texto: `10x`, tipo: "algebra" });
+              labels.push({ pos: [bFin/4, hFin/2], dir: [1, 1], texto: `10x`, tipo: "algebra" });
+            }
           }
 
-          // ROTACIONES LIMPIAS PARA PUNTOS Y VECTORES DE TEXTO
+          // ROTACIONES
           const rotar = (px: number, py: number): [number, number] => {
             let nx = px * flipX; let ny = py * flipY;
             if (swapXY) { const tmp = nx; nx = ny; ny = tmp; }
@@ -6361,7 +6565,7 @@ export class QuintoGradoService extends BaseGradoService {
           const etiquetas = labels.map(l => ({ ...l, pos: rotar(l.pos[0], l.pos[1]), dir: rotar(l.dir[0], l.dir[1]) }));
 
           return {
-            valores: { ...v, respuesta: Math.round(resFinal) },
+            valores: v, 
             respuesta: Math.round(resFinal),
             tipo_render: 'geometry_mafs',
             data: {
@@ -6910,6 +7114,288 @@ export class QuintoGradoService extends BaseGradoService {
           return { type: 'graphic_distribution', data: { shape: 'circle', figures: [f1, f2, f3] }, respuestaSobreescrita: f3.real };
         }
 
+
+      // 🔥 MEGA-MOTOR UNIVERSAL: CATÁLOGO MASIVO (Letras, Escaleras, Estrellas, Trapecios) 🔥
+        case 'rm_conteo_triangulos_basico':
+        case 'rm_conteo_triangulos_intermedio':
+        case 'rm_conteo_triangulos_avanzado':
+        case 'rm_conteo_triangulos_experto':
+        case 'rm_conteo_cuadrilateros_basico':
+        case 'rm_conteo_cuadrilateros_experto':
+        case 'rm_conteo_angulos_basico':
+        case 'rm_conteo_sectores_basico':
+        case 'rm_conteo_cubos_basico':
+        case 'rm_conteo_cubos_experto':
+        case 'conteo_figuras': {
+          const id = plantilla.id || '';
+          const v = valores || {};
+          let resFinal = 0;
+          const lines: any[] = [];
+          const polys3D: any[] = []; 
+          
+          let tipo = 'tri';
+          if (id.includes('cuadrilatero')) tipo = 'cuad';
+          else if (id.includes('angulo')) tipo = 'ang';
+          else if (id.includes('sectore')) tipo = 'sec';
+          else if (id.includes('cubo')) tipo = 'cub';
+
+          const lineColor = "#16a34a"; 
+          const w = 2;
+
+          // ==========================================
+          // 📐 1. TRIÁNGULOS Y ÁNGULOS (Variedad Extrema)
+          // ==========================================
+          if (tipo === 'tri' || tipo === 'ang') {
+            
+            // Filtro por dificultad (Le decimos a TypeScript que es un array de strings)
+            let opciones: string[] = [];
+            
+            if (id.includes('basico')) opciones = ['triangulo_pisos', 'cuadrado_x'];
+            else if (id.includes('intermedio')) opciones = ['triangulo_pisos', 'cuadrado_cruz', 'trapecio'];
+            else if (id.includes('avanzado')) opciones = ['cuadrado_cruz', 'rectangulo_doble', 'trapecio', 'estrella'];
+            else opciones = ['triangulo_pisos', 'rectangulo_doble', 'estrella']; // Experto
+
+            const formaElegida = opciones[Math.floor(Math.random() * opciones.length)];
+
+            if (formaElegida === 'triangulo_pisos') {
+              const n = Math.floor(Math.random() * 4) + 3; 
+              const m = id.includes('basico') ? 1 : Math.floor(Math.random() * 3) + 2; 
+              resFinal = m * ((n * (n + 1)) / 2);
+              const b = 16, h = 14, xA = -b/2, xC = b/2;
+              const xB = [-5, 0, 5][Math.floor(Math.random() * 3)]; 
+              
+              lines.push({ puntos: [[xA, 0], [xC, 0], [xB, h], [xA, 0]], color: lineColor, weight: w });
+              for (let i = 1; i < n; i++) lines.push({ puntos: [[xB, h], [xA + (b/n)*i, 0]], color: lineColor, weight: w });
+              for (let j = 1; j < m; j++) {
+                const yk = (h/m)*j;
+                lines.push({ puntos: [[xA + (xB - xA)*(yk/h), yk], [xC + (xB - xC)*(yk/h), yk]], color: lineColor, weight: w });
+              }
+            } 
+            else if (formaElegida === 'cuadrado_x') {
+              resFinal = 8;
+              const a = 8;
+              lines.push({ puntos: [[-a,-a], [a,-a], [a,a], [-a,a], [-a,-a]], color: lineColor, weight: w });
+              lines.push({ puntos: [[-a,-a], [a,a]], color: lineColor, weight: w });
+              lines.push({ puntos: [[-a,a], [a,-a]], color: lineColor, weight: w });
+            }
+            else if (formaElegida === 'cuadrado_cruz') {
+              resFinal = 16;
+              const a = 8;
+              lines.push({ puntos: [[-a,-a], [a,-a], [a,a], [-a,a], [-a,-a]], color: lineColor, weight: w });
+              lines.push({ puntos: [[-a,-a], [a,a]], color: lineColor, weight: w });
+              lines.push({ puntos: [[-a,a], [a,-a]], color: lineColor, weight: w });
+              lines.push({ puntos: [[-a,0], [a,0]], color: lineColor, weight: w });
+              lines.push({ puntos: [[0,-a], [0,a]], color: lineColor, weight: w });
+            }
+            else if (formaElegida === 'rectangulo_doble') {
+              resFinal = 16; // 8 en el izq, 8 en el der
+              const a = 6;
+              // Contorno y division
+              lines.push({ puntos: [[-a*2,-a], [a*2,-a], [a*2,a], [-a*2,a], [-a*2,-a]], color: lineColor, weight: w });
+              lines.push({ puntos: [[0,-a], [0,a]], color: lineColor, weight: w });
+              // X izquierda y X derecha
+              lines.push({ puntos: [[-a*2,-a], [0,a]], color: lineColor, weight: w });
+              lines.push({ puntos: [[-a*2,a], [0,-a]], color: lineColor, weight: w });
+              lines.push({ puntos: [[0,-a], [a*2,a]], color: lineColor, weight: w });
+              lines.push({ puntos: [[0,a], [a*2,-a]], color: lineColor, weight: w });
+            }
+            else if (formaElegida === 'trapecio') {
+              resFinal = 8;
+              const bM = 8, bm = 4, h = 6;
+              lines.push({ puntos: [[-bM, -h/2], [bM, -h/2], [bm, h/2], [-bm, h/2], [-bM, -h/2]], color: lineColor, weight: w });
+              lines.push({ puntos: [[-bM, -h/2], [bm, h/2]], color: lineColor, weight: w });
+              lines.push({ puntos: [[bM, -h/2], [-bm, h/2]], color: lineColor, weight: w });
+            }
+            else if (formaElegida === 'estrella') {
+              resFinal = 10;
+              const R = 10, pE: [number, number][] = [];
+              for(let i=0; i<5; i++) pE.push([R * Math.cos(Math.PI/2 + i*(4*Math.PI/5)), R * Math.sin(Math.PI/2 + i*(4*Math.PI/5))]);
+              lines.push({ puntos: [...pE, pE[0]], color: lineColor, weight: w });
+            }
+          }
+          // ==========================================
+          // 🟩 2. CUADRILÁTEROS
+          // ==========================================
+          else if (tipo === 'cuad') {
+            const cols = Math.floor(Math.random() * 4) + 3; 
+            const rows = Math.floor(Math.random() * 3) + 2; 
+            resFinal = ((cols * (cols + 1)) / 2) * ((rows * (rows + 1)) / 2);
+            
+            const skew = id.includes('experto') ? 0.5 : 0; 
+            const wl = 16, hl = 10, dx = wl/cols, dy = hl/rows;
+            const getPt = (c: number, r: number): [number, number] => [-wl/2 + c*dx + (-hl/2 + r*dy)*skew, -hl/2 + r*dy];
+
+            const colorC = "#8b5cf6"; 
+            lines.push({ puntos: [getPt(0,0), getPt(cols,0), getPt(cols,rows), getPt(0,rows), getPt(0,0)], color: colorC, weight: 2 });
+            for(let i=1; i<cols; i++) lines.push({ puntos: [getPt(i,0), getPt(i,rows)], color: colorC, weight: 2 });
+            for(let j=1; j<rows; j++) lines.push({ puntos: [getPt(0,j), getPt(cols,j)], color: colorC, weight: 2 });
+          }
+          // ==========================================
+          // 🍕 3. SECTORES CIRCULARES
+          // ==========================================
+          else if (tipo === 'sec') {
+            const n = Math.floor(Math.random() * 5) + 4; 
+            const m = Math.floor(Math.random() * 3) + 2; 
+            resFinal = m * ((n * (n + 1)) / 2);
+
+            const R = 12, angMin = Math.PI/6, angMax = 5*Math.PI/6, step = (angMax - angMin)/n;
+            const colorS = "#f97316"; 
+
+            for(let j=1; j<=m; j++) {
+              const rAct = (R/m) * j;
+              const arcoPts: [number, number][] = [];
+              for(let a = angMin; a <= angMax; a += 0.05) arcoPts.push([rAct * Math.cos(a), rAct * Math.sin(a)]);
+              arcoPts.push([rAct * Math.cos(angMax), rAct * Math.sin(angMax)]); // Cierre perfecto
+              lines.push({ puntos: arcoPts, color: colorS, weight: 2 });
+            }
+            for(let i=0; i<=n; i++) {
+              lines.push({ puntos: [[0,0], [R * Math.cos(angMin + i * step), R * Math.sin(angMin + i * step)]], color: colorS, weight: 2 });
+            }
+          }
+         
+         
+         // ==========================================
+          // 📦 FAMILIA 4: CUBOS ISOMÉTRICOS (DISEÑOS COMPLEJOS Y VOLUMÉTRICOS)
+          // ==========================================
+          else if (tipo === 'cub') {
+            const sc = 1.8; 
+            const proj = (x: number, y: number, z: number): [number, number] => {
+                return [(x - y) * 0.866 * sc, (-x * 0.5 - y * 0.5 + z) * sc];
+            };
+
+            // 🔥 CATÁLOGO MAESTRO DE DISEÑOS ARQUITECTÓNICOS (Blueprints) 🔥
+            const designs = {
+                geometric: {
+                    cross: [[0,1,0],[1,1,1],[0,1,0]],
+                    u:     [[1,0,1],[1,0,1],[1,1,1]],
+                    t:     [[1,1,1],[0,1,0],[0,1,0]],
+                    square: [[1,1],[1,1]]
+                },
+                letters: {
+                    f: [[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,0,0,0]],
+                    l: [[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,1,1,1]], // ✅ Ahora está aquí
+                    s: [[1,1,1,1],[1,0,0,0],[1,1,1,1],[0,0,0,1],[1,1,1,1]],
+                    e: [[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,1,1,1]],
+                    plus:[[0,2,0],[2,3,2],[0,2,0]]
+                },
+                volume: {
+                    // Volumetric Pyramid (Step Pyramid)
+                    pyramid: [
+                        [1,1,1,1,1],
+                        [1,2,2,2,1],
+                        [1,2,3,2,1],
+                        [1,2,2,2,1],
+                        [1,1,1,1,1]
+                    ],
+                    // Volumetric ZigZag/Spiral Complex Stair
+                    zigzag: [
+                        [3,2,1,0],
+                        [2,1,0,1],
+                        [1,0,1,2],
+                        [0,1,2,3]
+                    ],
+                    // Complex City/Castle with Towers
+                    castle: [
+                        [3,1,1,3],
+                        [1,1,1,1],
+                        [1,2,2,1],
+                        [3,1,1,3]
+                    ]
+                }
+            };
+
+            // 1. SELECCIÓN DE MATRIZ BASE (Blueprint)
+            let matrix: number[][] = [];
+            const rnd = Math.random();
+
+            // Lógica de complejidad paramétrica
+            if (id.includes('basico')) {
+                // Letras simples (F, L, U), achatadas (H:1-2). Total 3-9 cubos.
+                if (rnd < 0.4) matrix = Math.random()>0.5 ? designs.letters.f : designs.letters.l;
+                else if (rnd < 0.7) matrix = designs.geometric.u;
+                else matrix = [[2,1,0],[2,1,0],[2,1,0]]; // Escalera simple
+                // Aplanar: randomize a alturas 1 o 2 max.
+                matrix = matrix.map(r => r.map(v => v > 0 ? (Math.random()>0.5?2:1) : 0));
+            } 
+            else if (id.includes('intermedio')) {
+                // Matrices volumetricas (Piramide, Letras complejas S,E), alturas 1-3. Total 10-20.
+                if (rnd < 0.4) {
+                    matrix = designs.volume.pyramid;
+                    matrix = matrix.map(r => r.map(v => v > 2 ? 2 : v)); // Flatten slightly
+                } else {
+                    matrix = Math.random()>0.5 ? designs.letters.s : designs.letters.e;
+                    matrix = matrix.map(r => r.map(v => v > 0 ? (Math.floor(Math.random()*3)+1) : 0)); // Alturas 1-3
+                }
+            }
+            else { // AVANZADO / EXPERTO
+                // Arquitectura compleja multi-nivel (Ciudad, Escaleras espirales, Piramide con Torres). Total 20-40+.
+                if (rnd < 0.4) { // Pyramid Base + Towers
+                    matrix = designs.volume.pyramid;
+                    // Exageramos paramétricamente las torres
+                    matrix = matrix.map(r => r.map(v => v > 1 ? (v + (Math.random()>0.7?2:1)) : v));
+                } else if (rnd < 0.8) { // Volumetric City/Castle + Complex Pillars
+                    matrix = designs.volume.castle;
+                    // Exageramos paramétricamente las torres randomly +2 o +3
+                    matrix = matrix.map(r => r.map(v => v > 1 ? (v + Math.floor(Math.random()*3)+1) : v));
+                } else { // Dynamic Stairs Complex
+                    matrix = designs.volume.zigzag;
+                }
+                // Asegurar base conectada para que no floten
+                matrix = matrix.map(r => r.map(v => v > 0 ? v : (Math.random()>0.97?1:0)));
+            }
+
+            const maxX = matrix.length;
+            const maxY = matrix[0].length;
+
+            let maxZ = 0;
+            for(let x=0; x<maxX; x++) {
+              for(let y=0; y<maxY; y++) {
+                resFinal += matrix[x][y];
+                if (matrix[x][y] > maxZ) maxZ = matrix[x][y];
+              }
+            }
+
+            // Colores de sombreado (Mantenemos técnica Z-Oclusión)
+            const cTop = "#ffffff", cLeft = "#f1f5f9", cRight = "#cbd5e1", bColor = "#1e293b";
+
+            // 🔥 ALGORITMO DEL PINTOR (Oclusión Sólida)
+            for(let z = 0; z < maxZ; z++) {
+                for(let x = 0; x < maxX; x++) {
+                    for(let y = 0; y < maxY; y++) {
+                        if (z < matrix[x][y]) {
+                            
+                            // Vértices frontales
+                            const vFB = proj(x+1, y+1, z), vRB = proj(x+1, y, z), vLB = proj(x, y+1, z);
+                            const vFT = proj(x+1, y+1, z+1), vRT = proj(x+1, y, z+1), vLT = proj(x, y+1, z+1), vBT = proj(x, y, z+1);
+
+                            // Caras frontales sólidas
+                            const pT: [number, number][]   = [vFT, vRT, vBT, vLT];
+                            const pR: [number, number][] = [vFT, vFB, vRB, vRT];
+                            const pL: [number, number][]  = [vFT, vLT, vLB, vFB];
+
+                            polys3D.push({ puntos: pR, color: cRight, borde: bColor });
+                            polys3D.push({ puntos: pL, color: cLeft, borde: bColor });
+                            polys3D.push({ puntos: pT, color: cTop, borde: bColor });
+                        }
+                    }
+                }
+            }
+          }
+
+          v.total = resFinal; v.respuesta = resFinal;
+
+          return {
+            valores: v, respuesta: resFinal, tipo_render: 'geometry_mafs',
+            data: {
+              type: 'geometry_mafs', theme: 'area_triangulo',
+              puntos: [], 
+              poligonosExtra: polys3D, 
+              esArea: false, etiquetas: [],
+              lineasExtra: lines, arcos: [],
+              respuestaSobreescrita: resFinal
+            }
+          };
+        }
 
 
 
