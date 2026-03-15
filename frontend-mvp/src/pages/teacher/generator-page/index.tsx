@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useExamStore } from "../../../store/examStore";
 import { useUiStore } from "../../../store/uiStore";
-import { getTopicsByGrade } from "../../../lib/topics";
 import { Toaster, toast } from "sonner";
 import { useGeneration } from "./hooks/useGeneration";
 import Toolbar from "./components/Toolbar";
@@ -10,6 +9,7 @@ import ProblemCard from "./components/ProblemCard";
 import GenerationProgress from "./components/GenerationProgress"; // 🔥 AQUÍ ESTÁ LA VENTANA FLOTANTE
 import SaveExamModal from "./components/SaveExamModal"; // 🔥 NUEVO MODAL
 import api from "../../../services/api";
+
 
 type Grade = "3ro" | "4to" | "5to" | "6to";
 type Stage = "clasificatoria" | "final";
@@ -34,6 +34,31 @@ export const GeneratorPage = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [progress, setProgress] = useState(0);
 
+    // 🔥 1. RESTAURAMOS TU FUNCIÓN FUERA DEL COMPONENTE
+  const generarOpcionesAE = (respuesta: number) => {
+    const res = Number(respuesta);
+    if (isNaN(res)) return { options: { A: "1", B: "2", C: "3", D: "4", E: "5" }, correcta: "A" }; // Salvavidas
+    
+    const distractores = [
+      res + (Math.random() > 0.5 ? 2 : -5),
+      res + (Math.random() > 0.5 ? 10 : -3),
+      res * 2,
+      Math.abs(res - 4) + 1
+    ].map(n => Math.round(n * 10) / 10);
+
+    const pool = [...new Set([res, ...distractores])].slice(0, 5).sort((a, b) => a - b);
+    const letras = ["A", "B", "C", "D", "E"];
+    const options: Record<string, any> = {};
+    let correcta = "A";
+
+    pool.forEach((val, i) => {
+      options[letras[i]] = val;
+      if (val === res) correcta = letras[i];
+    });
+
+    return { options, correcta };
+  };
+
   // Estado para el modal de guardado
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
@@ -46,14 +71,32 @@ export const GeneratorPage = () => {
   const dragOffset = useRef({ x: 0, y: 0 });
 
   const [config, setConfig] = useState({
-    grade: "6to" as Grade,
+    grade: "5to" as Grade,
     stage: "clasificatoria" as Stage,
-    difficulty: "Intermedio",
-    model: "deepseek" as "deepseek" | "gemini",
+    difficulty: "Concurso",
+    model: "deepseek" as "deepseek",
     quantity: 1,
   });
 
-  const topicOptions = getTopicsByGrade(config.grade);
+  const [topicOptions, setTopicOptions] = useState<any[]>([]);
+
+  // Efecto que llama al backend cuando cambias de Grado (3ro, 4to, 5to...)
+  useEffect(() => {
+    const fetchTemas = async () => {
+      try {
+        const res = await api.get('/parametric/temas-disponibles'); // Asegúrate que esta ruta coincida con tu backend
+        if (res.data && res.data[config.grade]) {
+          setTopicOptions(res.data[config.grade]);
+        } else {
+          setTopicOptions([]); // Si no hay temas, vaciamos
+        }
+      } catch (error) {
+        console.error("Error al traer los temas de la base de datos:", error);
+      }
+    };
+
+    fetchTemas();
+  }, [config.grade]);
 
   // --- Lógica del Drag & Drop para la ventana de progreso ---
   useEffect(() => {
@@ -83,7 +126,7 @@ export const GeneratorPage = () => {
   };
 
   // --- Hook de Generación (Lógica de IA) ---
-  const { handleGenerate, regenerateOne, handleSimulacro, abortControllerRef } =
+  const {  regenerateOne, handleSimulacro, abortControllerRef } =
     useGeneration({
       topic,
       config,
@@ -97,7 +140,127 @@ export const GeneratorPage = () => {
       topicOptions,
     });
 
-  // --- Funciones de Interacción ---
+   const handleGenerateParametrico = async (append = false, cantidadExtra = 1) => {
+    abortControllerRef.current = false; // Reiniciamos el seguro
+    setIsGenerating(true);
+    
+    // Si NO estamos agregando extras, limpiamos la pantalla
+    if (!append) {
+      setProblems([]); 
+      setProgress(0);
+    }
+
+    const temaABuscar = topic;
+    const cantidad = append ? cantidadExtra : (config.quantity || 1);
+    const variacionInicial = append ? problems.length : 0; // Para que no repita variables
+
+    // =======================================================
+    // 🔥 SEMÁFORO GLOBAL (BASADO EN EL TEMARIO OFICIAL)
+    // =======================================================
+    const palabrasLetras = ["comunicación", "lenguaje", "verbal", "lectura", "literatura", "historia", "letras", "oraciones", "verbos"];
+    const esLetras = palabrasLetras.some(kw => topic.toLowerCase().includes(kw));
+    const modeloAUsar = esLetras ? 'gemini' : 'deepseek';
+
+    for (let i = 0; i < cantidad; i++) {
+      // 🛑 EL ESCUDO ANTI-FANTASMAS: Si el usuario canceló, cortamos el bucle de raíz
+      if (abortControllerRef.current) {
+        console.log("🛑 Generación abortada. Deteniendo peticiones restantes.");
+        break; 
+      }
+
+      let problemExitoso = null;
+      const variacionActual = variacionInicial + i; // Índice correcto para el backend
+
+      try {
+        // 1. Petición Matemática
+        const paramRes = await api.post("/parametric/generar", {
+          topic: temaABuscar,             
+          grado: config.grade,      
+          dificultad: config.difficulty,
+          variacion: variacionActual, 
+          model: modeloAUsar 
+        });
+        
+        const data = paramRes.data;
+        let enunciadoFinal = data.enunciado;
+        try {
+          const aiRes = await api.post("/ai/restyle", { 
+            baseText: data.enunciado, 
+            topic: topic, 
+            grade: config.grade, 
+            model: modeloAUsar, 
+            isSimulacro: false
+          });
+          enunciadoFinal = aiRes.data.styledText || data.enunciado;
+        } catch (e) { /* ignorar fallo de restyle */ }
+
+        let opcionesArmadas = data.opciones;
+        let letraCorrecta = data.correcta_letra || data.correcta;
+        const tiene5Opciones = opcionesArmadas && Object.keys(opcionesArmadas).length === 5;
+
+        if (!tiene5Opciones) {
+            const valorRespuesta = data.correcta_valor || data.correcta || (data.valores ? Object.values(data.valores).pop() : 0);
+            const generadas = generarOpcionesAE(valorRespuesta as number);
+            opcionesArmadas = generadas.options;
+            letraCorrecta = generadas.correcta;
+        }
+
+        problemExitoso = {
+          plantillaId: data.plantillaId,
+          question_markdown: enunciadoFinal,
+          options: opcionesArmadas,
+          correct_answer: letraCorrecta,
+          visual_data: data.visual_data || data.visualData || null, 
+          math_data: data.valores,
+          topic: topic,
+          dificultad_generada: data.dificultad || config.difficulty 
+        };
+
+      } catch (error) {
+        // 3. IA PURA (Si no hay plantilla)
+        console.warn(`Plantilla no encontrada para "${topic}". Generando vía IA Pura...`);
+        try {
+          const aiResponse = await api.post("/ai/generar", { 
+            topic: topic, 
+            grado: config.grade, 
+            dificultad: config.difficulty, 
+            model: modeloAUsar 
+          });
+          const aiData = aiResponse.data;
+          
+          problemExitoso = {
+            plantillaId: "ia_pura",
+            question_markdown: aiData.pregunta || aiData.question_markdown || aiData.enunciado,
+            options: aiData.opciones || aiData.options,
+            correct_answer: aiData.correcta || aiData.correct_answer,
+            visual_data: aiData.visual_data || null,
+            topic: topic,
+            dificultad_generada: config.difficulty
+          };
+        } catch (iaError: any) {
+          console.error(`❌ Error crítico en IA Pura:`, iaError.message);
+        }
+      }
+
+      // 3. 🔥 EFECTO STREAMING
+      if (problemExitoso) {
+        setProblems(prev => [...prev, problemExitoso]);
+      }
+
+      // Progreso visual
+      setProgress(Math.round(((i + 1) / cantidad) * 100));
+      
+      // Espera entre peticiones (solo si no se ha abortado)
+      if (i < cantidad - 1 && !abortControllerRef.current) {
+        await new Promise(resolve => setTimeout(resolve, 3500));
+      }
+    }
+
+    setIsGenerating(false);
+    if (!abortControllerRef.current) {
+       toast.success("¡Generación completada!");
+    }
+  };
 
   // 1. Abrir Modal
   const handleOpenSaveModal = () => {
@@ -176,13 +339,18 @@ export const GeneratorPage = () => {
     toast.success("Pregunta editada.");
   };
 
-  // 4. Cancelar Generación (Botón Rojo de la ventanita)
+  // 3.5 Eliminar un problema defectuoso
+  const handleDeleteProblem = (index: number) => {
+    setProblems((prev) => prev.filter((_, i) => i !== index));
+    toast.success("Problema eliminado.");
+  };
+
+  // 4. Cancelar Generación (Pausa Real)
   const handleCancelGeneration = () => {
-    abortControllerRef.current = true; // Detiene el bucle en useGeneration
+    abortControllerRef.current = true; // Dispara la señal de parada
     setIsGenerating(false);
-    setProgress(0);
-    setProblems([]); // 🔥 Limpia todo si cancelas
-    toast.info("Generación cancelada y limpiada.");
+    // Ya no hacemos setProblems([]) para no borrar lo que está en pantalla
+    toast.info("Generación pausada. Lo que ya cargó se mantiene en pantalla.");
   };
 
   const fontSizes = {
@@ -209,14 +377,15 @@ export const GeneratorPage = () => {
         setSuggestions={setSuggestions}
         topicOptions={topicOptions}
         isGenerating={isGenerating}
-        problems={problems}
-        onGenerate={handleGenerate}
+        onGenerate={() => handleGenerateParametrico(false)}
         onSimulacro={handleSimulacro}
         onSave={handleOpenSaveModal} // Abre el modal
         isSaving={isSaving}
         onZoomIn={increaseFont}
         onZoomOut={decreaseFont}
         theme={theme}
+        problems={problems}
+        onClear={() => setProblems([])}
       />
 
       <div
@@ -224,18 +393,43 @@ export const GeneratorPage = () => {
       >
         <div className="w-full px-2 mx-auto flex flex-col gap-3 pb-20">
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-            {problems.map((prob, index) => (
-              <ProblemCard
-                key={index}
-                problem={prob}
-                index={index}
-                theme={theme}
-                currentFont={currentFont}
-                onRegenerate={() => regenerateOne(index, prob)}
-                onUpdate={(newText) => handleUpdateProblem(index, newText)}
-              />
+           {problems.map((prob, index) => (
+              // 🔥 AQUÍ ENVOLVEMOS EL PROBLEMCARD
+              <div key={index} className="relative w-full h-full">
+                
+                {/* 🔥 ETIQUETA FLOTANTE (Solo sale si es avanzado) */}
+                {prob.dificultad_generada === 'avanzado' && (
+                  <div className="absolute top-3 right-4 z-10 px-3 py-1 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 text-[10px] font-extrabold uppercase tracking-wider rounded-full shadow-sm border border-red-200 dark:border-red-800">
+                    🔥 Reto Avanzado
+                  </div>
+                )}
+
+                <ProblemCard
+                  problem={prob}
+                  index={index}
+                  theme={theme}
+                  currentFont={currentFont}
+                  onRegenerate={() => regenerateOne(index, prob)}
+                  onUpdate={(newText) => handleUpdateProblem(index, newText)}
+                  onDelete={() => handleDeleteProblem(index)}
+                />
+              </div>
             ))}
           </div>
+          {/* 🔥 NUEVO BOTÓN: AGREGAR MÁS (Solo se ve si hay problemas y no está generando) */}
+          {problems.length > 0 && !isGenerating && (
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={() => handleGenerateParametrico(true, 1)} // Llama a la función en modo "append"
+                className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-all active:scale-95"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Agregar 1 problema más
+              </button>
+            </div>
+          )}
         </div>
 
         {/* 🔥 VENTANA FLOTANTE DE PROGRESO */}
@@ -264,6 +458,7 @@ export const GeneratorPage = () => {
         richColors
         position="top-center"
         closeButton
+        duration={2000}
         theme={theme === "dark" ? "dark" : "light"}
       />
     </div>

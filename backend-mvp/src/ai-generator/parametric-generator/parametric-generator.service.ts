@@ -11,6 +11,8 @@ import { QuintoGradoService } from './grados/quinto.grado.service';
 import { SextoGradoService } from './grados/sexto.grado.service';
 import { BaseGradoService } from './grados/base.grado.service';
 import { denominador, MCD, MCM, numerador } from './utils/math-helpers';
+import { TEMARIO_MAESTRO } from 'src/temario/temario.db';
+
 
 export interface VariableDef {
   type: 'number' | 'string';
@@ -59,11 +61,134 @@ export class ParametricGeneratorService {
     return resultado;
   }
 
-  obtenerPlantillaPorId(id: string): Plantilla {
+  obtenerPlantillaPorId(id: string): Plantilla { 
     const plantilla = this.plantillas.find((p) => p.id === id);
     if (!plantilla)
       throw new NotFoundException(`Plantilla ${id} no encontrada`);
     return plantilla;
+  }
+
+
+// 🔥 DICCIONARIO MAESTRO (CONAMAT 5TO GRADO)
+  private readonly MAPA_TEMAS: Record<string, string[]> = {
+    // Geometría
+    "Segmentos y ángulos (clasificación)": ["segmentos", "angulos_radiales", "rectas_secantes"],
+    "Segmentos": ["segmentos"],
+    "Ángulos y clasificación": ["angulos_radiales", "angulos_teoricos"],
+    "Rectas paralelas y perpendiculares": ["paralelas_ecuaciones", "paralelas_serrucho", "paralelas_abanico"],
+    "Perímetro y área de triángulos": ["area_triangulo", "triangulo_perimetro"], // 🎯 AQUÍ: Solo triángulos
+    "Área de triángulos y cuadriláteros": ["area_triangulo", "rectangulo_area", "area_rombo", "area_trapecio", "area_paralelogramo"],
+    "Área de regiones sombreadas": ["area_sombreada"],
+    "Circunferencia básica": ["angulos_circunferencia", "propiedades_circunferencia", "segmentos_circunferencia"],
+    "Sólidos: cubo, prisma regular": ["volumen_prisma", "volumen_prisma_triangular", "volumen_piramide"],
+    "Teorema de Pitágoras": ["teorema_pitagoras"],
+    "Teorema de Thales": ["thales"],
+    
+    // Estadística
+    "Gráfico de barras y pictogramas": ["grafico_barras", "pictograma"],
+    "Tablas de frecuencia": ["tabla_frecuencias", "estadistica_frecuencias_01", "frecuencia_algebraica"],
+    "Probabilidad básica": ["probabilidad_basica"],
+    
+    // Razonamiento Matemático (RM)
+    "Conteo de figuras": ["conteo_figuras"],
+    "Distribuciones gráficas": ["distribucion_grafica"],
+    "Criptoaritmética": ["criptoaritmetica"]
+  };
+
+ // 1. ESTA ES LA FUNCIÓN DE ENTRADA (Conecta con seleccionarPorScore)
+  buscarPlantillaPorCriterios(temaConamat: string, grado: string, dificultad: string, variacion: number = 0): Plantilla {
+  // 🔥 EL NORMALIZADOR SUPREMO: Quita tildes, dos puntos, guiones y símbolos raros
+const normalize = (str: string) => 
+  str?.toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Quita tildes
+    .replace(/[:.,\-]/g, " ")       // 👈 ESTA ES LA CLAVE: Cambia símbolos por espacios
+    .replace(/\s+/g, " ")           // Quita espacios dobles
+    .trim() || "";
+  
+  const safeGrado = normalize(grado) || "5to"; // 🔥 Normalizado
+  // 🔥 EL FILTRO RELAJADO: Si es mixto, no filtramos por dificultad
+  const difNormalizada = (dificultad || "").toLowerCase().trim();
+  
+  // 🔥 Filtro de grado blindado (compara normalizados)
+  const plantillasDelGrado = this.plantillas.filter(p => {
+  const gradoMatch = normalize(p.grado) === safeGrado;
+  // Si no es mixto, validamos dificultad. Si ES mixto, solo grado.
+  if (difNormalizada === "mixto" || difNormalizada === "concurso") return gradoMatch;
+  return gradoMatch && p.dificultad.some(d => normalize(d) === difNormalizada);
+});
+
+  const mejorPlantilla = this.seleccionarPorScore(plantillasDelGrado, temaConamat, safeGrado, variacion);
+
+  if (mejorPlantilla) {
+    const coincideDificultad = mejorPlantilla.dificultad.some(d => d && d.toString().toLowerCase().includes(difNormalizada));
+    if (!coincideDificultad) {
+      console.log(`⚠️ Forzando tema "${mejorPlantilla.tema}".`);
+    }
+  }
+  return mejorPlantilla;
+}
+
+  // 2. TU FUNCIÓN ACTUALIZADA (A prueba de balas y conectada)
+  private seleccionarPorScore(candidatas: any[], temaUsuario: string, gradoUsuario: string, variacion: number = 0): any {
+  const normalize = (str: string) => 
+    str?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[:.,\-]/g, " ").replace(/\s+/g, " ").trim() || "";
+
+  const temaUsrNorm = normalize(temaUsuario);
+  let poolValido: any[] = [];
+
+  // 1. INTENTO POR DICCIONARIO
+  const temasDelGrado = (TEMARIO_MAESTRO as any)[gradoUsuario] || [];
+  const temaEncontrado = temasDelGrado.find((t: any) => normalize(t.nombre) === temaUsrNorm);
+
+  if (temaEncontrado && temaEncontrado.subtipos?.length > 0) {
+    poolValido = candidatas.filter(p => {
+      const subtiposPlantilla = Array.isArray(p.subtipo) ? p.subtipo : [p.subtipo];
+      return subtiposPlantilla.some((sub: string) => 
+        temaEncontrado.subtipos.map(normalize).includes(normalize(sub))
+      );
+    });
+  }
+
+  // 2. FALLBACK CRÍTICO: Si el diccionario falló o no dio resultados, buscar por NOMBRE DE TEMA directo en el JSON
+  if (poolValido.length === 0) {
+    console.warn(`⚠️ Diccionario falló para "${temaUsuario}". Buscando match directo en JSON...`);
+    poolValido = candidatas.filter(p => {
+      const temaJSON = normalize(p.tema);
+      // 🔥 Match total o parcial
+      return temaJSON === temaUsrNorm || temaJSON.includes(temaUsrNorm) || temaUsrNorm.includes(temaJSON);
+    });
+  }
+
+  // 3. SELECCIÓN FINAL O ERROR
+  if (poolValido.length === 0) {
+    console.error(`❌ [ERROR FINAL] No hay plantillas para: "${temaUsuario}"`);
+    throw new Error("TEMA_IA_PURA");
+  }
+
+  poolValido.sort((a, b) => a.id.localeCompare(b.id));
+  const mejorMatch = poolValido[variacion % poolValido.length];
+  console.log(`✅ [EXITO] Plantilla detectada: ${mejorMatch.id}`);
+  return mejorMatch;
+}
+
+  // 🔥 ALGORITMO DE DISTANCIA (Detecta errores de tipeo como 'notavle' -> 'notable')
+  private levenshtein(a: string, b: string): number {
+    if (a.length === 0) return b.length;
+    if (b.length === 0) return a.length;
+    const matrix = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+    for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+    for (let i = 1; i <= a.length; i++) {
+      for (let j = 1; j <= b.length; j++) {
+        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j] + 1,      // Eliminación
+          matrix[i][j - 1] + 1,      // Inserción
+          matrix[i - 1][j - 1] + cost // Sustitución
+        );
+      }
+    }
+    return matrix[a.length][b.length];
   }
 
   private getGradoService(grado: string): BaseGradoService {
@@ -95,10 +220,11 @@ export class ParametricGeneratorService {
           if (valores[varName] !== undefined) continue;
           if (def.type === 'number') {
             valores[varName] = this.generarNumero(def);
-          } else if (def.type === 'string' && def.opciones) {
-            const opciones = def.opciones;
-            valores[varName] =
-              opciones[Math.floor(Math.random() * opciones.length)];
+          } else if (def.type === 'string' || (def as any).type === 'list') {
+              const opciones = def.opciones || (def as any).values || [];
+              valores[varName] = opciones.length > 0 
+                ? opciones[Math.floor(Math.random() * opciones.length)] 
+                : '';
           } else {
             valores[varName] = '';
           }
@@ -144,6 +270,7 @@ export class ParametricGeneratorService {
         } else {
           respuesta = scope[incognita];
         }
+        
 
         // 5. Construir enunciado
         let enunciadoFinal = gradoService.construirEnunciado(
@@ -153,6 +280,7 @@ export class ParametricGeneratorService {
           respuesta,
         );
 
+        enunciadoFinal = this.cleanAlgebraicExpression(enunciadoFinal);
         // 6. Generar visual_data (si aplica)
         const visualData = gradoService.generarVisualData(plantilla, valores);
         
@@ -175,6 +303,56 @@ export class ParametricGeneratorService {
             if ((visualData as any).respuestaSobreescrita !== undefined) delete (visualData as any).respuestaSobreescrita;
             if ((visualData as any).data?.respuestaSobreescrita !== undefined) delete (visualData as any).data.respuestaSobreescrita;
           }
+
+        // =====================================================================
+        // 🔥 ESCUDO ANTI-CRASH INTELIGENTE (0 decimales para Geo, Redondeo para Aritmética)
+        // =====================================================================
+        const esGeometriaOCripto = plantilla.id.startsWith('geo_') || plantilla.id.startsWith('rm_');
+        
+        if (esGeometriaOCripto) {
+            // REGLA ESTRICTA: Geometría y Cripto REQUIEREN enteros perfectos
+            let rechazar = false;
+            const resNum = Number(respuestaFinal);
+            if (!isNaN(resNum) && !Number.isInteger(resNum)) rechazar = true;
+
+            for (const key in valores) {
+                const val = valores[key];
+                if (typeof val === 'number' && !Number.isInteger(val)) rechazar = true;
+            }
+
+            if (rechazar) {
+                throw new Error('Geometría requiere números enteros. Recalculando...');
+            }
+        } else {
+            // REGLA SUAVE: Aritmética permite decimales, pero los REDONDEAMOS para no crashear la UI
+            const redondear = (num: any) => {
+                if (typeof num === 'number' && !Number.isInteger(num)) {
+                    return Math.round(num * 100) / 100; // Corta a 2 decimales máximo
+                }
+                return num;
+            };
+
+            const resNum = Number(respuestaFinal);
+            if (!isNaN(resNum)) respuestaFinal = redondear(resNum);
+
+            for (const key in valores) {
+                valores[key] = redondear(valores[key]);
+            }
+        }
+
+        // 🔥 ESCUDO ANTI-NaN Y NÚMEROS INFINITOS
+        const numeroValidado = Number(respuestaFinal);
+        if (respuestaFinal === null || respuestaFinal === undefined) {
+         throw new Error('Cálculo nulo. Reintentando...');
+        }
+
+        if (typeof respuestaFinal === 'number') {
+          if (Number.isNaN(respuestaFinal) || !isFinite(respuestaFinal)) {
+            throw new Error('Cálculo inválido (NaN o Infinito). Reintentando...');
+          }
+        }
+        
+        // (Borramos el escudo opcional de decimales feos porque la función 'redondear' de arriba ya hace eso)
 
         if (visualData && (visualData as any).enunciadoForzado) {
           enunciadoFinal = (visualData as any).enunciadoForzado;
@@ -213,5 +391,16 @@ export class ParametricGeneratorService {
       valor = parseFloat(valor.toFixed(decimales));
     }
     return valor;
+  }
+
+  private cleanAlgebraicExpression(text: string): string {
+    return text
+      // 🔥 Borra el 1 si está pegado a letra o LaTeX: $1m, +1n, (1x, =1a
+      .replace(/([$+\-\s(=])1(?=[a-zA-Z\\])/g, '$1')
+      // 🔥 Caso especial: inicio del string o bloque LaTeX $1x -> $x
+      .replace(/^1(?=[a-zA-Z\\])/, '')
+      .replace(/\$1(?=[a-zA-Z\\])/g, '$')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 }

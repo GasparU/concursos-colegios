@@ -1,54 +1,81 @@
+import { MafsGeometryRenderer } from "../../../../components/canvas/renderers/MafsGeometryRenderer";
 
-import { MafsGeometryRenderer } from '../../../../components/canvas/renderers/MafsGeometryRenderer'
-import { PureSvgPhysicsRenderer } from '../../../../components/canvas/renderers/PureSvgPhysicsRenderer';
-import { StatisticsChart } from '../../../../components/canvas/renderers/StatisticsChart';
-import { StatisticsTable } from '../../../../components/canvas/renderers/StatisticsTable';
+export const renderVisualEmbed = (rawVisualData: any, mathData?: any) => {
+  if (!rawVisualData) return null;
 
+  const visualType =
+    rawVisualData.tipo_render || rawVisualData.type || rawVisualData.data?.type;
+  const actualData = rawVisualData.data?.type
+    ? rawVisualData.data
+    : rawVisualData;
 
+  if (!visualType || visualType === "none") return null;
 
-
-export const renderVisualEmbed = (visualData: any, mathData?: any) => {
-  console.log("📊 renderVisualEmbed visualData:", JSON.stringify(visualData, null, 2));
-  if (!visualData || visualData.type === "none") return null;
-
-  if (visualData.type === "geometry_mafs") {
-    const tieneDataNueva = mathData && mathData.params;
-    const tieneDataVieja = visualData.elements && visualData.elements.length > 0;
-    if (!tieneDataNueva && !tieneDataVieja) return null;
+  const mafsTypes = [
+    "geometry_mafs", 
+    "graphic_counting", 
+    "distribucion_grafica", 
+    "criptoaritmetica",
+    "conteo_figuras", // Agregado por seguridad
+    "area_sombreada"  // Agregado por seguridad
+  ];
+  
+  if (mafsTypes.includes(visualType)) {
     return (
-      <div className="my-3 flex justify-center w-full select-none">
-        <div className="w-full md:max-w-[500px] h-[300px] bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden relative">
-          <MafsGeometryRenderer datosMatematicos={mathData || visualData} />
+      <div className="my-1 flex justify-center w-full select-none">
+        {/* 🔥 LA CLASE [&_button]:hidden APAGA LOS BOTONES A-/A+ A LA FUERZA */}
+        <div className="w-full md:max-w-[700px] aspect-video relative flex items-center justify-center bg-white overflow-hidden [&_button]:hidden">
+          <div className="w-full h-full flex items-center justify-center scale-95 origin-center">
+            <MafsGeometryRenderer datosMatematicos={actualData} />
+          </div>
         </div>
       </div>
     );
   }
 
-  if (visualData.type === "frequency_table") {
+  if (visualType === "frequency_table") {
+    {
+      /* 🔥 CAMBIO UNIVERSAL: Se aplica a mafsTypes, chart_bar, chart_pie, etc. */
+    }
     return (
-      <div className="my-3 flex justify-center w-full select-none">
-        <div className="w-full md:max-w-[500px] bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-          <StatisticsTable data={visualData.data} />
+      <div className="my-0 flex justify-center w-full select-none">
+        {/* 🔥 Eliminamos bordes, sombras y radios. El lienzo manda al 100%. */}
+        <div className="w-full md:max-w-[700px] aspect-video relative flex items-center justify-center bg-white overflow-hidden">
+          <div className="w-full h-full flex items-center justify-center scale-95 origin-center">
+            <MafsGeometryRenderer datosMatematicos={actualData} />
+          </div>
         </div>
       </div>
     );
   }
 
-  if (visualData.type === "physics_ariana") {
+  if (visualType === "physics_ariana") {
+    {
+      /* 🔥 CAMBIO UNIVERSAL: Se aplica a mafsTypes, chart_bar, chart_pie, etc. */
+    }
     return (
-      <div className="my-3 flex justify-center w-full select-none">
-        <div className="w-full md:max-w-[500px] h-[300px] bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden relative">
-          <PureSvgPhysicsRenderer visualData={visualData} />
+      <div className="my-0 flex justify-center w-full select-none">
+        {/* 🔥 Eliminamos bordes, sombras y radios. El lienzo manda al 100%. */}
+        <div className="w-full md:max-w-[700px] aspect-video relative flex items-center justify-center bg-white overflow-hidden">
+          <div className="w-full h-full flex items-center justify-center scale-95 origin-center">
+            <MafsGeometryRenderer datosMatematicos={actualData} />
+          </div>
         </div>
       </div>
     );
   }
 
-  if (visualData.type === "chart_bar" || visualData.type === "chart_pie") {
+  if (visualType === "chart_bar" || visualType === "chart_pie") {
+    {
+      /* 🔥 CAMBIO UNIVERSAL: Se aplica a mafsTypes, chart_bar, chart_pie, etc. */
+    }
     return (
-      <div className="my-3 flex justify-center w-full select-none">
-        <div className="w-full md:max-w-[500px] h-[300px] bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden relative">
-          <StatisticsChart type={visualData.type} data={visualData.data} />
+      <div className="my-0 flex justify-center w-full select-none">
+        {/* 🔥 Eliminamos bordes, sombras y radios. El lienzo manda al 100%. */}
+        <div className="w-full md:max-w-[700px] aspect-video relative flex items-center justify-center bg-white overflow-hidden">
+          <div className="w-full h-full flex items-center justify-center scale-95 origin-center">
+            <MafsGeometryRenderer datosMatematicos={actualData} />
+          </div>
         </div>
       </div>
     );
@@ -56,8 +83,8 @@ export const renderVisualEmbed = (visualData: any, mathData?: any) => {
 
   return (
     <div className="my-3 flex justify-center w-full select-none">
-      <div className="w-full md:max-w-[500px] h-[300px] bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden relative flex items-center justify-center text-xs text-slate-400">
-        Gráfico: {visualData.type}
+      <div className="w-full md:max-w-[500px] aspect-video bg-slate-50 rounded-lg border border-slate-200 shadow-sm overflow-hidden flex items-center justify-center text-xs text-slate-400">
+        Gráfico Pendiente: {visualType}
       </div>
     </div>
   );

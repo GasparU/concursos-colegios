@@ -5,8 +5,7 @@ import {
   Save,
   ZoomIn,
   ZoomOut,
-  Brain,
-  Zap,
+  Eraser,
 } from "lucide-react";
 import { normalizeText } from "../../../../lib/utils";
 
@@ -15,9 +14,9 @@ interface ToolbarProps {
   setConfig: (updater: any) => void;
   topic: string;
   setTopic: (val: string) => void;
-  suggestions: string[];
-  setSuggestions: (val: string[]) => void;
-  topicOptions: string[];
+  suggestions: any[];
+  setSuggestions: (val: any[]) => void;
+  topicOptions: any[];
   isGenerating: boolean;
   problems: any[];
   onGenerate: () => void;
@@ -27,6 +26,7 @@ interface ToolbarProps {
   onZoomIn: () => void;
   onZoomOut: () => void;
   theme: string;
+  onClear: () => void;
 }
 
 export default function Toolbar({
@@ -45,19 +45,21 @@ export default function Toolbar({
   isSaving,
   onZoomIn,
   onZoomOut,
-  theme,
+  onClear
 }: ToolbarProps) {
   const handleChange = (field: string, value: any) => {
     setConfig((prev: any) => ({ ...prev, [field]: value }));
   };
 
+  // 🔥 NUEVA FUNCIÓN DE BÚSQUEDA INSTANTÁNEA EN LA MEMORIA RAM
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setTopic(val);
     if (val.length > 1) {
       const search = normalizeText(val);
+      // Filtramos buscando en la propiedad 'nombre' del objeto
       const filtered = topicOptions.filter((t) =>
-        normalizeText(t).includes(search),
+        normalizeText(t.nombre).includes(search),
       );
       setSuggestions(filtered.slice(0, 8));
     } else {
@@ -65,8 +67,8 @@ export default function Toolbar({
     }
   };
 
-  const selectTopic = (t: string) => {
-    setTopic(t);
+  const selectTopic = (t: any) => {
+    setTopic(t.nombre); // Solo mostramos el nombre en el input
     setSuggestions([]);
   };
 
@@ -80,13 +82,26 @@ export default function Toolbar({
     <header className="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 shadow-sm z-10 transition-colors duration-300">
       {/* CONTENEDOR PRINCIPAL */}
       <div className="flex flex-col xl:flex-row gap-4 xl:items-end">
-        {/* ZONA 1: INPUT TEMA */}
+       {/* ZONA 1: INPUT TEMA */}
         <div className="flex-1 relative min-w-[200px]">
-          <label
-            className={`block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 ml-1`}
-          >
-            Tema o Contenido a Evaluar
-          </label>
+          {/* 🔥 EL LABEL AHORA TIENE EL BOTÓN DE LIMPIAR AL LADO */}
+          <div className="flex items-center gap-2 mb-2 ml-1">
+            <label className="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              Tema o Contenido a Evaluar
+            </label>
+            
+            {problems && problems.length > 0 && (
+              <button
+                onClick={onClear}
+                className="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
+                title="Limpiar todos los ejercicios de la pantalla"
+                type="button" // Para evitar que envíe formularios si lo hubiera
+              >
+                <Eraser size={14} /> 
+              </button>
+            )}
+          </div>
+
           <div className="relative">
             <Search
               size={16}
@@ -106,9 +121,20 @@ export default function Toolbar({
                   <div
                     key={i}
                     onClick={() => selectTopic(s)}
-                    className="px-4 py-2.5 text-sm hover:bg-indigo-50 dark:hover:bg-gray-700 cursor-pointer text-gray-700 dark:text-gray-200 border-b border-gray-100 dark:border-gray-700 last:border-0"
+                    className="px-4 py-2.5 text-sm hover:bg-indigo-50 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-0"
                   >
-                    {s}
+                    <span
+                      style={
+                        s.tipo === "conamat"
+                          ? { color: "#FF6384", fontWeight: "bold" } // 🔥 'Rojo Bonito' sutil
+                          : { color: "#3B82F6", fontWeight: "500" } // Azul estándar para academia
+                      }
+                    >
+                      {s.nombre}
+                    </span>
+                    <span className="text-[10px] text-gray-400 ml-2 uppercase">
+                      {s.tipo}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -132,17 +158,6 @@ export default function Toolbar({
             </select>
           </div>
           <div className="w-1/3 md:w-auto">
-            <label className={labelClass}>Etapa</label>
-            <select
-              value={config.stage}
-              onChange={(e) => handleChange("stage", e.target.value)}
-              className={`w-full md:w-32 px-2 ${inputClass}`}
-            >
-              <option value="clasificatoria">Clasificatoria</option>
-              <option value="final">Final</option>
-            </select>
-          </div>
-          <div className="w-1/3 md:w-auto">
             <label className={labelClass}>Nivel</label>
             <select
               value={config.difficulty}
@@ -152,40 +167,9 @@ export default function Toolbar({
               <option value="Básico">Básico</option>
               <option value="Intermedio">Intermedio</option>
               <option value="Avanzado">Avanzado</option>
+              <option value="Experto">Experto</option>
               <option value="Concurso">Mixto</option>
             </select>
-          </div>
-          <div className="w-full md:w-auto mt-2 md:mt-0">
-            <label className={`${labelClass} opacity-0 md:opacity-100`}>
-              Motor IA
-            </label>
-            <div
-              className={`flex items-center p-1 gap-1 border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 h-10`}
-            >
-              <button
-                onClick={() => handleChange("model", "deepseek")}
-                className={`flex-1 md:flex-none px-3 h-full rounded-lg text-[10px] font-bold transition-all flex items-center justify-center gap-1 ${
-                  config.model === "deepseek"
-                    ? "bg-indigo-100 text-indigo-700 shadow-sm"
-                    : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                }`}
-              >
-                <Brain size={14} />{" "}
-                <span className="hidden lg:inline">DeepSeek</span>
-              </button>
-              <div className="w-px h-4 bg-gray-200 dark:bg-gray-700"></div>
-              <button
-                onClick={() => handleChange("model", "gemini")}
-                className={`flex-1 md:flex-none px-3 h-full rounded-lg text-[10px] font-bold transition-all flex items-center justify-center gap-1 ${
-                  config.model === "gemini"
-                    ? "bg-orange-100 text-orange-700 shadow-sm"
-                    : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                }`}
-              >
-                <Zap size={14} />{" "}
-                <span className="hidden lg:inline">Gemini</span>
-              </button>
-            </div>
           </div>
         </div>
 

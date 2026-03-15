@@ -1082,9 +1082,6 @@ export class QuintoGradoService extends BaseGradoService {
       }
     }
     
-
-    
-
     // ========== GEOMETRÍA ==========
     if (plantilla.tema === 'geometria') {
       switch (plantilla.subtipo) {

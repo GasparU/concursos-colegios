@@ -1,4 +1,5 @@
 import { SystemMessage } from '@langchain/core/messages';
+
 // Importar todos los prompts de geometría
 import {
   SEGMENTS_PROMPT,
@@ -15,7 +16,8 @@ import {
 } from './prompts/geometry';
 
 import { GENERAL_PROMPT } from './prompts/general.prompts';
-import { SYLLABUS_DB } from './exam-syllabus';
+
+// Importar prompts de aritmética y estadística
 import { ARITHMETIC_PROMPT } from './prompts/arithmetic/arithmetic.prompts';
 import { STATISTICS_PROMPT } from './prompts/statistics/statistics.prompt';
 import { MCD_MCM_PROMPT } from './prompts/arithmetic/mcd-mcm.prompt';
@@ -25,7 +27,6 @@ import { FRACTION_EQUATION_PROMPT } from './prompts/arithmetic/fraction-equation
 import { SUCCESSIVE_PERCENTAGE_PROMPT } from './prompts/arithmetic/successive-percentage.prompt';
 import { MOTION_PROBLEM_PROMPT } from './prompts/arithmetic/motion-problem.prompt';
 import { MONEY_EXCHANGE_PROMPT } from './prompts/arithmetic/money-exchange.prompt';
-
 
 // Mapa de palabras clave a prompts de geometría
 const geometryPromptMap = [
@@ -54,10 +55,10 @@ const geometryPromptMap = [
   { keywords: ['cubo', 'prisma', '3d'], prompt: CUBE_PRISM_PROMPT },
 ];
 
+// 🔥 FUNCIÓN GET SYSTEM PROMPT (SIN STAGE NI SYLLABUS)
 export const getSystemPrompt = (
   topic: string,
   grade: string,
-  stage: string,
   difficulty: string,
 ) => {
   const t = topic.toLowerCase();
@@ -65,11 +66,7 @@ export const getSystemPrompt = (
   // 1. Buscar en geometría
   for (const entry of geometryPromptMap) {
     if (entry.keywords.some((k) => t.includes(k))) {
-      const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-      const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-      const promptText =
-        entry.prompt(grade, stage, difficulty) + syllabusContext;
-      return new SystemMessage(promptText);
+      return new SystemMessage(entry.prompt(grade, "", difficulty));
     }
   }
 
@@ -82,11 +79,7 @@ export const getSystemPrompt = (
     t.includes('mediana') ||
     t.includes('frecuencia')
   ) {
-    const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-    const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-    return new SystemMessage(
-      STATISTICS_PROMPT(grade, stage, difficulty) + syllabusContext,
-    );
+    return new SystemMessage(STATISTICS_PROMPT(grade, "", difficulty));
   }
 
   // 3. Detectar problemas específicos de aritmética avanzada (con calculador propio)
@@ -97,11 +90,7 @@ export const getSystemPrompt = (
     t.includes('máximo común divisor') ||
     t.includes('mínimo común múltiplo')
   ) {
-    const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-    const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-    return new SystemMessage(
-      MCD_MCM_PROMPT(grade, stage, difficulty) + syllabusContext,
-    );
+    return new SystemMessage(MCD_MCM_PROMPT(grade, "", difficulty));
   }
 
   // Proporcionalidad compuesta
@@ -109,11 +98,7 @@ export const getSystemPrompt = (
     t.includes('proporcionalidad compuesta') ||
     t.includes('regla de tres compuesta')
   ) {
-    const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-    const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-    return new SystemMessage(
-      COMPOUND_PROPORTION_PROMPT(grade, stage, difficulty) + syllabusContext,
-    );
+    return new SystemMessage(COMPOUND_PROPORTION_PROMPT(grade, "", difficulty));
   }
 
   // Fracción de una fracción
@@ -121,11 +106,7 @@ export const getSystemPrompt = (
     t.includes('fracción de una fracción') ||
     t.includes('fracción de fracción')
   ) {
-    const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-    const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-    return new SystemMessage(
-      FRACTION_OF_FRACTION_PROMPT(grade, stage, difficulty) + syllabusContext,
-    );
+    return new SystemMessage(FRACTION_OF_FRACTION_PROMPT(grade, "", difficulty));
   }
 
   // Ecuaciones con fracciones
@@ -133,11 +114,7 @@ export const getSystemPrompt = (
     t.includes('ecuaciones con fracciones') ||
     t.includes('ecuación fraccionaria')
   ) {
-    const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-    const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-    return new SystemMessage(
-      FRACTION_EQUATION_PROMPT(grade, stage, difficulty) + syllabusContext,
-    );
+    return new SystemMessage(FRACTION_EQUATION_PROMPT(grade, "", difficulty));
   }
 
   // Porcentajes sucesivos
@@ -145,25 +122,7 @@ export const getSystemPrompt = (
     t.includes('porcentajes sucesivos') ||
     t.includes('descuentos y aumentos sucesivos')
   ) {
-    const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-    const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-    return new SystemMessage(
-      SUCCESSIVE_PERCENTAGE_PROMPT(grade, stage, difficulty) + syllabusContext,
-    );
-  }
-
-  if (
-    t.includes('canje') ||
-    t.includes('monedas') ||
-    t.includes('billetes') ||
-    t.includes('dinero') ||
-    t.includes('equivalencia monetaria')
-  ) {
-    const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-    const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-    return new SystemMessage(
-      MONEY_EXCHANGE_PROMPT(grade, stage, difficulty) + syllabusContext,
-    );
+    return new SystemMessage(SUCCESSIVE_PERCENTAGE_PROMPT(grade, "", difficulty));
   }
 
   // Problemas de móviles
@@ -172,11 +131,7 @@ export const getSystemPrompt = (
     t.includes('encuentro') ||
     t.includes('alcance')
   ) {
-    const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-    const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-    return new SystemMessage(
-      MOTION_PROBLEM_PROMPT(grade, stage, difficulty) + syllabusContext,
-    );
+    return new SystemMessage(MOTION_PROBLEM_PROMPT(grade, "", difficulty));
   }
 
   // Detectar problemas de canje monetario
@@ -184,13 +139,10 @@ export const getSystemPrompt = (
     t.includes('canje') ||
     t.includes('monedas') ||
     t.includes('billetes') ||
+    t.includes('dinero') ||
     t.includes('equivalencia monetaria')
   ) {
-    const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-    const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-    return new SystemMessage(
-      MONEY_EXCHANGE_PROMPT(grade, stage, difficulty) + syllabusContext,
-    );
+    return new SystemMessage(MONEY_EXCHANGE_PROMPT(grade, "", difficulty));
   }
 
   // 4. Aritmética general (para temas que no tienen prompt específico)
@@ -229,17 +181,9 @@ export const getSystemPrompt = (
     t.includes('equivalencias') ||
     t.includes('cambio monetario')
   ) {
-    const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-    const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-    return new SystemMessage(
-      ARITHMETIC_PROMPT(grade, stage, difficulty) + syllabusContext,
-    );
+    return new SystemMessage(ARITHMETIC_PROMPT(grade, "", difficulty));
   }
 
   // 5. Por defecto, prompt general
-  const syllabus = SYLLABUS_DB[grade]?.[stage] || [];
-  const syllabusContext = `\nCONTEXTO TEMÁTICO:\n${syllabus.map((s) => `- ${s}`).join('\n')}\n`;
-  return new SystemMessage(
-    GENERAL_PROMPT(topic, grade, stage, difficulty) + syllabusContext,
-  );
-};;
+  return new SystemMessage(GENERAL_PROMPT(topic, grade, "", difficulty));
+};

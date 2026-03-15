@@ -9,7 +9,7 @@ export const generateMathProblem = async (
   quantity: number,
   styleConstraint?: string,
 ) => {
-  const response = await api.post("/ai/problem", {
+  const response = await api.post("/ai/generar", {
     // 👈 ahora usa api.post
     topic,
     grade,
@@ -20,5 +20,5 @@ export const generateMathProblem = async (
     styleConstraint,
   });
   console.log("📥 [FRONTEND] Respuesta cruda del backend:", response.data);
-  return response.data.data;
+  return response.data.data || response.data;
 };

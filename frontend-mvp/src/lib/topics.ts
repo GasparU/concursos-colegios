@@ -67,31 +67,46 @@ export const TOPICS_BY_GRADE_ONLY = {
     "Gráficos estadísticos complejos"
   ],
   '5to': [
-    // Clasificatoria
-    "Operaciones combinadas con decimales (2 decimales)",
-    "Suma/Resta de fracciones homogéneas y heterogéneas",
-    "Fracción de una fracción",
-    "Sucesiones con un patrón",
-    "Proporcionalidad directa simple",
-    "Equivalencia y canjes de monedas",
-    "Ángulos y clasificación",
-    "Rectas paralelas y perpendiculares",
-    "Perímetro de figuras básicas",
-    "Área de triángulos y cuadriláteros",
-    "Sucesos numéricos y no numéricos (probables e improbables)",
-    "Gráficas estadísticas: barras y poligonales",
-    // Final
-    "Operaciones combinadas decimales (avanzado)",
-    "Fracción de una fracción (problemas)",
-    "Sucesiones con dos patrones intercalados",
-    "Proporcionalidad inversa",
-    "Canjes monetarios complejos",
-    "Bisectriz de ángulos",
-    "Perímetro de figuras compuestas",
-    "Área de regiones sombreadas",
-    "Probabilidad básica (dados)",
-    "Gráficos circulares e interpretación",
-    "Promedio simple"
+    // --- TEMARIO OFICIAL CONAMAT (Rojo/Rosado) ---
+    { nombre: "Conjuntos y Diagramas de Venn", tipo: "conamat" },
+    { nombre: "Números naturales: operaciones y propiedades", tipo: "conamat" },
+    { nombre: "Cuatro operaciones", tipo: "conamat" },
+    { nombre: "Relaciones de mayor, menor e igual", tipo: "conamat" },
+    { nombre: "Ecuaciones e inecuaciones", tipo: "conamat" },
+    { nombre: "Teoría de números: divisibilidad", tipo: "conamat" },
+    { nombre: "Números primos", tipo: "conamat" },
+    { nombre: "MCD y MCM", tipo: "conamat" },
+    { nombre: "Fracciones: clases y operaciones", tipo: "conamat" },
+    { nombre: "Fracción de una fracción", tipo: "conamat" },
+    { nombre: "Suma y Resta de Fracciones", tipo: "conamat" },
+    { nombre: "Números decimales", tipo: "conamat" },
+    { nombre: "Operaciones combinadas con decimales", tipo: "conamat" },
+    { nombre: "Cuadrado y cubo de un número menor que 20", tipo: "conamat" },
+    { nombre: "Equivalencia y cambio monetario", tipo: "conamat" },
+    { nombre: "Proporcionalidad directa e inversa", tipo: "conamat" },
+    { nombre: "Regla de tres simple", tipo: "conamat" },
+    { nombre: "Promedios", tipo: "conamat" },
+    { nombre: "Segmentos", tipo: "conamat" },
+    { nombre: "Ángulos y Bisectriz", tipo: "conamat" },
+    { nombre: "Rectas paralelas y perpendiculares", tipo: "conamat" },
+    { nombre: "Triángulos", tipo: "conamat" },
+    { nombre: "Figuras planas: Áreas y perímetros", tipo: "conamat" },
+    { nombre: "Área de regiones sombreadas", tipo: "conamat" },
+    { nombre: "Gráficos estadísticos (barras, poligonales, circulares)", tipo: "conamat" },
+    { nombre: "Sucesos numéricos y no numéricos probables e improbables", tipo: "conamat" },
+    { nombre: "Sucesiones numéricas y alfabéticas", tipo: "conamat" },
+    { nombre: "Operadores Matemáticos", tipo: "conamat" },
+    { nombre: "Habilidad y situaciones matemáticas", tipo: "conamat" },
+
+    // --- TEMAS "TIGRE" DE ACADEMIA PRE-U (Azul) ---
+    { nombre: "Magnitudes Proporcionales (Tablas DP e IP)", tipo: "academia" },
+    { nombre: "Descomposición Polinómica", tipo: "academia" },
+    { nombre: "Sucesiones Numéricas (Doble Criterio)", tipo: "academia" },
+    { nombre: "Problemas de Edades", tipo: "academia" },
+    { nombre: "Planteo de Ecuaciones (Método Rombo)", tipo: "academia" },
+    { nombre: "Métodos Operativos (Cangrejo y Rectángulo)", tipo: "academia" },
+    { nombre: "Fracciones Especiales (Grifos y Caños)", tipo: "academia" },
+    { nombre: "Conteo de Números (Paginación)", tipo: "academia" }
   ],
   '6to': [
     // Clasificatoria
@@ -124,15 +139,19 @@ export const TOPICS_BY_GRADE_ONLY = {
 // Función para obtener temas por grado (sin etapa)
 export const getTopicsByGrade = (
   grade: keyof typeof TOPICS_BY_GRADE_ONLY,
-): string[] => {
-  return TOPICS_BY_GRADE_ONLY[grade]?.slice() || [];
+): any[] => {
+  const topics = TOPICS_BY_GRADE_ONLY[grade] || [];
+  
+  // Mapeamos la lista: si es un texto viejo, lo vuelve objeto. Si ya es objeto, lo deja igual.
+  return topics.map(t => 
+    typeof t === 'string' ? { nombre: t, tipo: "conamat" } : t
+  );
 };
 
 // Para compatibilidad con código antiguo, mantenemos la función anterior pero la redirigimos
 export const getTopicsByGradeAndStage = (
   grade: string,
-  stage?: string,
-): string[] => {
+): any[] => { // 🔥 Cambiado a any[] para que acepte los objetos con colores
   // Validamos que grade sea una clave válida
   if (
     grade === "3ro" ||
@@ -140,7 +159,7 @@ export const getTopicsByGradeAndStage = (
     grade === "5to" ||
     grade === "6to"
   ) {
-    return getTopicsByGrade(grade);
+    return getTopicsByGrade(grade as keyof typeof TOPICS_BY_GRADE_ONLY);
   }
   return [];
 };

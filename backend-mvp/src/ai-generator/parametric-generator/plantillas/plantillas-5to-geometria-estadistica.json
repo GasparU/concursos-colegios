@@ -3798,40 +3798,31 @@
 
   {
     "id": "estadistica_barras_01",
-    "tema": "estadistica",
-    "subtipo": "grafico_barras",
+    "tema": "Gráficos estadísticos (barras, poligonales, circulares)",
     "grado": "5to",
-    "etapa": ["clasificatoria"],
     "dificultad": ["intermedio"],
-    "bidireccional": false,
-    "enunciado": "El siguiente gráfico de barras muestra las ventas de {producto} durante una semana. El lunes se vendieron {lun} unidades, el martes {mar}, miércoles {mie}, jueves {jue} y viernes {vie}. ¿Cuántas unidades se vendieron en total?",
+    "enunciado": "En la siguiente tabla se muestran las ventas de la semana. ¿Cuántas unidades se vendieron en total?",
     "variables": {
-      "producto": {
-        "type": "string",
-        "opciones": ["manzanas", "libros", "camisas", "pelotas"]
-      },
-      "lun": { "type": "number", "min": 5, "max": 20, "step": 1 },
-      "mar": { "type": "number", "min": 5, "max": 20, "step": 1 },
-      "mie": { "type": "number", "min": 5, "max": 20, "step": 1 },
-      "jue": { "type": "number", "min": 5, "max": 20, "step": 1 },
-      "vie": { "type": "number", "min": 5, "max": 20, "step": 1 },
-      "total": { "type": "number", "min": 25, "max": 100 }
+      "lun": { "type": "number", "min": 10, "max": 30 },
+      "mar": { "type": "number", "min": 10, "max": 30 },
+      "mie": { "type": "number", "min": 10, "max": 30 },
+      "jue": { "type": "number", "min": 10, "max": 30 },
+      "vie": { "type": "number", "min": 10, "max": 30 }
     },
     "relaciones": ["total = lun + mar + mie + jue + vie"],
-    "restricciones": [],
     "incognita_directa": "total",
-    "incognitas_inversa": [],
-    "formato_respuesta": { "tipo": "entero", "rango": [25, 100] },
-    "metadata": {
-      "habilidades": ["gráfico de barras", "suma"],
-      "tiempo_estimado": 90,
-      "requiere_calculadora": false,
-      "fuente": "Adaptado de problemas de estadística"
-    }
+    "visual_data": {
+      "tipo": "barras",
+      "data": {
+        "labels": ["Lun", "Mar", "Mié", "Jue", "Vie"],
+        "datasets": [{ "label": "Ventas", "data": ["${lun}", "${mar}", "${mie}", "${jue}", "${vie}"] }]
+      }
+    },
+    "formato_respuesta": { "tipo": "entero" }
   },
   {
     "id": "estadistica_barras_intermedio",
-    "tema": "estadistica",
+    "tema": "Gráficos estadísticos (barras, poligonales, circulares)",
     "subtipo": "estadistica_barras_01",
     "grado": "5to",
     "dificultad": ["Intermedio"],
@@ -3868,7 +3859,7 @@
   },
   {
     "id": "estadistica_barras_doble",
-    "tema": "estadistica",
+    "tema": "Gráficos estadísticos (barras, poligonales, circulares)",
     "subtipo": "grafico_barras_doble",
     "grado": "5to",
     "dificultad": ["Experto"],
@@ -3886,7 +3877,7 @@
   },
   {
     "id": "estadistica_circular_angulo",
-    "tema": "estadistica",
+    "tema": "Gráficos estadísticos (barras, poligonales, circulares)",
     "subtipo": "grafico_circular",
     "grado": "5to",
     "etapa": ["final"],
@@ -3910,7 +3901,7 @@
   },
   {
     "id": "estadistica_circular_porcentaje",
-    "tema": "estadistica",
+    "tema": "Gráficos estadísticos (barras, poligonales, circulares)",
     "subtipo": "grafico_circular",
     "grado": "5to",
     "etapa": ["final"],
@@ -3974,7 +3965,7 @@
   },
   {
     "id": "estadistica_probabilidad_01",
-    "tema": "estadistica",
+    "tema": "Sucesos numéricos y no numéricos probables e improbables",
     "subtipo": "probabilidad_basica",
     "grado": "5to",
     "etapa": ["final"],
@@ -4001,37 +3992,32 @@
   },
   {
     "id": "estadistica_pictograma_01",
-    "tema": "estadistica",
-    "subtipo": "pictograma",
+    "tema": "Gráficos estadísticos (barras, poligonales, circulares)",
     "grado": "5to",
-    "etapa": ["clasificatoria"],
     "dificultad": ["intermedio"],
-    "bidireccional": false,
-    "enunciado": "El siguiente pictograma muestra la cantidad de libros leídos por un grupo de estudiantes. Cada símbolo 📚 representa {valor_libros} libros. Si Ana tiene {simbolos_ana} símbolos, Bruno tiene {simbolos_bruno} y Carlos tiene {simbolos_carlos}, ¿cuántos libros leyeron entre los tres?",
+    "enunciado": "En el pictograma, cada 📚 representa ${valor} libros. ¿Cuántos libros hay en total?",
     "variables": {
-      "valor_libros": { "type": "number", "min": 2, "max": 5, "step": 1 },
-      "simbolos_ana": { "type": "number", "min": 2, "max": 5, "step": 1 },
-      "simbolos_bruno": { "type": "number", "min": 2, "max": 5, "step": 1 },
-      "simbolos_carlos": { "type": "number", "min": 2, "max": 5, "step": 1 },
-      "total_libros": { "type": "number", "min": 6, "max": 75 }
+      "valor": { "type": "number", "min": 2, "max": 5 },
+      "ana": { "type": "number", "min": 2, "max": 6 },
+      "beto": { "type": "number", "min": 2, "max": 6 }
     },
-    "relaciones": [
-      "total_libros = valor_libros * (simbolos_ana + simbolos_bruno + simbolos_carlos)"
-    ],
-    "restricciones": [],
-    "incognita_directa": "total_libros",
-    "incognitas_inversa": [],
-    "formato_respuesta": { "tipo": "entero", "rango": [6, 75] },
-    "metadata": {
-      "habilidades": ["pictograma", "interpretación de datos"],
-      "tiempo_estimado": 90,
-      "requiere_calculadora": false,
-      "fuente": "Adaptado de problemas de estadística"
+    "relaciones": ["total = valor * (ana + beto)"],
+    "incognita_directa": "total",
+    "visual_data": {
+      "tipo": "pictograma",
+      "data": {
+        "icono": "📚",
+        "valor": "${valor}",
+        "datos": [
+          { "nombre": "Ana", "cantidad": "${ana}" },
+          { "nombre": "Beto", "cantidad": "${beto}" }
+        ]
+      }
     }
   },
   {
     "id": "estadistica_barras_comparativo",
-    "tema": "estadistica",
+    "tema": "Gráficos estadísticos (barras, poligonales, circulares)",
     "subtipo": "estadistica_barras_01",
     "grado": "5to",
     "variables": {

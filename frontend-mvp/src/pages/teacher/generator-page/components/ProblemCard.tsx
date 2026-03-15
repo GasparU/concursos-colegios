@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, RefreshCw, Pencil, Check, X } from "lucide-react";
+import { ChevronDown, RefreshCw, Pencil, Check, X, Trash2} from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
@@ -15,6 +15,7 @@ interface ProblemCardProps {
   currentFont: string;
   onRegenerate: () => void;
   onUpdate: (newText: string) => void; // 🔥 Nueva prop para guardar la edición
+  onDelete: () => void;
 }
 
 export default function ProblemCard({
@@ -24,6 +25,7 @@ export default function ProblemCard({
   currentFont,
   onRegenerate,
   onUpdate,
+  onDelete,
 }: ProblemCardProps) {
   const isDark = theme === "dark";
 
@@ -57,7 +59,7 @@ export default function ProblemCard({
     >
       {/* HEADER */}
       <div
-        className={`px-4 py-3 border-b flex justify-between items-center ${
+        className={`px-3 py-1.5 border-b flex justify-between items-center ${ 
           isDark
             ? "bg-slate-700/50 border-slate-700"
             : "bg-slate-50/80 border-slate-100"
@@ -93,6 +95,20 @@ export default function ProblemCard({
             {problem.topic}
           </span>
 
+            {/* 🔥 BOTÓN ELIMINAR */}
+          {!isEditing && (
+            <button
+              onClick={onDelete}
+              className={`p-1.5 rounded-full transition-colors ${
+                isDark
+                  ? "text-slate-400 hover:text-red-400 hover:bg-slate-700"
+                  : "text-slate-400 hover:text-red-600 hover:bg-red-50"
+              }`}
+              title="Eliminar este problema"
+            >
+              <Trash2 size={14} />
+            </button>
+          )}
           {/* 🔥 BOTÓN EDITAR */}
           {!isEditing && (
             <button
@@ -126,7 +142,7 @@ export default function ProblemCard({
       </div>
 
       {/* BODY */}
-      <div className="p-5">
+      <div className="p-2">
         {/* 🔥 ZONA DE EDICIÓN O VISUALIZACIÓN */}
         {isEditing ? (
           <div className="mb-4 animate-in fade-in zoom-in-95 duration-200">
@@ -156,9 +172,7 @@ export default function ProblemCard({
             </div>
           </div>
         ) : (
-          <div
-            className={`prose max-w-none mb-6 ${currentFont} ${isDark ? "prose-invert" : "prose-slate"}`}
-          >
+          <div className={`prose max-w-none mb-1 ${currentFont} ${isDark ? "prose-invert" : "prose-slate"}`}>
             <ReactMarkdown
               remarkPlugins={[remarkMath]}
               rehypePlugins={[rehypeKatex]}
@@ -197,46 +211,35 @@ export default function ProblemCard({
 
         {/* GRAFICO (Lienzo blanco intacto) */}
         {!isEditing && problem.visual_data && (
-          <div className="my-4 flex justify-center bg-white rounded-lg border border-slate-100 overflow-hidden shadow-inner">
-            <div className="w-full max-w-[500px] aspect-square md:aspect-video flex items-center justify-center">
+          <div className="my-1 flex justify-center overflow-hidden border border-transparent">
+            <div className="w-full flex items-center justify-center">
               {renderVisualEmbed(problem.visual_data, problem.math_data)}
             </div>
           </div>
         )}
 
-        {/* OPCIONES */}
+        {/* 🔥 ALTERNATIVAS EN UNA FILA (A-E) */}
         {problem.options && !isEditing && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+          <div className="grid grid-cols-5 gap-1.5 mb-2 mt-2">
             {Object.entries(problem.options).map(([key, val]) => (
               <div
                 key={key}
                 className={clsx(
-                  "flex items-center gap-3 px-4 py-3 rounded-lg border transition-all cursor-pointer group",
-                  currentFont,
+                  "flex flex-col items-center justify-center p-1 rounded-md border transition-all cursor-default",
                   key === problem.correct_answer
-                    ? isDark
-                      ? "bg-emerald-900/20 border-emerald-800 text-emerald-300"
-                      : "bg-emerald-50 border-emerald-200 text-emerald-800"
-                    : isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-600 hover:bg-slate-700"
-                      : "bg-white border-slate-200 text-slate-600 hover:border-indigo-200 hover:bg-slate-50",
+                    ? isDark ? "bg-emerald-900/20 border-emerald-800 text-emerald-300" : "bg-emerald-50 border-emerald-200 text-emerald-800"
+                    : isDark ? "bg-slate-800 border-slate-700 text-slate-400" : "bg-slate-50 border-slate-100 text-slate-600"
                 )}
               >
                 <span
                   className={clsx(
-                    "w-6 h-6 flex items-center justify-center rounded-full font-bold shrink-0 text-xs transition-colors",
-                    key === problem.correct_answer
-                      ? isDark
-                        ? "bg-emerald-500 text-white"
-                        : "bg-emerald-600 text-white"
-                      : isDark
-                        ? "bg-slate-700 text-slate-400 group-hover:bg-slate-600"
-                        : "bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-600",
+                    "w-4 h-4 flex items-center justify-center rounded-full font-black text-[9px] mb-1",
+                    key === problem.correct_answer ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-500"
                   )}
                 >
                   {key}
                 </span>
-                <span className="font-medium">
+                <span className="text-[11px] font-bold truncate w-full text-center leading-none">
                   <Latex strict={false}>{String(val)}</Latex>
                 </span>
               </div>
@@ -244,9 +247,9 @@ export default function ProblemCard({
           </div>
         )}
 
-        {/* SOLUCIÓN */}
+       {/* 🔥 SOLUCIÓN COMPACTA */}
         <details
-          className={`group border-t pt-4 mt-2 transition-colors ${
+          className={`group border-t pt-2 mt-1 transition-colors ${
             isDark ? "border-slate-700" : "border-slate-100"
           }`}
         >
