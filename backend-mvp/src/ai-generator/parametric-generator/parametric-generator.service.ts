@@ -368,6 +368,7 @@ const normalize = (str: string) =>
           valores,
           respuesta: respuestaFinal,
           visual_data: visualData,
+          metadata: plantilla.metadata,
         };
       } catch (error) {
         if (intento === maxIntentos - 1) {

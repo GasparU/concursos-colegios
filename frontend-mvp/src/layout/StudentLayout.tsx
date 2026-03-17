@@ -1,75 +1,74 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Sidebar from "./Sidebar";
 import { useUiStore } from "../store/uiStore";
 
 export default function StudentLayout() {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const { sidebarOpen } = useUiStore();
   const location = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     setMobileOpen(false);
   }, [location]);
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) {
-        setMobileOpen(false);
-      }
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (!mobile) setMobileOpen(false);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
-    <div className="flex h-screen">
-      {isMobile && (
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="fixed top-4 left-4 z-50 p-2 bg-primary-600 text-white rounded-md shadow-lg"
-        >
-          <Menu size={24} />
-        </button>
+    <div className="flex h-screen w-full bg-white overflow-hidden">
+      {/* Sidebar Fijo */}
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-50 bg-slate-50 border-r border-slate-200 transition-all duration-300 ease-in-out
+          ${isMobile 
+            ? (mobileOpen ? "translate-x-0 w-64 shadow-2xl" : "-translate-x-full w-64") 
+            : (sidebarOpen ? "translate-x-0 w-64" : "translate-x-0 w-20")
+          }
+        `}
+      >
+        <Sidebar />
+      </aside>
+
+      {/* Overlay Móvil */}
+      {isMobile && mobileOpen && (
+        <div
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"
+          onClick={() => setMobileOpen(false)}
+        />
       )}
 
+      {/* Contenedor de Contenido */}
       <div
-        className={
-          isMobile ? "fixed inset-0 z-40 pointer-events-none" : "block"
-        }
+        className={`
+          flex-1 flex flex-col min-w-0 h-full transition-all duration-300
+          ${!isMobile ? (sidebarOpen ? "pl-64" : "pl-20") : "pl-0"}
+        `}
       >
-        {isMobile && mobileOpen && (
-          <div
-            className="absolute inset-0 bg-black bg-opacity-50 pointer-events-auto"
-            onClick={() => setMobileOpen(false)}
-          />
+        {/* Botón Menú Móvil */}
+        {isMobile && (
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="fixed bottom-6 right-6 z-50 p-4 bg-slate-900 text-white rounded-full shadow-2xl"
+          >
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         )}
-        <div
-          className={`
-            transition-transform duration-300 ease-in-out
-            ${isMobile ? "absolute top-0 left-0 h-full pointer-events-auto" : ""}
-            ${isMobile && !mobileOpen ? "-translate-x-full" : "translate-x-0"}
-          `}
-        >
-          <Sidebar />
-        </div>
-      </div>
 
-      <main
-        className={`flex-1 p-4 transition-all duration-300 ${
-          !isMobile && sidebarOpen
-            ? "ml-64"
-            : !isMobile && !sidebarOpen
-              ? "ml-20"
-              : "ml-0"
-        }`}
-      >
-        <Outlet />
-      </main>
+        {/* CAMBIO CLAVE: Quitamos overflow-hidden y ponemos overflow-y-auto */}
+        <main className="flex-1 h-full w-full overflow-y-auto bg-white relative scroll-smooth">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

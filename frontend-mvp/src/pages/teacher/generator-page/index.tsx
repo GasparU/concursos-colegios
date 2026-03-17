@@ -9,6 +9,7 @@ import ProblemCard from "./components/ProblemCard";
 import GenerationProgress from "./components/GenerationProgress"; // 🔥 AQUÍ ESTÁ LA VENTANA FLOTANTE
 import SaveExamModal from "./components/SaveExamModal"; // 🔥 NUEVO MODAL
 import api from "../../../services/api";
+import { getTopicsByGrade } from "../../../lib/topics";
 
 
 type Grade = "3ro" | "4to" | "5to" | "6to";
@@ -35,9 +36,9 @@ export const GeneratorPage = () => {
   const [progress, setProgress] = useState(0);
 
     // 🔥 1. RESTAURAMOS TU FUNCIÓN FUERA DEL COMPONENTE
-  const generarOpcionesAE = (respuesta: number) => {
+  const generarOpcionesAE = (respuesta: number, prefix = "", suffix = "") => {
     const res = Number(respuesta);
-    if (isNaN(res)) return { options: { A: "1", B: "2", C: "3", D: "4", E: "5" }, correcta: "A" }; // Salvavidas
+    if (isNaN(res)) return { options: { A: "1", B: "2", C: "3", D: "4", E: "5" }, correcta: "A" };
     
     const distractores = [
       res + (Math.random() > 0.5 ? 2 : -5),
@@ -52,7 +53,8 @@ export const GeneratorPage = () => {
     let correcta = "A";
 
     pool.forEach((val, i) => {
-      options[letras[i]] = val;
+      // 🔥 Armamos la cadena con el formato deseado
+      options[letras[i]] = `${prefix}${val}${suffix}`;
       if (val === res) correcta = letras[i];
     });
 
@@ -78,25 +80,7 @@ export const GeneratorPage = () => {
     quantity: 1,
   });
 
-  const [topicOptions, setTopicOptions] = useState<any[]>([]);
-
-  // Efecto que llama al backend cuando cambias de Grado (3ro, 4to, 5to...)
-  useEffect(() => {
-    const fetchTemas = async () => {
-      try {
-        const res = await api.get('/parametric/temas-disponibles'); // Asegúrate que esta ruta coincida con tu backend
-        if (res.data && res.data[config.grade]) {
-          setTopicOptions(res.data[config.grade]);
-        } else {
-          setTopicOptions([]); // Si no hay temas, vaciamos
-        }
-      } catch (error) {
-        console.error("Error al traer los temas de la base de datos:", error);
-      }
-    };
-
-    fetchTemas();
-  }, [config.grade]);
+  const topicOptions = getTopicsByGrade(config.grade);
 
   // --- Lógica del Drag & Drop para la ventana de progreso ---
   useEffect(() => {
@@ -183,16 +167,19 @@ export const GeneratorPage = () => {
         
         const data = paramRes.data;
         let enunciadoFinal = data.enunciado;
-        try {
-          const aiRes = await api.post("/ai/restyle", { 
-            baseText: data.enunciado, 
-            topic: topic, 
-            grade: config.grade, 
-            model: modeloAUsar, 
-            isSimulacro: false
-          });
-          enunciadoFinal = aiRes.data.styledText || data.enunciado;
-        } catch (e) { /* ignorar fallo de restyle */ }
+        const tieneGrafico = data.visual_data || data.visualData;
+        if (!tieneGrafico) {
+          try {
+            const aiRes = await api.post("/ai/restyle", { 
+              baseText: data.enunciado, 
+              topic: topic, 
+              grade: config.grade, 
+              model: modeloAUsar, 
+              isSimulacro: false
+            });
+            enunciadoFinal = aiRes.data.styledText || data.enunciado;
+          } catch (e) { /* ignorar fallo de restyle */ }
+        }
 
         let opcionesArmadas = data.opciones;
         let letraCorrecta = data.correcta_letra || data.correcta;
@@ -200,7 +187,12 @@ export const GeneratorPage = () => {
 
         if (!tiene5Opciones) {
             const valorRespuesta = data.correcta_valor || data.correcta || (data.valores ? Object.values(data.valores).pop() : 0);
-            const generadas = generarOpcionesAE(valorRespuesta as number);
+            
+            // 🔥 AHORA LE PASAMOS EL PREFIJO Y SUFIJO DESDE EL BACKEND
+            const prefijo = data.metadata?.prefijo_opciones || "";
+            const sufijo = data.metadata?.sufijo_opciones || "";
+            
+            const generadas = generarOpcionesAE(valorRespuesta as number, prefijo, sufijo);
             opcionesArmadas = generadas.options;
             letraCorrecta = generadas.correcta;
         }
@@ -286,6 +278,9 @@ export const GeneratorPage = () => {
       // Preparamos el payload según el tipo
       const payload = {
         title: examData.title,
+        // 🔥 AGREGAMOS ESTA LÍNEA (Es la que Prisma está reclamando)
+        type: examData.type, 
+        
         questionsCount: problems.length,
         grade: config.grade,
         stage: config.stage,
@@ -306,8 +301,13 @@ export const GeneratorPage = () => {
           hint: p.hint || null,
           math_data: p.math_data || p.mathData,
           visual_data: p.visual_data || p.visualData,
+          
+          // 💡 TIP: Si tus preguntas también requieren un tipo (ej. 'aritmetica')
+          // asegúrate de enviarlo aquí también si el schema lo pide.
+          // type: config.type // Por ejemplo
         })),
       };
+      console.log("🚀 Payload que sale del Frontend:", payload);
 
       await api.post("/exams", payload);
 

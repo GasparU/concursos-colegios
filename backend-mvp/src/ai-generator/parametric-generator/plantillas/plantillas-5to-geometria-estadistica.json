@@ -3763,42 +3763,10 @@
   "formato_respuesta": { "tipo": "numero" },
   "metadata": {}
 },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-  
-  
-
-
   {
     "id": "estadistica_barras_01",
     "tema": "Gráficos estadísticos (barras, poligonales, circulares)",
+    "subtipo": "grafico_barras",
     "grado": "5to",
     "dificultad": ["intermedio"],
     "enunciado": "En la siguiente tabla se muestran las ventas de la semana. ¿Cuántas unidades se vendieron en total?",
@@ -3993,6 +3961,7 @@
   {
     "id": "estadistica_pictograma_01",
     "tema": "Gráficos estadísticos (barras, poligonales, circulares)",
+    "subtipo": "pictograma",
     "grado": "5to",
     "dificultad": ["intermedio"],
     "enunciado": "En el pictograma, cada 📚 representa ${valor} libros. ¿Cuántos libros hay en total?",
@@ -4112,6 +4081,100 @@
     "restricciones": [],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "cubo_conamat_area_volumen",
+    "tema": "Sólidos Geométricos: Cubo y Prisma",
+    "subtipo": "cubo_conamat_area_volumen",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio", "avanzado"],
+    "bidireccional": false,
+    "variables": {
+      "a": { "type": "number", "min": 3, "max": 12, "step": 1 }
+    },
+    "relaciones": [
+      "area_total = 6 * a * a",
+      "ans = a * a * a"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Observa el cubo mostrado. Se sabe que el área total de su superficie es de ${area_total} \\text{ cm}^2$. Calcula el volumen de dicho sólido.",
+    "metadata": {
+      "habilidades": ["área total", "volumen", "radicación"],
+      "prefijo_opciones": "$V = ",
+      "sufijo_opciones": " \\text{ cm}^3$"
+    }
+  },
+  {
+    "id": "cubo_conamat_aristas",
+    "tema": "Sólidos Geométricos: Cubo y Prisma",
+    "subtipo": "cubo_conamat_aristas",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["intermedio"],
+    "bidireccional": false,
+    "variables": {
+      "a": { "type": "number", "min": 4, "max": 15, "step": 1 }
+    },
+    "relaciones": [
+      "volumen = a * a * a",
+      "ans = 12 * a"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Si el volumen del cubo mostrado es de ${volumen} \\text{ cm}^3$, determina la suma de las longitudes de todas sus aristas.",
+    "metadata": {
+      "habilidades": ["suma de aristas", "volumen"],
+      "prefijo_opciones": "$\\Sigma \\text{aristas} = ",
+      "sufijo_opciones": " \\text{ cm}$"
+    }
+  },
+  {
+    "id": "cubo_grafico_volumen_basico",
+    "tema": "Sólidos Geométricos: Cubo y Prisma",
+    "subtipo": "cubo_grafico_volumen_basico",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
+    "bidireccional": false,
+    "variables": {
+      "a": { "type": "number", "min": 2, "max": 10, "step": 1 }
+    },
+    "relaciones": [
+      "ans = a * a * a"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "En el siguiente gráfico se muestra un cubo. Determina su volumen.",
+    "metadata": {
+      "habilidades": ["volumen de sólidos", "cubo"],
+      "prefijo_opciones": "$V = ",
+      "sufijo_opciones": " \\text{ u}^3$"
+    }
+  },
+  {
+    "id": "cubo_grafico_area_intermedio",
+    "tema": "Sólidos Geométricos: Cubo y Prisma",
+    "subtipo": "cubo_grafico_area_intermedio",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
+    "bidireccional": false,
+    "variables": {
+      "a": { "type": "number", "min": 3, "max": 9, "step": 1 }
+    },
+    "relaciones": [
+      "ans = 6 * a * a"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Observa el hexaedro regular (cubo) mostrado en la figura. Calcula el área total de su superficie.",
+    "metadata": {
+      "habilidades": ["área de superficie", "cubo"],
+      "prefijo_opciones": "$A_T = ",
+      "sufijo_opciones": " \\text{ u}^2$"
+    }
   }
 
 ]

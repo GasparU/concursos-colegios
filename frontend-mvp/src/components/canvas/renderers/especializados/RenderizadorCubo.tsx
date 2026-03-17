@@ -1,16 +1,83 @@
-import { Mafs, Line, Text } from "mafs";
+import { Mafs, Line, Text, Polygon } from "mafs";
 import { CONFIG_GEOMETRIA } from "./ConstantesVisuales";
 
 interface CuboProps {
-  puntos: [number, number][]; // 8 puntos
+  puntos?: [number, number][];
   color?: string;
+  parametros?: any;
 }
 
 export const RenderizadorCubo = ({
   puntos,
   color = CONFIG_GEOMETRIA.COLOR_LINEA_PRINCIPAL,
+  parametros,
 }: CuboProps) => {
-  if (!puntos || puntos.length !== 8) return null;
+  
+  // =========================================================================
+  // 🔥 LO NUEVO: Proyección Oblicua (El verdadero 3D de libro escolar)
+  // =========================================================================
+  if (!puntos || puntos.length !== 8) {
+    if (parametros && parametros.arista) {
+      const arista = parametros.arista;
+      
+      // Coordenadas fijas para un cubo 3D perfecto donde TODAS las líneas se ven
+      // f_ = front (frente), b_ = back (atrás)
+      // bl = bottom-left, tr = top-right, etc.
+      
+      const f_bl = [-1.8, -1.8] as [number, number];
+      const f_br = [0.6, -1.8] as [number, number];
+      const f_tr = [0.6, 0.6] as [number, number];
+      const f_tl = [-1.8, 0.6] as [number, number];
+
+      const b_bl = [-0.6, -0.6] as [number, number];
+      const b_br = [1.8, -0.6] as [number, number];
+      const b_tr = [1.8, 1.8] as [number, number];
+      const b_tl = [-0.6, 1.8] as [number, number];
+
+      return (
+        <div className="w-full flex justify-center py-4 bg-white dark:bg-slate-900 rounded-lg">
+          <Mafs viewBox={{ x: [-3, 3], y: [-3, 3] }} pan={false} zoom={false}>
+            
+            {/* 1. CARAS CON RELLENO (Se dibujan atrás para dar volumen sin tapar líneas) */}
+            <Polygon points={[f_bl, f_br, f_tr, f_tl]} color={color} fillOpacity={0.1} weight={0} />
+            <Polygon points={[f_tl, f_tr, b_tr, b_tl]} color={color} fillOpacity={0.2} weight={0} />
+            <Polygon points={[f_br, b_br, b_tr, f_tr]} color={color} fillOpacity={0.3} weight={0} />
+
+            {/* 2. ARISTAS OCULTAS (DASHED) - Las 3 líneas que van por detrás */}
+            <Line.Segment point1={b_bl} point2={b_br} color={color} weight={2} style="dashed" />
+            <Line.Segment point1={b_bl} point2={b_tl} color={color} weight={2} style="dashed" />
+            <Line.Segment point1={f_bl} point2={b_bl} color={color} weight={2} style="dashed" />
+
+            {/* 3. ARISTAS VISIBLES (Líneas sólidas y más gruesas) */}
+            {/* Cuadrado frontal */}
+            <Line.Segment point1={f_bl} point2={f_br} color={color} weight={3} />
+            <Line.Segment point1={f_br} point2={f_tr} color={color} weight={3} />
+            <Line.Segment point1={f_tr} point2={f_tl} color={color} weight={3} />
+            <Line.Segment point1={f_tl} point2={f_bl} color={color} weight={3} />
+            
+            {/* Líneas de profundidad */}
+            <Line.Segment point1={f_tl} point2={b_tl} color={color} weight={3} />
+            <Line.Segment point1={f_tr} point2={b_tr} color={color} weight={3} />
+            <Line.Segment point1={f_br} point2={b_br} color={color} weight={3} />
+            
+            {/* Marco trasero superior y derecho */}
+            <Line.Segment point1={b_tl} point2={b_tr} color={color} weight={3} />
+            <Line.Segment point1={b_tr} point2={b_br} color={color} weight={3} />
+
+            {/* 4. ETIQUETA (Centrada bajo la arista inferior frontal) */}
+            <Text x={-0.6} y={-2.2} size={22} color="#0f172a" svgTextProps={{ fontWeight: "bold" }}>
+              {`${arista} u`}
+            </Text>
+          </Mafs>
+        </div>
+      );
+    }
+    return null; 
+  }
+
+  // =========================================================================
+  // 🛡️ LO ANTIGUO: EXACTAMENTE COMO LO TENÍAS
+  // =========================================================================
   const front = puntos.slice(0, 4);
   const back = puntos.slice(4, 8);
 

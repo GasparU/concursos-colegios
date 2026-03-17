@@ -279,52 +279,42 @@
   },
   {
     "id": "proporcionalidad_compuesta_01",
-    "tema": "proporcionalidad_compuesta",
+    "tema": "Regla de tres simple y compuesta",
     "subtipo": "rendimiento_equipo",
     "grado": "5to",
     "etapa": ["final"],
     "dificultad": ["avanzado"],
-    "bidireccional": true,
-    "enunciado": "Un grupo de ${n_v}$ varones siembra ${obj}$ árboles en ${d1}$ días trabajando ${h1}$ h/día. Un grupo de ${n_d}$ damas hace lo mismo en ${d2}$ días trabajando ${h2}$ h/día. Si se forma un equipo de ${n_v_n}$ varones y ${n_d_n}$ damas, trabajando ${h1}$ h/día, ¿cuántos días necesitarán para sembrar los mismos ${obj}$ árboles?",
+    "bidireccional": false,
     "variables": {
-      "n_v": { "type": "number", "min": 2, "max": 8, "step": 1 },
-      "d1": { "type": "number", "min": 3, "max": 8, "step": 1 },
-      "h1": { "type": "number", "opciones": [6, 8] },
-      "n_d": { "type": "number", "min": 4, "max": 12, "step": 1 },
-      "d2": { "type": "number", "min": 4, "max": 10, "step": 1 },
-      "h2": { "type": "number", "opciones": [6, 8] },
-      "obj": { "type": "number", "min": 100, "max": 300, "step": 50 },
-      "n_v_n": { "type": "number", "min": 1, "max": 5, "step": 1 },
-      "n_d_n": { "type": "number", "min": 2, "max": 8, "step": 1 }
+      "n_v": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "d1": { "type": "number", "min": 4, "max": 6, "step": 1 },
+      "h1": { "type": "number", "min": 6, "max": 8, "step": 2 },
+      "n_d": { "type": "number", "min": 4, "max": 6, "step": 1 },
+      "d2": { "type": "number", "min": 8, "max": 12, "step": 2 },
+      "h2": { "type": "number", "min": 4, "max": 6, "step": 2 },
+      "n_v_n": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "n_d_n": { "type": "number", "min": 2, "max": 4, "step": 1 }
     },
     "relaciones": [
-      "eff_v = obj / (n_v * d1 * h1)",
-      "eff_d = obj / (n_d * d2 * h2)",
-      "dias = obj / ((n_v_n * eff_v + n_d_n * eff_d) * h1)"
+      "esfuerzo_v = n_v * d1 * h1",
+      "esfuerzo_d = n_d * d2 * h2",
+      "lcm_esfuerzos = MCM(esfuerzo_v, esfuerzo_d)",
+      "obj = lcm_esfuerzos * 2",
+      "eff_v_unit = obj / esfuerzo_v",
+      "eff_d_unit = obj / esfuerzo_d",
+      "eff_equipo = (n_v_n * eff_v_unit) + (n_d_n * eff_d_unit)",
+      "dias = obj / (eff_equipo * h1)"
     ],
-    "restricciones": ["dias > 0", "dias < 20", "eff_v > 0", "eff_d > 0"],
+    "restricciones": [
+      "dias == floor(dias)"
+    ],
     "incognita_directa": "dias",
-    "incognitas_inversa": [
-      "n_v",
-      "d1",
-      "h1",
-      "n_d",
-      "d2",
-      "h2",
-      "obj",
-      "n_v_n",
-      "n_d_n"
-    ],
-    "formato_respuesta": {
-      "tipo": "decimal",
-      "decimales": 2,
-      "rango": [1, 20]
-    },
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Un grupo de ${n_v}$ varones siembra ${obj}$ árboles en ${d1}$ días trabajando ${h1}$ h/día. Un grupo de ${n_d}$ damas hace lo mismo en ${d2}$ días trabajando ${h2}$ h/día. Si se forma un equipo de ${n_v_n}$ varones y ${n_d_n}$ damas, trabajando ${h1}$ h/día, ¿cuántos días necesitarán para sembrar los mismos ${obj}$ árboles?",
     "metadata": {
-      "habilidades": ["proporcionalidad", "eficiencia", "ecuaciones"],
-      "tiempo_estimado": 300,
-      "requiere_calculadora": true,
-      "fuente": "Adaptado de problemas de trabajo en equipo"
+      "habilidades": ["proporcionalidad", "eficiencia", "sistemas"],
+      "prefijo_opciones": "",
+      "sufijo_opciones": " días"
     }
   },
   {
@@ -388,65 +378,64 @@
     }
   },
   {
-  "id": "regla_tres_simple_01",
-  "tema": "regla_de_tres_simple",
-  "subtipo": "directa",
-  "grado": "5to",
-  "etapa": ["clasificatoria"],
-  "dificultad": ["intermedio"],
-  "bidireccional": true,
-  "enunciado": "Si ${cant1}$ kg de manzanas cuestan S/ ${precio1}$, ¿cuánto costarán ${cant2}$ kg?",
-  "variables": {
-    "cant1": { "type": "number", "min": 2, "max": 10, "step": 1 },
-    "k": { "type": "number", "min": 2, "max": 15, "step": 1 },
-    "cant2": { "type": "number", "min": 3, "max": 15, "step": 1 }
+    "id": "regla_tres_simple_01",
+    "tema": "Regla de tres simple y compuesta",
+    "subtipo": "directa",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["intermedio"],
+    "bidireccional": false,
+    "variables": {
+      "cant1": { "type": "number", "min": 2, "max": 10, "step": 1 },
+      "k": { "type": "number", "min": 2, "max": 15, "step": 1 },
+      "cant2": { "type": "number", "min": 3, "max": 15, "step": 1 }
+    },
+    "relaciones": [
+      "precio1 = cant1 * k",
+      "precio2 = cant2 * k"
+    ],
+    "incognita_directa": "precio2",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Si ${cant1}$ kg de manzanas cuestan S/ ${precio1}$, ¿cuánto costarán ${cant2}$ kg?",
+    "metadata": {
+      "habilidades": ["regla de tres", "proporcionalidad"],
+      "prefijo_opciones": "S/ ",
+      "sufijo_opciones": ""
+    }
   },
-  "relaciones": [
-    "precio1 = cant1 * k",
-    "precio2 = cant2 * k"
-  ],
-  "restricciones": ["precio2 >= precio1", "precio2 <= 150"],
-  "incognita_directa": "precio2",
-  "incognitas_inversa": ["cant1", "precio1", "cant2"],
-  "formato_respuesta": {
-    "tipo": "entero",
-    "rango": [15, 150]
-  },
-  "metadata": {
-    "habilidades": ["regla de tres", "proporcionalidad"],
-    "tiempo_estimado": 120,
-    "requiere_calculadora": true,
-    "fuente": "Adaptado de problemas de proporcionalidad"
-  }
-},
   {
-  "id": "regla_tres_compuesta_01",
-  "tema": "regla_de_tres_compuesta",
-  "subtipo": "rendimiento",
-  "grado": "5to",
-  "etapa": ["final"],
-  "dificultad": ["avanzado"],
-  "bidireccional": true,
-  "enunciado": "Para construir ${obra1}$ metros de carretera, ${obreros1}$ obreros trabajaron ${dias1}$ días durante ${horas1}$ horas diarias. ¿Cuántos días necesitarán ${obreros2}$ obreros trabajando ${horas2}$ horas diarias para hacer ${obra2}$ metros de la misma carretera?",
-  "variables": {
-    "obra1": { "type": "number", "min": 100, "max": 500, "step": 50 },
-    "obreros1": { "type": "number", "min": 5, "max": 20, "step": 1 },
-    "dias1": { "type": "number", "min": 10, "max": 30, "step": 1 },
-    "horas1": { "type": "number", "min": 6, "max": 10, "step": 1 },
-    "obra2": { "type": "number", "min": 100, "max": 500, "step": 50 },
-    "obreros2": { "type": "number", "min": 5, "max": 20, "step": 1 },
-    "horas2": { "type": "number", "min": 6, "max": 10, "step": 1 }
+    "id": "regla_tres_compuesta_01",
+    "tema": "Regla de tres simple y compuesta",
+    "subtipo": "rendimiento",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": false,
+    "variables": {
+      "base_k": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "obreros1": { "type": "number", "min": 6, "max": 12, "step": 2 },
+      "dias1": { "type": "number", "min": 10, "max": 20, "step": 2 },
+      "horas1": { "type": "number", "min": 6, "max": 8, "step": 2 },
+      "obreros2": { "type": "number", "min": 8, "max": 16, "step": 4 },
+      "horas2": { "type": "number", "min": 5, "max": 10, "step": 1 }
+    },
+    "relaciones": [
+      "esfuerzo1 = obreros1 * dias1 * horas1",
+      "lcm_eff = MCM(esfuerzo1, obreros2 * horas2)",
+      "constante_magica = (lcm_eff / esfuerzo1) * base_k",
+      "obra1 = 100 * constante_magica",
+      "obra2 = 200 * constante_magica",
+      "dias2 = (esfuerzo1 * obra2) / (obreros2 * horas2 * obra1)"
+    ],
+    "incognita_directa": "dias2",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Para construir ${obra1}$ metros de carretera, ${obreros1}$ obreros trabajaron ${dias1}$ días durante ${horas1}$ horas diarias. ¿Cuántos días necesitarán ${obreros2}$ obreros trabajando ${horas2}$ horas diarias para hacer ${obra2}$ metros de la misma carretera?",
+    "metadata": {
+      "habilidades": ["regla de tres compuesta", "magnitudes"],
+      "prefijo_opciones": "",
+      "sufijo_opciones": " días"
+    }
   },
-  "relaciones": [
-    "k = obra1 / (obreros1 * dias1 * horas1)",
-    "dias2 = obra2 / (obreros2 * horas2 * k)"
-  ],
-  "restricciones": ["dias2 > 0", "dias2 < 60"],
-  "incognita_directa": "dias2",
-  "incognitas_inversa": [],
-  "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
-  "metadata": {}
-},
   {
   "id": "ecuacion_simple_unificada",
   "tema": "ecuaciones_simples",
@@ -474,428 +463,6 @@
     "fuente": "Adaptado de problemas de ecuaciones"
   }
  },
-  {
-    "id": "rm_distribucion_hombrecito_basico",
-    "tema": "razonamiento_matematico",
-    "subtipo": "distribucion_grafica",
-    "grado": "5to",
-    "dificultad": ["basico"],
-    "enunciado": "Calcula el valor de 'x' en la siguiente distribución gráfica (Nivel Básico):",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["x = 1"],
-    "restricciones": [],
-    "incognita_directa": "x",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_distribucion_hombrecito_intermedio",
-    "tema": "razonamiento_matematico",
-    "subtipo": "distribucion_grafica",
-    "grado": "5to",
-    "dificultad": ["intermedio"],
-    "enunciado": "Calcula el valor de 'x' en la siguiente distribución gráfica (Nivel Intermedio):",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["x = 1"],
-    "restricciones": [],
-    "incognita_directa": "x",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_distribucion_hombrecito_avanzado",
-    "tema": "razonamiento_matematico",
-    "subtipo": "distribucion_grafica",
-    "grado": "5to",
-    "dificultad": ["avanzado"],
-    "enunciado": "Halla el valor que falta en la cabeza del último gráfico (Nivel Avanzado):",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["x = 1"],
-    "restricciones": [],
-    "incognita_directa": "x",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_distribucion_hombrecito_experto",
-    "tema": "razonamiento_matematico",
-    "subtipo": "distribucion_grafica",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "¡Reto CONAMAT! Descubre el patrón oculto y calcula el valor de 'x':",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["x = 1"],
-    "restricciones": [],
-    "incognita_directa": "x",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_basico",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["basico"],
-    "enunciado": "Ayuda a {nombre} a calcular la suma de las cifras ocultas por los asteriscos en esta operación.",
-    "variables": {
-      "nombre": {
-        "type": "string",
-        "opciones": ["Carlos", "Ana", "Luis", "Sofía", "Jorge"]
-      }
-    },
-    "relaciones": ["suma_ocultas = 1"],
-    "restricciones": [],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_intermedio",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["intermedio"],
-    "enunciado": "En la pizarra se borraron algunos números. Calcula la suma de las cifras ocultas.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["suma_ocultas = 1"],
-    "restricciones": [],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_avanzado",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["avanzado"],
-    "enunciado": "¡Desafío! Descubre el valor de los asteriscos en esta operación y da como respuesta la suma de ellos.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["suma_ocultas = 1"],
-    "restricciones": [],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_experto",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "¡Reto Final! Calcula la suma de todas las cifras ocultas por los asteriscos.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["suma_ocultas = 1"],
-    "restricciones": [],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_mult_basico",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["basico"],
-    "enunciado": "Calcula la suma de las cifras ocultas en esta multiplicación (Nivel Básico).",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["suma_ocultas = 1"],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_mult_intermedio",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["intermedio"],
-    "enunciado": "Descubre los asteriscos en esta multiplicación y suma sus valores (Nivel Intermedio).",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["suma_ocultas = 1"],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_mult_avanzado",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["avanzado"],
-    "enunciado": "¡Reto de sub-productos! Halla la suma de las cifras escondidas.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["suma_ocultas = 1"],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_mult_experto",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "¡Desafío CONAMAT! Reconstruye toda la multiplicación y suma los asteriscos.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["suma_ocultas = 1"],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_distribucion_casita_basico",
-    "tema": "razonamiento_matematico",
-    "subtipo": "distribucion_grafica",
-    "grado": "5to",
-    "dificultad": ["basico"],
-    "enunciado": "Halla el valor de 'x' ubicado en el techo de la última casita.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["x = 1"],
-    "incognita_directa": "x",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_distribucion_casita_intermedio",
-    "tema": "razonamiento_matematico",
-    "subtipo": "distribucion_grafica",
-    "grado": "5to",
-    "dificultad": ["intermedio"],
-    "enunciado": "Descubre qué número debe ir en la puerta de la tercera casa.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["x = 1"],
-    "incognita_directa": "x",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_distribucion_casita_avanzado",
-    "tema": "razonamiento_matematico",
-    "subtipo": "distribucion_grafica",
-    "grado": "5to",
-    "dificultad": ["avanzado"],
-    "enunciado": "Analiza las dos primeras casitas y calcula 'x'.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["x = 1"],
-    "incognita_directa": "x",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_distribucion_casita_experto",
-    "tema": "razonamiento_matematico",
-    "subtipo": "distribucion_grafica",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "¡Reto Experto! Aplica la regla de formación y calcula el valor de 'x'.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["x = 1"],
-    "incognita_directa": "x",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_div_basico",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["basico"],
-    "enunciado": "Completa los espacios vacíos en esta división exacta de 2 cifras entre 1.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["suma_ocultas = 1"],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_div_intermedio",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["intermedio"],
-    "enunciado": "Halla la suma de las cifras ocultas en esta división de 3 cifras entre 1.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["suma_ocultas = 1"],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_div_avanzado",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["avanzado"],
-    "enunciado": "Calcula la suma de los valores ocultos en la siguiente división entre 2 cifras.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["suma_ocultas = 1"],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_criptoaritmetica_div_experto",
-    "tema": "razonamiento_matematico",
-    "subtipo": "criptoaritmetica",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "¡Desafío Experto! Reconstruye la división inexacta de 4 cifras y halla la suma de las cifras ocultas.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["suma_ocultas = 1"],
-    "incognita_directa": "suma_ocultas",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_distribucion_circular_basico",
-    "tema": "razonamiento_matematico",
-    "subtipo": "distribucion_grafica",
-    "grado": "5to",
-    "dificultad": ["basico"],
-    "enunciado": "Halla el valor de 'x' en el tercer gráfico circular.",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["x = 1"],
-    "incognita_directa": "x",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_distribucion_circular_experto",
-    "tema": "razonamiento_matematico",
-    "subtipo": "distribucion_grafica",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "Analiza la relación radial y calcula el valor de 'x' (Nivel Experto).",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["x = 1"],
-    "incognita_directa": "x",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-
-  {
-    "id": "rm_conteo_triangulos_basico",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["basico"],
-    "enunciado": "Generado dinámicamente",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["total = 1"],
-    "incognita_directa": "total",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_conteo_triangulos_intermedio",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["intermedio"],
-    "enunciado": "Generado dinámicamente",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["total = 1"],
-    "incognita_directa": "total",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_conteo_triangulos_avanzado",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["avanzado"],
-    "enunciado": "Generado dinámicamente",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["total = 1"],
-    "incognita_directa": "total",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_conteo_triangulos_experto",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "Generado dinámicamente",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["total = 1"],
-    "incognita_directa": "total",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_conteo_cuadrilateros_basico",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["basico"],
-    "enunciado": "Generado dinámicamente",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["total = 1"],
-    "incognita_directa": "total",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_conteo_cuadrilateros_experto",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "Generado dinámicamente",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["total = 1"],
-    "incognita_directa": "total",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_conteo_angulos_basico",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["basico"],
-    "enunciado": "Generado dinámicamente",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["total = 1"],
-    "incognita_directa": "total",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_conteo_sectores_basico",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["basico"],
-    "enunciado": "Generado dinámicamente",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["total = 1"],
-    "incognita_directa": "total",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_conteo_cubos_basico",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["basico"],
-    "enunciado": "Generado dinámicamente",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["total = 1"],
-    "incognita_directa": "total",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "rm_conteo_cubos_experto",
-    "tema": "razonamiento_matematico",
-    "subtipo": "conteo_figuras",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "Generado dinámicamente",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 2 } },
-    "relaciones": ["total = 1"],
-    "incognita_directa": "total",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   {
   "id": "op_decimales_basico",
   "tema": "Operaciones combinadas",
@@ -1525,186 +1092,390 @@
   },
 {
   "id": "tabla_dp_basico",
-  "tema": "aritmetica",
-  "subtipo": "magnitudes_proporcionales",
+  "tema": "Magnitudes Proporcionales (DP e IP)",
+  "subtipo": "magnitudes_proporcionales_dp",
   "grado": "5to",
   "etapa": ["clasificatoria"],
   "dificultad": ["basico"],
-  "bidireccional": true,
-  "enunciado": "Completa la tabla de proporcionalidad directa:\n\n| A | {a1} | {a2} | {a3} |\n| B | {b1} |  ?  | {b3} |\n\nHalla el valor faltante.",
+  "bidireccional": false,
   "variables": {
-    "a1": { "type": "number", "min": 2, "max": 5, "step": 1 },
-    "a2": { "type": "number", "min": 4, "max": 8, "step": 1 },
-    "a3": { "type": "number", "min": 6, "max": 12, "step": 2 },
-    "b1": { "type": "number", "min": 3, "max": 6, "step": 1 },
-    "b3": { "type": "number", "min": 9, "max": 18, "step": 3 }
+    "k": { "type": "number", "min": 2, "max": 5, "step": 1 },
+    "a1": { "type": "number", "min": 2, "max": 6, "step": 1 },
+    "b2": { "type": "number", "min": 7, "max": 12, "step": 1 },
+    "a3": { "type": "number", "min": 14, "max": 20, "step": 2 }
   },
   "relaciones": [
-    "constante = b1 / a1",
-    "b2 = a2 * constante",
-    "b3_check = a3 * constante"
+    "b1 = a1 * k",
+    "a2 = b2 / k",
+    "b3 = a3 * k",
+    "ans = a2"
   ],
-  "restricciones": [
-    "b3 == a3 * constante"
-  ],
-  "incognita_directa": "b2",
-  "incognitas_inversa": ["a1", "a2", "a3", "b1", "b3"],
+  "restricciones": ["a2 == floor(a2)"],
+  "incognita_directa": "ans",
   "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Dada la siguiente tabla de magnitudes directamente proporcionales (DP), calcula el valor faltante $x$.\n\n$$\\begin{array}{|c|c|c|c|}\n\\hline\nA & {a1} & x & {a3} \\\\\n\\hline\nB & {b1} & {b2} & {b3} \\\\\n\\hline\n\\end{array}$$",
   "metadata": {
     "habilidades": ["proporcionalidad directa", "tablas"],
-    "tiempo_estimado": 60,
-    "requiere_calculadora": false,
-    "fuente": "Adaptado"
+    "prefijo_opciones": "$x = ",
+    "sufijo_opciones": "$"
   }
 },
 {
   "id": "tabla_ip_basico",
-  "tema": "aritmetica",
-  "subtipo": "magnitudes_proporcionales",
+  "tema": "Magnitudes Proporcionales (DP e IP)",
+  "subtipo": "magnitudes_proporcionales_ip",
   "grado": "5to",
   "etapa": ["clasificatoria"],
   "dificultad": ["basico"],
-  "bidireccional": true,
-  "enunciado": "Completa la tabla de proporcionalidad inversa:\n\n| A | {a1} | {a2} | {a3} |\n| B | {b1} |  ?  | {b3} |\n\nHalla el valor faltante.",
+  "bidireccional": false,
   "variables": {
+    "k": { "type": "number", "min": 24, "max": 60, "step": 12 },
     "a1": { "type": "number", "min": 2, "max": 4, "step": 1 },
-    "a2": { "type": "number", "min": 3, "max": 6, "step": 1 },
-    "a3": { "type": "number", "min": 4, "max": 8, "step": 2 },
-    "b1": { "type": "number", "min": 12, "max": 24, "step": 4 },
-    "b3": { "type": "number", "min": 6, "max": 12, "step": 2 }
+    "a2": { "type": "number", "min": 6, "max": 8, "step": 1 },
+    "a3": { "type": "number", "min": 10, "max": 12, "step": 1 }
   },
   "relaciones": [
-    "producto = a1 * b1",
-    "b2 = producto / a2",
-    "b3_check = producto / a3"
+    "b1 = k / a1",
+    "b2 = k / a2",
+    "b3 = k / a3",
+    "ans = b2"
   ],
-  "restricciones": [
-    "b3 == producto / a3"
-  ],
-  "incognita_directa": "b2",
-  "incognitas_inversa": ["a1", "a2", "a3", "b1", "b3"],
+  "restricciones": ["b1 == floor(b1)", "b2 == floor(b2)", "b3 == floor(b3)"],
+  "incognita_directa": "ans",
   "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Si las magnitudes $A$ y $B$ son inversamente proporcionales (IP), halla el valor de $y$ en el siguiente cuadro:\n\n$$\\begin{array}{|c|c|c|c|}\n\\hline\nA & {a1} & {a2} & {a3} \\\\\n\\hline\nB & {b1} & y & {b3} \\\\\n\\hline\n\\end{array}$$",
   "metadata": {
     "habilidades": ["proporcionalidad inversa", "tablas"],
-    "tiempo_estimado": 60,
-    "requiere_calculadora": false,
-    "fuente": "Adaptado"
+    "prefijo_opciones": "$y = ",
+    "sufijo_opciones": "$"
   }
 },
 {
   "id": "tabla_mixta_intermedio",
-  "tema": "aritmetica",
-  "subtipo": "magnitudes_proporcionales",
+  "tema": "Magnitudes Proporcionales (DP e IP)",
+  "subtipo": "magnitudes_proporcionales_mixta",
   "grado": "5to",
   "etapa": ["clasificatoria", "final"],
   "dificultad": ["intermedio"],
-  "bidireccional": true,
-  "enunciado": "Las magnitudes $A$ y $B$ son directamente proporcionales, mientras que $A$ y $C$ son inversamente proporcionales. Completa la tabla:\n\n| A | {a1} | {a2} | {a3} |\n| B | {b1} |  ?  | {b3} |\n| C | {c1} | {c2} |  ?  |",
+  "bidireccional": false,
   "variables": {
+    "base": { "type": "number", "min": 2, "max": 4, "step": 1 },
     "a1": { "type": "number", "min": 2, "max": 4, "step": 1 },
-    "a2": { "type": "number", "min": 3, "max": 5, "step": 1 },
-    "a3": { "type": "number", "min": 4, "max": 6, "step": 1 },
-    "b1": { "type": "number", "min": 6, "max": 12, "step": 2 },
-    "b3": { "type": "number", "min": 12, "max": 18, "step": 3 },
-    "c1": { "type": "number", "min": 12, "max": 18, "step": 3 },
-    "c2": { "type": "number", "min": 8, "max": 12, "step": 2 }
+    "a2": { "type": "number", "min": 5, "max": 8, "step": 1 },
+    "a3": { "type": "number", "min": 10, "max": 12, "step": 1 }
   },
   "relaciones": [
-    "k_dp = b1 / a1",
-    "b2 = a2 * k_dp",
-    "k_ip = a1 * c1",
-    "c3 = k_ip / a3"
+    "const = base * 120",
+    "b1 = const / a1",
+    "b2 = const / a2",
+    "b3 = const / a3",
+    "c1 = a1 * base",
+    "c2 = a2 * base",
+    "c3 = a3 * base",
+    "ans = b2 + c3"
   ],
-  "restricciones": [
-    "b3 == a3 * k_dp",
-    "c2 == k_ip / a2"
-  ],
-  "incognita_directa": ["b2", "c3"],
-  "incognitas_inversa": ["a1", "a2", "a3", "b1", "b3", "c1", "c2"],
+  "restricciones": ["b2 == floor(b2)", "c3 == floor(c3)"],
+  "incognita_directa": "ans",
   "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Las magnitudes $A$ y $B$ son IP, mientras que $A$ y $C$ son DP. Completa la tabla y calcula $x + y$.\n\n$$\\begin{array}{|c|c|c|c|}\n\\hline\nA & {a1} & {a2} & {a3} \\\\\n\\hline\nB & {b1} & x & {b3} \\\\\n\\hline\nC & {c1} & {c2} & y \\\\\n\\hline\n\\end{array}$$",
   "metadata": {
-    "habilidades": ["proporcionalidad directa e inversa", "tablas múltiples"],
-    "tiempo_estimado": 120,
-    "requiere_calculadora": false,
-    "fuente": "Adaptado"
+    "habilidades": ["proporcionalidad mixta", "tablas múltiples"],
+    "prefijo_opciones": "$x + y = ",
+    "sufijo_opciones": "$"
   }
 },
 {
   "id": "tabla_avanzado",
-  "tema": "aritmetica",
-  "subtipo": "magnitudes_proporcionales",
+  "tema": "Magnitudes Proporcionales (DP e IP)",
+  "subtipo": "magnitudes_proporcionales_ecuacion",
   "grado": "5to",
   "etapa": ["final"],
   "dificultad": ["avanzado"],
-  "bidireccional": true,
-  "enunciado": "Se sabe que $A$ es DP a $B$ e IP a $C^2$. Completa la tabla:\n\n| A | {a1} | {a2} | {a3} |\n| B | {b1} | {b2} |  ?  |\n| C | {c1} |  ?  | {c3} |",
+  "bidireccional": false,
   "variables": {
-    "a1": { "type": "number", "min": 2, "max": 4, "step": 1 },
-    "a2": { "type": "number", "min": 3, "max": 5, "step": 1 },
-    "a3": { "type": "number", "min": 4, "max": 6, "step": 1 },
-    "b1": { "type": "number", "min": 8, "max": 12, "step": 2 },
-    "b2": { "type": "number", "min": 12, "max": 16, "step": 2 },
-    "c1": { "type": "number", "min": 4, "max": 6, "step": 1 }
+    "k": { "type": "number", "min": 1, "max": 2, "step": 1 },
+    "c1": { "type": "number", "min": 2, "max": 4, "step": 1 },
+    "c2": { "type": "number", "min": 3, "max": 5, "step": 1 },
+    "a1": { "type": "number", "min": 10, "max": 20, "step": 2 }
   },
   "relaciones": [
-    "k = a1 * c1^2 / b1",
-    "c2 = sqrt( (a2 * c1^2 * b1) / (a1 * b2) )",
-    "b3 = a3 * c1^2 * b1 / (a1 * c3^2)"
+    "b1 = a1 * c1 * c1 * k",
+    "b2 = a1 * c2 * c2 * k",
+    "ans = b2"
   ],
-  "restricciones": [
-    "c2 == floor(c2)",
-    "b3 == floor(b3)",
-    "c2 > 0",
-    "b3 > 0"
-  ],
-  "incognita_directa": ["c2", "b3"],
-  "incognitas_inversa": ["a1", "a2", "a3", "b1", "b2", "c1"],
+  "incognita_directa": "ans",
   "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Se sabe que $A$ es DP a $B$ e IP a $C^2$. Si cuando $C = {c1}$, $A = {a1}$ y $B = {b1}$. Halla el valor de $x$ si cuando $C = {c2}$, $A$ sigue siendo ${a1}$.\n\n$$\\begin{array}{|c|c|c|}\n\\hline\nA & {a1} & {a1} \\\\\n\\hline\nB & {b1} & x \\\\\n\\hline\nC & {c1} & {c2} \\\\\n\\hline\n\\end{array}$$",
   "metadata": {
-    "habilidades": ["proporcionalidad con potencias", "ecuaciones"],
-    "tiempo_estimado": 180,
-    "requiere_calculadora": true,
-    "fuente": "Adaptado"
+    "habilidades": ["proporcionalidad con potencias"],
+    "prefijo_opciones": "$x = ",
+    "sufijo_opciones": "$"
   }
 },
 {
   "id": "tabla_experto",
-  "tema": "aritmetica",
-  "subtipo": "magnitudes_proporcionales",
+  "tema": "Magnitudes Proporcionales (DP e IP)",
+  "subtipo": "magnitudes_proporcionales_ecuacion",
   "grado": "5to",
   "etapa": ["final"],
   "dificultad": ["experto"],
-  "bidireccional": true,
-  "enunciado": "Las magnitudes $A$, $B$ y $C$ se relacionan mediante $A \\propto \\frac{B}{C^2}$. Si los valores se muestran en la tabla, halla $x$ e $y$.\n\n| A | {a1} | {a2} | {a3} |\n| B | {b1} |  x  | {b3} |\n| C | {c1} | {c2} |  y  |",
+  "bidireccional": false,
   "variables": {
-    "a1": { "type": "number", "min": 2, "max": 3, "step": 1 },
-    "a2": { "type": "number", "min": 4, "max": 5, "step": 1 },
-    "a3": { "type": "number", "min": 6, "max": 7, "step": 1 },
-    "b1": { "type": "number", "min": 18, "max": 27, "step": 3 },
-    "b3": { "type": "number", "min": 36, "max": 45, "step": 3 },
-    "c1": { "type": "number", "min": 3, "max": 4, "step": 1 },
-    "c2": { "type": "number", "min": 2, "max": 3, "step": 1 }
+    "k": { "type": "number", "min": 1, "max": 3, "step": 1 },
+    "a1": { "type": "number", "min": 2, "max": 5, "step": 1 },
+    "c1": { "type": "number", "min": 2, "max": 6, "step": 1 },
+    "a2": { "type": "number", "min": 6, "max": 10, "step": 1 },
+    "c2": { "type": "number", "min": 2, "max": 4, "step": 1 }
   },
   "relaciones": [
-    "k = a1 * c1^2 / b1",
-    "x = a2 * c2^2 / k",
-    "y = sqrt( a3 * c1^2 * b1 / (a1 * b3) )"
+    "root_b1 = a1 * c1 * k",
+    "b1 = root_b1 * root_b1",
+    "root_b2 = a2 * c2 * k",
+    "b2 = root_b2 * root_b2",
+    "ans = b2"
   ],
-  "restricciones": [
-    "x == floor(x)",
-    "y == floor(y)",
-    "x > 0",
-    "y > 0"
-  ],
-  "incognita_directa": ["x", "y"],
-  "incognitas_inversa": ["a1", "a2", "a3", "b1", "b3", "c1", "c2"],
+  "incognita_directa": "ans",
   "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Si $A$ es DP a $\\sqrt{B}$ e IP a $C$, calcula el valor de $x$ a partir de los datos del cuadro:\n\n$$\\begin{array}{|c|c|c|}\n\\hline\nA & {a1} & {a2} \\\\\n\\hline\nB & {b1} & x \\\\\n\\hline\nC & {c1} & {c2} \\\\\n\\hline\n\\end{array}$$",
   "metadata": {
-    "habilidades": ["proporcionalidad compuesta", "sistemas"],
-    "tiempo_estimado": 240,
-    "requiere_calculadora": true,
-    "fuente": "Adaptado"
+    "habilidades": ["raíces cuadradas", "proporcionalidad experta"],
+    "prefijo_opciones": "$x = ",
+    "sufijo_opciones": "$"
   }
+},
+{
+"id": "rm_cripto_suma_basico",
+"tema": "razonamiento_matematico",
+"subtipo": "criptoaritmetica",
+"grado": "5to",
+"dificultad": ["basico"],
+"variables": {
+"a": { "type": "number", "min": 1, "max": 9, "step": 1 },
+"b": { "type": "number", "min": 0, "max": 9, "step": 1 },
+"c": { "type": "number", "min": 1, "max": 9, "step": 1 },
+"d": { "type": "number", "min": 0, "max": 9, "step": 1 }
+},
+"relaciones": [
+"suma = (10*a + b) + (10*c + d)",
+"ans = a + d"
+],
+"restricciones": [],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "En la operación: $\\overline{A${b}} + \\overline{${c}D} = ${suma}$, halla el valor de A + D.",
+"metadata": {
+"habilidades": ["criptoaritmética", "suma"],
+"tiempo_estimado": 90,
+"requiere_calculadora": false
+}
+},
+{
+"id": "rm_cripto_resta_intermedio",
+"tema": "razonamiento_matematico",
+"subtipo": "criptoaritmetica",
+"grado": "5to",
+"dificultad": ["intermedio"],
+"variables": {
+"a": { "type": "number", "min": 1, "max": 9, "step": 1 },
+"b": { "type": "number", "min": 0, "max": 9, "step": 1 },
+"c": { "type": "number", "min": 1, "max": 9, "step": 1 },
+"d": { "type": "number", "min": 0, "max": 9, "step": 1 }
+},
+"relaciones": [
+"num1 = 10*a + b",
+"num2 = 10*c + d",
+"diferencia = num1 - num2",
+"ans = a * d"
+],
+"restricciones": [
+"num1 > num2"
+],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "En la resta: $\\overline{A${b}} - \\overline{${c}D} = ${diferencia}$, halla el valor de A \\times D.",
+"metadata": {
+"habilidades": ["criptoaritmética", "resta", "multiplicación"],
+"tiempo_estimado": 120,
+"requiere_calculadora": false
+}
+},
+{
+"id": "rm_cripto_mult_avanzado",
+"tema": "razonamiento_matematico",
+"subtipo": "criptoaritmetica",
+"grado": "5to",
+"dificultad": ["avanzado"],
+"variables": {
+"a": { "type": "number", "min": 1, "max": 9, "step": 1 },
+"b": { "type": "number", "min": 0, "max": 9, "step": 1 },
+"c": { "type": "number", "min": 1, "max": 9, "step": 1 }
+},
+"relaciones": [
+"num = 10*a + b",
+"producto = num * c",
+"ans = a + c"
+],
+"restricciones": [],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "En la multiplicación: $\\overline{A${b}} \\times ${c} = ${producto}$, halla el valor de A + C.",
+"metadata": {
+"habilidades": ["criptoaritmética", "multiplicación"],
+"tiempo_estimado": 150,
+"requiere_calculadora": true
+}
+},
+{
+"id": "rm_cripto_div_experto",
+"tema": "razonamiento_matematico",
+"subtipo": "criptoaritmetica",
+"grado": "5to",
+"dificultad": ["experto"],
+"variables": {
+"a": { "type": "number", "min": 1, "max": 9, "step": 1 },
+"b": { "type": "number", "min": 0, "max": 9, "step": 1 },
+"c": { "type": "number", "min": 0, "max": 9, "step": 1 },
+"d": { "type": "number", "min": 2, "max": 9, "step": 1 }
+},
+"relaciones": [
+"dividendo = 100*a + 10*b + c",
+"cociente = dividendo / d",
+"ans = d"
+],
+"restricciones": [
+"dividendo % d == 0"
+],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "En la división exacta: $\\overline{${a}X${c}} \\div Y = ${cociente}$, halla el valor de Y.",
+"metadata": {
+"habilidades": ["criptoaritmética", "división", "divisibilidad"],
+"tiempo_estimado": 180,
+"requiere_calculadora": true
+}
+},
+{
+"id": "numeros_div9_real_basico",
+"tema": "Teoría de números: divisibilidad",
+"subtipo": "criterios_divisibilidad",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["basico"],
+"bidireccional": false,
+"variables": {
+"a": { "type": "number", "min": 1, "max": 9, "step": 1 },
+"b": { "type": "number", "min": 0, "max": 9, "step": 1 },
+"c": { "type": "number", "min": 0, "max": 9, "step": 1 }
+},
+"relaciones": [
+"suma = a + b + c",
+"d = (9 - (suma % 9)) % 9"
+],
+"restricciones": [],
+"incognita_directa": "d",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Si el numeral $\\overline{${a}${b}X${c}}$ es múltiplo de 9, halla X.",
+"metadata": {
+"habilidades": ["criterio del 9", "divisibilidad"],
+"tiempo_estimado": 60,
+"requiere_calculadora": false
+}
+},
+{
+"id": "numeros_div11_real_intermedio",
+"tema": "Teoría de números: divisibilidad",
+"subtipo": "criterios_divisibilidad",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["intermedio"],
+"bidireccional": false,
+"variables": {
+"a": { "type": "number", "min": 1, "max": 9, "step": 1 },
+"c": { "type": "number", "min": 0, "max": 9, "step": 1 },
+"d": { "type": "number", "min": 0, "max": 9, "step": 1 }
+},
+"relaciones": [
+"b = a + c - d"
+],
+"restricciones": [
+"b >= 0",
+"b <= 9"
+],
+"incognita_directa": "b",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Si el numeral $\\overline{${a}X${c}${d}}$ es múltiplo de 11, halla X.",
+"metadata": {
+"habilidades": ["criterio del 11", "divisibilidad"],
+"tiempo_estimado": 90,
+"requiere_calculadora": false
+}
+},
+{
+"id": "sucesion_alfa_real_basico",
+"tema": "Sucesiones numéricas y alfabéticas",
+"subtipo": "sucesion_alfabetica",
+"grado": "5to",
+"etapa": ["clasificatoria"],
+"dificultad": ["basico"],
+"bidireccional": false,
+"variables": {
+"inicio": { "type": "number", "min": 1, "max": 5, "step": 1 },
+"salto": { "type": "number", "min": 2, "max": 4, "step": 1 }
+},
+"relaciones": [
+"t1 = inicio",
+"t2 = inicio + salto",
+"t3 = inicio + 2*salto",
+"ans = inicio + 3*salto"
+],
+"restricciones": [
+"ans <= 27"
+],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Halla la letra que sigue en la secuencia de posiciones: ${t1}, ${t2}, ${t3}, ...",
+"metadata": {
+"habilidades": ["sucesiones lineales", "abecedario"],
+"tiempo_estimado": 60,
+"requiere_calculadora": false
+}
+},
+{
+"id": "sucesion_alfa_real_intermedio",
+"tema": "Sucesiones numéricas y alfabéticas",
+"subtipo": "sucesion_alfabetica",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["intermedio"],
+"bidireccional": false,
+"variables": {
+"a1": { "type": "number", "min": 1, "max": 5, "step": 1 },
+"r1": { "type": "number", "min": 2, "max": 4, "step": 1 },
+"a2": { "type": "number", "min": 6, "max": 10, "step": 1 },
+"r2": { "type": "number", "min": 2, "max": 4, "step": 1 }
+},
+"relaciones": [
+"t1 = a1",
+"t2 = a2",
+"t3 = a1 + r1",
+"t4 = a2 + r2",
+"ans = a1 + 2*r1"
+],
+"restricciones": [
+"t1 <= 27",
+"t2 <= 27",
+"t3 <= 27",
+"t4 <= 27",
+"ans <= 27"
+],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Halla la letra que continúa en la secuencia: ${t1}, ${t2}, ${t3}, ${t4}, ...",
+"metadata": {
+"habilidades": ["sucesiones alternadas", "abecedario"],
+"tiempo_estimado": 90,
+"requiere_calculadora": false
+}
 },
 {
   "id": "descomp_basico",
@@ -1748,12 +1519,12 @@
     "b": { "type": "number", "min": 1, "max": 9, "step": 1 }
   },
   "relaciones": [
-    "suma = (10*a + b) + (10*b + a)"
+    "suma = (10*a + b) + (10*b + a)", "suma = a + b"
   ],
   "restricciones": [
     "suma > 0"
   ],
-  "incognita_directa": ["a+b"],
+  "incognita_directa": "suma", 
   "incognitas_inversa": ["a", "b", "suma"],
   "formato_respuesta": { "tipo": "entero" },
   "metadata": {
@@ -2075,165 +1846,14 @@
     "fuente": "Adaptado"
   }
 },
- {
-    "id": "conjuntos_001",
-    "tema": "Conjuntos y Diagramas de Venn",
-    "subtipo": "dos_conjuntos_sin_fuera",
-    "grado": "5to",
-    "etapa": ["intermedia"],
-    "dificultad": ["basico"],
-    "bidireccional": true,
-    "enunciado": "De {total} alumnos, {a} juegan fútbol y {b} juegan básquet. Si todos practican al menos un deporte, ¿cuántos juegan ambos?",
-    "variables": {
-      "total": { "type": "number", "min": 50, "max": 100, "step": 1 },
-      "a": { "type": "number", "min": 20, "max": 80, "step": 1 },
-      "b": { "type": "number", "min": 20, "max": 80, "step": 1 }
-    },
-    "relaciones": [
-      "interseccion = a + b - total"
-    ],
-    "restricciones": [
-      "a + b > total",
-      "a <= total",
-      "b <= total",
-      "interseccion >= 0"
-    ],
-    "incognita_directa": "interseccion",
-    "incognitas_inversa": ["total", "a", "b"],
-    "formato_respuesta": {
-      "tipo": "entero",
-      "rango": [0, 100]
-    },
-    "metadata": {
-      "habilidades": ["conjuntos", "diagrama de Venn"],
-      "tiempo_estimado": 60,
-      "requiere_calculadora": false,
-      "fuente": "adaptado"
-    }
-  },
-  {
-    "id": "conjuntos_002",
-    "tema": "Conjuntos y Diagramas de Venn",
-    "subtipo": "dos_conjuntos_con_fuera",
-    "grado": "5to",
-    "etapa": ["intermedia"],
-    "dificultad": ["intermedio"],
-    "bidireccional": true,
-    "enunciado": "En una encuesta a {total} personas, {a} leen revistas, {b} leen periódicos y {c} no leen ninguno. ¿Cuántas leen ambos?",
-    "variables": {
-      "total": { "type": "number", "min": 50, "max": 200, "step": 1 },
-      "a": { "type": "number", "min": 20, "max": 150, "step": 1 },
-      "b": { "type": "number", "min": 20, "max": 150, "step": 1 },
-      "c": { "type": "number", "min": 0, "max": 30, "step": 1 }
-    },
-    "relaciones": [
-      "leen_alguno = total - c",
-      "interseccion = a + b - leen_alguno"
-    ],
-    "restricciones": [
-      "c < total",
-      "a + b > leen_alguno",
-      "interseccion >= 0",
-      "a <= total",
-      "b <= total"
-    ],
-    "incognita_directa": "interseccion",
-    "incognitas_inversa": ["total", "a", "b", "c"],
-    "formato_respuesta": {
-      "tipo": "entero",
-      "rango": [0, 200]
-    },
-    "metadata": {
-      "habilidades": ["conjuntos", "diagrama de Venn", "complemento"],
-      "tiempo_estimado": 90,
-      "requiere_calculadora": false,
-      "fuente": "adaptado"
-    }
-  },
-  {
-    "id": "conjuntos_003",
-    "tema": "Conjuntos y Diagramas de Venn",
-    "subtipo": "tres_conjuntos_solo_chocolate",
-    "grado": "5to",
-    "etapa": ["final"],
-    "dificultad": ["avanzado"],
-    "bidireccional": true,
-    "enunciado": "De {total} personas, {a} gustan del chocolate, {b} de la vainilla, {c} de la fresa. Además, {ab} gustan de chocolate y vainilla, {ac} de chocolate y fresa, {bc} de vainilla y fresa, y {abc} de los tres. ¿Cuántos gustan solo de chocolate?",
-    "variables": {
-      "total": { "type": "number", "min": 100, "max": 500, "step": 1 },
-      "a": { "type": "number", "min": 30, "max": 200, "step": 1 },
-      "b": { "type": "number", "min": 30, "max": 200, "step": 1 },
-      "c": { "type": "number", "min": 30, "max": 200, "step": 1 },
-      "ab": { "type": "number", "min": 5, "max": 50, "step": 1 },
-      "ac": { "type": "number", "min": 5, "max": 50, "step": 1 },
-      "bc": { "type": "number", "min": 5, "max": 50, "step": 1 },
-      "abc": { "type": "number", "min": 1, "max": 20, "step": 1 }
-    },
-    "relaciones": [
-      "solo_chocolate = a - ab - ac + abc"
-    ],
-    "restricciones": [
-      "ab >= abc",
-      "ac >= abc",
-      "bc >= abc",
-      "a >= ab + ac - abc",
-      "b >= ab + bc - abc",
-      "c >= ac + bc - abc",
-      "solo_chocolate >= 0",
-      "a <= total",
-      "b <= total",
-      "c <= total"
-    ],
-    "incognita_directa": "solo_chocolate",
-    "incognitas_inversa": ["total", "a", "b", "c", "ab", "ac", "bc", "abc"],
-    "formato_respuesta": {
-      "tipo": "entero",
-      "rango": [0, 500]
-    },
-    "metadata": {
-      "habilidades": ["conjuntos", "tres conjuntos", "intersección"],
-      "tiempo_estimado": 180,
-      "requiere_calculadora": false,
-      "fuente": "adaptado"
-    }
-  },
-  {
-    "id": "conjuntos_004",
-    "tema": "Conjuntos y Diagramas de Venn",
-    "subtipo": "porcentajes_ninguno",
-    "grado": "5to",
-    "etapa": ["intermedia"],
-    "dificultad": ["experto"],
-    "bidireccional": true,
-    "enunciado": "En una ciudad, el {p}% de la población lee el diario A, el {q}% lee el diario B y el {r}% lee ambos. ¿Qué porcentaje no lee ninguno?",
-    "variables": {
-      "p": { "type": "number", "min": 10, "max": 80, "step": 1 },
-      "q": { "type": "number", "min": 10, "max": 80, "step": 1 },
-      "r": { "type": "number", "min": 0, "max": 50, "step": 1 }
-    },
-    "relaciones": [
-      "leen_alguno = p + q - r",
-      "ninguno = 100 - leen_alguno"
-    ],
-    "restricciones": [
-      "leen_alguno <= 100",
-      "r <= p",
-      "r <= q",
-      "ninguno >= 0"
-    ],
-    "incognita_directa": "ninguno",
-    "incognitas_inversa": ["p", "q", "r"],
-    "formato_respuesta": {
-      "tipo": "entero",
-      "rango": [0, 100]
-    },
-    "metadata": {
-      "habilidades": ["conjuntos", "porcentajes", "complemento"],
-      "tiempo_estimado": 90,
-      "requiere_calculadora": false,
-      "fuente": "adaptado"
-    }
-  },
+ 
+
+
+
+
+
+
+  
   {
     "id": "promedios_001",
     "tema": "promedios",
@@ -3132,6 +2752,7 @@
   {
     "id": "probabilidad_sucesos_basico",
     "tema": "Sucesos numéricos y no numéricos probables e improbables",
+    "subtipo": "probabilidad_basica",
     "grado": "5to",
     "dificultad": ["basico"],
     "enunciado": "En una caja hay ${rojas}$ bolas rojas y ${azules}$ bolas azules. Al extraer una al azar, ¿qué suceso es más probable?",
@@ -3224,6 +2845,7 @@
   {
     "id": "sucesion_num_basico_01",
     "tema": "Sucesiones numéricas y alfabéticas",
+    "subtipo": "sucesion_numerica",
     "grado": "5to",
     "dificultad": ["basico"],
     "enunciado": "Halla el término que sigue en la sucesión: ${a}, ${t2}, ${t3}, ${t4}, \\dots",
@@ -3243,6 +2865,7 @@
   {
     "id": "sucesion_num_basico_02",
     "tema": "Sucesiones numéricas y alfabéticas",
+    "subtipo": "sucesion_numerica",
     "grado": "5to",
     "dificultad": ["basico"],
     "enunciado": "Determina el número que falta: ${x}, ${t2}, ${t3}, ${t4}, \\dots",
@@ -3260,105 +2883,74 @@
     "formato_respuesta": { "tipo": "entero" }
   },
   {
-    "id": "sucesion_alpha_int_01",
-    "tema": "Sucesiones numéricas y alfabéticas",
-    "grado": "5to",
-    "dificultad": ["intermedio"],
-    "enunciado": "En la siguiente sucesión alfabética: $B, E, H, K, \\ldots$, ¿qué letra continúa? (No consideres CH ni LL).",
-    "variables": {
-      "dummy": { "type": "number", "min": 1, "max": 1 }
-    },
-    "relaciones": ["ans = 14 * dummy"],
-    "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "opcion_multiple", "opciones": { "14": "N", "15": "Ñ", "16": "O" } }
+  "id": "sucesion_num_avanzado_var",
+  "tema": "Sucesiones numéricas y alfabéticas",
+  "grado": "5to",
+  "dificultad": ["avanzado"],
+  "enunciado": "Calcula el valor del término que sigue: ${t1}, ${t2}, ${t3}, ${t4}, ...",
+  "variables": {
+  "A": { "type": "number", "min": 1, "max": 5, "step": 1 },
+  "B": { "type": "number", "min": 1, "max": 5, "step": 1 },
+  "C": { "type": "number", "min": 1, "max": 5, "step": 1 }
   },
-  {
-    "id": "sucesion_alpha_int_02",
-    "tema": "Sucesiones numéricas y alfabéticas",
-    "grado": "5to",
-    "dificultad": ["intermedio"],
-    "enunciado": "Determina la letra que sigue en la secuencia: $C, F, I, L, \\ldots$",
-    "variables": {
-      "dummy": { "type": "number", "min": 1, "max": 1 }
-    },
-    "relaciones": ["ans = 15 * dummy"],
-    "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "opcion_multiple", "opciones": { "14": "N", "15": "Ñ", "16": "O" } }
-  },
-  {
-    "id": "sucesion_alpha_int_03",
-    "tema": "Sucesiones numéricas y alfabéticas",
-    "grado": "5to",
-    "dificultad": ["intermedio"],
-    "enunciado": "Halla la letra que continúa en: $A, D, G, J, \\ldots$",
-    "variables": {
-      "dummy": { "type": "number", "min": 1, "max": 1 }
-    },
-    "relaciones": ["ans = 13 * dummy"],
-    "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "opcion_multiple", "opciones": { "13": "M", "14": "N", "15": "Ñ" } }
-  },
-  {
-    "id": "sucesion_num_avanzado_var",
-    "tema": "Sucesiones numéricas y alfabéticas",
-    "grado": "5to",
-    "dificultad": ["avanzado"],
-    "enunciado": "Calcula el valor del término que sigue: $${n1}, ${t2}, ${t3}, ${t4}, \\dots$",
-    "variables": {
-      "n1": { "type": "number", "min": 5, "max": 15 },
-      "r": { "type": "number", "min": 4, "max": 9 }
-    },
-    "relaciones": [
-      "t2 = n1 + r",
-      "t3 = n1 + 2*r",
-      "t4 = n1 + 3*r",
-      "resultado = n1 + 4*r"
-    ],
-    "incognita_directa": "resultado",
-    "formato_respuesta": { "tipo": "entero" }
+  "relaciones": [
+  "t1 = A*1*1 + B*1 + C",
+  "t2 = A*2*2 + B*2 + C",
+  "t3 = A*3*3 + B*3 + C",
+  "t4 = A*4*4 + B*4 + C",
+  "resultado = A*5*5 + B*5 + C"
+  ],
+  "incognita_directa": "resultado",
+  "formato_respuesta": { "tipo": "entero" }
   },
   {
     "id": "sucesion_mixta_experto_01",
     "tema": "Sucesiones numéricas y alfabéticas",
     "grado": "5to",
     "dificultad": ["experto"],
-    "enunciado": "Halla los valores de $x$ e $y$ en la sucesión alternada: ${a}, ${b}, ${t3}, ${t4}, ${t5}, ${t6}, x, y$.",
+    "enunciado": "Halla los valores de $x$ e $y$ en la sucesión alternada: ${t1}, ${t2}, ${t3}, ${t4}, ${t5}, ${t6}, x, y$.",
     "variables": {
-      "a": { "type": "number", "min": 1, "max": 5 },
-      "r": { "type": "number", "min": 2, "max": 4 },
-      "b": { "type": "number", "min": 10, "max": 15 },
-      "k": { "type": "number", "min": 2, "max": 5 }
+    "A1": { "type": "number", "min": 1, "max": 3, "step": 1 },
+    "B1": { "type": "number", "min": 1, "max": 3, "step": 1 },
+    "C1": { "type": "number", "min": 1, "max": 3, "step": 1 },
+    "A2": { "type": "number", "min": 1, "max": 3, "step": 1 },
+    "B2": { "type": "number", "min": 1, "max": 3, "step": 1 },
+    "C2": { "type": "number", "min": 1, "max": 3, "step": 1 }
     },
     "relaciones": [
-      "t3 = a + r",
-      "t4 = b + k",
-      "t5 = a + 2*r",
-      "t6 = b + 2*k",
-      "x = a + 3*r",
-      "y = b + 3*k"
+    "t1 = A1*1*1 + B1*1 + C1",
+    "t2 = A2*1*1 + B2*1 + C2",
+    "t3 = A1*2*2 + B1*2 + C1",
+    "t4 = A2*2*2 + B2*2 + C2",
+    "t5 = A1*3*3 + B1*3 + C1",
+    "t6 = A2*3*3 + B2*3 + C2",
+    "x = A1*4*4 + B1*4 + C1",
+    "y = A2*4*4 + B2*4 + C2"
     ],
     "incognita_directa": ["x", "y"],
     "formato_respuesta": { "tipo": "compuesto" }
-  },
+    },
   {
     "id": "sucesion_dec_aritmetica_01",
     "tema": "Sucesiones numéricas y alfabéticas",
     "grado": "5to",
     "dificultad": ["intermedio", "avanzado"],
-    "enunciado": "¿Qué número continúa en la siguiente progresión?\n ${a} ; ${t2} ; ${t3} ; ${t4} ; \\dots",
+    "enunciado": "¿Qué número continúa en la siguiente progresión? ${t1} ; ${t2} ; ${t3} ; ${t4} ; ...",
     "variables": {
-      "a": { "type": "number", "min": 10.5, "max": 50.5, "step": 0.5 },
-      "r": { "type": "number", "min": 1.2, "max": 6.8, "step": 0.2 }
+    "A": { "type": "number", "min": 1, "max": 5, "step": 1 },
+    "B": { "type": "number", "min": 1, "max": 5, "step": 1 },
+    "C": { "type": "number", "min": 1, "max": 5, "step": 1 }
     },
     "relaciones": [
-      "t2 = a + r",
-      "t3 = a + 2*r",
-      "t4 = a + 3*r",
-      "ans = a + 4*r"
+    "t1 = A*1*1 + B*1 + C",
+    "t2 = A*2*2 + B*2 + C",
+    "t3 = A*3*3 + B*3 + C",
+    "t4 = A*4*4 + B*4 + C",
+    "ans = A*5*5 + B*5 + C"
     ],
     "incognita_directa": "ans",
     "formato_respuesta": { "tipo": "decimal", "decimales": 2 }
-  },
+    },
   {
     "id": "sucesion_dec_geometrica_01",
     "tema": "Sucesiones numéricas y alfabéticas",
@@ -3409,96 +3001,27 @@
     "tema": "Sucesiones numéricas y alfabéticas",
     "grado": "5to",
     "dificultad": ["avanzado"],
-    "enunciado": "Encuentra la fracción que sigue en la secuencia:\n $$\\frac{${n1}}{${d1}} ; \\frac{${n2}}{${d2}} ; \\frac{${n3}}{${d3}} ; \\dots$$",
+    "enunciado": "Encuentra la fracción que sigue en la secuencia: \\frac{${n1}}{${d1}} ; \\frac{${n2}}{${d2}} ; \\frac{${n3}}{${d3}} ; \\dots",
     "variables": {
-      "n1": { "type": "number", "min": 1, "max": 5, "step": 1 },
-      "rn": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "d1": { "type": "number", "min": 2, "max": 7, "step": 1 },
-      "rd": { "type": "number", "min": 2, "max": 5, "step": 1 }
+    "An": { "type": "number", "min": 1, "max": 3, "step": 1 },
+    "Bn": { "type": "number", "min": 1, "max": 3, "step": 1 },
+    "Cn": { "type": "number", "min": 1, "max": 3, "step": 1 },
+    "Ad": { "type": "number", "min": 2, "max": 4, "step": 1 },
+    "Bd": { "type": "number", "min": 3, "max": 6, "step": 1 }
     },
     "relaciones": [
-      "n2 = n1 + rn",
-      "n3 = n1 + 2*rn",
-      "num = n1 + 3*rn",
-      "d2 = d1 + rd",
-      "d3 = d1 + 2*rd",
-      "den = d1 + 3*rd"
+    "n1 = An*1*1 + Bn*1 + Cn",
+    "n2 = An*2*2 + Bn*2 + Cn",
+    "n3 = An*3*3 + Bn*3 + Cn",
+    "num = An*4*4 + Bn*4 + Cn",
+    "d1 = Ad*1 + Bd",
+    "d2 = Ad*2 + Bd",
+    "d3 = Ad*3 + Bd",
+    "den = Ad*4 + Bd"
     ],
     "incognita_directa": ["num", "den"],
     "formato_respuesta": { "tipo": "fraccion" }
-  },
-  {
-    "id": "sucesion_alfa_creciente_01",
-    "tema": "Sucesiones numéricas y alfabéticas",
-    "grado": "5to",
-    "dificultad": ["intermedio", "avanzado"],
-    "enunciado": "Encuentra la letra que falta (el patrón de salto aumenta en 1 cada vez: +1, +2, +3...):\n $A, B, D, G, K, \\dots$",
-    "variables": {
-      "dummy": { "type": "number", "min": 1, "max": 1 }
     },
-    "relaciones": ["ans = 16 * dummy"],
-    "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "opcion_multiple", "opciones": { "15": "Ñ", "16": "O", "17": "P", "18": "Q" } }
-  },
-  {
-    "id": "sucesion_alfa_retroceso_01",
-    "tema": "Sucesiones numéricas y alfabéticas",
-    "grado": "5to",
-    "dificultad": ["intermedio", "avanzado"],
-    "enunciado": "Descifra el código secreto determinando la letra que continúa (patrón en retroceso):\n $Z, W, T, Q, \\dots$",
-    "variables": {
-      "dummy": { "type": "number", "min": 1, "max": 1 }
-    },
-    "relaciones": ["ans = 14 * dummy"],
-    "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "opcion_multiple", "opciones": { "13": "M", "14": "N", "15": "Ñ", "12": "L" } }
-  },
-  {
-    "id": "sucesion_num_letra_alt_01",
-    "tema": "Sucesiones numéricas y alfabéticas",
-    "grado": "5to",
-    "dificultad": ["avanzado"],
-    "enunciado": "En la siguiente sucesión alternada, cada letra toma el valor numérico de su posición en el abecedario. Halla el número que continúa:\n $2, F, 10, N, \\dots$",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 1 } },
-    "relaciones": ["ans = 18 * dummy"],
-    "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "sucesion_num_letra_alt_02",
-    "tema": "Sucesiones numéricas y alfabéticas",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "Cada letra representa su posición en el abecedario. Halla el número que sigue en esta progresión geométrica:\n $A, 2, D, 8, O, \\dots$",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 1 } },
-    "relaciones": ["ans = 32 * dummy"],
-    "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "sucesion_num_letra_alt_03",
-    "tema": "Sucesiones numéricas y alfabéticas",
-    "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "Descifra el patrón combinado (x2, -1) sabiendo que las letras representan su posición alfabética. ¿Qué número sigue?\n $3, E, 9, P, \\dots$",
-    "variables": { "dummy": { "type": "number", "min": 1, "max": 1 } },
-    "relaciones": ["ans = 33 * dummy"],
-    "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "entero" }
-  },
-
-
-
-
-
-
-
-
-
-
-
-
-
   {
     "id": "probabilidad_clasica_intermedio",
     "tema": "Sucesos numéricos y no numéricos probables e improbables",
@@ -3593,7 +3116,7 @@
   "subtipo": "suma_resta_fracciones",
   "grado": "5to",
   "dificultad": ["basico", "intermedio"],
-  "enunciado": "Compara las siguientes fracciones: $A = \\\\frac{{n1}}{{d1}}$ y $B = \\\\frac{{n2}}{{d2}}$. ¿Cuál de las dos es la fracción mayor?",
+  "enunciado": "Compara las siguientes fracciones: $A = \\frac{{n1}}{{d1}}$ y $B = \\frac{{n2}}{{d2}}$. ¿Cuál de las dos es la fracción mayor?",
   "variables": {
     "n1": { "type": "number", "min": 1, "max": 5 },
     "d1": { "type": "number", "min": 6, "max": 9 },
@@ -3607,7 +3130,867 @@
   ],
   "incognita_directa": "ans",
   "formato_respuesta": { "tipo": "entero" }
+},
+{
+"id": "rm_distrib_hombre_intermedio",
+"tema": "razonamiento_matematico",
+"subtipo": "distribucion_grafica",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["intermedio"],
+"bidireccional": false,
+"variables": {
+"b1": { "type": "number", "min": 2, "max": 9, "step": 1 },
+"b2": { "type": "number", "min": 2, "max": 9, "step": 1 },
+"p1": { "type": "number", "min": 2, "max": 9, "step": 1 },
+"p2": { "type": "number", "min": 2, "max": 9, "step": 1 }
+},
+"relaciones": [
+"cabeza = (b1 * b2) - (p1 + p2)"
+],
+"restricciones": [
+"cabeza > 0"
+],
+"incognita_directa": "cabeza",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Halla el valor de X en la cabeza del tercer hombrecito sabiendo que la relación es la misma en todos.",
+"metadata": {
+"habilidades": ["distribuciones gráficas", "operaciones combinadas"],
+"tiempo_estimado": 90,
+"requiere_calculadora": false
 }
+},
+{
+"id": "rm_distrib_circular_avanzado",
+"tema": "razonamiento_matematico",
+"subtipo": "distribucion_grafica",
+"grado": "5to",
+"etapa": ["final"],
+"dificultad": ["avanzado"],
+"bidireccional": false,
+"variables": {
+"s1": { "type": "number", "min": 2, "max": 12, "step": 1 },
+"s2": { "type": "number", "min": 2, "max": 12, "step": 1 },
+"s3": { "type": "number", "min": 2, "max": 12, "step": 1 }
+},
+"relaciones": [
+"s4 = (s2 * s3) / s1"
+],
+"restricciones": [
+"(s2 * s3) % s1 == 0"
+],
+"incognita_directa": "s4",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Determina el valor que falta en el sector circular.",
+"metadata": {
+"habilidades": ["distribuciones circulares", "multiplicación y división"],
+"tiempo_estimado": 120,
+"requiere_calculadora": false
+}
+},
+{
+"id": "rm_conteo_triangulos_induccion_basico",
+"tema": "razonamiento_matematico",
+"subtipo": "conteo_figuras",
+"grado": "5to",
+"etapa": ["clasificatoria"],
+"dificultad": ["basico"],
+"bidireccional": false,
+"variables": {
+"n": { "type": "number", "min": 4, "max": 10, "step": 1 }
+},
+"relaciones": [
+"total = (n * (n + 1)) / 2"
+],
+"restricciones": [],
+"incognita_directa": "total",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "¿Cuántos triángulos hay en total en una figura que tiene ${n} espacios en su base?",
+"metadata": {
+"habilidades": ["conteo por inducción", "fórmula triangular"],
+"tiempo_estimado": 60,
+"requiere_calculadora": false
+}
+},
+{
+"id": "rm_conteo_cuadrilateros_malla_avanzado",
+"tema": "razonamiento_matematico",
+"subtipo": "conteo_figuras",
+"grado": "5to",
+"etapa": ["final"],
+"dificultad": ["avanzado"],
+"bidireccional": false,
+"variables": {
+"m": { "type": "number", "min": 2, "max": 6, "step": 1 },
+"n": { "type": "number", "min": 2, "max": 6, "step": 1 }
+},
+"relaciones": [
+"total = ((m * (m + 1)) / 2) * ((n * (n + 1)) / 2)"
+],
+"restricciones": [],
+"incognita_directa": "total",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Calcula el número máximo de cuadriláteros en una cuadrícula de ${m} filas por ${n} columnas.",
+"metadata": {
+"habilidades": ["conteo en malla", "combinatoria", "fórmula de selección"],
+"tiempo_estimado": 120,
+"requiere_calculadora": true
+}
+},
+{
+"id": "algebra_leyes_exp_basico",
+"tema": "algebra",
+"subtipo": "teoria_exponentes",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["basico", "intermedio"],
+"bidireccional": false,
+"variables": {
+"a": { "type": "number", "min": 2, "max": 12, "step": 1 },
+"b": { "type": "number", "min": 2, "max": 12, "step": 1 },
+"c": { "type": "number", "min": 2, "max": 12, "step": 1 }
+},
+"relaciones": [
+"ans = a + b - c"
+],
+"restricciones": [
+"a + b > c"
+],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Reduce la siguiente expresión aplicando las leyes de exponentes e indica el exponente final de $x$: E = \\frac{x^{${a}} \\cdot x^{${b}}}{x^{${c}}}",
+"metadata": {
+"habilidades": ["leyes de exponentes", "producto de potencias", "cociente de potencias"],
+"tiempo_estimado": 60,
+"requiere_calculadora": false
+}
+},
+{
+"id": "algebra_radicacion_intermedio",
+"tema": "algebra",
+"subtipo": "radicacion",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["intermedio", "avanzado"],
+"bidireccional": false,
+"variables": {
+"a": { "type": "number", "min": 2, "max": 4, "step": 1 },
+"b": { "type": "number", "min": 2, "max": 4, "step": 1 },
+"k": { "type": "number", "min": 2, "max": 5, "step": 1 }
+},
+"relaciones": [
+"c = a * b * k",
+"ans = c / (a * b)"
+],
+"restricciones": [],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Simplifica la siguiente expresión e indica el exponente final de $x$: E = \\sqrt[${a}]{\\sqrt[${b}]{x^{${c}}}} (Asume que $x > 0$).",
+"metadata": {
+"habilidades": ["radicación", "exponentes fraccionarios", "raíz de raíz"],
+"tiempo_estimado": 90,
+"requiere_calculadora": false
+}
+},
+{
+"id": "geo_cilindro_vol_basico",
+"tema": "geometria",
+"subtipo": "volumen_cilindro",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["basico", "intermedio"],
+"bidireccional": false,
+"variables": {
+"r": { "type": "number", "min": 2, "max": 8, "step": 1 },
+"h": { "type": "number", "min": 5, "max": 15, "step": 1 }
+},
+"relaciones": [
+"coeficiente = r * r * h"
+],
+"restricciones": [],
+"incognita_directa": "coeficiente",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Calcula el volumen de un cilindro circular recto cuyo radio de la base mide ${r} cm y su altura mide ${h} cm. (Expresa tu respuesta como el coeficiente de π).",
+"metadata": {
+"habilidades": ["volumen de cilindro", "área del círculo"],
+"tiempo_estimado": 60,
+"requiere_calculadora": false
+}
+},
+{
+"id": "geo_piramide_vol_intermedio",
+"tema": "geometria",
+"subtipo": "volumen_piramide",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["intermedio", "avanzado"],
+"bidireccional": false,
+"variables": {
+"L": { "type": "number", "min": 3, "max": 10, "step": 1 },
+"h": { "type": "number", "min": 3, "max": 15, "step": 1 }
+},
+"relaciones": [
+"vol = (L * L * h) / 3"
+],
+"restricciones": [
+"(L * L * h) % 3 == 0"
+],
+"incognita_directa": "vol",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Calcula el volumen de una pirámide regular de base cuadrada si el lado de la base mide ${L} cm y su altura mide ${h} cm.",
+"metadata": {
+"habilidades": ["volumen de pirámide", "área de cuadrado"],
+"tiempo_estimado": 90,
+"requiere_calculadora": true
+}
+},
+{
+"id": "rm_analogia_numerica_intermedio",
+"tema": "razonamiento_matematico",
+"subtipo": "analogias",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["intermedio"],
+"bidireccional": false,
+"variables": {
+"a1": { "type": "number", "min": 3, "max": 15, "step": 1 },
+"b1": { "type": "number", "min": 3, "max": 15, "step": 1 },
+"a2": { "type": "number", "min": 3, "max": 15, "step": 1 },
+"b2": { "type": "number", "min": 3, "max": 15, "step": 1 },
+"a3": { "type": "number", "min": 3, "max": 15, "step": 1 },
+"b3": { "type": "number", "min": 3, "max": 15, "step": 1 }
+},
+"relaciones": [
+"c1 = 2 * (a1 + b1)",
+"c2 = 2 * (a2 + b2)",
+"x = 2 * (a3 + b3)"
+],
+"restricciones": [],
+"incognita_directa": "x",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Halla el valor de $x$ en la siguiente analogía numérica:\n ${a1} \\quad (${c1}) \\quad ${b1} \n ${a2} \\quad (${c2}) \\quad ${b2} \n ${a3} \\quad (x) \\quad ${b3}",
+"metadata": {
+"habilidades": ["analogías numéricas", "patrones aritméticos"],
+"tiempo_estimado": 90,
+"requiere_calculadora": false
+}
+},
+{
+"id": "algebra_polinomio_valor_basico",
+"tema": "algebra",
+"subtipo": "polinomios",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["basico"],
+"bidireccional": false,
+"variables": {
+"a": { "type": "number", "min": 2, "max": 5, "step": 1 },
+"b": { "type": "number", "min": 2, "max": 7, "step": 1 },
+"c": { "type": "number", "min": 1, "max": 10, "step": 1 },
+"k": { "type": "number", "min": 2, "max": 5, "step": 1 }
+},
+"relaciones": [
+"ans = a * (k * k) + b * k + c"
+],
+"restricciones": [],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Dado el polinomio $P(x) = ${a}x^2 + ${b}x + ${c}$, halla el valor de $P(${k})$.",
+"metadata": {
+"habilidades": ["polinomios", "valor numérico"],
+"tiempo_estimado": 60,
+"requiere_calculadora": false
+}
+},
+{
+"id": "geo_plano_distancia_intermedio",
+"tema": "geometria",
+"subtipo": "plano_cartesiano",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["intermedio"],
+"bidireccional": false,
+"variables": {
+"x1": { "type": "number", "min": 1, "max": 5, "step": 1 },
+"y1": { "type": "number", "min": 1, "max": 5, "step": 1 },
+"k": { "type": "number", "min": 1, "max": 3, "step": 1 }
+},
+"relaciones": [
+"dx = 3 * k",
+"dy = 4 * k",
+"x2 = x1 + dx",
+"y2 = y1 + dy",
+"d = 5 * k"
+],
+"restricciones": [],
+"incognita_directa": "d",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Halla la distancia entre los puntos $A(${x1}; ${y1})$ y $B(${x2}; ${y2})$ en el plano cartesiano.",
+"metadata": {
+"habilidades": ["plano cartesiano", "distancia entre puntos", "terna pitagórica"],
+"tiempo_estimado": 90,
+"requiere_calculadora": false
+}
+},
+{
+"id": "algebra_intervalos_intermedio",
+"tema": "algebra",
+"subtipo": "intervalos",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["intermedio"],
+"bidireccional": false,
+"variables": {
+"a": { "type": "number", "min": 1, "max": 5, "step": 1 },
+"n": { "type": "number", "min": 3, "max": 5, "step": 1 }
+},
+"relaciones": [
+"b = a + n",
+"ans = (n * ( (a + 1) + b )) / 2"
+],
+"restricciones": [],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Si $x \\in \\langle ${a}; ${b} ]$ y $x$ es un número entero, calcula la suma de todos los valores posibles de $x$.",
+"metadata": {
+"habilidades": ["intervalos", "suma de enteros", "progresión aritmética"],
+"tiempo_estimado": 90,
+"requiere_calculadora": false
+}
+},
+{
+"id": "num_primos_cd_basico",
+"tema": "Teoría de números: divisibilidad",
+"subtipo": "cantidad_divisores",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["basico"],
+"bidireccional": false,
+"variables": {
+"a": { "type": "number", "min": 2, "max": 5, "step": 1 },
+"b": { "type": "number", "min": 2, "max": 4, "step": 1 }
+},
+"relaciones": [
+"ans = (a + 1) * (b + 1)"
+],
+"restricciones": [],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Calcula la cantidad total de divisores que tiene el número $N = 2^{${a}} \\times 3^{${b}}$.",
+"metadata": {
+"habilidades": ["cantidad de divisores", "descomposición canónica"],
+"tiempo_estimado": 60,
+"requiere_calculadora": false
+}
+},
+{
+"id": "num_primos_exponente_intermedio",
+"tema": "Teoría de números: divisibilidad",
+"subtipo": "cantidad_divisores",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["intermedio"],
+"bidireccional": false,
+"variables": {
+"n": { "type": "number", "min": 2, "max": 6, "step": 1 },
+"b": { "type": "number", "min": 1, "max": 4, "step": 1 }
+},
+"relaciones": [
+"cd = (n + 1) * (b + 1)"
+],
+"restricciones": [],
+"incognita_directa": "n",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Si el número $N = 2^n \\times 3^{${b}}$ tiene ${cd} divisores en total, halla el valor de $n$.",
+"metadata": {
+"habilidades": ["cantidad de divisores", "ecuaciones"],
+"tiempo_estimado": 90,
+"requiere_calculadora": false
+}
+},
+{
+"id": "num_primos_compuestos_avanzado",
+"tema": "Teoría de números: divisibilidad",
+"subtipo": "cantidad_divisores",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["avanzado"],
+"bidireccional": false,
+"variables": {
+"a": { "type": "number", "min": 2, "max": 4, "step": 1 },
+"b": { "type": "number", "min": 1, "max": 3, "step": 1 },
+"c": { "type": "number", "min": 1, "max": 2, "step": 1 }
+},
+"relaciones": [
+"cd_total = (a + 1) * (b + 1) * (c + 1)",
+"cd_primos = 3",
+"ans = cd_total - cd_primos - 1"
+],
+"restricciones": [],
+"incognita_directa": "ans",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Determina la cantidad de divisores compuestos que posee el número $N = 2^{${a}} \\times 3^{${b}} \\times 5^{${c}}$.",
+"metadata": {
+"habilidades": ["divisores primos", "divisores compuestos", "conteo"],
+"tiempo_estimado": 120,
+"requiere_calculadora": false
+}
+},
+{
+"id": "num_primos_producto_experto",
+"tema": "Teoría de números: divisibilidad",
+"subtipo": "cantidad_divisores",
+"grado": "5to",
+"etapa": ["clasificatoria", "final"],
+"dificultad": ["experto"],
+"bidireccional": false,
+"variables": {
+"k": { "type": "number", "min": 2, "max": 5, "step": 1 }
+},
+"relaciones": [
+"cd = (k + 1) * 2 * (k + 2)"
+],
+"restricciones": [],
+"incognita_directa": "k",
+"formato_respuesta": { "tipo": "entero" },
+"enunciado": "Si el número $N = 10^{${k}} \\times 15$ posee ${cd} divisores, halla el valor de $k$.",
+"metadata": {
+"habilidades": ["descomposición de productos", "cálculo de divisores", "ecuaciones"],
+"tiempo_estimado": 150,
+"requiere_calculadora": true
+}
+},
+{
+    "id": "conjuntos_vacio_teorico",
+    "tema": "Conjuntos y Diagramas de Venn",
+    "subtipo": "comprension_conjuntos",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio", "avanzado"],
+    "bidireccional": false,
+    "variables": {
+      "n": { "type": "number", "min": 2, "max": 15, "step": 1 }
+    },
+    "relaciones": [
+      "ans = '\\\\emptyset'"
+    ],
+    "restricciones": [],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "string" },
+    "enunciado": "Determina por extensión el siguiente conjunto:\n\n$$A = \\{ x \\in \\mathbb{N} \\mid {n} < x < {n+1} \\}$$",
+    "metadata": {
+      "habilidades": ["conjunto vacío", "notación por comprensión"],
+      "tiempo_estimado": 60,
+      "requiere_calculadora": false,
+      "prefijo_opciones": "$A = ",
+      "sufijo_opciones": "$",
+      "opciones_fijas": ["\\{ 0 \\}", "\\{ 1 \\}", "\\infty", "\\{ {n} \\}"]
+    }
+  },
+{
+    "id": "venn_grafico_interseccion",
+    "tema": "Conjuntos y Diagramas de Venn",
+    "subtipo": "venn_grafico_elementos",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
+    "bidireccional": false,
+    "variables": {
+      "soloA1": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "inter": { "type": "number", "min": 7, "max": 12, "step": 1 },
+      "soloB": { "type": "number", "min": 3, "max": 8, "step": 1 }
+    },
+    "relaciones": ["ans = inter"],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Observa el diagrama de Venn adjunto. Determina por extensión el conjunto intersección $A \\cap B$.",
+    "metadata": {
+      "habilidades": ["intersección"],
+      "prefijo_opciones": "$A \\cap B = \\{ ",
+      "sufijo_opciones": " \\}$"
+    }
+  },
+  {
+    "id": "venn_grafico_union",
+    "tema": "Conjuntos y Diagramas de Venn",
+    "subtipo": "venn_grafico_elementos",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["intermedio"],
+    "bidireccional": false,
+    "variables": {
+      "a": { "type": "number", "min": 2, "max": 6, "step": 1 },
+      "b": { "type": "number", "min": 3, "max": 7, "step": 1 },
+      "c": { "type": "number", "min": 4, "max": 8, "step": 1 },
+      "fuera1": { "type": "number", "min": 1, "max": 5, "step": 1 }
+    },
+    "relaciones": ["ans = a + b + c"],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Según el diagrama de Venn mostrado, calcula la suma de los elementos del conjunto $A \\cup B$.",
+    "metadata": {
+      "habilidades": ["unión", "suma"],
+      "prefijo_opciones": "$n(A \\cup B) = ",
+      "sufijo_opciones": "$"
+    }
+  },
+  {
+    "id": "venn_grafico_lluvia_elementos",
+    "tema": "Conjuntos y Diagramas de Venn",
+    "subtipo": "venn_grafico_elementos",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["intermedio"],
+    "bidireccional": false,
+    "variables": {
+      "eA1": { "type": "number", "min": 1, "max": 4, "step": 1 },
+      "eA2": { "type": "number", "min": 5, "max": 8, "step": 1 },
+      "eI1": { "type": "number", "min": 9, "max": 12, "step": 1 },
+      "eI2": { "type": "number", "min": 13, "max": 16, "step": 1 },
+      "eB1": { "type": "number", "min": 17, "max": 20, "step": 1 },
+      "eB2": { "type": "number", "min": 21, "max": 25, "step": 1 },
+      "eU1": { "type": "number", "min": 26, "max": 30, "step": 1 }
+    },
+    "relaciones": [
+      "ans = eI1 + eI2"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Dados los conjuntos definidos por extensión:\n\n$$A = \\{ {eA1}, {eA2}, {eI1}, {eI2} \\}$$\n$$B = \\{ {eB1}, {eB2}, {eI1}, {eI2} \\}$$\n\nAdemás, se sabe que el elemento $\\{ {eU1} \\}$ no pertenece a ninguno de los dos. \n\nCalcula la suma de los elementos que pertenecen a la intersección $A \\cap B$.",
+    "metadata": {
+      "habilidades": ["elementos dispersos", "intersección", "suma"],
+      "prefijo_opciones": "$\\Sigma (A \\cap B) = ",
+      "sufijo_opciones": "$"
+    }
+  },
+  {
+    "id": "venn_grafico_diferencia_simetrica",
+    "tema": "Conjuntos y Diagramas de Venn",
+    "subtipo": "venn_grafico_elementos",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": false,
+    "variables": {
+      "a": { "type": "number", "min": 5, "max": 9, "step": 1 },
+      "b": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "c": { "type": "number", "min": 6, "max": 10, "step": 1 },
+      "fuera1": { "type": "number", "min": 1, "max": 3, "step": 1 }
+    },
+    "relaciones": ["ans = a + c"],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Observa el gráfico. ¿Cuál es la suma de los elementos que pertenecen a la diferencia simétrica $A \\Delta B$?",
+    "metadata": {
+      "habilidades": ["diferencia simétrica"],
+      "prefijo_opciones": "$\\Sigma (A \\Delta B) = ",
+      "sufijo_opciones": "$"
+    }
+  },
+  {
+    "id": "conjuntos_003",
+    "tema": "Conjuntos y Diagramas de Venn",
+    "subtipo": "tres_conjuntos_solo_chocolate",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": true,
+    "enunciado": "De {total} personas, {a} gustan del chocolate, {b} de la vainilla, {c} de la fresa. Además, {ab} gustan de chocolate y vainilla, {ac} de chocolate y fresa, {bc} de vainilla y fresa, y {abc} de los tres. ¿Cuántos gustan solo de chocolate?",
+    "variables": {
+      "total": { "type": "number", "min": 100, "max": 500, "step": 1 },
+      "a": { "type": "number", "min": 30, "max": 200, "step": 1 },
+      "b": { "type": "number", "min": 30, "max": 200, "step": 1 },
+      "c": { "type": "number", "min": 30, "max": 200, "step": 1 },
+      "ab": { "type": "number", "min": 5, "max": 50, "step": 1 },
+      "ac": { "type": "number", "min": 5, "max": 50, "step": 1 },
+      "bc": { "type": "number", "min": 5, "max": 50, "step": 1 },
+      "abc": { "type": "number", "min": 1, "max": 20, "step": 1 }
+    },
+    "relaciones": [
+      "solo_chocolate = a - ab - ac + abc"
+    ],
+    "restricciones": [
+      "ab >= abc",
+      "ac >= abc",
+      "bc >= abc",
+      "a >= ab + ac - abc",
+      "b >= ab + bc - abc",
+      "c >= ac + bc - abc",
+      "solo_chocolate >= 0",
+      "a <= total",
+      "b <= total",
+      "c <= total"
+    ],
+    "incognita_directa": "solo_chocolate",
+    "incognitas_inversa": ["total", "a", "b", "c", "ab", "ac", "bc", "abc"],
+    "formato_respuesta": {
+      "tipo": "entero",
+      "rango": [0, 500]
+    },
+    "metadata": {
+      "habilidades": ["conjuntos", "tres conjuntos", "intersección"],
+      "tiempo_estimado": 180,
+      "requiere_calculadora": false,
+      "fuente": "adaptado"
+    }
+  },
+  {
+    "id": "conjuntos_004",
+    "tema": "Conjuntos y Diagramas de Venn",
+    "subtipo": "porcentajes_ninguno",
+    "grado": "5to",
+    "etapa": ["intermedia"],
+    "dificultad": ["experto"],
+    "bidireccional": true,
+    "enunciado": "En una ciudad, el {p}% de la población lee el diario A, el {q}% lee el diario B y el {r}% lee ambos. ¿Qué porcentaje no lee ninguno?",
+    "variables": {
+      "p": { "type": "number", "min": 10, "max": 80, "step": 1 },
+      "q": { "type": "number", "min": 10, "max": 80, "step": 1 },
+      "r": { "type": "number", "min": 0, "max": 50, "step": 1 }
+    },
+    "relaciones": [
+      "leen_alguno = p + q - r",
+      "ninguno = 100 - leen_alguno"
+    ],
+    "restricciones": [
+      "leen_alguno <= 100",
+      "r <= p",
+      "r <= q",
+      "ninguno >= 0"
+    ],
+    "incognita_directa": "ninguno",
+    "incognitas_inversa": ["p", "q", "r"],
+    "formato_respuesta": {
+      "tipo": "entero",
+      "rango": [0, 100]
+    },
+    "metadata": {
+      "habilidades": ["conjuntos", "porcentajes", "complemento"],
+      "tiempo_estimado": 90,
+      "requiere_calculadora": false,
+      "fuente": "adaptado"
+    }
+  
+  },
+{
+    "id": "conjuntos_venn_diferencia_basico",
+    "tema": "Conjuntos y Diagramas de Venn",
+    "subtipo": "venn_grafico_elementos",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["basico"],
+    "bidireccional": false,
+    "variables": {
+      "soloA1": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "soloA2": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "inter": { "type": "number", "min": 6, "max": 9, "step": 1 },
+      "soloB": { "type": "number", "min": 10, "max": 15, "step": 1 }
+    },
+    "relaciones": [
+      "ans = soloA1 + soloA2"
+    ],
+    "restricciones": [],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Observa el diagrama de Venn. Calcula la suma de los elementos que pertenecen al conjunto $A - B$ (Solo A).",
+    "metadata": {
+      "habilidades": ["diagrama de Venn", "diferencia de conjuntos"],
+      "tiempo_estimado": 60,
+      "requiere_calculadora": false,
+      "prefijo_opciones": "$A - B = \\{ ",
+      "sufijo_opciones": " \\}$"
+    }
+  },
+  {
+    "id": "conjuntos_venn_complemento_intermedio",
+    "tema": "Conjuntos y Diagramas de Venn",
+    "subtipo": "venn_grafico_elementos",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
+    "bidireccional": false,
+    "variables": {
+      "a": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "b": { "type": "number", "min": 4, "max": 6, "step": 1 },
+      "c": { "type": "number", "min": 7, "max": 9, "step": 1 },
+      "fuera1": { "type": "number", "min": 10, "max": 12, "step": 1 },
+      "fuera2": { "type": "number", "min": 13, "max": 15, "step": 1 }
+    },
+    "relaciones": [
+      "ans = fuera1 + fuera2"
+    ],
+    "restricciones": [],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Dado el diagrama, ¿cuál es la suma de los elementos que pertenecen a $(A \\cup B)'$ (el complemento de la unión)?",
+    "metadata": {
+      "habilidades": ["diagrama de Venn", "complemento", "unión"],
+      "tiempo_estimado": 90,
+      "requiere_calculadora": false,
+      "prefijo_opciones": "$(A \\cup B)' = \\{ ",
+      "sufijo_opciones": " \\}$"
+    }
+  },
+  {
+    "id": "conjuntos_unitario_avanzado",
+    "tema": "Conjuntos y Diagramas de Venn",
+    "subtipo": "conjunto_unitario",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": false,
+    "variables": {
+      "k": { "type": "number", "min": 3, "max": 8, "step": 1 }
+    },
+    "relaciones": [
+      "val = 3 * k - 1",
+      "ans = k"
+    ],
+    "restricciones": [],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Se sabe que el conjunto $A = \\{ 3x - 1; ${val} \\}$ es un conjunto unitario. Determina el valor de $x$.",
+    "metadata": {
+      "habilidades": ["conjunto unitario", "ecuación lineal"],
+      "tiempo_estimado": 60,
+      "requiere_calculadora": false
+    }
+  },
+  {
+    "id": "conjuntos_comprension_experto",
+    "tema": "Conjuntos y Diagramas de Venn",
+    "subtipo": "comprension_conjuntos",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["experto"],
+    "bidireccional": false,
+    "variables": {
+      "a": { "type": "number", "min": 1, "max": 3, "step": 1 }
+    },
+    "relaciones": [
+      "b = a + 3",
+      "x1 = a + 1",
+      "x2 = a + 2",
+      "e1 = x1 * x1 + 1",
+      "e2 = x2 * x2 + 1",
+      "ans = e1 + e2"
+    ],
+    "restricciones": [],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Dado el conjunto determinado por comprensión: $$C = \\{ x^2 + 1 \\mid x \\in \\mathbb{Z}, ${a} < x < ${b} \\}$$ Calcula la suma de los elementos del conjunto $C$.",
+    "metadata": {
+      "habilidades": ["notación por comprensión", "enteros", "evaluación"],
+      "tiempo_estimado": 120,
+      "requiere_calculadora": false
+    }
+  },
+
+
+  {
+    "id": "z_adicion_sustraccion_basico",
+    "tema": "Adición y Sustracción en Z",
+    "subtipo": "z_adicion_sustraccion",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
+    "bidireccional": false,
+    "variables": {
+      "a": { "type": "number", "min": 5, "max": 20, "step": 1 },
+      "b": { "type": "number", "min": 15, "max": 35, "step": 1 },
+      "c": { "type": "number", "min": 5, "max": 15, "step": 1 },
+      "d": { "type": "number", "min": 2, "max": 10, "step": 1 }
+    },
+    "relaciones": [
+      "ans = a - b + c + d"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Efectúa la siguiente operación con números enteros y determina el valor de $E$:\n\n$$E = (-{a}) - (-{a}) + (+{a}) - (+{b}) - (-{c}) - (-{d})$$",
+    "metadata": {
+      "habilidades": ["ley de signos", "reducción"],
+      "prefijo_opciones": "$E = ",
+      "sufijo_opciones": "$"
+    }
+  },
+  {
+    "id": "z_adicion_sustraccion_intermedio",
+    "tema": "Adición y Sustracción en Z",
+    "subtipo": "z_adicion_sustraccion",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["intermedio"],
+    "bidireccional": false,
+    "variables": {
+      "t_inicial": { "type": "number", "min": -15, "max": -3, "step": 1 },
+      "sube1": { "type": "number", "min": 8, "max": 15, "step": 1 },
+      "baja1": { "type": "number", "min": 10, "max": 22, "step": 1 },
+      "sube2": { "type": "number", "min": 4, "max": 12, "step": 1 }
+    },
+    "relaciones": [
+      "ans = t_inicial + sube1 - baja1 + sube2"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Un termómetro marcaba ${t_inicial}^\\circ\\text{C}$ a las 5:00 a.m. Tres horas más tarde, la temperatura aumentó ${sube1}^\\circ\\text{C}$; al mediodía descendió ${baja1}^\\circ\\text{C}$ debido a un frente frío, y a las 4:00 p.m. volvió a subir ${sube2}^\\circ\\text{C}$. ¿Qué temperatura registró el termómetro a las 4:00 p.m.?",
+    "metadata": {
+      "habilidades": ["comprensión lectora", "números negativos"],
+      "prefijo_opciones": "$",
+      "sufijo_opciones": "^\\circ\\text{C}$"
+    }
+  },
+  {
+    "id": "z_adicion_sustraccion_avanzado",
+    "tema": "Adición y Sustracción en Z",
+    "subtipo": "z_adicion_sustraccion",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": false,
+    "variables": {
+      "a": { "type": "number", "min": 1, "max": 9, "step": 1 },
+      "b": { "type": "number", "min": 2, "max": 12, "step": 1 },
+      "c": { "type": "number", "min": 5, "max": 15, "step": 1 },
+      "d": { "type": "number", "min": 3, "max": 8, "step": 1 }
+    },
+    "relaciones": [
+      "ans = - ( -a - (b - c - d) )"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Simplifica la siguiente expresión matemática prestando atención a los signos de agrupación:\n\n$$M = - \\{ -{a} - [ {b} - ( {c} + {d} ) ] \\}$$",
+    "metadata": {
+      "habilidades": ["agrupación", "ley de signos"],
+      "prefijo_opciones": "$M = ",
+      "sufijo_opciones": "$"
+    }
+  },
+  {
+    "id": "z_adicion_sustraccion_experto",
+    "tema": "Adición y Sustracción en Z",
+    "subtipo": "z_adicion_sustraccion",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
+    "bidireccional": false,
+    "variables": {
+      "a": { "type": "number", "min": 15, "max": 40, "step": 1 },
+      "b": { "type": "number", "min": 5, "max": 25, "step": 1 },
+      "c": { "type": "number", "min": -30, "max": -10, "step": 1 }
+    },
+    "relaciones": [
+      "ans = -a - b - c"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Al opuesto de un número $x$, se le suma la diferencia entre $(-{a})$ y el opuesto de $(-{b})$. Si este resultado equivale a ${c}$, halla el valor de $x$.",
+    "metadata": {
+      "habilidades": ["planteo de ecuaciones", "opuesto aditivo"],
+      "prefijo_opciones": "$x = ",
+      "sufijo_opciones": "$"
+    }
+  }
+
   
 
 

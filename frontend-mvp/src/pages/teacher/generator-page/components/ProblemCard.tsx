@@ -218,6 +218,8 @@ export default function ProblemCard({
           </div>
         )}
 
+     
+
         {/* 🔥 ALTERNATIVAS EN UNA FILA (A-E) */}
         {problem.options && !isEditing && (
           <div className="grid grid-cols-5 gap-1.5 mb-2 mt-2">

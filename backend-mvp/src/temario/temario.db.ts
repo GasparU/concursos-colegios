@@ -153,59 +153,80 @@ export const TEMARIO_MAESTRO = {
     },
   ],
   "5to": [
-    // --- TEMARIO OFICIAL CONAMAT (Rojo/Rosado) ---
-    { nombre: "Conjuntos y Diagramas de Venn", tipo: "conamat", subtipos: ["dos_conjuntos_sin_fuera", "dos_conjuntos_con_fuera", "tres_conjuntos_solo_chocolate", "porcentajes_ninguno"] },
-    { nombre: "Números naturales: operaciones y propiedades", tipo: "conamat", subtipos: [] }, 
-    { nombre: "Cuatro operaciones", tipo: "conamat", subtipos: [] },
-    { nombre: "Relaciones de mayor, menor e igual", tipo: "conamat", subtipos: ["sueldo_minimo", "punto_equilibrio", "area_maxima", "maximizar_productos"] },
-    { nombre: "Ecuaciones e inecuaciones", tipo: "conamat", subtipos: ["lineal", "sueldo_minimo", "punto_equilibrio", "area_maxima", "maximizar_productos"] },
-    { nombre: "Teoría de números: divisibilidad", tipo: "conamat", subtipos: ["criterios_divisibilidad", "multiplos", "propiedades_multiplos"] },
+    // =========================================================
+    // 🔴 TEMARIO OFICIAL CONAMAT (Competencia Directa)
+    // =========================================================
+    // ARITMÉTICA
+    { nombre: "Cuatro operaciones y Operaciones combinadas", tipo: "conamat", subtipos: ["operaciones_combinadas"] },
+    { nombre: "Teoría de números: Divisibilidad", tipo: "conamat", subtipos: ["criterios_divisibilidad", "multiplos", "propiedades_multiplos"] },
     { nombre: "Números primos", tipo: "conamat", subtipos: [] },
-    { nombre: "MCD y MCM", tipo: "conamat", subtipos: ["coincidencia_tiempo", "encuentro_amigos", "reparto_equitativo", "baldosas_piso"] },
-    
-    // 🔥 EL ARREGLO DE FRACCIONES (Sin Caños)
-    { nombre: "Fracciones: clases y operaciones", tipo: "conamat", subtipos: ["reparto_sucesivo", "consumo_volumen", "fraccion_de_una_fraccion", "suma_resta_fracciones", "comparacion_fracciones", "fracciones_basicas"] },
-    { nombre: "Fracción de una fracción", tipo: "conamat", subtipos: ["reparto_sucesivo", "consumo_volumen", "fraccion_de_una_fraccion"] },
-    { nombre: "Suma y Resta de Fracciones", tipo: "conamat", subtipos: ["suma_resta_fracciones"] },
-    
-    { nombre: "Números decimales", tipo: "conamat", subtipos: [] },
-    { nombre: "Operaciones combinadas con decimales", tipo: "conamat", subtipos: ["operaciones_combinadas"] },
-    { nombre: "Cuadrado y cubo de un número menor que 20", tipo: "conamat", subtipos: [] },
-    { nombre: "Equivalencia y cambio monetario", tipo: "conamat", subtipos: ["vuelto_compra", "presupuesto_gastos"] },
-    { nombre: "Proporcionalidad directa e inversa", tipo: "conamat", subtipos: ["magnitudes_proporcionales", "rendimiento_equipo", "directa", "rendimiento"] },
-    { nombre: "Regla de tres simple", tipo: "conamat", subtipos: ["directa"] },
-    { nombre: "Promedios", tipo: "conamat", subtipos: ["agregar_numero", "promedio_ponderado", "promedio_geometrico", "eliminar_numero"] },
-    
-    // Geometría y Estadística (Conectados a sus subtipos)
+    { nombre: "Fracciones: Clases y operaciones", tipo: "conamat", subtipos: ["suma_resta_fracciones", "comparacion_fracciones", "fracciones_basicas"] },
+    { nombre: "Fracción de una fracción", tipo: "conamat", subtipos: ["fraccion_de_una_fraccion", "reparto_sucesivo", "consumo_volumen"] },
+    { nombre: "Números decimales (Operaciones)", tipo: "conamat", subtipos: [] },
+    { nombre: "Equivalencia y cambio monetario", tipo: "conamat", subtipos: ["canje_monetario", "vuelto_compra", "presupuesto_gastos"] },
+    { nombre: "Proporcionalidad directa e inversa", tipo: "conamat", subtipos: ["magnitudes_proporcionales", "magnitudes_prop."] },
+    { nombre: "Regla de tres simple y compuesta", tipo: "conamat", subtipos: ["directa", "rendimiento", "rendimiento_equipo"] },
+    { nombre: "Porcentajes y Descuentos", tipo: "conamat", subtipos: ["descuento", "aumento"] },
+    { nombre: "Magnitudes Proporcionales (DP e IP)", tipo: "aritmetica", subtipos: ["magnitudes_proporcionales_dp", "magnitudes_proporcionales_ip", "magnitudes_proporcionales_mixta", "magnitudes_proporcionales_ecuacion"] },
+
+    // GEOMETRÍA
     { nombre: "Segmentos", tipo: "conamat", subtipos: ["segmentos"] },
-    { nombre: "Ángulos y Bisectriz", tipo: "conamat", subtipos: ["angulos_radiales", "angulos_teoricos", "conteo_angulos"] },
-    { nombre: "Rectas paralelas y perpendiculares", tipo: "conamat", subtipos: ["paralelas_ecuaciones", "paralelas_serrucho", "rectas_secantes"] },
-    { nombre: "Triángulos", tipo: "conamat", subtipos: ["area_triangulo", "triangulo_perimetro"] },
+    { nombre: "Ángulos y Bisectriz", tipo: "conamat", subtipos: ["angulos_radiales", "angulos_teoricos"] },
+    { nombre: "Rectas paralelas y perpendiculares", tipo: "conamat", subtipos: ["paralelas_ecuaciones", "paralelas_serrucho", "paralelas_abanico", "rectas_secantes"] },
+    { nombre: "Triángulos (Propiedades y Perímetros)", tipo: "conamat", subtipos: ["triangulo_angulos", "triangulo_perimetro", "perimetro_escalera"] },
     { nombre: "Figuras planas: Áreas y perímetros", tipo: "conamat", subtipos: ["area_triangulo", "area_rectangulo", "area_rombo", "area_trapecio", "area_paralelogramo"] },
     { nombre: "Área de regiones sombreadas", tipo: "conamat", subtipos: ["area_sombreada"] },
-    { nombre: "Gráficos estadísticos (barras, poligonales, circulares)", tipo: "conamat", subtipos: ["grafico_barras", "grafico_circular", "tabla_frecuencias", "pictograma"] },
-    { nombre: "Sucesos numéricos y no numéricos probables e improbables", tipo: "conamat", subtipos: ["probabilidad_fraccion", "suceso_contrario", "extraccion_doble"] },
-    { nombre: "Sucesiones numéricas y alfabéticas", tipo: "conamat", subtipos: [] },
-    { nombre: "Operadores Matemáticos", tipo: "conamat", subtipos: ["lineal", "cuadratico", "fraccionario", "anidado"] },
-    { nombre: "Habilidad y situaciones matemáticas", tipo: "conamat", subtipos: ["cangrejo_3_pasos", "cangrejo_4_pasos", "rectangulo_entero", "rectangulo_decimal"] },
+    { nombre: "Sólidos 3D: Prisma y Paralelepípedo", tipo: "conamat", subtipos: ["volumen_prisma", "volumen_prisma_triangular"] },
+    { 
+      nombre: "Sólidos Geométricos: Cubo y Prisma", 
+      tipo: "geometria", 
+      subtipos: ["cubo_conamat_area_volumen", "cubo_conamat_aristas", "cubo_grafico_volumen_basico", "cubo_grafico_area_intermedio"] 
+    },
 
-    // --- TEMAS "TIGRE" DE ACADEMIA PRE-U (Azul) ---
-    { nombre: "Magnitudes Proporcionales (Tablas DP e IP)", tipo: "academia", subtipos: ["magnitudes_proporcionales"] },
-    { nombre: "Descomposición Polinómica", tipo: "academia", subtipos: ["descomposicion_polinomica"] },
-    { nombre: "Sucesiones Numéricas (Doble Criterio)", tipo: "academia", subtipos: [] },
-    { nombre: "Problemas de Edades", tipo: "academia", subtipos: ["problemas_edades"] },
-    { nombre: "Planteo de Ecuaciones (Método Rombo)", tipo: "academia", subtipos: ["planteo_ecuaciones"] },
-    { nombre: "Métodos Operativos (Cangrejo y Rectángulo)", tipo: "academia", subtipos: ["cangrejo_3_pasos", "cangrejo_4_pasos", "rectangulo_entero", "rectangulo_decimal"] },
+    // ESTADÍSTICA Y PROBABILIDAD
+    { nombre: "Gráficos estadísticos (barras, poligonales, circulares)", tipo: "conamat", subtipos: ["grafico_barras", "grafico_barras_doble", "grafico_circular", "tabla_frecuencias", "pictograma"] },
+    { nombre: "Sucesos numéricos probables e improbables", tipo: "conamat", subtipos: ["probabilidad_basica", "probabilidad_fraccion", "suceso_contrario", "extraccion_doble"] },
+
+    // RAZONAMIENTO MATEMÁTICO
+    { nombre: "Sucesiones numéricas y alfabéticas", tipo: "conamat", subtipos: ["sucesion_numerica", "sucesion_alfabetica", "sucesion_decimal", "sucesion_fracciones"] },
+    { nombre: "Operadores Matemáticos", tipo: "conamat", subtipos: ["lineal", "cuadratico", "fraccionario", "anidado"] },
+    { nombre: "Criptoaritmética", tipo: "conamat", subtipos: ["criptoaritmetica"] },
+    { nombre: "Problemas de Edades", tipo: "conamat", subtipos: ["problemas_edades"] },
+    { nombre: "Planteo de Ecuaciones", tipo: "conamat", subtipos: ["planteo_ecuaciones"] },
+
+
+    // =========================================================
+    // 🔵 TEMARIO ACADEMIA (Requisitos y Complementos)
+    // =========================================================
+    // REQUISITOS BASE (Obligatorios para entender CONAMAT)
+    { nombre: "MCD y MCM (Requisito)", tipo: "academia", subtipos: ["coincidencia_tiempo", "encuentro_amigos", "reparto_equitativo", "baldosas_piso"] },
+    { nombre: "Descomposición Polinómica (Requisito)", tipo: "academia", subtipos: ["descomposicion_polinomica"] },
+    { nombre: "Leyes de Exponentes y Radicación (Requisito)", tipo: "academia", subtipos: ["teoria_exponentes", "radicacion"] },
+    { nombre: "Ecuaciones e Inecuaciones (Requisito)", tipo: "academia", subtipos: ["lineal", "sueldo_minimo", "punto_equilibrio", "area_maxima", "maximizar_productos"] },
+    { nombre: "Teorema de Pitágoras y T. Notables (Requisito)", tipo: "academia", subtipos: ["teorema_pitagoras", "triangulos_notables"] },
+    { nombre: "Promedios (Requisito)", tipo: "academia", subtipos: ["agregar_numero", "promedio_ponderado", "promedio_geometrico", "eliminar_numero"] },
+    { nombre: "Analogías Numéricas (Requisito)", tipo: "academia", subtipos: ["analogias"] },
+    { nombre: "Distribuciones Gráficas (Requisito)", tipo: "academia", subtipos: ["distribucion_grafica"] },
+    { nombre: "Métodos Operativos: Cangrejo y Rectángulo (Requisito)", tipo: "academia", subtipos: ["cangrejo_3_pasos", "cangrejo_4_pasos", "rectangulo_entero", "rectangulo_decimal"] },
+    { 
+      nombre: "Adición y Sustracción en Z", 
+      tipo: "algebra", 
+      subtipos: ["z_adicion_sustraccion"] 
+    },
+
+    // COMPLEMENTOS (Temas de las 16 Semanas Escolares)
+    { nombre: "Sólidos 3D: Cilindros y Pirámides (Complemento)", tipo: "academia", subtipos: ["volumen_cilindro", "volumen_piramide"] },
+    { nombre: "Polinomios: Valor Numérico (Complemento)", tipo: "academia", subtipos: ["polinomios"] },
+    { nombre: "Plano Cartesiano y Distancias (Complemento)", tipo: "academia", subtipos: ["plano_cartesiano"] },
+    { nombre: "Intervalos Numéricos (Complemento)", tipo: "academia", subtipos: ["intervalos"] },
+    { nombre: "Circunferencia y Propiedades (Complemento)", tipo: "academia", subtipos: ["angulos_circunferencia", "propiedades_circunferencia", "segmentos_circunferencia"] },
+    { nombre: "Conteo de Figuras y Paginación (Complemento)", tipo: "academia", subtipos: ["conteo_figuras", "paginacion_1cifra", "paginacion_2cifras", "paginacion_3cifras", "paginacion_general"] },
     
-    // 🔥 LOS CAÑOS ESTÁN AQUÍ AISLADOS
-    { nombre: "Fracciones Especiales (Grifos y Caños)", tipo: "academia", subtipos: ["dos_llenan", "llena_y_vacia", "tres_llenan", "con_apertura_diferida"] },
-    
-    { nombre: "Conteo de Números (Paginación)", tipo: "academia", subtipos: ["paginacion_1cifra", "paginacion_2cifras", "paginacion_3cifras", "paginacion_general"] },
-    // Como bonus, añadí los de RM que tenías sueltos en el JSON
-    { nombre: "Distribuciones gráficas", tipo: "academia", subtipos: ["distribucion_grafica"] },
-    { nombre: "Criptoaritmética", tipo: "academia", subtipos: ["criptoaritmetica"] },
-    { nombre: "Conteo de figuras", tipo: "academia", subtipos: ["conteo_figuras"] }
-  ],
+    // TEMAS AISLADOS / EXTRAS
+    { nombre: "Conjuntos y Diagramas de Venn (Extra)", tipo: "academia", subtipos: ["dos_conjuntos_sin_fuera", "dos_conjuntos_con_fuera", "tres_conjuntos_solo_chocolate", "porcentajes_ninguno", "enn_grafico_elementos", "venn_grafico_elementos", "conjunto_unitario", "comprension_conjuntos"] },
+    { nombre: "Fracciones Especiales: Grifos y Caños (Extra)", tipo: "academia", subtipos: ["dos_llenan", "llena_y_vacia", "tres_llenan", "con_apertura_diferida"] },
+    { nombre: "Teorema de Thales (Extra)", tipo: "academia", subtipos: ["thales"] }
+],
   '6to': [
     // 🔵 TEMAS PREVIOS (ACADEMIA)
     { id: '6_primos', nombre: 'Números primos y compuestos', tipo: 'academia' },

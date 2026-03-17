@@ -1081,10 +1081,74 @@ export class QuintoGradoService extends BaseGradoService {
           return null;
       }
     }
+
+    // ========== CONJUNTOS Y DIAGRAMAS DE VENN ==========
+    if (plantilla.tema === 'Conjuntos y Diagramas de Venn' || plantilla.tema === 'Conjuntos y Diagramas de Venn (Extra)') {
+      switch (plantilla.subtipo) {
+        case 'venn_grafico_elementos':
+        case 'conjuntos_venn_diferencia_basico':
+        case 'conjuntos_venn_complemento_intermedio':
+        case 'venn_grafico_interseccion':       
+        case 'venn_grafico_union':              
+        case 'venn_grafico_diferencia_simetrica': 
+       {
+          // 🔥 ESTE LOG NOS DIRÁ SI EL BACKEND POR FIN ESTÁ FUNCIONANDO
+          console.log('🎨 Generando visual para Diagrama de Venn...'); 
+          
+          return {
+            type: 'geometry_mafs', // El pase VIP
+            theme: 'venn_grafico_elementos',
+            params: {
+              soloA1: valores.soloA1,
+              soloA2: valores.soloA2,
+              inter: valores.inter,
+              soloB: valores.soloB,
+              a: valores.a,
+              b: valores.b,
+              c: valores.c,
+              fuera1: valores.fuera1,
+              fuera2: valores.fuera2,
+              eA1: valores.eA1,
+              eA2: valores.eA2,
+              eA3: valores.eA3,
+              eI1: valores.eI1,
+              eI2: valores.eI2,
+              eB1: valores.eB1,
+              eB2: valores.eB2,
+              eB3: valores.eB3,
+              eU1: valores.eU1,
+              eU2: valores.eU2
+            }
+          };
+        }
+      }
+    }
+
+    // ========== SÓLIDOS GEOMÉTRICOS ==========
+    if (plantilla.tema === 'Sólidos Geométricos: Cubo y Prisma') {
+      switch (plantilla.subtipo) {
+        case 'cubo_grafico_volumen_basico':
+        case 'cubo_grafico_area_intermedio': {
+          console.log('🧊 Generando visual para Cubo...'); 
+          return {
+            type: 'geometry_mafs',
+            theme: 'cubo',
+            params: { 
+              arista: valores.a, 
+              color: '#0ea5e9' 
+            }
+          };
+        }
+      }
+    }
+
     
     // ========== GEOMETRÍA ==========
     if (plantilla.tema === 'geometria') {
       switch (plantilla.subtipo) {
+     
+    
+
         case 'triangulo_ecuaciones': {
           console.log('🎨 Generando visual para triángulo con ecuaciones');
           const angA = valores.angA;
@@ -6797,6 +6861,8 @@ export class QuintoGradoService extends BaseGradoService {
           };
         }
 
+       
+      
        // 🔥 RM: CRIPTOARITMÉTICA MULTIPLICACIÓN (VERSIÓN BLINDADA CONAMAT) 🔥
         case 'rm_criptoaritmetica_mult_basico':
         case 'rm_criptoaritmetica_mult_intermedio':

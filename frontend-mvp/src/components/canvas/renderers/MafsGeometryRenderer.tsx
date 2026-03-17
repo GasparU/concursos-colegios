@@ -32,20 +32,23 @@ import RenderizadorTrianguloCompleto from "./especializados/RenderizadorTriangul
 import { RenderizadorSegmentos } from "./especializados/RenderizadorSegmentos";
 import { StatisticsTable } from "./StatisticsTable";
 import { RenderizadorAreaTriangulo } from "./especializados/RenderizadorAreaTriangulo";
-
+import { VennDiagram } from "./especializados/VennDiagram";
 
 export const MafsGeometryRenderer = (props: any) => {
+  // 🔥 BLINDAJE TOTAL: Acepta la data sin importar cómo llegue
   const datosEntrada =
-    props.datosMatematicos || props.visualData || props.mathData || props.data;
+    props.datosMatematicos || props.visualData || props.visual_data || props.mathData || props.data || props;
 
-  if (!datosEntrada) {
+  if (!datosEntrada || Object.keys(datosEntrada).length === 0) {
     return (
-      <div className="text-red-600 font-bold">Error: Sin datos de entrada</div>
+      <div className="text-red-600 font-bold p-4 bg-red-50 border border-red-200 rounded">
+        Error: Sin datos de entrada válidos
+      </div>
     );
   }
 
-  let tipoFigura = datosEntrada.type;
-  let parametros = datosEntrada.params;
+  let tipoFigura = datosEntrada.type || datosEntrada.theme;
+  let parametros = datosEntrada.params || datosEntrada;
 
   if (tipoFigura === "geometry_mafs") {
     tipoFigura = datosEntrada.theme;
@@ -55,8 +58,6 @@ export const MafsGeometryRenderer = (props: any) => {
   }
 
   switch (tipoFigura) {
-    // Geometría existente
-
     case "rectas_secantes":
       return <RenderizadorRectasSecantes parametros={parametros} />;
 
@@ -100,7 +101,7 @@ export const MafsGeometryRenderer = (props: any) => {
           etiquetas={parametros.etiquetas}
           angulos={parametros.angulos}
           lados={parametros.lados}
-          lineasAzulesPunteadas={parametros.lineasAzulesPunteadas} // 🔥 AGREGAR ESTO
+          lineasAzulesPunteadas={parametros.lineasAzulesPunteadas} 
         />
       );
 
@@ -141,7 +142,7 @@ export const MafsGeometryRenderer = (props: any) => {
       return <RenderizadorAreaSombreada parametros={parametros} />;
     case "cubo":
       return (
-        <RenderizadorCubo puntos={parametros.puntos} color={parametros.color} />
+        <RenderizadorCubo puntos={parametros.puntos} color={parametros.color} parametros={parametros} />
       );
 
     case "triangulos":
@@ -151,10 +152,8 @@ export const MafsGeometryRenderer = (props: any) => {
       return <RenderizadorSimetria />;
 
     case "segmentos":
-      // Aseguramos que pasamos los parámetros limpios al componente especializado
       return <RenderizadorSegmentos parametros={parametros} />;
 
-    // Nuevos casos
     case "rectangulo_punto_diagonal":
       return <RenderizadorRectanguloPuntoDiagonal parametros={parametros} />;
     case "cuadrados_superpuestos":
@@ -174,14 +173,12 @@ export const MafsGeometryRenderer = (props: any) => {
         />
       );
 
-      case "area_triangulo":
+    case "area_triangulo":
       return <RenderizadorAreaTriangulo parametros={parametros} />;
-
 
     case "regiones_sombreadas_compuestas":
       return <RenderizadorRegionesCompuestas parametros={parametros} />;
 
-    // Estadística
     case "chart_bar":
     case "chart_pie":
       return <StatisticsChart type={tipoFigura} data={parametros} />;
@@ -193,10 +190,13 @@ export const MafsGeometryRenderer = (props: any) => {
         <StatisticsTable visualData={{ type: tipoFigura, ...parametros }} />
       );
 
+    case "venn_grafico_elementos":
+      return <VennDiagram parametros={parametros} />;
+
     default:
       return (
-        <div className="p-10 text-center text-red-500">
-          Tipo de figura no soportado: <strong>{tipoFigura}</strong>
+        <div className="p-10 text-center text-red-500 bg-red-50 border border-red-200 rounded">
+          Tipo de figura no soportado: <strong>{String(tipoFigura)}</strong>
         </div>
       );
   }

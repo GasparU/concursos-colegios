@@ -22,6 +22,7 @@ import ClassDashboard from "./pages/teacher/ClassDashboard";
 import { GeneratorPage } from "./pages/teacher/generator-page";
 import ParametricTestPage from "./pages/teacher/ParametricTestPage";
 import SimpleTestPage from "./pages/teacher/SimpleTestPage";
+import ExamPrestart from "./pages/student/ExamPrestart";
 
 function App() {
   const { user, loading, checkAuth } = useAuthStore();
@@ -62,6 +63,7 @@ function App() {
             <Route element={<StudentLayout />}>
               <Route path="/student" element={<StudentExamList />} />
               <Route path="/student/exams" element={<StudentExamList />} />
+              <Route path="/student/exam-prestart/:id" element={<ExamPrestart />} />
               <Route path="/student/exam/:id" element={<ExamPlayerPage />} />
               <Route path="/student/results/:id" element={<ResultsPage />} />
               <Route path="*" element={<Navigate to="/student" />} />

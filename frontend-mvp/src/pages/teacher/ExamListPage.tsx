@@ -1,4 +1,3 @@
-// src/pages/teacher/ExamListPage.tsx (diseño renovado)
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -9,6 +8,8 @@ import {
   Clock,
   Calendar,
   FileText,
+  Trash2,
+  AlertTriangle // 🔥 Nuevo ícono para la alerta
 } from "lucide-react";
 import api from "../../services/api";
 
@@ -20,24 +21,96 @@ interface Exam {
   durationMinutes?: number;
   questionsCount: number;
   studentsCount: number;
-  complexity?: "Baja" | "Media" | "Alta"; // opcional para el diseño
+  complexity?: "Baja" | "Media" | "Alta"; 
 }
 
 export default function ExamListPage() {
   const [exams, setExams] = useState<Exam[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  // 🔥 ESTADO PARA EL MODAL DE ELIMINACIÓN
+  const [examToDelete, setExamToDelete] = useState<string | null>(null);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get("/exams").then((res) => setExams(res.data));
+    api.get("/exams").then((res) => {
+      setExams(res.data);
+      setLoading(false);
+    });
   }, []);
 
   const handleCreate = () => {
-   navigate("/teacher/exam/new");
+    navigate("/teacher/exam/new");
   };
 
+  // 🔥 LÓGICA DE BORRADO ACTUALIZADA
+  const confirmDelete = async () => {
+    if (!examToDelete) return;
+    try {
+      await api.delete(`/exams/${examToDelete}`);
+      setExams(exams.filter(exam => exam.id !== examToDelete));
+      setExamToDelete(null); // Cerramos el modal
+    } catch (error) {
+      console.error("Error al eliminar:", error);
+      alert("Hubo un error al eliminar. Verifica tu conexión o consola.");
+    }
+  };
+
+  const formatDate = (dateStr?: string) => {
+    const today = new Date().toLocaleDateString("es-PE");
+    if (!dateStr) return today;
+    
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime()) || date.getFullYear() === 1969 || date.getFullYear() === 1970) {
+      return today;
+    }
+    return date.toLocaleDateString("es-PE");
+  };
+
+  if (loading) return (
+    <div className="p-20 text-center font-black text-blue-600 animate-pulse uppercase tracking-widest">
+      Cargando panel...
+    </div>
+  );
+
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Cabecera con título y botón */}
+    <div className="p-6 max-w-7xl mx-auto relative">
+      
+      {/* 🔥 MODAL BONITO DE ELIMINACIÓN */}
+      {examToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm transition-opacity">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-sm w-full p-6 animate-in fade-in zoom-in duration-200">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                <AlertTriangle size={32} />
+              </div>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tighter">
+                ¿Eliminar examen?
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 font-medium">
+                Esta acción no se puede deshacer. Se borrará permanentemente de tu base de datos.
+              </p>
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={() => setExamToDelete(null)}
+                  className="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-black uppercase text-xs tracking-widest rounded-xl transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-black uppercase text-xs tracking-widest rounded-xl transition-colors shadow-md"
+                >
+                  Sí, eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cabecera */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
@@ -72,34 +145,15 @@ export default function ExamListPage() {
           {exams.map((exam) => (
             <div
               key={exam.id}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-300"
+              className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col"
             >
-              {/* Cabecera de la tarjeta con ID y complejidad (simulada) */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                <span className="text-xs font-mono text-blue-700 dark:text-blue-300">
-                  ID: #{exam.id.slice(0, 8)}
-                </span>
-                <span
-                  className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                    exam.complexity === "Alta"
-                      ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-                      : exam.complexity === "Media"
-                        ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300"
-                        : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-                  }`}
-                >
-                  {exam.complexity || "Media"}
-                </span>
-              </div>
-
               {/* Cuerpo de la tarjeta */}
-              <div className="p-4">
-                <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">
+              <div className="p-5 flex-1">
+                <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-4 line-clamp-2 leading-tight">
                   {exam.title}
                 </h3>
 
-                {/* Detalles */}
-                <div className="space-y-2 text-sm">
+                <div className="space-y-3 text-sm">
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                     {exam.type === "DURACION_FIJA" ? (
                       <>
@@ -109,10 +163,7 @@ export default function ExamListPage() {
                     ) : (
                       <>
                         <Calendar size={16} className="text-purple-500" />
-                        <span>
-                          Límite:{" "}
-                          {new Date(exam.deadline!).toLocaleDateString()}
-                        </span>
+                        <span>Límite: {formatDate(exam.deadline)}</span>
                       </>
                     )}
                   </div>
@@ -121,35 +172,44 @@ export default function ExamListPage() {
                     <span>{exam.questionsCount} preguntas</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <Users size={16} className="text-green-500" />
+                    <Users size={16} className="text-emerald-500" />
                     <span>{exam.studentsCount} estudiantes</span>
                   </div>
                 </div>
               </div>
 
-              {/* Acciones (botones) */}
-              <div className="px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+              {/* Acciones */}
+              <div className="px-4 py-3 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-700 flex justify-end items-center gap-2">
                 <Link
                   to={`/teacher/exam/${exam.id}`}
-                  className="p-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 rounded-lg transition"
+                  className="p-2 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-900/20 rounded-lg transition"
                   title="Editar"
                 >
                   <Edit size={18} />
                 </Link>
                 <Link
                   to={`/teacher/exam/${exam.id}/results`}
-                  className="p-2 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/20 rounded-lg transition"
+                  className="p-2 text-green-600 hover:bg-green-100 dark:text-green-400 dark:hover:bg-green-900/20 rounded-lg transition"
                   title="Ver resultados"
                 >
                   <Eye size={18} />
                 </Link>
                 <Link
                   to={`/teacher/exam/${exam.id}/students`}
-                  className="p-2 text-purple-600 hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-900/20 rounded-lg transition"
+                  className="p-2 text-purple-600 hover:bg-purple-100 dark:text-purple-400 dark:hover:bg-purple-900/20 rounded-lg transition"
                   title="Progreso estudiantes"
                 >
                   <Users size={18} />
                 </Link>
+                
+                {/* 🔥 BOTÓN QUE ABRE EL MODAL BONITO */}
+                <button
+                  onClick={() => setExamToDelete(exam.id)}
+                  className="ml-auto p-2 text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-900/20 rounded-lg transition"
+                  title="Eliminar examen"
+                >
+                  <Trash2 size={18} />
+                </button>
               </div>
             </div>
           ))}
