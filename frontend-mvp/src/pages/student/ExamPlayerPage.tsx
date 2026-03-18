@@ -50,6 +50,25 @@ export default function ExamPlayerPage() {
   const [startTime, setStartTime] = useState(Date.now());
 
   useEffect(() => {
+    const saved = localStorage.getItem(`progress_${id}`);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setAnswers(parsed);
+        console.log("🔥 Progreso de Ariana recuperado");
+      } catch (e) {
+        console.error("Error al recuperar progreso", e);
+      }
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (Object.keys(answers).length > 0) {
+      localStorage.setItem(`progress_${id}`, JSON.stringify(answers));
+    }
+  }, [answers, id]);
+
+  useEffect(() => {
     api.get(`/exams/${id}/check`).then((res) => {
       if (res.data.finished) navigate(`/student/results/${id}`);
     });
@@ -90,6 +109,7 @@ export default function ExamPlayerPage() {
 
     try {
       await api.post(`/exams/${id}/submit`, { answers, timings: finalTimings });
+      localStorage.removeItem(`progress_${id}`);
       navigate(`/student/results/${id}?show=summary`);
     } catch (error) {
       alert("Error al enviar");
