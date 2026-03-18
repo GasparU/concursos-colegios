@@ -6,7 +6,9 @@ import {
   UseGuards,
   Request,
   Param,
-  Delete
+  Delete,
+  Query,
+  Req
 } from '@nestjs/common';
 import { ExamsService } from './exams.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -16,10 +18,19 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class ExamsController {
   constructor(private readonly examsService: ExamsService) {}
 
-  // 1. Lista especial para el dashboard del estudiante (con isCompleted)
   @Get('student/list')
-  findAllForStudent(@Request() req) {
-    const userId = req.user.userId || req.user.id;
+  @UseGuards(JwtAuthGuard)
+  async getStudentExams(@Req() req) {
+    // 🔥 DEBUG EXTREMO: Mira tu terminal cuando Ariana entre a la lista
+    console.log("👤 ¿Quién pide la lista?:", req.user);
+
+    // Intentamos sacar el ID de todos los escondites posibles
+    const userId = req.user?.id || req.user?.sub || req.user?.userId;
+
+    if (!userId) {
+      console.error("🚨 ALERTA: No se encontró ID en req.user. Revisa tu JwtStrategy.");
+    }
+
     return this.examsService.findAllForStudent(userId);
   }
 
@@ -46,11 +57,11 @@ export class ExamsController {
   @Post(':id/submit')
   async submitExam(
     @Param('id') id: string,
-    @Body() body: { answers: any },
+    @Body() body: any,
     @Request() req,
   ) {
     const userId = req.user.userId || req.user.id || req.user.sub;
-    return this.examsService.submitExam(id, userId, body.answers);
+    return this.examsService.submitExam(id, userId, body);
   }
 
   // 6. Obtener un examen específico

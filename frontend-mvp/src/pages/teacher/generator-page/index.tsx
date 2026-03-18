@@ -181,8 +181,8 @@ export const GeneratorPage = () => {
           } catch (e) { /* ignorar fallo de restyle */ }
         }
 
-        let opcionesArmadas = data.opciones;
-        let letraCorrecta = data.correcta_letra || data.correcta;
+        let opcionesArmadas = data.options || (Array.isArray(data.opciones) ? null : data.opciones);
+        let letraCorrecta = data.correctAnswer || data.correct_answer || data.correcta_letra || data.correcta;
         const tiene5Opciones = opcionesArmadas && Object.keys(opcionesArmadas).length === 5;
 
         if (!tiene5Opciones) {
@@ -301,13 +301,11 @@ export const GeneratorPage = () => {
           hint: p.hint || null,
           math_data: p.math_data || p.mathData,
           visual_data: p.visual_data || p.visualData,
+          difficulty: p.dificultad_generada || 'basico'
           
-          // 💡 TIP: Si tus preguntas también requieren un tipo (ej. 'aritmetica')
-          // asegúrate de enviarlo aquí también si el schema lo pide.
-          // type: config.type // Por ejemplo
         })),
       };
-      console.log("🚀 Payload que sale del Frontend:", payload);
+     
 
       await api.post("/exams", payload);
 

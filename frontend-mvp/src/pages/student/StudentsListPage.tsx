@@ -195,7 +195,7 @@ export default function ResultsPage() {
                   {!isCorrect && (
                     <div className="mt-6 p-6 bg-indigo-50/80 dark:bg-indigo-900/10 rounded-xl border-2 border-indigo-100 dark:border-indigo-900/30 shadow-inner">
                       <div className="flex items-center gap-2 mb-3 text-indigo-700 dark:text-indigo-400 font-black text-xs uppercase tracking-widest">
-                        <Sparkles size={16} /> Profe Atiana 🤖
+                        <Sparkles size={16} /> Profesor albus dumbledore🤖
                       </div>
                       {/* 🔥 IA AUMENTA DE TAMAÑO */}
                       <div className="text-slate-800 dark:text-slate-200 font-medium leading-relaxed transition-all duration-200" style={{ fontSize: `${fontSize}px` }}>

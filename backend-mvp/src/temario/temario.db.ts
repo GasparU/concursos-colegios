@@ -188,7 +188,7 @@ export const TEMARIO_MAESTRO = {
     { nombre: "Sucesos numéricos probables e improbables", tipo: "conamat", subtipos: ["probabilidad_basica", "probabilidad_fraccion", "suceso_contrario", "extraccion_doble"] },
 
     // RAZONAMIENTO MATEMÁTICO
-    { nombre: "Sucesiones numéricas y alfabéticas", tipo: "conamat", subtipos: ["sucesion_numerica", "sucesion_alfabetica", "sucesion_decimal", "sucesion_fracciones"] },
+    { nombre: "Sucesiones numéricas y alfabéticas",tipo: "conamat", subtipos: ["sucesion_numerica", "sucesion_alfabetica","sucesion_alfanumerica", "sucesion_algebraica", "sucesion_intercalada", "sucesion_cuadratica"] },
     { nombre: "Operadores Matemáticos", tipo: "conamat", subtipos: ["lineal", "cuadratico", "fraccionario", "anidado"] },
     { nombre: "Criptoaritmética", tipo: "conamat", subtipos: ["criptoaritmetica"] },
     { nombre: "Problemas de Edades", tipo: "conamat", subtipos: ["problemas_edades"] },

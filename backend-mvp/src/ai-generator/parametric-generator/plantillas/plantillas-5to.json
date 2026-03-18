@@ -1410,73 +1410,7 @@
 "requiere_calculadora": false
 }
 },
-{
-"id": "sucesion_alfa_real_basico",
-"tema": "Sucesiones numéricas y alfabéticas",
-"subtipo": "sucesion_alfabetica",
-"grado": "5to",
-"etapa": ["clasificatoria"],
-"dificultad": ["basico"],
-"bidireccional": false,
-"variables": {
-"inicio": { "type": "number", "min": 1, "max": 5, "step": 1 },
-"salto": { "type": "number", "min": 2, "max": 4, "step": 1 }
-},
-"relaciones": [
-"t1 = inicio",
-"t2 = inicio + salto",
-"t3 = inicio + 2*salto",
-"ans = inicio + 3*salto"
-],
-"restricciones": [
-"ans <= 27"
-],
-"incognita_directa": "ans",
-"formato_respuesta": { "tipo": "entero" },
-"enunciado": "Halla la letra que sigue en la secuencia de posiciones: ${t1}, ${t2}, ${t3}, ...",
-"metadata": {
-"habilidades": ["sucesiones lineales", "abecedario"],
-"tiempo_estimado": 60,
-"requiere_calculadora": false
-}
-},
-{
-"id": "sucesion_alfa_real_intermedio",
-"tema": "Sucesiones numéricas y alfabéticas",
-"subtipo": "sucesion_alfabetica",
-"grado": "5to",
-"etapa": ["clasificatoria", "final"],
-"dificultad": ["intermedio"],
-"bidireccional": false,
-"variables": {
-"a1": { "type": "number", "min": 1, "max": 5, "step": 1 },
-"r1": { "type": "number", "min": 2, "max": 4, "step": 1 },
-"a2": { "type": "number", "min": 6, "max": 10, "step": 1 },
-"r2": { "type": "number", "min": 2, "max": 4, "step": 1 }
-},
-"relaciones": [
-"t1 = a1",
-"t2 = a2",
-"t3 = a1 + r1",
-"t4 = a2 + r2",
-"ans = a1 + 2*r1"
-],
-"restricciones": [
-"t1 <= 27",
-"t2 <= 27",
-"t3 <= 27",
-"t4 <= 27",
-"ans <= 27"
-],
-"incognita_directa": "ans",
-"formato_respuesta": { "tipo": "entero" },
-"enunciado": "Halla la letra que continúa en la secuencia: ${t1}, ${t2}, ${t3}, ${t4}, ...",
-"metadata": {
-"habilidades": ["sucesiones alternadas", "abecedario"],
-"tiempo_estimado": 90,
-"requiere_calculadora": false
-}
-},
+
 {
   "id": "descomp_basico",
   "tema": "aritmetica",
@@ -2842,186 +2776,172 @@
     "formato_respuesta": { "tipo": "fraccion" },
     "metadata": { "habilidades": ["espacio muestral"], "tiempo_estimado": 180 }
   },
-  {
+ {
     "id": "sucesion_num_basico_01",
     "tema": "Sucesiones numéricas y alfabéticas",
     "subtipo": "sucesion_numerica",
     "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
     "dificultad": ["basico"],
-    "enunciado": "Halla el término que sigue en la sucesión: ${a}, ${t2}, ${t3}, ${t4}, \\dots",
+    "bidireccional": true,
+    "enunciado": "En un entrenamiento, Ariana observa la siguiente secuencia de números: ${t1}, ${t2}, ${t3}, ${t4}, \\dots Calcula cuál será el número que ocupará la posición 15 ($t_{15}$).",
     "variables": {
-      "a": { "type": "number", "min": 2, "max": 10 },
-      "r": { "type": "number", "min": 2, "max": 5 }
+      "a": { "type": "number", "min": 2, "max": 15 },
+      "r": { "type": "number", "min": 3, "max": 6 }
     },
     "relaciones": [
-      "t2 = a + r",
-      "t3 = a + 2*r",
-      "t4 = a + 3*r",
-      "ans = a + 4*r"
+      "t1 = a", "t2 = a + r", "t3 = a + 2*r", "t4 = a + 3*r", "ans = a + 14*r"
     ],
     "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "entero" }
+    "incognitas_inversa": ["a", "r"],
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": {
+      "habilidades": ["sucesiones lineales", "progresión aritmética"],
+      "tiempo_estimado": 60,
+      "requiere_calculadora": false
+    }
   },
   {
-    "id": "sucesion_num_basico_02",
+    "id": "sucesion_letras_pura_01",
     "tema": "Sucesiones numéricas y alfabéticas",
-    "subtipo": "sucesion_numerica",
+    "subtipo": "sucesion_alfabetica",
     "grado": "5to",
+    "etapa": ["clasificatoria"],
     "dificultad": ["basico"],
-    "enunciado": "Determina el número que falta: ${x}, ${t2}, ${t3}, ${t4}, \\dots",
+    "bidireccional": false,
+    "enunciado": "Descifra el código secreto hallando la letra que sigue en la sucesión alfabética: ${t1}, ${t2}, ${t3}, ${t4}, \\dots",
     "variables": {
-      "x": { "type": "number", "min": 40, "max": 60 },
-      "k": { "type": "number", "min": 3, "max": 7 }
+      "ini": { "type": "number", "min": 1, "max": 5 },
+      "raz": { "type": "number", "min": 2, "max": 4 }
     },
     "relaciones": [
-      "t2 = x - k",
-      "t3 = x - 2*k",
-      "t4 = x - 3*k",
-      "ans = x - 4*k"
+      "t1 = letra(ini)", "t2 = letra(ini + raz)", "t3 = letra(ini + 2*raz)", "t4 = letra(ini + 3*raz)", "ans = letra(ini + 4*raz)"
     ],
     "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "entero" }
+    "formato_respuesta": { "tipo": "texto" },
+    "metadata": {
+      "habilidades": ["abecedario posicional"],
+      "tiempo_estimado": 45,
+      "requiere_calculadora": false
+    }
   },
   {
-  "id": "sucesion_num_avanzado_var",
-  "tema": "Sucesiones numéricas y alfabéticas",
-  "grado": "5to",
-  "dificultad": ["avanzado"],
-  "enunciado": "Calcula el valor del término que sigue: ${t1}, ${t2}, ${t3}, ${t4}, ...",
-  "variables": {
-  "A": { "type": "number", "min": 1, "max": 5, "step": 1 },
-  "B": { "type": "number", "min": 1, "max": 5, "step": 1 },
-  "C": { "type": "number", "min": 1, "max": 5, "step": 1 }
-  },
-  "relaciones": [
-  "t1 = A*1*1 + B*1 + C",
-  "t2 = A*2*2 + B*2 + C",
-  "t3 = A*3*3 + B*3 + C",
-  "t4 = A*4*4 + B*4 + C",
-  "resultado = A*5*5 + B*5 + C"
-  ],
-  "incognita_directa": "resultado",
-  "formato_respuesta": { "tipo": "entero" }
-  },
-  {
-    "id": "sucesion_mixta_experto_01",
+    "id": "sucesion_alfanumerica_mixta_01",
     "tema": "Sucesiones numéricas y alfabéticas",
+    "subtipo": "sucesion_alfanumerica",
     "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "Halla los valores de $x$ e $y$ en la sucesión alternada: ${t1}, ${t2}, ${t3}, ${t4}, ${t5}, ${t6}, x, y$.",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
+    "bidireccional": false,
+    "enunciado": "Un investigador analiza un patrón de códigos de seguridad. Determina el término alfanumérico que continúa en la serie: ${t1} ; ${t2} ; ${t3} ; ${t4} ; \\dots",
     "variables": {
-    "A1": { "type": "number", "min": 1, "max": 3, "step": 1 },
-    "B1": { "type": "number", "min": 1, "max": 3, "step": 1 },
-    "C1": { "type": "number", "min": 1, "max": 3, "step": 1 },
-    "A2": { "type": "number", "min": 1, "max": 3, "step": 1 },
-    "B2": { "type": "number", "min": 1, "max": 3, "step": 1 },
-    "C2": { "type": "number", "min": 1, "max": 3, "step": 1 }
+      "num_ini": { "type": "number", "min": 2, "max": 7 },
+      "num_raz": { "type": "number", "min": 2, "max": 5 },
+      "let_ini": { "type": "number", "min": 1, "max": 4 },
+      "let_raz": { "type": "number", "min": 1, "max": 3 }
     },
     "relaciones": [
-    "t1 = A1*1*1 + B1*1 + C1",
-    "t2 = A2*1*1 + B2*1 + C2",
-    "t3 = A1*2*2 + B1*2 + C1",
-    "t4 = A2*2*2 + B2*2 + C2",
-    "t5 = A1*3*3 + B1*3 + C1",
-    "t6 = A2*3*3 + B2*3 + C2",
-    "x = A1*4*4 + B1*4 + C1",
-    "y = A2*4*4 + B2*4 + C2"
-    ],
-    "incognita_directa": ["x", "y"],
-    "formato_respuesta": { "tipo": "compuesto" }
-    },
-  {
-    "id": "sucesion_dec_aritmetica_01",
-    "tema": "Sucesiones numéricas y alfabéticas",
-    "grado": "5to",
-    "dificultad": ["intermedio", "avanzado"],
-    "enunciado": "¿Qué número continúa en la siguiente progresión? ${t1} ; ${t2} ; ${t3} ; ${t4} ; ...",
-    "variables": {
-    "A": { "type": "number", "min": 1, "max": 5, "step": 1 },
-    "B": { "type": "number", "min": 1, "max": 5, "step": 1 },
-    "C": { "type": "number", "min": 1, "max": 5, "step": 1 }
-    },
-    "relaciones": [
-    "t1 = A*1*1 + B*1 + C",
-    "t2 = A*2*2 + B*2 + C",
-    "t3 = A*3*3 + B*3 + C",
-    "t4 = A*4*4 + B*4 + C",
-    "ans = A*5*5 + B*5 + C"
+      "t1 = str(num_ini, letra(let_ini))", 
+      "t2 = str(num_ini + num_raz, letra(let_ini + let_raz))", 
+      "t3 = str(num_ini + 2*num_raz, letra(let_ini + 2*let_raz))", 
+      "t4 = str(num_ini + 3*num_raz, letra(let_ini + 3*let_raz))", 
+      "ans = str(num_ini + 4*num_raz, letra(let_ini + 4*let_raz))"
     ],
     "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "decimal", "decimales": 2 }
-    },
-  {
-    "id": "sucesion_dec_geometrica_01",
-    "tema": "Sucesiones numéricas y alfabéticas",
-    "grado": "5to",
-    "dificultad": ["avanzado", "experto"],
-    "enunciado": "Indica el número que sigue:\n ${a} ; ${t2} ; ${t3} ; ${t4} ; \\dots",
-    "variables": {
-      "a": { "type": "number", "min": 0.02, "max": 0.08, "step": 0.02 },
-      "r": { "type": "number", "min": 2, "max": 5, "step": 1 }
-    },
-    "relaciones": [
-      "t2 = a * r",
-      "t3 = a * r * r",
-      "t4 = a * r * r * r",
-      "ans = a * r * r * r * r"
-    ],
-    "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "decimal", "decimales": 2 }
+    "formato_respuesta": { "tipo": "texto" },
+    "metadata": {
+      "habilidades": ["sucesiones combinadas"],
+      "tiempo_estimado": 90,
+      "requiere_calculadora": false
+    }
   },
   {
-    "id": "sucesion_mixta_xy_01",
+    "id": "sucesion_algebraica_01",
     "tema": "Sucesiones numéricas y alfabéticas",
+    "subtipo": "sucesion_algebraica",
     "grado": "5to",
-    "dificultad": ["experto"],
-    "enunciado": "Dada la sucesión alternada, calcula el valor de $x + y$.\n ${t1} ; ${t2} ; ${t3} ; ${t4} ; ${t5} ; ${t6} ; x ; y",
+    "etapa": ["final"],
+    "dificultad": ["intermedio"],
+    "bidireccional": false,
+    "enunciado": "Determina la regla de formación (término general $t_n$) que gobierna el comportamiento de la siguiente sucesión: ${t1}, ${t2}, ${t3}, ${t4}, \\dots",
     "variables": {
-      "a": { "type": "number", "min": 2, "max": 8, "step": 1 },
-      "ra": { "type": "number", "min": 2, "max": 5, "step": 1 },
-      "b": { "type": "number", "min": 1, "max": 5, "step": 1 },
-      "rb": { "type": "number", "min": 2, "max": 3, "step": 1 }
+      "r": { "type": "number", "min": 2, "max": 7 },
+      "c": { "type": "number", "min": 1, "max": 9 }
     },
     "relaciones": [
-      "t1 = a",
-      "t2 = b",
-      "t3 = a + ra",
-      "t4 = b * rb",
-      "t5 = a + 2*ra",
-      "t6 = b * rb * rb",
-      "x = a + 3*ra",
-      "y = b * rb * rb * rb",
-      "ans = x + y"
+      "t1 = r*1 + c", "t2 = r*2 + c", "t3 = r*3 + c", "t4 = r*4 + c", 
+      "ans = str('$', r, 'n + ', c, '$')"
     ],
     "incognita_directa": "ans",
-    "formato_respuesta": { "tipo": "entero" }
+    "formato_respuesta": { "tipo": "texto" },
+    "metadata": {
+      "habilidades": ["término enésimo", "álgebra básica"],
+      "tiempo_estimado": 90,
+      "requiere_calculadora": false
+    }
   },
   {
-    "id": "sucesion_fracciones_01",
+    "id": "sucesion_avanzada_intercalada_01",
     "tema": "Sucesiones numéricas y alfabéticas",
+    "subtipo": "sucesion_intercalada",
     "grado": "5to",
+    "etapa": ["final"],
     "dificultad": ["avanzado"],
-    "enunciado": "Encuentra la fracción que sigue en la secuencia: \\frac{${n1}}{${d1}} ; \\frac{${n2}}{${d2}} ; \\frac{${n3}}{${d3}} ; \\dots",
+    "bidireccional": false,
+    "enunciado": "Ariana se ha dado cuenta de que esta secuencia tiene 'truco': ¡son dos patrones que se mezclan uno tras otro! ¿Qué número sigue en: ${t1}, ${t2}, ${t3}, ${t4}, ${t5}, ${t6}, \\dots?",
     "variables": {
-    "An": { "type": "number", "min": 1, "max": 3, "step": 1 },
-    "Bn": { "type": "number", "min": 1, "max": 3, "step": 1 },
-    "Cn": { "type": "number", "min": 1, "max": 3, "step": 1 },
-    "Ad": { "type": "number", "min": 2, "max": 4, "step": 1 },
-    "Bd": { "type": "number", "min": 3, "max": 6, "step": 1 }
+      "base1": { "type": "number", "min": 2, "max": 10 },
+      "salto1": { "type": "number", "min": 2, "max": 5 },
+      "base2": { "type": "number", "min": 50, "max": 100 },
+      "salto2": { "type": "number", "min": -10, "max": -3 }
     },
     "relaciones": [
-    "n1 = An*1*1 + Bn*1 + Cn",
-    "n2 = An*2*2 + Bn*2 + Cn",
-    "n3 = An*3*3 + Bn*3 + Cn",
-    "num = An*4*4 + Bn*4 + Cn",
-    "d1 = Ad*1 + Bd",
-    "d2 = Ad*2 + Bd",
-    "d3 = Ad*3 + Bd",
-    "den = Ad*4 + Bd"
+      "t1 = base1",
+      "t2 = base2",
+      "t3 = base1 + salto1",
+      "t4 = base2 + salto2",
+      "t5 = base1 + salto1 * 2",
+      "t6 = base2 + salto2 * 2",
+      "ans = base1 + salto1 * 3"
     ],
-    "incognita_directa": ["num", "den"],
-    "formato_respuesta": { "tipo": "fraccion" }
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": {
+      "habilidades": ["percepción de patrones dobles", "pensamiento lateral"],
+      "tiempo_estimado": 80,
+      "requiere_calculadora": false
+    }
+},
+{
+    "id": "sucesion_experto_01",
+    "tema": "Sucesiones numéricas y alfabéticas",
+    "subtipo": "sucesion_cuadratica",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
+    "bidireccional": false,
+    "enunciado": "Halla la regla de correspondencia $t_n$ de la siguiente sucesión polinomial de segundo orden: ${t1}, ${t2}, ${t3}, ${t4}, \\dots",
+    "variables": {
+      "A": { "type": "number", "min": 1, "max": 3 },
+      "B": { "type": "number", "min": 1, "max": 4 },
+      "C": { "type": "number", "min": 1, "max": 5 }
     },
+    "relaciones": [
+      "t1 = A*1*1 + B*1 + C", 
+      "t2 = A*2*2 + B*2 + C", 
+      "t3 = A*3*3 + B*3 + C", 
+      "t4 = A*4*4 + B*4 + C", 
+      "ans = str('$', A, 'n^2 + ', B, 'n + ', C, '$')"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "texto" },
+    "metadata": {
+      "habilidades": ["término enésimo cuadrático", "abstracción algebraica"],
+      "tiempo_estimado": 150,
+      "requiere_calculadora": false
+    }
+},
+
   {
     "id": "probabilidad_clasica_intermedio",
     "tema": "Sucesos numéricos y no numéricos probables e improbables",

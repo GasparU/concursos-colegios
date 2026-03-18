@@ -26,6 +26,7 @@ export class ExamsService {
       4. Usa LaTeX $...$ para toda la matemática.
       5. Termina con un "Truco:" de 1 sola línea si es posible.
       6. Puedes darlo en "paso 1, paso 2, paso 3". Pero no más de 6 pasos ni tantas lineas, es matematica, no te va a leer explicaciones, solo pasos directos.
+      7. Si usas palabras con tildes o la letra Ñ dentro de LaTeX $...$, DEBES envolverlas en \\text{...}. Ejemplo: $t_{\\text{término}}$ en lugar de $t_{término}$.
 
       Problema: ${questionMarkdown}
       Opciones: ${JSON.stringify(options)}
@@ -82,46 +83,87 @@ export class ExamsService {
     }
   }
 
-  // --- 🚀 SUBMIT: EVALÚA Y GENERA IA AL INSTANTE ---
-  async submitExam(examId: string, studentId: string, answers: any) {
+  async submitExam(examId: string, studentId: string, payload: any) {
+    // 🛡️ Extraemos con seguridad. Si algo no viene, ponemos {}
+    const answers = payload?.answers || {};
+    const timings = payload?.timings || {};
+    
+    // 🔥 DEBUG: Mira tu terminal negra cuando Ariana termine. Verás esto:
+    console.log("📥 DATOS RECIBIDOS EN EL SERVER:", { answers, timings });
+
     const exam = await this.prisma.exam.findUnique({
       where: { id: examId },
-      include: { questions: true },
+      include: { questions: { orderBy: { order: 'asc' } } }, 
     });
 
     if (!exam) throw new NotFoundException('Examen no encontrado');
 
     let score = 0;
     const failedQuestions: any[] = [];
+    
+    const total = exam.questions.length;
+    const limitBasico = Math.floor(total * 0.30);    
+    const limitIntermedio = Math.floor(total * 0.70); 
 
-    // 1. Calificamos a la velocidad de la luz
-    exam.questions.forEach((q) => {
-      if (answers[q.id] === q.correctAnswer) {
+    const details: any = {
+      basico: { correct: 0, total: 0, totalTime: 0 },
+      intermedio: { correct: 0, total: 0, totalTime: 0 },
+      avanzado: { correct: 0, total: 0, totalTime: 0 }
+    };
+
+    exam.questions.forEach((q, index) => {
+      let nivel: 'basico' | 'intermedio' | 'avanzado' = 'basico';
+      if (index >= limitBasico && index < limitIntermedio) nivel = 'intermedio';
+      else if (index >= limitIntermedio) nivel = 'avanzado';
+
+      details[nivel].total++;
+      
+      // 🔥 PROTECCIÓN ANTI-CRASH: Si no hay tiempo para este ID, usamos 0
+      const timeSpent = timings[q.id] || 0;
+      details[nivel].totalTime += Number(timeSpent);
+
+      // 🔥 COMPARACIÓN ULTRA-SEGURA
+      const userAns = String(answers[q.id] || "").trim().toUpperCase();
+      const correctAns = String(q.correctAnswer || "").trim().toUpperCase();
+
+      // Si el ID coincide y la letra es igual, es punto
+      if (userAns === correctAns && userAns !== "") {
         score++;
+        details[nivel].correct++; 
       } else {
         failedQuestions.push(q);
       }
     });
 
-    // 2. Guardamos el resultado en la BD ¡AL INSTANTE! (0.1 segundos)
+    const finalDetails = {};
+    Object.keys(details).forEach(key => {
+      const d = details[key];
+      const avg = d.total > 0 ? Math.round(d.totalTime / d.total) : 0;
+      finalDetails[key] = {
+        correct: d.correct,
+        total: d.total,
+        avgTimeStr: `${avg}s / preg` 
+      };
+    });
+
     const savedResult = await this.prisma.examResult.create({
       data: {
         examId,
         studentId,
         score,
-        total: exam.questions.length,
+        total,
         answers,
         startTime: new Date(),
         endTime: new Date(),
+        details: finalDetails 
       },
     });
 
-    // 3. 🔥 FIRE AND FORGET: Disparamos la IA en segundo plano SIN AWAIT
+    // Procesamos IA solo para las falladas
     this.processAIInBackground(failedQuestions).catch(err => 
       console.error("Error en proceso IA de fondo:", err)
     );
 
-    // 4. Respondemos al frontend inmediatamente
     return savedResult;
   }
 
@@ -171,51 +213,123 @@ export class ExamsService {
     };
   }
 
-  // --- 📝 LISTADO PARA ALUMNOS ---
-  async findAllForStudent(userId: string) {
-    const exams = await this.prisma.exam.findMany({
-      include: {
-        examResults: {
-          where: { studentId: userId },
-          select: { id: true }
-        }
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+ async findAllForStudent(userId: string) {
+    // 🔥 1. VALLA DE SEGURIDAD: Si el ID llega vacío o 'undefined', no tocamos la base de datos
+    if (!userId || userId === 'undefined') {
+      console.error("⚠️ findAllForStudent: El userId llegó vacío o es undefined. Revisa el Controller.");
+      return []; // Devolvemos una lista vacía para que no explote el frontend
+    }
 
-    return exams.map(exam => ({
-      ...exam,
-      // @ts-ignore
-      isCompleted: (exam.examResults?.length || 0) > 0 
-    }));
+    try {
+      // 2. Buscamos quién pide la info
+      const requester = await this.prisma.user.findUnique({ where: { id: userId } });
+      
+      // 🔥 3. Si el ID existe pero no está en la DB (raro), evitamos el error de 'requester.role'
+      if (!requester) {
+        console.error(`⚠️ Usuario con ID ${userId} no existe en la base de datos.`);
+        return [];
+      }
+
+      let targetStudentId = userId;
+
+      // 🔥 4. Lógica Automática: Si eres Docente, buscamos a la única alumna (Ariana)
+      if (requester.role === 'DOCENTE') {
+        const student = await this.prisma.user.findFirst({
+          where: { role: 'ESTUDIANTE' }
+        });
+        if (student) {
+          targetStudentId = student.id;
+        } else {
+          console.warn("⚠️ Eres docente pero no hay ningún ESTUDIANTE registrado.");
+        }
+      }
+
+      // 5. Traemos los exámenes e incluimos los resultados del alumno objetivo
+      const exams = await this.prisma.exam.findMany({
+        include: {
+          examResults: {
+            where: { studentId: targetStudentId },
+            orderBy: { createdAt: 'desc' },
+          }
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      // 6. Mapeamos los datos de forma segura
+      return exams.map(exam => {
+        const results = exam.examResults || [];
+        const lastResult = results[0] || null;
+
+        return {
+          ...exam,
+          isCompleted: !!lastResult,
+          score: lastResult?.score ?? 0,
+          totalQuestions: exam.questionsCount || 0,
+          dateCompleted: lastResult?.endTime ?? null,
+          studentScore: lastResult?.score,
+          details: lastResult?.details || null, 
+          examResults: results 
+        };
+      });
+    } catch (error) {
+      // Este log te dirá exactamente qué pasó si algo falla adentro
+      console.error("❌ Error crítico en findAllForStudent:", error);
+      throw new Error("Error interno al recuperar los exámenes");
+    }
   }
 
-  // --- 🛠️ MÉTODOS CRUD ---
   async create(data: any, userId: string) {
     const { questions, ...examData } = data;
 
+    // 🔥 CONFIGURACIÓN DE ESCALERA
+    const P_BASICO = 0.30; 
+    const P_INTERMEDIO = 0.40;
+
+    const total = questions.length;
+    const cantBasico = Math.floor(total * P_BASICO);
+    const cantIntermedio = Math.floor(total * P_INTERMEDIO);
+
+    const isStandard = ['TAREA', 'CLASE', 'SIMULACRO'].includes(examData.type);
+    
+    // 🔥 ORDENAMIENTO REAL: Usamos el campo 'difficulty' que ahora sí envía el frontend
+    const sortedQuestions = [...questions]
+      .filter(q => !(isStandard && (q.difficulty === 'experto' || q.dificultad?.includes('experto'))))
+      .sort((a, b) => {
+        const pesos: Record<string, number> = { 'basico': 1, 'intermedio': 2, 'avanzado': 3, 'experto': 4 };
+        const pesoA = pesos[a.difficulty || a.dificultad?.[0]] || 1;
+        const pesoB = pesos[b.difficulty || b.dificultad?.[0]] || 1;
+        return pesoA - pesoB;
+      });
+
     return this.prisma.exam.create({
       data: {
+        ...examData,
         title: examData.title || 'Sin título',
-        type: examData.type,
-        grade: examData.grade,
-        stage: examData.stage,
-        difficulty: examData.difficulty,
-        questionsCount: questions.length,
-        deadline: examData.deadline,
-        durationMinutes: examData.durationMinutes,
+        questionsCount: sortedQuestions.length,
         docenteId: userId,
         questions: {
-          create: questions.map((q: any, index: number) => ({
-            order: index + 1,
-            questionMarkdown: q.question_markdown || q.questionMarkdown || '',
-            options: q.options || {},
-            correctAnswer: String(q.correct_answer || q.correctAnswer || ''),
-            solutionMarkdown: q.solution_markdown || q.solutionMarkdown || 'No hay solución detallada.',
-            hint: q.hint || null,
-            mathData: q.math_data || q.mathData || {},
-            visualData: q.visual_data || q.visualData || {},
-          })),
+          create: sortedQuestions.map((q: any, index: number) => {
+            // 🔥 ASIGNACIÓN DE COLORES BASADA EN LA POSICIÓN DE LA ESCALERA
+            let color = "emerald"; 
+            if (index >= cantBasico && index < (cantBasico + cantIntermedio)) color = "amber";
+            if (index >= (cantBasico + cantIntermedio)) color = "rose";
+            if (q.difficulty === 'experto' || q.dificultad?.includes('experto')) color = "violet";
+
+            // 🛡️ Aseguramos que visualData sea un objeto para meter el color
+            const vData = q.visual_data || q.visualData || {};
+
+            return {
+              order: index + 1,
+              questionMarkdown: q.question_markdown || q.questionMarkdown || '',
+              options: q.options || {},
+              correctAnswer: String(q.correct_answer || q.correctAnswer || ''),
+              solutionMarkdown: q.solution_markdown || q.solutionMarkdown || 'No hay solución detallada.',
+              hint: q.hint || null,
+              mathData: q.math_data || q.mathData || {},
+              // 🔥 Aquí se guarda el color que el estudiante verá
+              visualData: { ...vData, difficultyColor: color },
+            };
+          }),
         },
       },
       include: { questions: true },

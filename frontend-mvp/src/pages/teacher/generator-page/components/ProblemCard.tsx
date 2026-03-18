@@ -175,7 +175,12 @@ export default function ProblemCard({
           <div className={`prose max-w-none mb-1 ${currentFont} ${isDark ? "prose-invert" : "prose-slate"}`}>
             <ReactMarkdown
               remarkPlugins={[remarkMath]}
-              rehypePlugins={[rehypeKatex]}
+              rehypePlugins={[
+                  [rehypeKatex, { 
+                    strict: false,       // 🔥 ESTO: Le dice a KaTeX que no sea tan llorón con la Ñ
+                    throwOnError: false  // Evita que la app se rompa si hay un error de sintaxis
+                  }]
+                ]}
               components={{
                 p: ({ children }) => (
                   <p className={`mb-3 leading-relaxed ${textBodyColor}`}>

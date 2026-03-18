@@ -75,7 +75,7 @@ export default function ResultsPage() {
 
   const grade = ((result.score / result.total) * 20).toFixed(1);
 
-  const getVisualParams = (visualDataRaw: any, qId: string) => {
+  const getVisualParams = (visualDataRaw: any) => {
     if (!visualDataRaw) return null;
     try {
       let data = typeof visualDataRaw === 'string' ? JSON.parse(visualDataRaw) : visualDataRaw;
@@ -144,7 +144,7 @@ export default function ResultsPage() {
               const userAnsKey = safeAnswers[q.id] || "";
               const isCorrect = userAnsKey.toUpperCase() === String(q.correctAnswer).toUpperCase();
               const options = q.options || {};
-              const visual = getVisualParams(q.visualData, q.id);
+              const visual = getVisualParams(q.visualData);
 
               // 🔥 DETECTA SI ES SEGMENTO PARA APLASTAR EL LIENZO
               const isSegment = visual && (visual.type === 'segmentos' || visual.theme === 'segmentos');
@@ -164,7 +164,7 @@ export default function ResultsPage() {
                   </div>
 
                   {/* 🔥 EL DIBUJO CON ALTURA INTELIGENTE (Segmentos = h-32 en lugar de un bloque enorme) */}
-                  {visual && (
+                  {visual && (visual.theme || visual.type) && (
                     <div className="w-full max-w-4xl bg-white dark:bg-slate-900 rounded-xl border-2 border-slate-200 dark:border-slate-700 my-4 overflow-hidden shadow-sm flex items-center justify-center">
                       <div className={`w-full flex items-center justify-center ${isSegment ? 'h-32 md:h-40' : 'aspect-[21/6]'}`}>
                          <MafsGeometryRenderer visualData={visual} />
@@ -175,30 +175,36 @@ export default function ResultsPage() {
                   {/* 🔥 OPCIONES EN LÍNEA: A) y su respuesta en la misma fila y achatados */}
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-2 md:gap-3 mb-4 w-full">
                     {['A', 'B', 'C', 'D', 'E'].map((letter) => {
-                      const val = options[letter] ?? options[letter.toLowerCase()];
-                      if (val === undefined || val === null) return null; 
+                        const val = options[letter] ?? options[letter.toLowerCase()];
+                        if (val === undefined || val === null) return null; 
 
-                      const isUserChoice = userAnsKey.toUpperCase() === letter;
-                      const isCorrectChoice = String(q.correctAnswer).toUpperCase() === letter;
+                        const isUserChoice = String(userAnsKey).toUpperCase() === letter;
+                        const isCorrectChoice = String(q.correctAnswer).toUpperCase() === letter;
 
-                      return (
-                        <div key={letter} className={`px-3 py-2 rounded-lg border-2 flex flex-row items-center gap-3 transition-all ${
-                          isUserChoice 
-                            ? (isCorrect ? 'bg-emerald-50 border-emerald-400 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 shadow-sm' : 'bg-red-50 border-red-400 dark:bg-red-900/30 text-red-800 dark:text-red-300 shadow-sm') 
-                            : (isCorrectChoice ? 'bg-emerald-50 border-emerald-400 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 shadow-sm' : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400')
-                        }`}>
-                          <span className="font-black opacity-50 text-sm shrink-0">{letter})</span>
-                          <span className="font-bold whitespace-nowrap overflow-hidden text-ellipsis" style={{ fontSize: `${Math.max(14, fontSize - 2)}px` }}><Latex>{String(val)}</Latex></span>
-                        </div>
-                      );
-                    })}
+                        return (
+                          <div key={letter} className={`px-3 py-2 rounded-lg border-2 flex flex-row items-center gap-3 transition-all ${
+                            isUserChoice 
+                              ? (isCorrect ? 'bg-emerald-50 border-emerald-400' : 'bg-red-50 border-red-400') 
+                              : (isCorrectChoice ? 'bg-emerald-50 border-emerald-400 opacity-80' : 'bg-white border-slate-200')
+                          }`}>
+                            <span className="font-black opacity-50 text-sm shrink-0">{letter})</span>
+                            <span className="font-bold flex-1"><Latex>{String(val)}</Latex></span>
+                            {/* 🔥 INDICADOR VISUAL PARA SABER QUÉ MARCÓ ARIANA */}
+                            {isUserChoice && (
+                              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-white/50 border border-current">
+                                Tu elección
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
                   </div>
 
                   {/* 🔥 EXPLICACIÓN DE IA CON SALTOS DE LÍNEA (Listas y pasos hacia abajo) */}
                   {!isCorrect && (
                     <div className="mt-4 p-5 bg-indigo-50/80 dark:bg-indigo-900/10 rounded-xl border-2 border-indigo-100 dark:border-indigo-900/30 shadow-inner">
                       <div className="flex items-center gap-2 mb-3 text-indigo-700 dark:text-indigo-400 font-black text-xs uppercase tracking-widest">
-                        <Sparkles size={16} /> Profe Atiana 🤖
+                        <Sparkles size={16} /> Profesor albus dumbledore 🤖
                       </div>
                       <div className="text-slate-800 dark:text-slate-200 font-medium leading-relaxed transition-all duration-200 whitespace-pre-wrap" style={{ fontSize: `${fontSize}px` }}>
                         <Latex>{q.solutionMarkdown}</Latex>

@@ -3,12 +3,12 @@ import { useAuthStore } from "../store/authStore";
 import {
   LayoutDashboard,
   FileText,
-  Users,
   LogOut,
   Moon,
   Sun,
   ChevronLeft,
   ChevronRight,
+  Trophy,
 } from "lucide-react";
 // 🔥 IMPORTANTE: Ahora solo usamos uiStore (themeStore ya no existe)
 import { useUiStore } from "../store/uiStore";
@@ -37,12 +37,11 @@ export default function Sidebar({ isMobile = false, onClose }: SidebarProps) {
       ? [
           { icon: LayoutDashboard, label: "Dashboard", path: "/teacher" },
           { icon: FileText, label: "Exámenes", path: "/teacher/exams" },
-          { icon: Users, label: "Estudiantes", path: "/teacher/students" },
         ]
       : [
-          { icon: LayoutDashboard, label: "Dashboard", path: "/student" },
-          { icon: FileText, label: "Exámenes", path: "/student/exams" },
-          { icon: Users, label: "Resultados", path: "/student/results" },
+          // 🔥 Solo 2 pestañas para Ariana
+          { icon: LayoutDashboard, label: "Mis Misiones", path: "/student/exams" },
+          { icon: Trophy, label: "Mi Progreso", path: "/student/results" },
         ];
 
   const isActive = (path: string) => location.pathname === path;

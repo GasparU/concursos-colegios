@@ -90,6 +90,7 @@ model ExamResult {
   score       Int
   total       Int
   answers     Json
+  details     Json?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }

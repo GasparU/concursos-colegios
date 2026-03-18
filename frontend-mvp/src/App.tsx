@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/authStore";
 
@@ -25,12 +24,7 @@ import SimpleTestPage from "./pages/teacher/SimpleTestPage";
 import ExamPrestart from "./pages/student/ExamPrestart";
 
 function App() {
-  const { user, loading, checkAuth } = useAuthStore();
-
-
-  useEffect(() => {
-    checkAuth().finally(() => console.log("checkAuth finalizado"));
-  }, []);
+  const { user, loading,  } = useAuthStore();
 
   if (loading) return <div className="p-4">Cargando...</div>;
 
@@ -63,6 +57,7 @@ function App() {
             <Route element={<StudentLayout />}>
               <Route path="/student" element={<StudentExamList />} />
               <Route path="/student/exams" element={<StudentExamList />} />
+              <Route path="/student/results" element={<ClassDashboard />} />
               <Route path="/student/exam-prestart/:id" element={<ExamPrestart />} />
               <Route path="/student/exam/:id" element={<ExamPlayerPage />} />
               <Route path="/student/results/:id" element={<ResultsPage />} />

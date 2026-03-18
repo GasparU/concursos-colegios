@@ -95,39 +95,42 @@ export class ParametricGeneratorService {
     "Criptoaritmética": ["criptoaritmetica"]
   };
 
- // 1. ESTA ES LA FUNCIÓN DE ENTRADA (Conecta con seleccionarPorScore)
+ 
+  // 1. ESTA ES LA FUNCIÓN DE ENTRADA (Conecta con seleccionarPorScore)
   buscarPlantillaPorCriterios(temaConamat: string, grado: string, dificultad: string, variacion: number = 0): Plantilla {
-  // 🔥 EL NORMALIZADOR SUPREMO: Quita tildes, dos puntos, guiones y símbolos raros
-const normalize = (str: string) => 
-  str?.toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // Quita tildes
-    .replace(/[:.,\-]/g, " ")       // 👈 ESTA ES LA CLAVE: Cambia símbolos por espacios
-    .replace(/\s+/g, " ")           // Quita espacios dobles
-    .trim() || "";
-  
-  const safeGrado = normalize(grado) || "5to"; // 🔥 Normalizado
-  // 🔥 EL FILTRO RELAJADO: Si es mixto, no filtramos por dificultad
-  const difNormalizada = (dificultad || "").toLowerCase().trim();
-  
-  // 🔥 Filtro de grado blindado (compara normalizados)
-  const plantillasDelGrado = this.plantillas.filter(p => {
-  const gradoMatch = normalize(p.grado) === safeGrado;
-  // Si no es mixto, validamos dificultad. Si ES mixto, solo grado.
-  if (difNormalizada === "mixto" || difNormalizada === "concurso") return gradoMatch;
-  return gradoMatch && p.dificultad.some(d => normalize(d) === difNormalizada);
-});
+    const normalize = (str: string) => 
+      str?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[:.,\-]/g, " ").replace(/\s+/g, " ").trim() || "";
+    
+    const safeGrado = normalize(grado) || "5to";
+    let difBuscada = (dificultad || "").toLowerCase().trim();
+    
+    // 🔥 EL HACK DE ORDEN MIXTO (20% Básico, 50% Inter, 30% Avanzado)
+    if (difBuscada === "mixto" || difBuscada === "concurso") {
+        const v = variacion % 10;
+        if (v < 2) difBuscada = "basico";           
+        else if (v < 7) difBuscada = "intermedio";  
+        else difBuscada = "avanzado";               
+    }
+    
+    // 1. Obtenemos TODAS las plantillas del grado para tener un "Plan B"
+    const plantillasDelGrado = this.plantillas.filter(p => normalize(p.grado) === safeGrado);
+    
+    // 2. Filtramos solo las que coinciden con la dificultad estricta
+    const plantillasDificultadEstricta = plantillasDelGrado.filter(p => 
+      // 🔥 CIRUGÍA: Escudo anti-nulos por si alguna plantilla del JSON no tiene el campo "dificultad"
+      (p.dificultad || []).some(d => normalize(d) === difBuscada)
+    );
 
-  const mejorPlantilla = this.seleccionarPorScore(plantillasDelGrado, temaConamat, safeGrado, variacion);
-
-  if (mejorPlantilla) {
-    const coincideDificultad = mejorPlantilla.dificultad.some(d => d && d.toString().toLowerCase().includes(difNormalizada));
-    if (!coincideDificultad) {
-      console.log(`⚠️ Forzando tema "${mejorPlantilla.tema}".`);
+    try {
+        // 🔥 INTENTO 1: Buscar el tema con la dificultad perfecta
+        return this.seleccionarPorScore(plantillasDificultadEstricta, temaConamat, safeGrado, variacion);
+    } catch (error) {
+        // 🚨 SALVAVIDAS ANTI-CRASH: Si falla porque ese tema no tiene esa dificultad específica,
+        // relajamos el filtro y usamos TODAS las plantillas del grado para no enviarlo a la IA
+        console.warn(`⚠️ Salvavidas activado: El tema no tiene dificultad "${difBuscada}". Rescatando plantilla original...`);
+        return this.seleccionarPorScore(plantillasDelGrado, temaConamat, safeGrado, variacion);
     }
   }
-  return mejorPlantilla;
-}
 
   // 2. TU FUNCIÓN ACTUALIZADA (A prueba de balas y conectada)
   private seleccionarPorScore(candidatas: any[], temaUsuario: string, gradoUsuario: string, variacion: number = 0): any {
@@ -241,6 +244,11 @@ const normalize = (str: string) =>
           ceil: Math.ceil,
           round: Math.round,
           abs: Math.abs,
+          str: (...args: any[]) => args.join('').replace(/\s*\+\s*\-/g, ' - ').replace(/\+\-/g, '-'),
+          letra: (n: number) => {
+              const idx = (Math.round(n) - 1) % 27;
+              return 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'[idx < 0 ? idx + 27 : idx];
+          },
         };
 
         for (const rel of plantilla.relaciones) {
@@ -308,9 +316,10 @@ const normalize = (str: string) =>
         // 🔥 ESCUDO ANTI-CRASH INTELIGENTE (0 decimales para Geo, Redondeo para Aritmética)
         // =====================================================================
         const esGeometriaOCripto = plantilla.id.startsWith('geo_') || plantilla.id.startsWith('rm_');
+
+        const esAlgebraTexto = typeof respuestaFinal === 'string';
         
-        if (esGeometriaOCripto) {
-            // REGLA ESTRICTA: Geometría y Cripto REQUIEREN enteros perfectos
+        if (esGeometriaOCripto && !esAlgebraTexto) { 
             let rechazar = false;
             const resNum = Number(respuestaFinal);
             if (!isNaN(resNum) && !Number.isInteger(resNum)) rechazar = true;
@@ -323,7 +332,7 @@ const normalize = (str: string) =>
             if (rechazar) {
                 throw new Error('Geometría requiere números enteros. Recalculando...');
             }
-        } else {
+        } if (!esAlgebraTexto) {
             // REGLA SUAVE: Aritmética permite decimales, pero los REDONDEAMOS para no crashear la UI
             const redondear = (num: any) => {
                 if (typeof num === 'number' && !Number.isInteger(num)) {
@@ -360,13 +369,85 @@ const normalize = (str: string) =>
         }
 
         console.log(`[Intento ${intento}] Valores generados:`, valores);
+        
+        
+        // 🔥 CIRUGÍA 2: GENERADOR INTELIGENTE DE ALTERNATIVAS CON LATEX Y LETRA VERDE
+        let opcionesMap: Record<string, string> = {};
+        const subtipo = plantilla.subtipo || '';
+        const resStr = String(respuestaFinal);
+        let distractores: string[] = [];
+
+        try {
+            if (subtipo === 'sucesion_alfabetica') {
+                const abc = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+                const idx = abc.indexOf(resStr);
+                if (idx !== -1) {
+                    const getL = (i: number) => abc[(i + 54) % 27];
+                    distractores = [getL(idx + 1), getL(idx - 1), getL(idx + 2), getL(idx - 2)];
+                }
+            } else if (subtipo === 'sucesion_alfanumerica') {
+                const match = resStr.match(/(\d+)([A-ZÑ])/);
+                if (match) {
+                    const num = parseInt(match[1]);
+                    const char = match[2];
+                    const abc = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+                    const cIdx = abc.indexOf(char);
+                    const getL = (i: number) => abc[(i + 54) % 27];
+                    distractores = [`${num + 1}${char}`, `${num - 1}${getL(cIdx + 1)}`, `${num}${getL(cIdx + 1)}`, `${num + 2}${getL(cIdx - 1)}`];
+                }
+            } else if (subtipo === 'sucesion_algebraica') {
+                const r = valores.r || 2;
+                const c = valores.c || 1;
+                // 🔥 Inyectamos los $ para que ReactMarkdown los pinte como fórmulas
+                const fmt = (coef: number, cte: number) => `$${coef}n ${cte < 0 ? '-' : '+'} ${Math.abs(cte)}$`;
+                distractores = [fmt(r+1, c), fmt(r, c+1), fmt(r-1, c), fmt(r, c-1)];
+            } else if (subtipo === 'sucesion_cuadratica') {
+                const A = valores.A || 1;
+                const B = valores.B || 1;
+                const C = valores.C || 1;
+                // 🔥 Inyectamos los $ para los cuadrados
+                const fmtC = (a: number, b: number, c: number) => `$${a}n^2 ${b < 0 ? '-' : '+'} ${Math.abs(b)}n ${c < 0 ? '-' : '+'} ${Math.abs(c)}$`;
+                distractores = [fmtC(A+1, B, C), fmtC(A, B+1, C), fmtC(A, B, C+1), fmtC(A, B-1, C)];
+            } else {
+                const num = Number(resStr);
+                if (!isNaN(num)) {
+                    const diff = (num > 20) ? 2 : 1;
+                    distractores = [String(num + diff), String(num - diff), String(num + diff * 2), String(num - diff * 2)];
+                }
+            }
+        } catch(e) { console.error("Error generando distractores", e); }
+
+        let opcionesArray = [...new Set([resStr, ...distractores])].filter(Boolean);
+        let saltos = 1;
+        while (opcionesArray.length < 5) {
+            if (!isNaN(Number(resStr))) opcionesArray.push(String(Number(resStr) + saltos * 3));
+            else opcionesArray.push(`N.A. ${saltos}`);
+            opcionesArray = [...new Set(opcionesArray)];
+            saltos++;
+        }
+        opcionesArray = opcionesArray.slice(0, 5).sort(() => Math.random() - 0.5);
+        const letras = ['A', 'B', 'C', 'D', 'E'];
+        let letraCorrecta = 'A'; // Valor por defecto de seguridad
+        
+        opcionesArray.forEach((op, i) => {
+            opcionesMap[letras[i]] = op;
+            // 🔥 VERIFICACIÓN CRÍTICA: Encontramos en qué letra cayó la respuesta correcta
+            if (op === resStr) {
+                letraCorrecta = letras[i]; 
+            }
+        });
+
+        console.log(`[Intento ${intento}] Respuesta correcta: ${resStr} -> Letra: ${letraCorrecta}`);
 
         return {
           plantillaId: plantilla.id,
           tema: plantilla.tema,
           enunciado: enunciadoFinal,
           valores,
-          respuesta: respuestaFinal,
+          respuesta: resStr,
+          correct_answer: letraCorrecta, // 🔥 La letra exacta para pintar verde (React)
+          correctAnswer: letraCorrecta,  // 🔥 Respaldo por si acaso
+          options: opcionesMap, 
           visual_data: visualData,
           metadata: plantilla.metadata,
         };
@@ -403,5 +484,44 @@ const normalize = (str: string) =>
       .replace(/\$1(?=[a-zA-Z\\])/g, '$')
       .replace(/\s+/g, ' ')
       .trim();
+  }
+
+  // 🔥 MÉTODO SUPREMO PARA EXÁMENES MIXTOS PERFECTOS (20% - 50% - 30%)
+  generarExamenLote(temaConamat: string, grado: string, dificultad: string, cantidad: number) {
+    const problemas: any[] = [];
+
+    if (dificultad.toLowerCase() === 'mixto') {
+      // 1. Calculamos cuotas exactas con redondeo
+      const cantBasico = Math.round(cantidad * 0.20);
+      const cantInter = Math.round(cantidad * 0.50);
+      
+      // El avanzado absorbe el resto para que la suma siempre dé la cantidad exacta pedida
+      const cantAvanz = cantidad - cantBasico - cantInter; 
+
+      console.log(`🧠 Generando Mixto [Total: ${cantidad}]: Básico(${cantBasico}) | Intermedio(${cantInter}) | Avanzado(${cantAvanz})`);
+
+      // 2. Generamos en ORDEN ESTRICTO
+      for (let i = 0; i < cantBasico; i++) {
+        const p = this.buscarPlantillaPorCriterios(temaConamat, grado, 'basico', i);
+        problemas.push(this.generarProblema(p.id));
+      }
+      for (let i = 0; i < cantInter; i++) {
+        const p = this.buscarPlantillaPorCriterios(temaConamat, grado, 'intermedio', i);
+        problemas.push(this.generarProblema(p.id));
+      }
+      for (let i = 0; i < cantAvanz; i++) {
+        const p = this.buscarPlantillaPorCriterios(temaConamat, grado, 'avanzado', i);
+        problemas.push(this.generarProblema(p.id));
+      }
+    } else {
+      // Comportamiento normal si elige una sola dificultad (ej. Puros Expertos)
+      for (let i = 0; i < cantidad; i++) {
+        const p = this.buscarPlantillaPorCriterios(temaConamat, grado, dificultad, i);
+        problemas.push(this.generarProblema(p.id));
+      }
+    }
+
+    // 3. Imprimimos el orden (1, 2, 3...) para que la UI lo respete
+    return problemas.map((p, index) => ({ ...p, order: index + 1 }));
   }
 }

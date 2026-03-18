@@ -10,15 +10,20 @@ export default function StudentExamList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 💡 Cargamos la lista exclusiva de estudiantes
+    // 💡 Aseguramos que empiece cargando
+    setLoading(true); 
+
     api.get("/exams/student/list")
       .then((res) => {
         setExams(res.data);
-        setLoading(false);
       })
       .catch((err) => {
-        console.error("Error al cargar lista:", err);
-        setLoading(false);
+        console.error("❌ Error al cargar lista:", err);
+      })
+      .finally(() => {
+        // 🔥 El 'finally' se ejecuta siempre (si sale bien o mal)
+        // así ahorras líneas y te aseguras de apagar el cargando.
+        setLoading(false); 
       });
   }, []);
 

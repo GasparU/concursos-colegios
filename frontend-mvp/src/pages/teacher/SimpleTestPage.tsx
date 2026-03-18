@@ -49,7 +49,12 @@ export default function SimpleTestPage() {
           <div className="prose prose-slate max-w-none">
             <ReactMarkdown
               remarkPlugins={[remarkMath]}
-              rehypePlugins={[rehypeKatex]}
+              rehypePlugins={[
+                [rehypeKatex, { 
+                  strict: false,       // 🔥 ESTO: Le dice a KaTeX que no sea tan llorón con la Ñ
+                  throwOnError: false  // Evita que la app se rompa si hay un error de sintaxis
+                }]
+              ]}
             >
               {problema.enunciado}
             </ReactMarkdown>
