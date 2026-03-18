@@ -121,23 +121,23 @@ export default function ExamPlayerPage() {
   return (
     <div className="flex flex-col h-screen w-full bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
       
-      <header className="h-14 border-b dark:border-slate-800 flex items-center justify-between px-2 pr-12 md:px-6 md:pr-6 bg-white dark:bg-slate-900 shrink-0 shadow-sm z-10">
-        <div className="flex items-center gap-1.5 md:gap-3">
-         <div className={`text-white px-2 md:px-3 py-1 rounded-lg font-black text-[10px] md:text-sm shadow-sm whitespace-nowrap ${badgeColors[diffColor]}`}>
+      <header className="h-12 md:h-14 border-b dark:border-slate-800 flex items-center justify-between px-1.5 md:px-6 bg-white dark:bg-slate-900 shrink-0 shadow-sm z-10">
+        <div className="flex items-center gap-1 md:gap-3">
+         <div className={`text-white px-2 md:px-3 py-0.5 md:py-1 rounded-lg font-black text-[9px] md:text-sm shadow-sm whitespace-nowrap ${badgeColors[diffColor]}`}>
             {currentIndex + 1} / {exam.questions.length}
           </div>
-          <span className="text-xs md:text-sm font-bold text-slate-500 truncate max-w-[80px] md:max-w-[200px]">
+          <span className="text-[10px] md:text-sm font-bold text-slate-500 truncate max-w-[80px] md:max-w-[200px]">
             {exam.title}
           </span>
         </div>
 
-        <div className="flex items-center gap-0.5 md:gap-4 scale-90 md:scale-100 origin-right">
+        <div className="flex items-center gap-1 md:gap-4 scale-90 md:scale-100 origin-right whitespace-nowrap">
           <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl p-0.5 shadow-inner">
-            <button onClick={() => setFontSize((s) => Math.max(16, s - 2))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all">
+            <button onClick={() => setFontSize((s) => Math.max(16, s - 2))} className="p-1 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all">
               <Minus size={16} className="text-slate-500" />
             </button>
-            <span className="px-2 font-black text-slate-400 text-[10px] uppercase">Aa</span>
-            <button onClick={() => setFontSize((s) => Math.min(36, s + 2))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all">
+            <span className="px-1.5 font-black text-slate-400 text-[9px] uppercase">Aa</span>
+            <button onClick={() => setFontSize((s) => Math.min(36, s + 2))} className="p-1 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all">
               <Plus size={16} className="text-slate-500" />
             </button>
           </div>
@@ -162,8 +162,8 @@ export default function ExamPlayerPage() {
           </section>
 
           {question.visualData && (question.visualData.theme || question.visualData.type) && (
-           <div className="bg-white dark:bg-slate-900 rounded-lg md:rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 p-1 md:p-2 mt-1.5 flex justify-center shadow-sm">
-              <div className="w-full max-w-xl md:max-w-3xl aspect-[16/10] md:aspect-[21/8] bg-slate-50 dark:bg-slate-950 rounded-lg md:rounded-2xl overflow-hidden">
+           <div className="bg-white dark:bg-slate-900 rounded-lg md:rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 p-1 md:p-2 mt-1 flex justify-center shadow-sm">
+              <div className="w-full max-w-sm md:max-w-3xl aspect-square md:aspect-[21/8] bg-slate-50 dark:bg-slate-950 rounded-lg md:rounded-2xl overflow-hidden">
                 <MafsGeometryRenderer
                   type={question.visualData.theme || question.visualData.type}
                   params={question.visualData.params}
@@ -172,21 +172,21 @@ export default function ExamPlayerPage() {
             </div>
           )}
 
-          <div className="grid grid-cols-5 gap-1.5 mt-3 md:mt-auto pb-2 md:pb-4">
+          <div className="grid grid-cols-5 gap-1.5 mt-2 md:mt-auto pb-2 md:pb-4">
             {Object.entries(question.options).map(([key, value]) => (
               <button
                 key={key}
                 onClick={() => setAnswers({ ...answers, [question.id]: key })}
-                className={`py-1.5 md:py-3 px-1 md:px-2 rounded-lg md:rounded-xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-0.5 group relative ${
+                className={`py-1 md:py-3 px-1 md:px-2 rounded-lg md:rounded-xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-0 group relative ${
                   answers[question.id] === key
                     ? "bg-indigo-600 border-indigo-600 text-white shadow-lg"
                     : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-indigo-300 shadow-none md:shadow-sm"
                 }`}
               >
-                <span className={`text-[9px] md:text-[10px] font-black uppercase ${answers[question.id] === key ? "text-indigo-200" : "text-slate-300"}`}>
+                <span className={`text-[8px] md:text-[10px] font-black uppercase ${answers[question.id] === key ? "text-indigo-200" : "text-slate-300"}`}>
                   {key}
                 </span>
-                <span className="font-bold text-xs md:text-sm leading-none truncate w-full px-1">
+                <span className="font-bold text-[10px] md:text-sm leading-none truncate w-full px-0.5">
                   <Latex>{String(value)}</Latex>
                 </span>
               </button>
@@ -195,7 +195,7 @@ export default function ExamPlayerPage() {
         </div>
       </main>
 
-      <footer className="h-12 md:h-16 bg-white dark:bg-slate-900 border-t dark:border-slate-800 px-4 md:px-8 flex items-center justify-between shrink-0 z-10">
+      <footer className="h-12 md:h-16 bg-white dark:bg-slate-900 md:border-t dark:border-slate-800 md:border-slate-100 px-4 md:px-8 flex items-center justify-between shrink-0 z-10 rounded-none shadow-none">
         <button
           onClick={() => {
             // 🔥 Guardamos tiempo antes de cambiar

@@ -39,11 +39,11 @@ export default function ExamPrestart() {
   if (!exam) return <div className="p-10 text-center text-slate-500">No se encontró el examen solicitado.</div>;
 
   return (
-    <div className="max-w-2xl mx-auto mt-4 md:mt-12 p-5 md:p-8 bg-white rounded-3xl shadow-xl border border-slate-100">
-      <h1 className="text-3xl font-black text-slate-900 mb-2">{exam.title}</h1>
-      <p className="text-slate-400 mb-8 font-medium uppercase text-xs tracking-widest">{exam.grade} • {exam.difficulty}</p>
+    <div className="max-w-2xl mx-auto mt-4 md:mt-12 p-5 md:p-8 bg-white rounded-3xl md:rounded-[2rem] shadow-xl border border-slate-100">
+      <h1 className="text-2xl md:text-3xl font-black text-slate-900 mb-1 md:mb-2">{exam.title}</h1>
+      <p className="text-slate-400 mb-4 md:mb-8 font-medium uppercase text-[10px] md:text-xs tracking-widest">{exam.grade} • {exam.difficulty}</p>
 
-      <div className="space-y-6">
+      <div className="space-y-3 md:space-y-6">
         {/* Card de Duración */}
         <div className="flex gap-4 p-5 bg-blue-50 rounded-2xl border border-blue-100">
           <Clock className="text-blue-600 shrink-0" />
