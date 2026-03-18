@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Minus, Plus, Type, Sparkles, Loader2, Bot } from "lucide-react";
 import { MafsGeometryRenderer } from "../../components/canvas/renderers/MafsGeometryRenderer";
 import api from "../../services/api";
@@ -9,7 +9,7 @@ import "katex/dist/katex.min.css";
 export default function ResultsPage() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  
   const [result, setResult] = useState<any>(null);
   
   // 🔥 TAMAÑO BASE MÁS GRANDE PARA PC
