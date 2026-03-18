@@ -58,7 +58,7 @@ export default function StudentLayout() {
         {isMobile && (
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="fixed bottom-6 right-6 z-50 p-4 bg-slate-900 text-white rounded-full shadow-2xl"
+            className="fixed top-3 left-3 z-50 p-2.5 bg-slate-900 text-white rounded-xl shadow-lg"
           >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>

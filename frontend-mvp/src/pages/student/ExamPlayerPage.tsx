@@ -121,17 +121,17 @@ export default function ExamPlayerPage() {
   return (
     <div className="flex flex-col h-screen w-full bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
       
-      <header className="h-14 border-b dark:border-slate-800 flex items-center justify-between px-6 bg-white dark:bg-slate-900 shrink-0 shadow-sm z-10">
-        <div className="flex items-center gap-3">
-          <div className={`text-white px-3 py-1 rounded-lg font-black text-sm shadow-sm ${badgeColors[diffColor]}`}>
+      <header className="h-14 border-b dark:border-slate-800 flex items-center justify-between px-2 md:px-6 bg-white dark:bg-slate-900 shrink-0 shadow-sm z-10">
+        <div className="flex items-center gap-2 md:gap-3">
+         <div className={`text-white px-2 md:px-3 py-1 rounded-lg font-black text-[10px] md:text-sm shadow-sm whitespace-nowrap ${badgeColors[diffColor]}`}>
             {currentIndex + 1} / {exam.questions.length}
           </div>
-          <span className="text-sm font-bold text-slate-500 truncate max-w-[200px]">
+          <span className="text-xs md:text-sm font-bold text-slate-500 truncate max-w-[100px] md:max-w-[200px]">
             {exam.title}
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4 scale-90 md:scale-100 origin-right">
           <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl p-0.5 shadow-inner">
             <button onClick={() => setFontSize((s) => Math.max(16, s - 2))} className="p-1.5 hover:bg-white dark:hover:bg-slate-700 rounded-lg transition-all">
               <Minus size={16} className="text-slate-500" />
@@ -162,8 +162,8 @@ export default function ExamPlayerPage() {
           </section>
 
           {question.visualData && (question.visualData.theme || question.visualData.type) && (
-            <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 p-2 flex justify-center shadow-sm">
-              <div className="w-full max-w-3xl aspect-[21/8] bg-slate-50 dark:bg-slate-950 rounded-2xl overflow-hidden">
+           <div className="bg-white dark:bg-slate-900 rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 p-2 flex justify-center shadow-sm">
+              <div className="w-full max-w-3xl aspect-[4/3] md:aspect-[21/8] bg-slate-50 dark:bg-slate-950 rounded-2xl overflow-hidden">
                 <MafsGeometryRenderer
                   type={question.visualData.theme || question.visualData.type}
                   params={question.visualData.params}
@@ -172,7 +172,7 @@ export default function ExamPlayerPage() {
             </div>
           )}
 
-          <div className="grid grid-cols-5 gap-2 mt-auto pb-4">
+          <div className="grid grid-cols-5 gap-2 mt-6 md:mt-auto pb-4">
             {Object.entries(question.options).map(([key, value]) => (
               <button
                 key={key}
