@@ -119,7 +119,7 @@ export default function ExamPlayerPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-full bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
+    <div className="flex flex-col h-[100dvh] w-full bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
       
       <header className="h-12 md:h-14 border-b dark:border-slate-800 flex items-center justify-between px-1.5 md:px-6 bg-white dark:bg-slate-900 shrink-0 shadow-sm z-10">
         <div className="flex items-center gap-1 md:gap-3">
@@ -162,8 +162,8 @@ export default function ExamPlayerPage() {
           </section>
 
           {question.visualData && (question.visualData.theme || question.visualData.type) && (
-           <div className="bg-white dark:bg-slate-900 rounded-lg md:rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 p-1 md:p-2 mt-1 flex justify-center shadow-sm">
-              <div className="w-full max-w-sm md:max-w-3xl aspect-square md:aspect-[21/8] bg-slate-50 dark:bg-slate-950 rounded-lg md:rounded-2xl overflow-hidden">
+           <div className="bg-white dark:bg-slate-900 rounded-lg md:rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 p-1 md:p-2 mt-1 mb-2 md:mb-0 flex justify-center shadow-sm">
+              <div className="w-full max-w-sm md:max-w-3xl aspect-[5/4] md:aspect-[21/8] bg-slate-50 dark:bg-slate-950 rounded-lg md:rounded-2xl overflow-hidden">
                 <MafsGeometryRenderer
                   type={question.visualData.theme || question.visualData.type}
                   params={question.visualData.params}
