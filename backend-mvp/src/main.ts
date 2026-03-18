@@ -9,8 +9,8 @@ async function bootstrap() {
 
   // 2. Configurar CORS (UNA SOLA VEZ)
   app.enableCors({
-    origin: 'http://localhost:5173', // Tu frontend
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    origin: ['https://concursos-colegios-ariana.vercel.app', 'http://localhost:5173'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
   // 🔥 BORRÉ EL SEGUNDO app.enableCors() QUE TENÍAS AQUÍ, ESE ERA EL ERROR
