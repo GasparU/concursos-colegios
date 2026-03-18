@@ -162,8 +162,8 @@ export default function ExamPlayerPage() {
           </section>
 
           {question.visualData && (question.visualData.theme || question.visualData.type) && (
-           <div className="bg-white dark:bg-slate-900 rounded-lg md:rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 p-1 md:p-2 mt-1 mb-2 md:mb-0 flex justify-center shadow-sm">
-              <div className="w-full max-w-sm md:max-w-3xl aspect-[5/4] md:aspect-[21/8] bg-slate-50 dark:bg-slate-950 rounded-lg md:rounded-2xl overflow-hidden">
+           <div className="bg-white dark:bg-slate-900 rounded-lg lg:rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 p-1 lg:p-2 mt-1 mb-2 lg:mb-0 flex justify-center shadow-sm">
+              <div className="w-full max-w-sm md:max-w-xl lg:max-w-3xl aspect-[4/5] md:aspect-square lg:aspect-[21/8] bg-slate-50 dark:bg-slate-950 rounded-lg lg:rounded-2xl overflow-hidden">
                 <MafsGeometryRenderer
                   type={question.visualData.theme || question.visualData.type}
                   params={question.visualData.params}
