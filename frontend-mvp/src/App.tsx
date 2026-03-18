@@ -22,9 +22,14 @@ import { GeneratorPage } from "./pages/teacher/generator-page";
 import ParametricTestPage from "./pages/teacher/ParametricTestPage";
 import SimpleTestPage from "./pages/teacher/SimpleTestPage";
 import ExamPrestart from "./pages/student/ExamPrestart";
+import { useEffect } from "react";
 
 function App() {
-  const { user, loading,  } = useAuthStore();
+  const { user, loading, checkAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   if (loading) return <div className="p-4">Cargando...</div>;
 
