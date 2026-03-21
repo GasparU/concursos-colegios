@@ -102,8 +102,9 @@ export class ExamsService {
     const failedQuestions: any[] = [];
     
     const total = exam.questions.length;
-    const limitBasico = Math.floor(total * 0.30);    
-    const limitIntermedio = Math.floor(total * 0.70); 
+    const limitBasico = Math.floor(total * 0.30);     // 30% inicial
+    const limitIntermedio = Math.floor(total * 0.60); // 30% + 30% = 60%
+    
 
     const details: any = {
       basico: { correct: 0, total: 0, totalTime: 0 },
@@ -112,9 +113,17 @@ export class ExamsService {
     };
 
     exam.questions.forEach((q, index) => {
+            
       let nivel: 'basico' | 'intermedio' | 'avanzado' = 'basico';
-      if (index >= limitBasico && index < limitIntermedio) nivel = 'intermedio';
-      else if (index >= limitIntermedio) nivel = 'avanzado';
+      
+      if (index < limitBasico) {
+        nivel = 'basico';
+      } else if (index < limitIntermedio) {
+        nivel = 'intermedio';
+      } else {
+        // Todo lo que está del 60% al 100% es avanzado (el 40% restante)
+        nivel = 'avanzado';
+      }
 
       details[nivel].total++;
       
@@ -213,18 +222,17 @@ export class ExamsService {
     };
   }
 
- async findAllForStudent(userId: string) {
-    // 🔥 1. VALLA DE SEGURIDAD: Si el ID llega vacío o 'undefined', no tocamos la base de datos
+  async findAllForStudent(userId: string) {
+    // 🔥 1. VALLA DE SEGURIDAD
     if (!userId || userId === 'undefined') {
       console.error("⚠️ findAllForStudent: El userId llegó vacío o es undefined. Revisa el Controller.");
-      return []; // Devolvemos una lista vacía para que no explote el frontend
+      return []; 
     }
 
     try {
       // 2. Buscamos quién pide la info
       const requester = await this.prisma.user.findUnique({ where: { id: userId } });
       
-      // 🔥 3. Si el ID existe pero no está en la DB (raro), evitamos el error de 'requester.role'
       if (!requester) {
         console.error(`⚠️ Usuario con ID ${userId} no existe en la base de datos.`);
         return [];
@@ -232,7 +240,7 @@ export class ExamsService {
 
       let targetStudentId = userId;
 
-      // 🔥 4. Lógica Automática: Si eres Docente, buscamos a la única alumna (Ariana)
+      // 4. Lógica Automática Docente -> Estudiante
       if (requester.role === 'DOCENTE') {
         const student = await this.prisma.user.findFirst({
           where: { role: 'ESTUDIANTE' }
@@ -244,7 +252,7 @@ export class ExamsService {
         }
       }
 
-      // 5. Traemos los exámenes e incluimos los resultados del alumno objetivo
+      // 5. Traemos los exámenes
       const exams = await this.prisma.exam.findMany({
         include: {
           examResults: {
@@ -255,7 +263,7 @@ export class ExamsService {
         orderBy: { createdAt: 'desc' },
       });
 
-      // 6. Mapeamos los datos de forma segura
+      // 6. Mapeamos
       return exams.map(exam => {
         const results = exam.examResults || [];
         const lastResult = results[0] || null;
@@ -272,9 +280,11 @@ export class ExamsService {
         };
       });
     } catch (error) {
-      // Este log te dirá exactamente qué pasó si algo falla adentro
+      // 🔥 CAMBIO QUIRÚRGICO VITAL:
       console.error("❌ Error crítico en findAllForStudent:", error);
-      throw new Error("Error interno al recuperar los exámenes");
+      // En vez de 'throw new Error' que rompe React con un 500, devolvemos un array vacío [].
+      // Así la app carga visualmente, y tú puedes ver el error real en tu consola negra.
+      return []; 
     }
   }
 
@@ -283,11 +293,13 @@ export class ExamsService {
 
     // 🔥 CONFIGURACIÓN DE ESCALERA
     const P_BASICO = 0.30; 
-    const P_INTERMEDIO = 0.40;
+    const P_INTERMEDIO = 0.30;
+    const P_AVANZADO = 0.40
 
     const total = questions.length;
     const cantBasico = Math.floor(total * P_BASICO);
     const cantIntermedio = Math.floor(total * P_INTERMEDIO);
+    const cantAvanzado = Math.floor(total * P_AVANZADO)
 
     const isStandard = ['TAREA', 'CLASE', 'SIMULACRO'].includes(examData.type);
     
@@ -310,23 +322,63 @@ export class ExamsService {
         questions: {
           create: sortedQuestions.map((q: any, index: number) => {
             // 🔥 ASIGNACIÓN DE COLORES BASADA EN LA POSICIÓN DE LA ESCALERA
-            let color = "emerald"; 
-            if (index >= cantBasico && index < (cantBasico + cantIntermedio)) color = "amber";
-            if (index >= (cantBasico + cantIntermedio)) color = "rose";
-            if (q.difficulty === 'experto' || q.dificultad?.includes('experto')) color = "violet";
+           let color = "emerald"; 
+            
+            // Si el índice está en el primer 20%
+            if (index < cantBasico) {
+                color = "emerald";
+            } 
+            // Si está entre el 20% y el 50% (20+30)
+            else if (index < (cantBasico + cantIntermedio)) {
+                color = "amber";
+            } 
+            // Si está entre el 50% y el 80% (20+30+30)
+            else if (index < (cantBasico + cantIntermedio + cantAvanzado)) {
+                color = "rose";
+            }
+            // El resto es Violeta
+            else {
+                color = "violet";
+            }
+
+            // Forzado por etiqueta manual (mantiene consistencia con lo que ya tenías)
+            if (q.difficulty === 'experto' || q.dificultad?.includes('experto')) {
+                color = "violet";
+            }
 
             // 🛡️ Aseguramos que visualData sea un objeto para meter el color
             const vData = q.visual_data || q.visualData || {};
 
+            // 🔥 REEMPLAZA TU cleanMath POR ESTA VERSIÓN BLINDADA
+            const cleanMath = (text: string) => {
+              if (!text) return text;
+              return text
+                // 1. Limpia "1n^2" -> "n^2" (Guarda lo que haya antes en el $1)
+                .replace(/(^|[^\d])1n\^2/g, '$1n^2')
+                
+                // 2. Limpia "1n" -> "n" (Protegiendo el 11n, 21n con Lookahead negativo)
+                .replace(/(^|[^\d])1n(?!\d)/g, '$1n')
+                
+                // 3. Aniquila " + 0n" o " - 0n" (Como en tu opción C)
+                .replace(/\s*[+-]\s*0n(?!\d)/g, '')
+                
+                // 4. Aniquila "0n^2 + " (Por si la IA genera A=0)
+                .replace(/(^|[^\d])0n\^2\s*[+-]\s*/g, '$1');
+            };
+
+            const cleanOptions = {};
+            Object.entries(q.options || {}).forEach(([key, value]) => {
+              cleanOptions[key] = cleanMath(String(value));
+            });
+
             return {
               order: index + 1,
-              questionMarkdown: q.question_markdown || q.questionMarkdown || '',
-              options: q.options || {},
-              correctAnswer: String(q.correct_answer || q.correctAnswer || ''),
-              solutionMarkdown: q.solution_markdown || q.solutionMarkdown || 'No hay solución detallada.',
+              questionMarkdown: cleanMath(q.question_markdown || q.questionMarkdown || ''),
+              options: cleanOptions, // Usamos las opciones limpias
+              correctAnswer: cleanMath(String(q.correct_answer || q.correctAnswer || '')),
+              solutionMarkdown: cleanMath(q.solution_markdown || q.solutionMarkdown || 'No hay solución detallada.'),
               hint: q.hint || null,
               mathData: q.math_data || q.mathData || {},
-              // 🔥 Aquí se guarda el color que el estudiante verá
               visualData: { ...vData, difficultyColor: color },
             };
           }),
@@ -337,12 +389,22 @@ export class ExamsService {
   }
 
   async findOne(id: string) {
-    const exam = await this.prisma.exam.findUnique({
-      where: { id },
-      include: { questions: { orderBy: { order: 'asc' } } },
-    });
-    if (!exam) throw new NotFoundException('Examen no encontrado');
-    return exam;
+    // 🔥 ESCUDO: Evita que Prisma explote si React envía "undefined" como string
+    if (!id || id === 'undefined' || id === 'null') {
+      throw new NotFoundException('Examen no válido');
+    }
+
+    try {
+      const exam = await this.prisma.exam.findUnique({
+        where: { id },
+        include: { questions: { orderBy: { order: 'asc' } } },
+      });
+      if (!exam) throw new NotFoundException('Examen no encontrado');
+      return exam;
+    } catch (error) {
+      console.error(`❌ Error en findOne (ID: ${id}):`, error);
+      throw new NotFoundException('Error al cargar examen'); // 404 en vez de 500
+    }
   }
 
   async findAll() {
@@ -353,10 +415,20 @@ export class ExamsService {
   }
 
   async checkResultExists(examId: string, userId: string) {
-    const result = await this.prisma.examResult.findFirst({
-      where: { examId, studentId: userId },
-    });
-    return !!result;
+    // 🔥 ESCUDO: Protegemos contra IDs fantasmas
+    if (!examId || examId === 'undefined' || !userId || userId === 'undefined') {
+      return false;
+    }
+
+    try {
+      const result = await this.prisma.examResult.findFirst({
+        where: { examId, studentId: userId },
+      });
+      return !!result;
+    } catch (error) {
+      console.error("❌ Error en checkResultExists:", error);
+      return false; // Si falla, asumimos false para no romper la UI
+    }
   }
 
 

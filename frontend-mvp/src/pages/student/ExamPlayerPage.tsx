@@ -145,7 +145,7 @@ export default function ExamPlayerPage() {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto p-1.5 md:p-4 flex justify-center scrollbar-thin">
+      <main className="flex-1 overflow-y-auto p-1.5 pb-16 md:p-4 flex justify-center scrollbar-thin">
         <div className="w-full max-w-5xl flex flex-col gap-1.5 md:gap-4">
           
           <section className={`p-3 md:p-5 flex flex-col gap-2 rounded-xl md:rounded-[1.5rem] shadow-sm transition-all duration-500 ${cardColors[diffColor]}`}>
@@ -172,12 +172,12 @@ export default function ExamPlayerPage() {
             </div>
           )}
 
-          <div className="grid grid-cols-5 gap-1.5 mt-2 md:mt-auto pb-2 md:pb-4">
+          <div className="grid grid-cols-5 gap-1.5 mt-2 md:mt-auto pb-10 md:pb-0">
             {Object.entries(question.options).map(([key, value]) => (
               <button
                 key={key}
                 onClick={() => setAnswers({ ...answers, [question.id]: key })}
-                className={`py-1 md:py-3 px-1 md:px-2 rounded-lg md:rounded-xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-0 group relative ${
+                className={`py-1 md:py-3 px-1 md:px-2 rounded-lg md:rounded-xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-0 group relative mb-2 md:mb-0 ${
                   answers[question.id] === key
                     ? "bg-indigo-600 border-indigo-600 text-white shadow-lg"
                     : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-indigo-300 shadow-none md:shadow-sm"
