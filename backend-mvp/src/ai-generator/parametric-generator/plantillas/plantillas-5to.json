@@ -3266,36 +3266,98 @@
 }
 },
 {
-"id": "rm_analogia_numerica_intermedio",
-"tema": "razonamiento_matematico",
-"subtipo": "analogias",
-"grado": "5to",
-"etapa": ["clasificatoria", "final"],
-"dificultad": ["intermedio"],
-"bidireccional": false,
-"variables": {
-"a1": { "type": "number", "min": 3, "max": 15, "step": 1 },
-"b1": { "type": "number", "min": 3, "max": 15, "step": 1 },
-"a2": { "type": "number", "min": 3, "max": 15, "step": 1 },
-"b2": { "type": "number", "min": 3, "max": 15, "step": 1 },
-"a3": { "type": "number", "min": 3, "max": 15, "step": 1 },
-"b3": { "type": "number", "min": 3, "max": 15, "step": 1 }
-},
-"relaciones": [
-"c1 = 2 * (a1 + b1)",
-"c2 = 2 * (a2 + b2)",
-"x = 2 * (a3 + b3)"
-],
-"restricciones": [],
-"incognita_directa": "x",
-"formato_respuesta": { "tipo": "entero" },
-"enunciado": "Halla el valor de $x$ en la siguiente analogía numérica:\n ${a1} \\quad (${c1}) \\quad ${b1} \n ${a2} \\quad (${c2}) \\quad ${b2} \n ${a3} \\quad (x) \\quad ${b3}",
-"metadata": {
-"habilidades": ["analogías numéricas", "patrones aritméticos"],
-"tiempo_estimado": 90,
-"requiere_calculadora": false
-}
-},
+    "id": "rm_analogia_numerica_basico_01",
+    "tema": "razonamiento_matematico",
+    "subtipo": "analogias_numericas",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["basico"],
+    "bidireccional": false,
+   "enunciado": "Calcula el valor de $x$ en la analogía: $$\\qquad \\qquad \\begin{matrix} ${a1} & (${c1}) & ${b1} \\\\ ${a2} & (${c2}) & ${b2} \\\\ ${a3} & (x) & ${b3} \\end{matrix}$$",
+    "variables": {
+      "a1": { "type": "number", "min": 10, "max": 30 }, "b1": { "type": "number", "min": 10, "max": 30 },
+      "a2": { "type": "number", "min": 10, "max": 30 }, "b2": { "type": "number", "min": 10, "max": 30 },
+      "a3": { "type": "number", "min": 10, "max": 30 }, "b3": { "type": "number", "min": 10, "max": 30 }
+    },
+    "relaciones": [
+      "c1 = a1 + b1 + 5",
+      "c2 = a2 + b2 + 5",
+      "x = a3 + b3 + 5"
+    ],
+    "incognita_directa": "x",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["aritmética básica"], "tiempo_estimado": 60, "requiere_calculadora": false }
+  },
+  {
+    "id": "rm_analogia_numerica_intermedio_01",
+    "tema": "razonamiento_matematico",
+    "subtipo": "analogias_numericas",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
+    "bidireccional": false,
+    "enunciado": "Halla el valor de $x$ en la analogía: $$\\qquad \\qquad \\begin{matrix} ${a1} & (${c1}) & ${b1} \\\\ ${a2} & (${c2}) & ${b2} \\\\ ${a3} & (x) & ${b3} \\end{matrix}$$",
+    "variables": {
+      "a1": { "type": "number", "min": 3, "max": 15 }, "b1": { "type": "number", "min": 3, "max": 15 },
+      "a2": { "type": "number", "min": 3, "max": 15 }, "b2": { "type": "number", "min": 3, "max": 15 },
+      "a3": { "type": "number", "min": 3, "max": 15 }, "b3": { "type": "number", "min": 3, "max": 15 }
+    },
+    "relaciones": [
+      "c1 = 2 * (a1 + b1)",
+      "c2 = 2 * (a2 + b2)",
+      "x = 2 * (a3 + b3)"
+    ],
+    "incognita_directa": "x",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["analogías numéricas"], "tiempo_estimado": 90, "requiere_calculadora": false }
+  },
+  {
+    "id": "rm_analogia_numerica_avanzado_01",
+    "tema": "razonamiento_matematico",
+    "subtipo": "analogias_numericas",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": false,
+    "enunciado": "Determina el valor de $x$ en la distribución: $$\\qquad \\qquad \\begin{matrix} ${a1} & (${c1}) & ${b1} \\\\ ${a2} & (${c2}) & ${b2} \\\\ ${a3} & (x) & ${b3} \\end{matrix}$$",
+    "variables": {
+      "a1": { "type": "number", "min": 2, "max": 12 }, "b1": { "type": "number", "min": 2, "max": 12 },
+      "a2": { "type": "number", "min": 2, "max": 12 }, "b2": { "type": "number", "min": 2, "max": 12 },
+      "a3": { "type": "number", "min": 2, "max": 12 }, "b3": { "type": "number", "min": 2, "max": 12 }
+    },
+    "relaciones": [
+      "c1 = (a1 * a1) + b1",
+      "c2 = (a2 * a2) + b2",
+      "x = (a3 * a3) + b3"
+    ],
+    "incognita_directa": "x",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["potenciación"], "tiempo_estimado": 120, "requiere_calculadora": false }
+  },
+  {
+    "id": "rm_analogia_numerica_experto_01",
+    "tema": "razonamiento_matematico",
+    "subtipo": "analogias_numericas",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["experto", "concurso"],
+    "bidireccional": false,
+    "enunciado": "Halla $x$ descubriendo la ley de formación: $$\\qquad \\qquad \\begin{matrix} ${a1} & (${c1}) & ${b1} \\\\ ${a2} & (${c2}) & ${b2} \\\\ ${a3} & (x) & ${b3} \\end{matrix}$$",
+    "variables": {
+      "a1": { "type": "number", "min": 4, "max": 15 }, "b1": { "type": "number", "min": 4, "max": 15 },
+      "a2": { "type": "number", "min": 4, "max": 15 }, "b2": { "type": "number", "min": 4, "max": 15 },
+      "a3": { "type": "number", "min": 4, "max": 15 }, "b3": { "type": "number", "min": 4, "max": 15 }
+    },
+    "relaciones": [
+      "c1 = (a1 * b1) - a1",
+      "c2 = (a2 * b2) - a2",
+      "x = (a3 * b3) - a3"
+    ],
+    "incognita_directa": "x",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["pensamiento lateral"], "tiempo_estimado": 150, "requiere_calculadora": false }
+  },
+
 {
 "id": "algebra_polinomio_valor_basico",
 "tema": "algebra",

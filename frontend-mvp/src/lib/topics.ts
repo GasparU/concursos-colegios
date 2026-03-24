@@ -112,7 +112,8 @@ export const TOPICS_BY_GRADE_ONLY = {
     { nombre: "Ecuaciones e Inecuaciones (Requisito)", tipo: "academia", subtipos: ["lineal", "sueldo_minimo", "punto_equilibrio", "area_maxima", "maximizar_productos"] },
     { nombre: "Teorema de Pitágoras y T. Notables (Requisito)", tipo: "academia", subtipos: ["teorema_pitagoras", "triangulos_notables"] },
     { nombre: "Promedios (Requisito)", tipo: "academia", subtipos: ["agregar_numero", "promedio_ponderado", "promedio_geometrico", "eliminar_numero"] },
-    { nombre: "Analogías Numéricas (Requisito)", tipo: "academia", subtipos: ["analogias"] },
+    { nombre: "Analogías Numéricas (Requisito)", tipo: "academia", subtipos: ["analogias_numericas"] },
+
     { nombre: "Distribuciones Gráficas (Requisito)", tipo: "academia", subtipos: ["distribucion_grafica"] },
     { nombre: "Métodos Operativos: Cangrejo y Rectángulo (Requisito)", tipo: "academia", subtipos: ["cangrejo_3_pasos", "cangrejo_4_pasos", "rectangulo_entero", "rectangulo_decimal"] },
     { nombre: "Sólidos 3D: Cilindros y Pirámides (Complemento)", tipo: "academia", subtipos: ["volumen_cilindro", "volumen_piramide"] },
