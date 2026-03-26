@@ -33,6 +33,7 @@ import { RenderizadorSegmentos } from "./especializados/RenderizadorSegmentos";
 import { StatisticsTable } from "./StatisticsTable";
 import { RenderizadorAreaTriangulo } from "./especializados/RenderizadorAreaTriangulo";
 import { VennDiagram } from "./especializados/VennDiagram";
+import { RenderizadorCilindro } from "./especializados/RenderizadorCilindro";
 
 export const MafsGeometryRenderer = (props: any) => {
   // 🔥 BLINDAJE TOTAL: Acepta la data sin importar cómo llegue
@@ -60,6 +61,9 @@ export const MafsGeometryRenderer = (props: any) => {
   switch (tipoFigura) {
     case "rectas_secantes":
       return <RenderizadorRectasSecantes parametros={parametros} />;
+
+      case "cilindro":
+      return <RenderizadorCilindro parametros={parametros} />;
 
     case "triangulo_angulos":
       return (

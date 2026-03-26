@@ -1141,13 +1141,26 @@ export class QuintoGradoService extends BaseGradoService {
         }
       }
     }
+    
 
     
     // ========== GEOMETRÍA ==========
     if (plantilla.tema === 'geometria') {
       switch (plantilla.subtipo) {
      
-    
+        case 'solidos_3d_cilindro': {
+  console.log('🧪 Generando visual para Cilindro...');
+  return {
+    type: 'geometry_mafs', // Mismo type que usas para que el frontend lo reconozca
+    theme: 'cilindro',     // Este es el discriminador para tu componente
+    params: {
+      r: valores.r,
+      h: valores.h,
+      // Generamos la orientación aquí para que sea persistente en el examen
+      orientacion: Math.random() > 0.5 ? 'vertical' : 'horizontal'
+    }
+  };
+}
 
         case 'triangulo_ecuaciones': {
           console.log('🎨 Generando visual para triángulo con ecuaciones');

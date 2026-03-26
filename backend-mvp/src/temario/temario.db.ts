@@ -216,7 +216,10 @@ export const TEMARIO_MAESTRO = {
     },
 
     // COMPLEMENTOS (Temas de las 16 Semanas Escolares)
-    { nombre: "Sólidos 3D: Cilindros y Pirámides (Complemento)", tipo: "academia", subtipos: ["volumen_cilindro", "volumen_piramide"] },
+    { nombre: "Sólidos 3D: Cilindros (Complemento)", tipo: "academia", subtipos: ["solidos_3d_cilindro"] },
+
+// 2. Tema exclusivo para Pirámides (Mapea al subtipo de tus JSON de pirámides)
+    { nombre: "Sólidos 3D: Pirámides (Complemento)", tipo: "academia", subtipos: ["volumen_piramide"] },  
     { nombre: "Polinomios: Valor Numérico (Complemento)", tipo: "academia", subtipos: ["polinomios"] },
     { nombre: "Plano Cartesiano y Distancias (Complemento)", tipo: "academia", subtipos: ["plano_cartesiano"] },
     { nombre: "Intervalos Numéricos (Complemento)", tipo: "academia", subtipos: ["intervalos"] },

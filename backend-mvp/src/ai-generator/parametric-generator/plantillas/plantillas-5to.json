@@ -3214,30 +3214,72 @@
 }
 },
 {
-"id": "geo_cilindro_vol_basico",
-"tema": "geometria",
-"subtipo": "volumen_cilindro",
-"grado": "5to",
-"etapa": ["clasificatoria", "final"],
-"dificultad": ["basico", "intermedio"],
-"bidireccional": false,
-"variables": {
-"r": { "type": "number", "min": 2, "max": 8, "step": 1 },
-"h": { "type": "number", "min": 5, "max": 15, "step": 1 }
-},
-"relaciones": [
-"coeficiente = r * r * h"
-],
-"restricciones": [],
-"incognita_directa": "coeficiente",
-"formato_respuesta": { "tipo": "entero" },
-"enunciado": "Calcula el volumen de un cilindro circular recto cuyo radio de la base mide ${r} cm y su altura mide ${h} cm. (Expresa tu respuesta como el coeficiente de π).",
-"metadata": {
-"habilidades": ["volumen de cilindro", "área del círculo"],
-"tiempo_estimado": 60,
-"requiere_calculadora": false
-}
-},
+    "id": "geo_cilindro_basico_01",
+    "tema": "geometria",
+    "subtipo": "solidos_3d_cilindro",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Calcula el **Área Lateral** de un cilindro circular recto cuyo radio mide ${r} cm$ y su altura es de ${h} cm$. (Expresa tu respuesta como el coeficiente de $\\pi$)",
+    "variables": {
+      "r": { "type": "number", "min": 2, "max": 15 },
+      "h": { "type": "number", "min": 5, "max": 30 }
+    },
+    "relaciones": ["coef = 2 * r * h"],
+    "incognita_directa": "coef",
+    "formato_respuesta": { "tipo": "entero" },
+    "visual_data": { "type": "cilindro", "params": { "r": "${r}", "h": "${h}", "orientacion": "vertical" } }
+  },
+  {
+    "id": "geo_cilindro_intermedio_01",
+    "tema": "geometria",
+    "subtipo": "solidos_3d_cilindro",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "Halla el **Área Total** de un cilindro circular recto de radio ${r} cm$ y altura ${h} cm$. (Indica solo el coeficiente de $\\pi$)",
+    "variables": {
+      "r": { "type": "number", "min": 3, "max": 12 },
+      "h": { "type": "number", "min": 8, "max": 25 }
+    },
+    "relaciones": ["coef = 2 * r * (h + r)"],
+    "incognita_directa": "coef",
+    "formato_respuesta": { "tipo": "entero" },
+    "visual_data": { "type": "cilindro", "params": { "r": "${r}", "h": "${h}", "orientacion": "horizontal" } }
+  },
+  {
+    "id": "geo_cilindro_avanzado_01",
+    "tema": "geometria",
+    "subtipo": "solidos_3d_cilindro",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "Calcula el **Volumen** del sólido de revolución mostrado, sabiendo que el radio de su base mide ${r} cm$ y su altura es ${h} cm$. (Expresa el resultado como coeficiente de $\\pi$)",
+    "variables": {
+      "r": { "type": "number", "min": 4, "max": 20 },
+      "h": { "type": "number", "min": 6, "max": 40 }
+    },
+    "relaciones": ["coef = r * r * h"],
+    "incognita_directa": "coef",
+    "formato_respuesta": { "tipo": "entero" },
+    "visual_data": { "type": "cilindro", "params": { "r": "${r}", "h": "${h}", "orientacion": "vertical" } }
+  },
+  {
+    "id": "geo_cilindro_experto_01",
+    "tema": "geometria",
+    "subtipo": "solidos_3d_cilindro",
+    "grado": "5to",
+    "dificultad": ["experto", "concurso"],
+    "enunciado": "En un cilindro de revolución, la altura mide el triple del radio. Si el diámetro de la base es ${d} cm$, calcula el **Volumen**. (Expresa el coeficiente de $\\pi$)",
+    "variables": {
+      "r": { "type": "number", "min": 2, "max": 10 }
+    },
+    "relaciones": [
+      "d = 2 * r",
+      "h = 3 * r",
+      "coef = r * r * h"
+    ],
+    "incognita_directa": "coef",
+    "formato_respuesta": { "tipo": "entero" },
+    "visual_data": { "type": "cilindro", "params": { "r": "${r}", "h": "${h}", "orientacion": "vertical" } }
+  },
 {
 "id": "geo_piramide_vol_intermedio",
 "tema": "geometria",
