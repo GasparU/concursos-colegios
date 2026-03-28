@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -26,6 +27,12 @@ async function bootstrap() {
     });
     next();
   });
+
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true, // Limpia el objeto de campos que no estén en el DTO
+    forbidNonWhitelisted: true, // Lanza error si envían campos extraños
+    transform: true, // Convierte los tipos automáticamente (ej: string a number)
+  }));
 
   await app.listen(process.env.PORT ?? 3000);
   console.log(`🚀 Cerebro corriendo en: http://localhost:3000/api`);

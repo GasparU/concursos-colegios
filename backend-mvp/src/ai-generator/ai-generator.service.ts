@@ -390,8 +390,10 @@ export class AiGeneratorService {
              ${guiaMatematica}
 
              "REGLA DE FORMATO OBLIGATORIA: Debes usar LaTeX para TODA expresión matemática, números, variables, fórmulas y fracciones. 
-             Enciérralo siempre entre símbolos de dólar (ejemplo: $x^2$, $\\frac{1}{2}$, $\\sqrt{144}$). Para numerales con barra superior usa $\\overline{abcd}$."
+              Enciérralo siempre entre símbolos de dólar (ejemplo: $x^2$, $\\\\frac{1}{2}$, $\\\\sqrt{144}$).
              
+              ⚠️ IMPORTANTE PARA EL JSON: Para que el sistema no rompa, usa DOBLE BARRA INVERTIDA en los comandos LaTeX (ejemplo: usa \\\\frac en lugar de \\frac, y \\\\overline en lugar de \\overline). Para numerales con barra superior usa $\\\\overline{abcd}$."
+              
              REGLAS ESTRICTAS:
              1. PROHIBIDO usar máquinas, fábricas, obreros o grifos.
              2. NO calcules nada, usa los DATOS OBLIGATORIOS provistos.
@@ -424,6 +426,10 @@ export class AiGeneratorService {
           'reparto',
           'canjes',
           'monedas',
+          'z',             
+          'enteros',       
+          'multiplicación', 
+          'división',
           'billetes',
           'sucesiones',
           'progresión',
@@ -560,6 +566,11 @@ export class AiGeneratorService {
         params.x_value = finalX;
         console.log('✅ [DEBUG] x_value final (IA vs Geo):', finalX);
 
+        if (esAritmetica) {
+    this.logger.log(`🔢 IA PURA: Retornando tema Z sin validar geometría.`);
+    result.visual_data = null; 
+    return { success: true, data: result, provider: provider.providerName };
+}
 
         if (esAritmetica) {
             this.logger.log(`🔢 IA PURA detectada (${topic}). Retornando sin validar geometría.`);

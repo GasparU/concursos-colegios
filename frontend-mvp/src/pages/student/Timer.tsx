@@ -1,58 +1,36 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
+import { useTimerStore } from "../../hooks/useTimerStore";
 
-interface TimerProps {
-  type: "FECHA_LIMITE" | "DURACION_FIJA";
-  deadline?: string;
-  durationMinutes?: number;
-  startTime?: string;
-  onEnd: () => void;
-}
-
-export default function Timer({
-  type,
-  deadline,
-  durationMinutes,
-  startTime,
-  onEnd,
-}: TimerProps) {
-  const [timeLeft, setTimeLeft] = useState<string>("");
+export default function Timer() {
+  const { currentRemaining, isDebt, tick, isActive } = useTimerStore();
 
   useEffect(() => {
-    const calculateTimeLeft = () => {
-      let endTime: number;
-      if (type === "DURACION_FIJA" && startTime && durationMinutes) {
-        endTime = new Date(startTime).getTime() + durationMinutes * 60000;
-      } else if (type === "FECHA_LIMITE" && deadline) {
-        endTime = new Date(deadline).getTime();
-      } else {
-        return "Tiempo indefinido";
-      }
+    let interval: any;
+    if (isActive) {
+      interval = setInterval(() => tick(), 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, tick]);
 
-      const now = new Date().getTime();
-      const diff = endTime - now;
-
-      if (diff <= 0) {
-        onEnd();
-        return "Tiempo terminado";
-      }
-
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-      return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    };
-
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [type, deadline, durationMinutes, startTime, onEnd]);
+  const formatTime = (seconds: number) => {
+    const absSecs = Math.abs(seconds);
+    const mins = Math.floor(absSecs / 60);
+    const secs = absSecs % 60;
+    const sign = seconds < 0 ? "+" : ""; 
+    return `${sign}${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
 
   return (
-    <div className="text-xl font-mono bg-gray-100 px-4 py-2 rounded-lg">
-      ⏱️ {timeLeft}
+    <div className={`
+      text-lg md:text-xl font-mono px-4 py-1.5 rounded-xl border-2 transition-all duration-300 shadow-sm
+      ${isDebt 
+        ? "bg-red-50 border-red-500 text-red-600 animate-pulse" 
+        : "bg-slate-100 border-slate-200 text-slate-700"}
+    `}>
+      <span className="text-[10px] md:text-xs uppercase font-black mr-2 opacity-50">
+        {isDebt ? "⚠️ Deuda" : "⏱️ Tiempo"}
+      </span>
+      {formatTime(currentRemaining)}
     </div>
   );
 }

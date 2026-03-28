@@ -128,11 +128,8 @@ export const TOPICS_BY_GRADE_ONLY = {
     { nombre: "Conjuntos y Diagramas de Venn (Extra)", tipo: "academia", subtipos: ["dos_conjuntos_sin_fuera", "dos_conjuntos_con_fuera", "tres_conjuntos_solo_chocolate", "porcentajes_ninguno", "venn_grafico_elementos", "conjunto_unitario", "comprension_conjuntos"] },
     { nombre: "Fracciones Especiales: Grifos y Caños (Extra)", tipo: "academia", subtipos: ["dos_llenan", "llena_y_vacia", "tres_llenan", "con_apertura_diferida"] },
     { nombre: "Teorema de Thales (Extra)", tipo: "academia", subtipos: ["thales"] },
-    { 
-      nombre: "Adición y Sustracción en Z", 
-      tipo: "algebra", 
-      subtipos: ["z_adicion_sustraccion"] 
-    },
+    { nombre: "Adición y Sustracción en Z", tipo: "algebra", subtipos: ["z_adicion_sustraccion"] },
+    { nombre: "Multiplicación y División en Z", tipo: "algebra", subtipos: ["z_multiplicacion_division"] },
   ],
   '6to': [
     // Clasificatoria

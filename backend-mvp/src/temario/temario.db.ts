@@ -209,11 +209,8 @@ export const TEMARIO_MAESTRO = {
 
     { nombre: "Distribuciones Gráficas (Requisito)", tipo: "academia", subtipos: ["distribucion_grafica"] },
     { nombre: "Métodos Operativos: Cangrejo y Rectángulo (Requisito)", tipo: "academia", subtipos: ["cangrejo_3_pasos", "cangrejo_4_pasos", "rectangulo_entero", "rectangulo_decimal"] },
-    { 
-      nombre: "Adición y Sustracción en Z", 
-      tipo: "algebra", 
-      subtipos: ["z_adicion_sustraccion"] 
-    },
+    { nombre: "Adición y Sustracción en Z", tipo: "algebra", subtipos: ["z_adicion_sustraccion"] },
+    { nombre: "Multiplicación y División en Z", tipo: "algebra", subtipos: ["z_multiplicacion_division"] },
 
     // COMPLEMENTOS (Temas de las 16 Semanas Escolares)
     { nombre: "Sólidos 3D: Cilindros (Complemento)", tipo: "academia", subtipos: ["solidos_3d_cilindro"] },

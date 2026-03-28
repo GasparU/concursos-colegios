@@ -85,6 +85,10 @@ model ExamResult {
   exam        Exam      @relation(fields: [examId], references: [id])
   studentId   String
   student     User      @relation(fields: [studentId], references: [id])
+
+  timeUsedSeconds Int?     @default(0) // Tiempo real que demoró (calculado por Zustand)
+  idealTimeSeconds Int?    @default(0) // La suma de (2min, 3min, 4min) de esa prueba específica
+
   startTime   DateTime
   endTime     DateTime?
   score       Int

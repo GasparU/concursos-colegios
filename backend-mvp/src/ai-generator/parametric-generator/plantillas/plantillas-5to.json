@@ -4014,7 +4014,84 @@
       "prefijo_opciones": "$x = ",
       "sufijo_opciones": "$"
     }
-  }
+  },
+  {
+  "id": "z_mult_div_basico_01",
+  "tema": "Multiplicación y División en Z",
+  "subtipo": "z_multiplicacion_division",
+  "grado": "5to",
+  "etapa": ["clasificatoria", "final"],
+  "dificultad": ["basico"],
+  "variables": {
+    "a": { "type": "number", "min": 4, "max": 9 },
+    "b": { "type": "number", "min": 3, "max": 7 }
+  },
+  "relaciones": ["ans = (-a * b) - (-20 / 5)"],
+  "incognita_directa": "ans",
+  "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Calcula el valor de la expresión:\n\n$$A = (-{a}) \\cdot ({b}) - (-20 \\div 5)$$ ",
+  "metadata": { "habilidades": ["ley de signos", "jerarquía"], "tiempo_estimado": 60 }
+},
+ {
+  "id": "z_mult_div_intermedio_01",
+  "tema": "Multiplicación y División en Z",
+  "subtipo": "z_multiplicacion_division",
+  "grado": "5to",
+  "etapa": ["clasificatoria", "final"],
+  "dificultad": ["intermedio"],
+  "variables": {
+    "a": { "type": "number", "min": 4, "max": 8 },
+    "c": { "type": "number", "min": 2, "max": 5 },
+    "k": { "type": "number", "min": 3, "max": 6 }
+  },
+  "relaciones": [
+    "x_val = 8", 
+    "y_val = -(c * k)", 
+    "prod_x = x_val * -a",
+    "div_y = y_val / c",
+    "ans = x_val + y_val"
+  ],
+  "restricciones": [], 
+  "incognita_directa": "ans",
+  "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Si se sabe que:\n\n$x \\cdot (-{a}) = {prod_x}$\n\n$y \\div {c} = {div_y}$\n\nDetermina el valor de $x + y$.",
+  "metadata": { "habilidades": ["ecuaciones en Z", "despeje"], "tiempo_estimado": 120 }
+},
+  {
+  "id": "z_mult_div_avanzado_01",
+  "tema": "Multiplicación y División en Z",
+  "subtipo": "z_multiplicacion_division",
+  "grado": "5to",
+  "etapa": ["clasificatoria", "final"],
+  "dificultad": ["avanzado"],
+  "variables": {
+    "d": { "type": "number", "min": 6, "max": 12 },
+    "q": { "type": "number", "min": 3, "max": 9 },
+    "r": { "type": "number", "min": 1, "max": 5 }
+  },
+  "relaciones": ["ans = (-d * q) + (-r)"],
+  "incognita_directa": "ans",
+  "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "En una división de números enteros, se sabe que el divisor es $-{d}$, el cociente obtenido es ${q}$ y el residuo es $-{r}$. Calcula el valor del dividendo.",
+  "metadata": { "habilidades": ["algoritmo de división"], "tiempo_estimado": 180 }
+},
+  {
+  "id": "z_mult_div_experto_01",
+  "tema": "Multiplicación y División en Z",
+  "subtipo": "z_multiplicacion_division",
+  "grado": "5to",
+  "etapa": ["final"],
+  "dificultad": ["experto"],
+  "variables": {
+    "exp": { "type": "number", "min": 2023, "max": 2027, "step": 2 },
+    "n": { "type": "number", "min": 50, "max": 150 }
+  },
+  "relaciones": ["ans = -1 * n"],
+  "incognita_directa": "ans",
+  "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Analiza la paridad de los exponentes y determina el valor de la incógnita $J$:\n\n$$J = (-1)^{${exp}} \\cdot ({n})$$\n\nRecuerda: $(-1)^{\\text{impar}} = -1$.",
+  "metadata": { "habilidades": ["análisis de paridad", "lógica"], "tiempo_estimado": 240 }
+}
 
   
 

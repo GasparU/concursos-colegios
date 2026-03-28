@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { SubmitExamDto } from './dto/submit-exam.dto';
 
 @Injectable()
 export class ExamsService {
@@ -83,11 +84,14 @@ export class ExamsService {
     }
   }
 
-  async submitExam(examId: string, studentId: string, payload: any) {
+  async submitExam(examId: string, studentId: string,  dto: SubmitExamDto) {
     // 🛡️ Extraemos con seguridad. Si algo no viene, ponemos {}
-    const answers = payload?.answers || {};
-    const timings = payload?.timings || {};
+    const answers = dto.answers || {};
+    const timings = dto.timings || {};
     
+    const timeUsedSeconds = dto.timeUsedSeconds || 0;
+    const idealTimeSeconds = dto.idealTimeSeconds || 0;
+
     // 🔥 DEBUG: Mira tu terminal negra cuando Ariana termine. Verás esto:
     console.log("📥 DATOS RECIBIDOS EN EL SERVER:", { answers, timings });
 
@@ -102,8 +106,8 @@ export class ExamsService {
     const failedQuestions: any[] = [];
     
     const total = exam.questions.length;
-    const limitBasico = Math.floor(total * 0.30);     // 30% inicial
-    const limitIntermedio = Math.floor(total * 0.60); // 30% + 30% = 60%
+    const limitBasico = Math.floor(total * 0.30);     
+    const limitIntermedio = Math.floor(total * 0.60); 
     
 
     const details: any = {
@@ -164,6 +168,8 @@ export class ExamsService {
         answers,
         startTime: new Date(),
         endTime: new Date(),
+        timeUsedSeconds,
+        idealTimeSeconds,
         details: finalDetails 
       },
     });

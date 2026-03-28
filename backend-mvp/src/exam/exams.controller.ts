@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ExamsService } from './exams.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { SubmitExamDto } from './dto/submit-exam.dto';
 
 @Controller('exams')
 @UseGuards(JwtAuthGuard)
@@ -57,11 +58,11 @@ export class ExamsController {
   @Post(':id/submit')
   async submitExam(
     @Param('id') id: string,
-    @Body() body: any,
+    @Body() dto: SubmitExamDto,
     @Request() req,
   ) {
     const userId = req.user.userId || req.user.id || req.user.sub;
-    return this.examsService.submitExam(id, userId, body);
+    return this.examsService.submitExam(id, userId, dto);
   }
 
   // 6. Obtener un examen específico

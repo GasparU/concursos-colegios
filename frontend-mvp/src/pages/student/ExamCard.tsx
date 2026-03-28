@@ -1,4 +1,4 @@
-import { Clock, Calendar, FileText, Trash2, PlayCircle } from "lucide-react";
+import { Clock, Calendar, FileText, Trash2} from "lucide-react";
 
 interface ExamCardProps {
   exam: any; // Usamos any para evitar cualquier conflicto con tus datos
@@ -7,7 +7,7 @@ interface ExamCardProps {
   onDelete?: (id: string) => void; // 🔥 AQUÍ DECLARAMOS EL BORRADO
 }
 
-export default function ExamCard({ exam, onStart, onAction, onDelete }: ExamCardProps) {
+export default function ExamCard({ exam, onStart,  onDelete }: ExamCardProps) {
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return "Sin límite";
     return new Date(dateStr).toLocaleDateString("es-PE", { day: '2-digit', month: '2-digit', year: 'numeric' });
