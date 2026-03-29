@@ -253,7 +253,38 @@ export const TEMARIO_MAESTRO = {
     { id: "rv_5_jerarquia", nombre: "Jerarquía Textual: Título, Idea principal y de apoyo", tipo: "conamat", categoria: "COMUNICACION" },
     { id: "rv_5_metodo_lect", nombre: "Método y Técnicas de Lectura (Niveles de comprensión)", tipo: "academia", categoria: "COMUNICACION" },
     { id: "rv_5_plan_red", nombre: "Plan de Redacción y Eliminación de Oraciones", tipo: "academia", categoria: "COMUNICACION" },
-    { id: "rv_5_tipos_texto", nombre: "Tipos de Texto: Intención, Temática, Dialécticos y Mixtos", tipo: "conamat", categoria: "COMUNICACION" }
+    { id: "rv_5_tipos_texto", nombre: "Tipos de Texto: Intención, Temática, Dialécticos y Mixtos", tipo: "conamat", categoria: "COMUNICACION" },
+
+    // --- HISTORIA DEL PERÚ (HP) ---
+    { id: "hp_5_poblamiento_am", nombre: "Poblamiento Americano: Teorías y Rutas", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_litico_arcaico", nombre: "Poblamiento del Perú: Periodo Lítico y Arcaico (Caral)", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_formativo", nombre: "Horizonte Temprano: Chavín (Estado Teocrático) y Paracas", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_intermedio_tem", nombre: "Intermedio Temprano: Mochica y Nasca (Ingeniería Hidráulica)", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_horizonte_med", nombre: "Horizonte Medio: Tiahuanaco y el Imperio Wari", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_intermedio_tar", nombre: "Intermedio Tardío: Chimú (Chan Chan) y Chincha", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_incas_politica", nombre: "El Tahuantinsuyo: Proceso Histórico, Política y Educación", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_incas_economia", nombre: "El Tahuantinsuyo: Economía (Reciprocidad) y Sociedad (Ayllu)", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_invasion", nombre: "Invasión a los Andes: Viajes de Pizarro y Caída del Imperio", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_resistencia", nombre: "Resistencia Andina (Incas de Vilcabamba) y Guerras Civiles", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_virreinato_pol", nombre: "Virreinato: Instituciones Coloniales y Administración", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_virreinato_eco", nombre: "Virreinato: Economía (Mita, Potosí) y Sociedad de Castas", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_reformas", nombre: "Reformas Borbónicas y Rebeliones Indígenas (Túpac Amaru II)", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_precursores", nombre: "Independencia: Precursores, Próceres y Crisis Española", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_corriente_sur", nombre: "Corriente Libertadora del Sur: San Martín y el Protectorado", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_corriente_nor", nombre: "Corriente Libertadora del Norte: Simón Bolívar y la Dictadura", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_republica_ini", nombre: "Primer Militarismo y la Confederación Peruano-Boliviana", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_prosperidad", nombre: "La Prosperidad Falaz: El Boom del Guano y Ramón Castilla", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hp_5_guerra_chile", nombre: "Guerra con Chile: Campaña Marítima y Campaña de la Breña", tipo: "concurso", categoria: "COMUNICACION" },
+
+    // --- HISTORIA UNIVERSAL (HU) ---
+    { id: "hu_5_prehistoria", nombre: "Prehistoria: Edad de Piedra y de los Metales", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hu_5_egipto", nombre: "Cultura Egipto: Pirámides, Faraones y Organización", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hu_5_mesopotamia", nombre: "Mesopotamia: Primeras Ciudades y Escritura Cuneiforme", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hu_5_grecia", nombre: "Grecia Antigua: Esparta, Atenas y las Guerras Médicas", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hu_5_roma", nombre: "Roma: Monarquía, República e Imperio", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hu_5_media", nombre: "Edad Media: Feudalismo, Cruzadas y el Imperio Carolingio", tipo: "concurso", categoria: "COMUNICACION" },
+    { id: "hu_5_moderna", nombre: "Edad Moderna: Humanismo, Renacimiento y Descubrimientos", tipo: "concurso", categoria: "COMUNICACION" },
+    
 ],
   '6to': [
     // 🔵 TEMAS PREVIOS (ACADEMIA)

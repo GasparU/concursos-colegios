@@ -369,7 +369,7 @@ export class AiGeneratorService {
         );
         const topicLower = topic.toLowerCase();
         const normalizedTopic = topic.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        const esLetras = /comunic|lenguaj|verbal|lect|gramat|comprensi|texto|ortograf|acento|tono|fonema|silaba|hiato|diptongo|triptongo|sustantivo|adjetivo|verbo|pronombre|articulo|oracion|sujeto|predicado|mayuscula|punto|coma|sintaxis|semant|sinon|anton|paron|homon|analo|termino|excluid|series|conector|plan|redacc|literat/i.test(normalizedTopic);
+        const esLetras = /comunic|lenguaj|verbal|lect|gramat|comprensi|texto|ortograf|acento|tono|fonema|silaba|hiato|diptongo|triptongo|sustantivo|adjetivo|verbo|pronombre|articulo|oracion|sujeto|predicado|mayuscula|punto|coma|sintaxis|semant|sinon|anton|paron|homon|analo|termino|excluid|series|conector|plan|redacc|literat|histor|geog|civic|psicol|pobl|americ|litic|arcaic|chavin|paracas|mochica|nasca|wari|tiahua|chimu|chincha|inca|tahuant|invasion|conquist|virrein|coloni|reformas|precurs|independ|libertad|militarism|guano|salitre|guerra/i.test(normalizedTopic);
 
 
         // 1. PREPARAR PROMPT (Igual que antes)
@@ -378,8 +378,8 @@ export class AiGeneratorService {
         // 🔥 CORRECCIÓN CRÍTICA: Si es letras, el sistema NO PUEDE ser un profesor de matemáticas
         if (esLetras) {
           systemPrompt = new SystemMessage(
-            'Eres un experto Docente de Comunicación y Lenguaje de nivel olimpiada. ' +
-            'Tu misión es crear retos de análisis lingüístico, sintáctico o de comprensión. ' +
+            'Eres un experto Docente de Humanidades y Ciencias Sociales (Historia, Geografía, Lenguaje). ' +
+            'Tu misión es crear retos de alto nivel académico para concurso en primaria' +
             'PROHIBIDO TOTALMENTE usar lógica matemática, números para cálculos o fórmulas.'
           );
         } else if (!systemPrompt) {
@@ -420,28 +420,35 @@ export class AiGeneratorService {
         if (!systemPrompt)
           systemPrompt = new SystemMessage('Eres un profesor de matemáticas.');
 
-        const esComprension = /lect|comprensi|texto/i.test(normalizedTopic);
+        const esComprensionLectora = /^(?=.*lect)(?=.*comprensi)|^(?=.*texto)|^(?=.*jerarquia text)/i.test(normalizedTopic);
 
         const promptCuerpo = esLetras 
           ? `Actúa como un riguroso examinador de Comunicación de nivel concurso nacional de primaria.
              Genera un reto de "${topic}" para ${grade}.
              DIFICULTAD: ${difficulty}.
 
-             ${esComprension 
+            ${esComprensionLectora
                ? 'REGLA: Primero escribe un texto académico de 3-4 párrafos y luego formula la pregunta basada en él.' 
                : 'REGLA CRÍTICA: PROHIBIDO escribir introducciones, historias, pautas iniciales o contextos creativos (dragones, exploradores, etc.). Ve DIRECTO a la instrucción de la pregunta.'
              }
 
-             ESTRUCTURA OBLIGATORIA DEL JSON:
-             1. question_markdown: El texto de la pregunta (si es comprensión lectora, incluye el párrafo de lectura primero).
-             2. options: Un objeto con EXACTAMENTE 5 alternativas marcadas como A, B, C, D, E.
-             3. correct_answer: Solo la letra (A, B, C, D o E).
-             4. math_data: null.
+             ESTRUCTURA OBLIGATORIA (JSON PLANO):
+             1. topic: El nombre exacto del tema enviado.
+             2. difficulty: El nivel exacto enviado.
+             3. question_markdown: La pregunta evaluativa directa (o Texto + Pregunta si es comprensión). Asegura que el contenido sea variado y no repetitivo.
+             4. options: Un objeto con EXACTAMENTE 5 alternativas (A, B, C, D, E).
+             5. correct_answer: Solo la letra (A-E).
+             6. math_data: null.
 
-             REGLAS DE ORO:
-             - PROHIBIDO preguntas abiertas. SIEMPRE deben ser de opción múltiple.
-             - El texto debe ser profesional y de nivel concurso.
-             - No uses símbolos matemáticos ni LaTeX ($).
+             REGLAS DE ESTILO FINALES:
+             - Tono formal, seco y académico. Sin saludos.
+             - PROHIBIDO el plagio o repetición de preguntas anteriores. Diversifica los enfoques.
+             - Si es gramática, usa **negritas** solo para las palabras clave.
+
+             🔥 REGLA DE VARIEDAD CRÍTICA:
+             - Si el tema permite múltiples enfoques, elige uno al azar: (A) Causas/Consecuencias, (B) Aspectos Económicos, (C) Aspectos Sociales, (D) Personajes/Obras o (E) Ubicación Geográfica/Cronología.
+             - PROHIBIDO repetir la misma pregunta o alternativas que en intentos previos.
+             - Semilla de Aleatoriedad: ${uniqueSeed} - ${Math.random()}
 
              SEMILLA DE SEGURIDAD: ${uniqueSeed}`
           : `Genera un problema de "${topic}" para ${grade}.

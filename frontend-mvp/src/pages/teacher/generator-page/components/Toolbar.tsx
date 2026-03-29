@@ -52,16 +52,31 @@ export default function Toolbar({
   };
 
   // 🔥 NUEVA FUNCIÓN DE BÚSQUEDA INSTANTÁNEA EN LA MEMORIA RAM
+  // 🔥 VERSIÓN MEJORADA: Busca en todas las categorías sin importar Mayúsculas/Minúsculas
+  // 🔥 BUSCADOR PROFESIONAL: Prioridad por coincidencia inicial y sin límite corto
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setTopic(val);
-    if (val.length > 1) {
-      const search = normalizeText(val);
-      // Filtramos buscando en la propiedad 'nombre' del objeto
-      const filtered = topicOptions.filter((t) =>
-        normalizeText(t.nombre).includes(search),
-      );
-      setSuggestions(filtered.slice(0, 8));
+
+    if (val.length > 0) {
+      const search = normalizeText(val).toLowerCase();
+  
+      // 🔍 LOG DE DEPURACIÓN: Abre la consola (F12) para ver esto
+      console.log(`Buscando "${search}" en ${topicOptions.length} temas totales.`);
+
+      const filtered = topicOptions
+        .filter((t) => normalizeText(t.nombre || "").toLowerCase().includes(search))
+        .sort((a, b) => {
+          // ⭐ PRIORIDAD: Si el nombre EMPIEZA con la búsqueda, va primero
+          const startsA = normalizeText(a.nombre).toLowerCase().startsWith(search);
+          const startsB = normalizeText(b.nombre).toLowerCase().startsWith(search);
+          if (startsA && !startsB) return -1;
+          if (!startsA && startsB) return 1;
+          return 0;
+        });
+
+      // Subimos el límite a 15 para que Historia no se quede fuera
+      setSuggestions(filtered.slice(0, 15)); 
     } else {
       setSuggestions([]);
     }

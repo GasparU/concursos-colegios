@@ -64,6 +64,39 @@ export const GeneratorPage = () => {
   // Estado para el modal de guardado
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
 
+  const regenerateOneIA = async (index: number, topicName: string) => {
+    try {
+      toast.loading("Regenerando pregunta de letras...", { id: `regen-${index}` });
+      
+      const response = await api.post("/ai/generar", { 
+        topic: topicName, 
+        grado: config.grade, 
+        dificultad: config.difficulty, // O usar la de la escalera
+        model: 'deepseek' 
+      });
+
+      const aiData = response.data;
+      const newProblem = {
+        plantillaId: "ia_pura",
+        question_markdown: aiData.question_markdown || aiData.pregunta,
+        options: aiData.options || aiData.opciones,
+        correct_answer: aiData.correct_answer || aiData.correcta,
+        topic: topicName,
+        dificultad_generada: config.difficulty
+      };
+
+      setProblems(prev => {
+        const updated = [...prev];
+        updated[index] = newProblem;
+        return updated;
+      });
+
+      toast.success("¡Pregunta actualizada!", { id: `regen-${index}` });
+    } catch (error) {
+      toast.error("Error al regenerar.", { id: `regen-${index}` });
+    }
+  };
+
   // Estados para la ventana flotante (Drag & Drop)
   const [dragPos, setDragPos] = useState({
     x: window.innerWidth / 2 - 160,
@@ -140,7 +173,9 @@ export const GeneratorPage = () => {
 
    /// 🔥 BUSCAMOS LA CATEGORÍA EN EL TEMARIO MAESTRO
     const temaEncontrado = topicOptions.find(t => t.nombre === topic);
-    const esLetras = temaEncontrado?.categoria === 'COMUNICACION';
+    const esLetras = 
+      temaEncontrado?.categoria === 'COMUNICACION' || 
+      temaEncontrado?.categoria === 'CIENCIAS_SOCIALES';
     
     // 🔥 FORZAMOS DEEPSEEK PARA EVITAR EL ERROR 429 DE GOOGLE
     const modeloAUsar = 'deepseek';
@@ -439,7 +474,18 @@ export const GeneratorPage = () => {
                   index={index}
                   theme={theme}
                   currentFont={currentFont}
-                  onRegenerate={() => regenerateOne(index, prob)}
+                  onRegenerate={() => {
+    // 🔍 Detectamos si el problema actual es de letras o ciencias sociales
+    const temaInfo = topicOptions.find(t => t.nombre === prob.topic);
+    const esLetrasOSociales = temaInfo?.categoria === 'COMUNICACION' || temaInfo?.categoria === 'CIENCIAS_SOCIALES';
+    
+    if (esLetrasOSociales) {
+      // Llamamos a una función específica para regenerar via IA PURA
+      regenerateOneIA(index, prob.topic);
+    } else {
+      regenerateOne(index, prob);
+    }
+  }}
                   onUpdate={(newText) => handleUpdateProblem(index, newText)}
                   onDelete={() => handleDeleteProblem(index)}
                 />
