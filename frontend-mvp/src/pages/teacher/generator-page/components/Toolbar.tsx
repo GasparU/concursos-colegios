@@ -61,9 +61,6 @@ export default function Toolbar({
     if (val.length > 0) {
       const search = normalizeText(val).toLowerCase();
   
-      // 🔍 LOG DE DEPURACIÓN: Abre la consola (F12) para ver esto
-      console.log(`Buscando "${search}" en ${topicOptions.length} temas totales.`);
-
       const filtered = topicOptions
         .filter((t) => normalizeText(t.nombre || "").toLowerCase().includes(search))
         .sort((a, b) => {
