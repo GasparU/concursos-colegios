@@ -130,33 +130,115 @@ export const TOPICS_BY_GRADE_ONLY = {
     { nombre: "Teorema de Thales (Extra)", tipo: "academia", subtipos: ["thales"] },
     { nombre: "Adición y Sustracción en Z", tipo: "algebra", subtipos: ["z_adicion_sustraccion"] },
     { nombre: "Multiplicación y División en Z", tipo: "algebra", subtipos: ["z_multiplicacion_division"] },
+
+
+    // 🔵 COMUNICACIÓN Y LENGUAJE (Nivel Olimpiada 369 / Tesla)
+    { id: "com_5_com_def", nombre: "La Comunicación: definición, clases y elementos (Ruido, Canal, Contexto)", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_leng_hum", nombre: "El Lenguaje Humano: características y funciones", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_leng_hab", nombre: "Lengua y Habla: relaciones y diferencias", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_var_ling", nombre: "Variación Lingüística: dialecto, dialecto estándar e idioma", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_fon_sup", nombre: "Fonemas Suprasegmentales: El acento, el tono y la entonación", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_silaba", nombre: "La Sílaba: estructura y clases", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_sec_voc", nombre: "Secuencias Vocálicas: diptongos, triptongos y hiatos", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_acento_ton", nombre: "Clases de palabras según la sílaba tónica (Agudas, Graves, Esdrújulas)", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_sustantivo", nombre: "El Sustantivo: definición, clases y accidentes gramaticales", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_articulo", nombre: "El Artículo: funciones y normativa", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_adjetivo", nombre: "El Adjetivo: calificativos, determinativos y grados", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_pronombre", nombre: "El Pronombre: clases y reemplazo pronominal", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_5_verbo", nombre: "El Verbo: persona, tiempo, modo y conjugación", tipo: "conamat", categoria: "COMUNICACION" },
+
+    // 🟢 RAZONAMIENTO VERBAL / HABILIDAD VERBAL (Nivel Concurso)
+    { id: "rv_5_semantica", nombre: "Relaciones Semánticas: Sinonimia, Antonimia, Paronimia y Homonimia", tipo: "academia", categoria: "COMUNICACION" },
+    { id: "rv_5_series", nombre: "Series Verbales y Término Excluido", tipo: "academia", categoria: "COMUNICACION" },
+    { id: "rv_5_analogias", nombre: "Analogías: Relaciones lógicas y pares análogos", tipo: "academia", categoria: "COMUNICACION" },
+    { id: "rv_5_or_inc", nombre: "Oraciones Incompletas y Conectores Lógicos", tipo: "academia", categoria: "COMUNICACION" },
+    { id: "rv_5_comp_lect", nombre: "Comprensión Lectora: Idea principal y Tema central", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "rv_5_jerarquia", nombre: "Jerarquía Textual: Título, Idea principal y de apoyo", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "rv_5_metodo_lect", nombre: "Método y Técnicas de Lectura (Niveles de comprensión)", tipo: "academia", categoria: "COMUNICACION" },
+    { id: "rv_5_plan_red", nombre: "Plan de Redacción y Eliminación de Oraciones", tipo: "academia", categoria: "COMUNICACION" },
+    { id: "rv_5_tipos_texto", nombre: "Tipos de Texto: Intención, Temática, Dialécticos y Mixtos", tipo: "conamat", categoria: "COMUNICACION" }
   ],
   '6to': [
-    // Clasificatoria
-    "MCD aplicado a problemas prácticos",
-    "MCM aplicado a intervalos",
-    "Números primos y compuestos",
-    "Cuadrados perfectos (1-50)",
-    "Proporcionalidad directa/inversa compuesta",
-    "Cambio monetario con comisiones",
-    "Ángulos entre paralelas",
-    "Perímetro y área de triángulos",
-    "Circunferencia básica",
-    "Tablas de frecuencia",
-    "Media aritmética simple",
-    "Probabilidad de eventos",
-    // Final
-    "Operaciones combinadas con fracciones y decimales",
-    "MCD y MCM problemas complejos",
-    "Números primos avanzados",
-    "Proporcionalidad compuesta (doble)",
-    "Intereses simples básicos",
-    "Sólidos: prismas y cubos (área lateral, total y volumen)",
-    "Volumen de sólidos regulares",
-    "Probabilidad de eventos compuestos",
-    "Gráficas estadísticas combinadas",
-    "Moda y media aplicadas"
-  ]
+    // 🔵 TEMAS PREVIOS (ACADEMIA)
+    { id: '6_primos', nombre: 'Números primos y compuestos', tipo: 'academia' },
+    {
+      id: '6_cuadrados_perf',
+      nombre: 'Cuadrados perfectos (1-50)',
+      tipo: 'academia',
+    },
+    {
+      id: '6_fracciones_dec',
+      nombre: 'Operaciones combinadas con fracciones y decimales',
+      tipo: 'academia',
+    },
+    { id: '6_interes', nombre: 'Intereses simples básicos', tipo: 'academia' },
+
+    // 🔴 TEMAS OFICIALES (CONAMAT)
+    {
+      id: '6_mcd_mcm',
+      nombre: 'MCD y MCM aplicado a problemas prácticos',
+      tipo: 'conamat',
+    },
+    {
+      id: '6_prop_compuesta',
+      nombre: 'Proporcionalidad compuesta (directa/inversa)',
+      tipo: 'conamat',
+    },
+    {
+      id: '6_moneda_comision',
+      nombre: 'Cambio monetario con comisiones',
+      tipo: 'conamat',
+    },
+    {
+      id: '6_angulos_paralelas',
+      nombre: 'Ángulos entre paralelas',
+      tipo: 'conamat',
+    },
+    {
+      id: '6_perim_area_tri',
+      nombre: 'Perímetro y área de triángulos',
+      tipo: 'conamat',
+    },
+    {
+      id: '6_circunferencia',
+      nombre: 'Circunferencia básica',
+      tipo: 'conamat',
+    },
+    {
+      id: '6_solidos',
+      nombre: 'Sólidos: prismas y cubos (área lateral, total y volumen)',
+      tipo: 'conamat',
+    },
+    { id: '6_frecuencias', nombre: 'Tablas de frecuencia', tipo: 'conamat' },
+    {
+      id: '6_media_moda',
+      nombre: 'Media aritmética y Moda aplicadas',
+      tipo: 'conamat',
+    },
+    {
+      id: '6_probabilidad_comp',
+      nombre: 'Probabilidad de eventos compuestos',
+      tipo: 'conamat',
+    },
+    {
+      id: '6_graficas_comb',
+      nombre: 'Gráficas estadísticas combinadas',
+      tipo: 'conamat',
+    },
+
+    // 🔵 COMUNICACIÓN Y LENGUAJE (Nivel Olimpiada 369 / Tesla - 6to Grado)
+    { id: "com_6_base", nombre: "La Comunicación, Lenguaje y Variaciones (Repaso avanzado)", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_6_fonemas", nombre: "Fonemas Suprasegmentales y Secuencias Vocálicas complejas", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_6_oracion", nombre: "La Oración: Unimembre y Bimembre", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_6_sujeto", nombre: "El Sujeto: definición, estructura y sus clases", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_6_predicado", nombre: "El Predicado: núcleo y modificadores (Objeto Directo/Indirecto)", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_6_mayusculas", nombre: "Uso de Mayúsculas y Normativa de Grafías", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "com_6_categorias", nombre: "Categorías Gramaticales: Sustantivo, Pronombre, Adjetivo y Verbo", tipo: "conamat", categoria: "COMUNICACION" },
+    
+    // 🟢 RAZONAMIENTO VERBAL (Refuerzo 6to)
+    { id: "rv_6_jerarquia", nombre: "Jerarquía Textual Avanzada y Tipos de Preguntas (Inferencia/Extrapolación)", tipo: "conamat", categoria: "COMUNICACION" },
+    { id: "rv_6_conectores", nombre: "Conectores Lógicos y Coherencia Textual", tipo: "academia", categoria: "COMUNICACION" }
+  ],
 } as const;
 
 // Función para obtener temas por grado (sin etapa)

@@ -228,28 +228,40 @@ export default function ExamPlayerPage() {
               </div>
             )}
 
-          <div className="grid grid-cols-5 gap-1.5 mt-2 md:mt-auto pb-10 md:pb-0">
-            {Object.entries(question.options).map(([key, value]) => (
-              <button
-                key={key}
-                onClick={() => setAnswers({ ...answers, [question.id]: key })}
-                className={`py-1 md:py-3 px-1 md:px-2 rounded-lg md:rounded-xl border-2 text-center transition-all active:scale-95 flex flex-col items-center justify-center gap-0 group relative mb-2 md:mb-0 ${
-                  answers[question.id] === key
-                    ? "bg-indigo-600 border-indigo-600 text-white shadow-lg"
-                    : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-indigo-300 shadow-none md:shadow-sm"
-                }`}
-              >
-                <span
-                  className={`text-[8px] md:text-[10px] font-black uppercase ${answers[question.id] === key ? "text-indigo-200" : "text-slate-300"}`}
-                >
-                  {key}
-                </span>
-                <span className="font-bold text-[10px] md:text-sm leading-none truncate w-full px-0.5">
-                  <Latex>{String(value)}</Latex>
-                </span>
-              </button>
-            ))}
-          </div>
+          <div className="flex flex-col gap-2 mt-4 md:mt-auto pb-10 md:pb-0">
+  {Object.entries(question.options).map(([key, value]) => (
+    <button
+      key={key}
+      onClick={() => setAnswers({ ...answers, [question.id]: key })}
+      className={`w-full py-3 px-4 rounded-xl border-2 transition-all active:scale-[0.98] flex items-center gap-4 group relative ${
+        answers[question.id] === key
+          ? "bg-indigo-600 border-indigo-600 text-white shadow-md"
+          : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 shadow-sm"
+      }`}
+    >
+      {/* Indicador de letra (A, B, C...) */}
+      <div
+        className={`shrink-0 w-8 h-8 flex items-center justify-center rounded-lg font-black text-sm transition-colors ${
+          answers[question.id] === key 
+            ? "bg-white/20 text-white" 
+            : "bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:text-indigo-500"
+        }`}
+      >
+        {key}
+      </div>
+
+      {/* Texto de la alternativa - Alineado a la izquierda y sin truncate */}
+      <div className="flex-1 text-left font-bold text-sm md:text-base leading-tight">
+        <Latex>{String(value)}</Latex>
+      </div>
+
+      {/* Check visual minimalista si está seleccionado */}
+      {answers[question.id] === key && (
+        <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+      )}
+    </button>
+  ))}
+</div>
         </div>
       </main>
 
@@ -302,16 +314,18 @@ export default function ExamPlayerPage() {
               // 🔥 Lógica de Deuda para el botón Siguiente
               const nextQ = exam.questions[currentIndex + 1];
               if (nextQ) {
-                // 1. Extraemos el color de la pregunta (emerald, amber, rose, etc)
+                // 1. Detectamos por color (Mat) o por string directo (Letras)
                 const color = nextQ.visualData?.difficultyColor;
+                const diffString = nextQ.difficulty?.toLowerCase() || nextQ.dificultad_generada?.toLowerCase();
 
-                // 2. Mapeamos el tiempo real según el color de tu sistema
-                const nextTime =
-                  color === "emerald"
-                    ? 120 // Verde = Básico
-                    : color === "amber"
-                      ? 180 // Naranja = Intermedio
-                      : 240; // Otros = Avanzado
+                // 2. Mapeo inteligente de tiempo
+                let nextTime = 240; // Default: Avanzado (4 min)
+
+                if (color === "emerald" || diffString === "basico") {
+                  nextTime = 120; // 2 min
+                } else if (color === "amber" || diffString === "intermedio") {
+                  nextTime = 180; // 3 min
+                }
 
                 startQuestion(nextTime);
               }

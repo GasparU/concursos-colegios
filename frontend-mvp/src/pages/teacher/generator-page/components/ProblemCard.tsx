@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, RefreshCw, Pencil, Check, X, Trash2} from "lucide-react";
+import { ChevronDown, RefreshCw, Pencil, Check, X, Trash2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
@@ -59,7 +59,7 @@ export default function ProblemCard({
     >
       {/* HEADER */}
       <div
-        className={`px-3 py-1.5 border-b flex justify-between items-center ${ 
+        className={`px-3 py-1.5 border-b flex justify-between items-center ${
           isDark
             ? "bg-slate-700/50 border-slate-700"
             : "bg-slate-50/80 border-slate-100"
@@ -95,7 +95,7 @@ export default function ProblemCard({
             {problem.topic}
           </span>
 
-            {/* 🔥 BOTÓN ELIMINAR */}
+          {/* 🔥 BOTÓN ELIMINAR */}
           {!isEditing && (
             <button
               onClick={onDelete}
@@ -172,15 +172,20 @@ export default function ProblemCard({
             </div>
           </div>
         ) : (
-          <div className={`prose max-w-none mb-1 ${currentFont} ${isDark ? "prose-invert" : "prose-slate"}`}>
+          <div
+            className={`prose max-w-none mb-1 ${currentFont} ${isDark ? "prose-invert" : "prose-slate"}`}
+          >
             <ReactMarkdown
               remarkPlugins={[remarkMath]}
               rehypePlugins={[
-                  [rehypeKatex, { 
-                    strict: false,       // 🔥 ESTO: Le dice a KaTeX que no sea tan llorón con la Ñ
-                    throwOnError: false  // Evita que la app se rompa si hay un error de sintaxis
-                  }]
-                ]}
+                [
+                  rehypeKatex,
+                  {
+                    strict: false, // 🔥 ESTO: Le dice a KaTeX que no sea tan llorón con la Ñ
+                    throwOnError: false, // Evita que la app se rompa si hay un error de sintaxis
+                  },
+                ],
+              ]}
               components={{
                 p: ({ children }) => (
                   <p className={`mb-3 leading-relaxed ${textBodyColor}`}>
@@ -223,38 +228,52 @@ export default function ProblemCard({
           </div>
         )}
 
-     
-
-        {/* 🔥 ALTERNATIVAS EN UNA FILA (A-E) */}
+        {/* 🔥 ALTERNATIVAS EN LISTA VERTICAL (ESTILO PROFESIONAL LETRAS) */}
         {problem.options && !isEditing && (
-          <div className="grid grid-cols-5 gap-1.5 mb-2 mt-2">
+          <div className="flex flex-col gap-2 mb-4 mt-2 px-1">
             {Object.entries(problem.options).map(([key, val]) => (
               <div
                 key={key}
                 className={clsx(
-                  "flex flex-col items-center justify-center p-1 rounded-md border transition-all cursor-default",
+                  "flex items-start gap-3 p-2.5 rounded-lg border transition-all cursor-default shadow-sm",
                   key === problem.correct_answer
-                    ? isDark ? "bg-emerald-900/20 border-emerald-800 text-emerald-300" : "bg-emerald-50 border-emerald-200 text-emerald-800"
-                    : isDark ? "bg-slate-800 border-slate-700 text-slate-400" : "bg-slate-50 border-slate-100 text-slate-600"
+                    ? isDark
+                      ? "bg-emerald-900/20 border-emerald-500/50 text-emerald-300"
+                      : "bg-emerald-50 border-emerald-300 text-emerald-900"
+                    : isDark
+                      ? "bg-slate-900/40 border-slate-700 text-slate-400"
+                      : "bg-slate-50/50 border-slate-100 text-slate-700",
                 )}
               >
+                {/* Letra indicadora (A, B, C...) */}
                 <span
                   className={clsx(
-                    "w-4 h-4 flex items-center justify-center rounded-full font-black text-[9px] mb-1",
-                    key === problem.correct_answer ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-500"
+                    "shrink-0 w-6 h-6 flex items-center justify-center rounded-md font-black text-[10px] shadow-sm",
+                    key === problem.correct_answer
+                      ? "bg-emerald-500 text-white"
+                      : isDark
+                        ? "bg-slate-700 text-slate-500"
+                        : "bg-white text-slate-400 border border-slate-200",
                   )}
                 >
                   {key}
                 </span>
-                <span className="text-[11px] font-bold truncate w-full text-center leading-none">
+
+                {/* Texto de la opción - Alineado a la izquierda y sin truncate */}
+                <div className="flex-1 text-[13px] font-bold leading-tight pt-0.5">
                   <Latex strict={false}>{String(val)}</Latex>
-                </span>
+                </div>
+
+                {/* Check de "Correcta" para el Docente */}
+                {key === problem.correct_answer && (
+                  <Check size={14} className="text-emerald-500 shrink-0 mt-1" />
+                )}
               </div>
             ))}
           </div>
         )}
 
-       {/* 🔥 SOLUCIÓN COMPACTA */}
+        {/* 🔥 SOLUCIÓN COMPACTA */}
         <details
           className={`group border-t pt-2 mt-1 transition-colors ${
             isDark ? "border-slate-700" : "border-slate-100"

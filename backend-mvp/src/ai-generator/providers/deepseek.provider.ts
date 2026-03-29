@@ -36,9 +36,8 @@ export class DeepSeekProvider implements IAiProvider {
   IMPORTANTE: 
   - Responde ÚNICAMENTE con un JSON válido y plano. 
   - NO uses bloques de código markdown (ni \`\`\`json, ni \`\`\`).  
-  - El JSON DEBE contener la propiedad "math_data" con TODOS los parámetros requeridos.
-  - math_data.params.x_value DEBE ser un número (ej: 18, 6.5), NO texto.
-  - Si no puedes generar math_data, responde con un JSON vacío {} (pero entonces el backend reintentará).`;
+  - Para problemas MATEMÁTICOS, el JSON DEBE contener "math_data" con parámetros y x_value numérico.
+  - Para problemas de LENGUAJE/LETRAS, pon "math_data": null y asegúrate de enviar el objeto "options" con 5 alternativas.`;
 
     const messagesToSend = [
       ...messages.slice(0, -1),
@@ -75,7 +74,9 @@ export class DeepSeekProvider implements IAiProvider {
         mathData = parsed.visual_data.math_data;
       }
 
-      if (!mathData) {
+      const tieneTextoYAlternativas = parsed.question_markdown && parsed.options;
+
+      if (!mathData && !tieneTextoYAlternativas) {
         const error = new Error(
           'La IA no generó math_data (ni en raíz ni en visual_data)',
         );
@@ -84,7 +85,7 @@ export class DeepSeekProvider implements IAiProvider {
       }
 
       // 🔥 Reemplazar parsed.math_data por el encontrado
-      parsed.math_data = mathData;
+      parsed.math_data = mathData || null;
 
       return parsed as T;
     } catch (e: any) {

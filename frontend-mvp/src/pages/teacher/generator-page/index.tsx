@@ -138,84 +138,36 @@ export const GeneratorPage = () => {
     const cantidad = append ? cantidadExtra : (config.quantity || 1);
     const variacionInicial = append ? problems.length : 0; // Para que no repita variables
 
-    // =======================================================
-    // 🔥 SEMÁFORO GLOBAL (BASADO EN EL TEMARIO OFICIAL)
-    // =======================================================
-    const palabrasLetras = ["comunicación", "lenguaje", "verbal", "lectura", "literatura", "historia", "letras", "oraciones", "verbos"];
-    const esLetras = palabrasLetras.some(kw => topic.toLowerCase().includes(kw));
-    const modeloAUsar = esLetras ? 'gemini' : 'deepseek';
+   /// 🔥 BUSCAMOS LA CATEGORÍA EN EL TEMARIO MAESTRO
+    const temaEncontrado = topicOptions.find(t => t.nombre === topic);
+    const esLetras = temaEncontrado?.categoria === 'COMUNICACION';
+    
+    // 🔥 FORZAMOS DEEPSEEK PARA EVITAR EL ERROR 429 DE GOOGLE
+    const modeloAUsar = 'deepseek';
 
     for (let i = 0; i < cantidad; i++) {
-      // 🛑 EL ESCUDO ANTI-FANTASMAS: Si el usuario canceló, cortamos el bucle de raíz
-      if (abortControllerRef.current) {
-        console.log("🛑 Generación abortada. Deteniendo peticiones restantes.");
-        break; 
-      }
+      if (abortControllerRef.current) break; 
 
       let problemExitoso = null;
-      const variacionActual = variacionInicial + i; // Índice correcto para el backend
+      const variacionActual = variacionInicial + i;
 
-      try {
-        // 1. Petición Matemática
-        const paramRes = await api.post("/parametric/generar", {
-          topic: temaABuscar,             
-          grado: config.grade,      
-          dificultad: config.difficulty,
-          variacion: variacionActual, 
-          model: modeloAUsar 
-        });
-        
-        const data = paramRes.data;
-        let enunciadoFinal = data.enunciado;
-        const tieneGrafico = data.visual_data || data.visualData;
-        if (!tieneGrafico) {
-          try {
-            const aiRes = await api.post("/ai/restyle", { 
-              baseText: data.enunciado, 
-              topic: topic, 
-              grade: config.grade, 
-              model: modeloAUsar, 
-              isSimulacro: false
-            });
-            enunciadoFinal = aiRes.data.styledText || data.enunciado;
-          } catch (e) { /* ignorar fallo de restyle */ }
-        }
+      let dificultadVariable = config.difficulty;
+      if (config.difficulty === 'Mixto') {
+        // Ejemplo para 6 preguntas: 1-2 Básico, 3-4 Intermedio, 5-6 Avanzado
+        const ratio = (i + 1) / cantidad;
+        if (ratio <= 0.34) dificultadVariable = 'basico';
+        else if (ratio <= 0.70) dificultadVariable = 'intermedio';
+        else dificultadVariable = 'avanzado';
+      }
 
-        let opcionesArmadas = data.options || (Array.isArray(data.opciones) ? null : data.opciones);
-        let letraCorrecta = data.correctAnswer || data.correct_answer || data.correcta_letra || data.correcta;
-        const tiene5Opciones = opcionesArmadas && Object.keys(opcionesArmadas).length === 5;
-
-        if (!tiene5Opciones) {
-            const valorRespuesta = data.correcta_valor || data.correcta || (data.valores ? Object.values(data.valores).pop() : 0);
-            
-            // 🔥 AHORA LE PASAMOS EL PREFIJO Y SUFIJO DESDE EL BACKEND
-            const prefijo = data.metadata?.prefijo_opciones || "";
-            const sufijo = data.metadata?.sufijo_opciones || "";
-            
-            const generadas = generarOpcionesAE(valorRespuesta as number, prefijo, sufijo);
-            opcionesArmadas = generadas.options;
-            letraCorrecta = generadas.correcta;
-        }
-
-        problemExitoso = {
-          plantillaId: data.plantillaId,
-          question_markdown: enunciadoFinal,
-          options: opcionesArmadas,
-          correct_answer: letraCorrecta,
-          visual_data: data.visual_data || data.visualData || null, 
-          math_data: data.valores,
-          topic: topic,
-          dificultad_generada: data.dificultad || config.difficulty 
-        };
-
-      } catch (error) {
-        // 3. IA PURA (Si no hay plantilla)
-        console.warn(`Plantilla no encontrada para "${topic}". Generando vía IA Pura...`);
+      // 🔥 BIFURCACIÓN QUIRÚRGICA: Si es Letras, vamos directo al grano
+      if (esLetras) {
+        console.log(`📝 [MODO LETRAS] Saltando directamente a IA: ${topic}`);
         try {
           const aiResponse = await api.post("/ai/generar", { 
             topic: topic, 
             grado: config.grade, 
-            dificultad: config.difficulty, 
+            dificultad: dificultadVariable, 
             model: modeloAUsar 
           });
           const aiData = aiResponse.data;
@@ -223,28 +175,104 @@ export const GeneratorPage = () => {
           problemExitoso = {
             plantillaId: "ia_pura",
             question_markdown: aiData.pregunta || aiData.question_markdown || aiData.enunciado,
-            options: aiData.opciones || aiData.options,
-            correct_answer: aiData.correcta || aiData.correct_answer,
+            options: aiData.options || aiData.opciones,
+            correct_answer: aiData.correct_answer || aiData.correcta,
             visual_data: aiData.visual_data || null,
             topic: topic,
             dificultad_generada: config.difficulty
           };
-        } catch (iaError: any) {
-          console.error(`❌ Error crítico en IA Pura:`, iaError.message);
+        } catch (iaError) {
+          console.error("❌ Error en generación de Letras:", iaError);
+        }
+      } else {
+        // 🔢 CAMINO MATEMÁTICO (Tu lógica original intacta)
+        try {
+          const paramRes = await api.post("/parametric/generar", {
+            topic: temaABuscar,             
+            grado: config.grade,      
+            dificultad: config.difficulty,
+            variacion: variacionActual, 
+            model: modeloAUsar 
+          });
+          
+          const data = paramRes.data;
+          let enunciadoFinal = data.enunciado;
+          const tieneGrafico = data.visual_data || data.visualData;
+
+          // Tu lógica de Restyle
+          if (!tieneGrafico) {
+            try {
+              const aiRes = await api.post("/ai/restyle", { 
+                baseText: data.enunciado, 
+                topic: topic, 
+                grade: config.grade, 
+                model: modeloAUsar, 
+                isSimulacro: false
+              });
+              enunciadoFinal = aiRes.data.styledText || data.enunciado;
+            } catch (e) { /* ignorar */ }
+          }
+
+          // Tu lógica de Opciones
+          let opcionesArmadas = data.options || (Array.isArray(data.opciones) ? null : data.opciones);
+          let letraCorrecta = data.correctAnswer || data.correct_answer || data.correcta_letra || data.correcta;
+          const tiene5Opciones = opcionesArmadas && Object.keys(opcionesArmadas).length === 5;
+
+          if (!tiene5Opciones) {
+              const valorRespuesta = data.correcta_valor || data.correcta || (data.valores ? Object.values(data.valores).pop() : 0);
+              const prefijo = data.metadata?.prefijo_opciones || "";
+              const sufijo = data.metadata?.sufijo_opciones || "";
+              
+              const generadas = generarOpcionesAE(valorRespuesta as number, prefijo, sufijo);
+              opcionesArmadas = generadas.options;
+              letraCorrecta = generadas.correcta;
+          }
+
+          problemExitoso = {
+            plantillaId: data.plantillaId,
+            question_markdown: enunciadoFinal,
+            options: opcionesArmadas,
+            correct_answer: letraCorrecta,
+            visual_data: data.visual_data || data.visualData || null, 
+            math_data: data.valores,
+            topic: topic,
+            dificultad_generada: data.dificultad || config.difficulty 
+          };
+
+        } catch (error) {
+          // IA Pura de respaldo para Matemática
+          console.warn(`Plantilla no encontrada para "${topic}". Generando vía IA Pura...`);
+          try {
+            const aiResponse = await api.post("/ai/generar", { 
+              topic: topic, 
+              grado: config.grade, 
+              dificultad: config.difficulty, 
+              model: modeloAUsar 
+            });
+            const aiData = aiResponse.data;
+            problemExitoso = {
+              plantillaId: "ia_pura",
+              question_markdown: aiData.pregunta || aiData.question_markdown || aiData.enunciado,
+              options: aiData.opciones || aiData.options,
+              correct_answer: aiData.correcta || aiData.correct_answer,
+              visual_data: aiData.visual_data || null,
+              topic: topic,
+              dificultad_generada: config.difficulty
+            };
+          } catch (iaError) { console.error(iaError); }
         }
       }
 
-      // 3. 🔥 EFECTO STREAMING
+      // 🔥 PINTADO EN TIEMPO REAL
       if (problemExitoso) {
         setProblems(prev => [...prev, problemExitoso]);
       }
 
-      // Progreso visual
       setProgress(Math.round(((i + 1) / cantidad) * 100));
       
-      // Espera entre peticiones (solo si no se ha abortado)
+      // Delay reducido para que "pinte" más rápido
       if (i < cantidad - 1 && !abortControllerRef.current) {
-        await new Promise(resolve => setTimeout(resolve, 3500));
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
 
@@ -276,11 +304,15 @@ export const GeneratorPage = () => {
 
     try {
       // Preparamos el payload según el tipo
+
+      const temaInfo = topicOptions.find(t => t.nombre === topic);
+      const examCategory = temaInfo?.categoria || 'MATEMATICA';
+
+
       const payload = {
         title: examData.title,
-        // 🔥 AGREGAMOS ESTA LÍNEA (Es la que Prisma está reclamando)
         type: examData.type, 
-        
+        category: examCategory,
         questionsCount: problems.length,
         grade: config.grade,
         stage: config.stage,

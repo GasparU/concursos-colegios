@@ -16,8 +16,10 @@ export class ExamsService {
   }
 
   // --- 🤖 IA: DEEPSEEK CHAT (CERO ALUCINACIONES, CERO LÍMITES) ---
-  async getAIDidacticExplanation(questionMarkdown: string, correctAnswer: string, options: any) {
-    const prompt = `
+  async getAIDidacticExplanation(questionMarkdown: string, correctAnswer: string, options: any, category: string = 'MATH' ) {
+
+
+    const promptMath = `
       Actúa como profesor de la academia Atiana para CONAMAT.
       
       REGLAS ESTRICTAS E INQUEBRANTABLES:
@@ -33,6 +35,27 @@ export class ExamsService {
       Opciones: ${JSON.stringify(options)}
       Clave Correcta: ${correctAnswer}
     `;
+
+    const promptLetras = `
+      Actúa como Mentor Senior de la academia pre-universitaria UNI para el nivel 5to/6to de primaria.
+
+      REGLAS ESTRICTAS E INQUEBRANTABLES:
+      1. NO uses LaTeX (nada de signos $).
+      2. NO saludes ni des introducciones ("Analizando...", "¡Claro!").
+      3. Tono directo, lógico y didáctico.
+      4. Si la pregunta es de Sintaxis o Gramática, usa **negritas** (Markdown) para resaltar el elemento clave (ej: el **sujeto** o el **verbo**).
+      5. Estructura tu respuesta así:
+         - POR QUÉ ES LA CORRECTA: (Explicación breve)
+         - ANÁLISIS DEL ERROR COMÚN: (Por qué las otras opciones confunden)
+         - TIP PRE-U: (Un truco rápido para recordar la regla)
+
+      Problema: ${questionMarkdown}
+      Opciones: ${JSON.stringify(options)}
+      Clave Correcta: ${correctAnswer}
+    `;
+
+    const isLetras = ['COMUNICACION', 'LENGUAJE', 'RAZONAMIENTO_VERBAL', 'HISTORIA'].includes(category.toUpperCase());
+    const finalPrompt = isLetras ? promptLetras : promptMath;
 
     try {
       // Llamada nativa a la API de DeepSeek
@@ -65,16 +88,16 @@ export class ExamsService {
   }
 
   // 🔥 FUNCIÓN PRIVADA QUE TRABAJA EN LA SOMBRA
-  private async processAIInBackground(failedQuestions: any[]) {
+  private async processAIInBackground(failedQuestions: any[], examCategory: string = 'MATH') {
     for (const q of failedQuestions) {
       const isDefault = !q.solutionMarkdown || 
                          q.solutionMarkdown.length < 20 || 
                          q.solutionMarkdown.includes("No hay solución");
 
       if (isDefault) {
-        console.log(`🧠 [BACKGROUND] DeepSeek analizando pregunta: ${q.id}`);
+        console.log(`🧠 [BACKGROUND] DeepSeek analizando pregunta: ${q.id} (Categoría: ${examCategory})`);
         // Asumo que sigues usando la función getAIDidacticExplanation de DeepSeek
-        const aiSolution = await this.getAIDidacticExplanation(q.questionMarkdown, q.correctAnswer, q.options);
+        const aiSolution = await this.getAIDidacticExplanation(q.questionMarkdown, q.correctAnswer, q.options, examCategory);
         
         await this.prisma.question.update({
           where: { id: q.id },
@@ -174,8 +197,10 @@ export class ExamsService {
       },
     });
 
+    const examCategory = (exam as any).category || (exam as any).type || (exam as any).title || 'MATH';
+
     // Procesamos IA solo para las falladas
-    this.processAIInBackground(failedQuestions).catch(err => 
+    this.processAIInBackground(failedQuestions, examCategory).catch(err => 
       console.error("Error en proceso IA de fondo:", err)
     );
 
@@ -295,7 +320,10 @@ export class ExamsService {
   }
 
   async create(data: any, userId: string) {
-    const { questions, ...examData } = data;
+    const { questions, category, ...examData } = data;  
+
+    const textoCategoria = String(category || examData.type || examData.title).toUpperCase();
+    const isLetrasCategory = ['COMUNICACION', 'LENGUAJE', 'RAZONAMIENTO_VERBAL', 'HISTORIA'].includes(String(examData.category || examData.type).toUpperCase());
 
     // 🔥 CONFIGURACIÓN DE ESCALERA
     const P_BASICO = 0.30; 
@@ -319,6 +347,8 @@ export class ExamsService {
         return pesoA - pesoB;
       });
 
+      
+
     return this.prisma.exam.create({
       data: {
         ...examData,
@@ -327,37 +357,25 @@ export class ExamsService {
         docenteId: userId,
         questions: {
           create: sortedQuestions.map((q: any, index: number) => {
-            // 🔥 ASIGNACIÓN DE COLORES BASADA EN LA POSICIÓN DE LA ESCALERA
            let color = "emerald"; 
-            
-            // Si el índice está en el primer 20%
             if (index < cantBasico) {
                 color = "emerald";
             } 
-            // Si está entre el 20% y el 50% (20+30)
             else if (index < (cantBasico + cantIntermedio)) {
                 color = "amber";
             } 
-            // Si está entre el 50% y el 80% (20+30+30)
             else if (index < (cantBasico + cantIntermedio + cantAvanzado)) {
                 color = "rose";
             }
-            // El resto es Violeta
             else {
                 color = "violet";
             }
-
-            // Forzado por etiqueta manual (mantiene consistencia con lo que ya tenías)
             if (q.difficulty === 'experto' || q.dificultad?.includes('experto')) {
                 color = "violet";
             }
-
-            // 🛡️ Aseguramos que visualData sea un objeto para meter el color
             const vData = q.visual_data || q.visualData || {};
-
-            // 🔥 REEMPLAZA TU cleanMath POR ESTA VERSIÓN BLINDADA
             const cleanMath = (text: string) => {
-              if (!text) return text;
+              if (!text || isLetrasCategory) return text;
               return text
                 // 1. Limpia "1n^2" -> "n^2" (Guarda lo que haya antes en el $1)
                 .replace(/(^|[^\d])1n\^2/g, '$1n^2')

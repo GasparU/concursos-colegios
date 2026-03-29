@@ -20,17 +20,18 @@ import { calculateStatistics } from './statistics.calculator';
 import { ChatOpenAI } from '@langchain/openai';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 
-
 // 🔥 Limpiador Definitivo Nivel CONAMAT
 const cleanAlgebraicExpression = (text: string): string => {
-  return text
-    // 🔥 Borra el 1 si está pegado a letra o LaTeX: $1m, +1n, (1x, =1a
-    .replace(/([$+\-\s(=])1(?=[a-zA-Z\\])/g, '$1')
-    // 🔥 Caso especial: inicio del string o bloque LaTeX $1x -> $x
-    .replace(/^1(?=[a-zA-Z\\])/, '')
-    .replace(/\$1(?=[a-zA-Z\\])/g, '$')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return (
+    text
+      // 🔥 Borra el 1 si está pegado a letra o LaTeX: $1m, +1n, (1x, =1a
+      .replace(/([$+\-\s(=])1(?=[a-zA-Z\\])/g, '$1')
+      // 🔥 Caso especial: inicio del string o bloque LaTeX $1x -> $x
+      .replace(/^1(?=[a-zA-Z\\])/, '')
+      .replace(/\$1(?=[a-zA-Z\\])/g, '$')
+      .replace(/\s+/g, ' ')
+      .trim()
+  );
 };
 
 @Injectable()
@@ -116,27 +117,29 @@ export class AiGeneratorService {
     modelName: string = 'deepseek',
     isSimulacro: boolean = false,
   ): Promise<string> {
-
     // 1. Detección del área para saber cuánta libertad darle a la IA
     const topicLower = topic.toLowerCase();
-    const esGeometria = /geometr|ángul|triángul|polígon|segment|recta/i.test(topicLower);
-    
-    const esOperadores = topicLower.includes('operador')
+    const esGeometria = /geometr|ángul|triángul|polígon|segment|recta/i.test(
+      topicLower,
+    );
+
+    const esOperadores = topicLower.includes('operador');
 
     // 2. Arsenal de contextos creativos (Para que nunca se repita)
     const contextos = [
-      "Chefs preparando banquetes o pasteles",
-      "Astronautas explorando planetas o calculando combustible",
-      "Jardineros diseñando parques o plantando árboles",
-      "Ingenieros construyendo puentes o robots",
-      "Gamers ganando puntos o superando niveles",
-      "Científicos mezclando pociones o analizando bacterias",
-      "Piratas repartiendo tesoros o navegando millas",
-      "Deportistas en entrenamiento o rompiendo récords",
-      "Magos en una academia de hechicería",
-      "Rescatistas de animales en misiones épicas"
+      'Chefs preparando banquetes o pasteles',
+      'Astronautas explorando planetas o calculando combustible',
+      'Jardineros diseñando parques o plantando árboles',
+      'Ingenieros construyendo puentes o robots',
+      'Gamers ganando puntos o superando niveles',
+      'Científicos mezclando pociones o analizando bacterias',
+      'Piratas repartiendo tesoros o navegando millas',
+      'Deportistas en entrenamiento o rompiendo récords',
+      'Magos en una academia de hechicería',
+      'Rescatistas de animales en misiones épicas',
     ];
-    const contextoAleatorio = contextos[Math.floor(Math.random() * contextos.length)];
+    const contextoAleatorio =
+      contextos[Math.floor(Math.random() * contextos.length)];
 
     // 3. Prompt Dinámico
     const prompt = `
@@ -148,28 +151,40 @@ export class AiGeneratorService {
 
     Tu misión es REESCRIBIR el texto siguiendo estas reglas según el MODO seleccionado:
 
-    ${isSimulacro && !esGeometria ? `
+    ${
+      isSimulacro && !esGeometria
+        ? `
     🌟 MODO SIMULACRO (NARRATIVO):
     - Crea una historia breve basada en el contexto: "${contextoAleatorio}".
     - Adapta los personajes y acciones para que el problema parezca un reto de la vida real.
-    ` : `
+    `
+        : `
     ⚡ MODO ENTRENAMIENTO (DIRECTO):
     - PROHIBIDO inventar historias o personajes.
     - SÉ DIRECTO, frío y operativo. 
     - Usa frases como: "Halla el valor de...", "Calcula...", "Si se sabe que...".
     - El inicio debe ser matemático (ej: "Si $A * B = ...$").
-    `}
+    `
+    }
 
-    ${esGeometria ? `
+    ${
+      esGeometria
+        ? `
     📐 REGLA DE GEOMETRÍA: 
     - Independiente del modo, mantén el lenguaje puro y formal. Nada de cuentos.
-    ` : ''}
+    `
+        : ''
+    }
 
-    ${esOperadores ? `
+    ${
+      esOperadores
+        ? `
     🔥 REGLA DE OPERADORES:
     - Es OBLIGATORIO mostrar el símbolo de operación (ej. $a \\triangle b$).
     - Asegúrate de que los símbolos LaTeX estén entre $.
-    ` : ''}
+    `
+        : ''
+    }
 
     REGLAS INQUEBRANTABLES:
     1. BREVEDAD: Máximo 2 líneas para entrenamiento, 3 para simulacro.
@@ -203,7 +218,7 @@ export class AiGeneratorService {
         response = await model.invoke(prompt);
       }
 
-      const textoFinal = response.content.toString().trim()
+      const textoFinal = response.content.toString().trim();
 
       const resultadoLimpio = cleanAlgebraicExpression(textoFinal || baseText);
       return resultadoLimpio;
@@ -353,39 +368,83 @@ export class AiGeneratorService {
           `🔄 Intento ${attempt}/${MAX_RETRIES} - Generando problema...`,
         );
         const topicLower = topic.toLowerCase();
+        const normalizedTopic = topic.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const esLetras = /comunic|lenguaj|verbal|lect|gramat|comprensi|texto|ortograf|acento|tono|fonema|silaba|hiato|diptongo|triptongo|sustantivo|adjetivo|verbo|pronombre|articulo|oracion|sujeto|predicado|mayuscula|punto|coma|sintaxis|semant|sinon|anton|paron|homon|analo|termino|excluid|series|conector|plan|redacc|literat/i.test(normalizedTopic);
+
+
         // 1. PREPARAR PROMPT (Igual que antes)
         let systemPrompt = getSystemPrompt(topic, grade, difficulty);
 
+        // 🔥 CORRECCIÓN CRÍTICA: Si es letras, el sistema NO PUEDE ser un profesor de matemáticas
+        if (esLetras) {
+          systemPrompt = new SystemMessage(
+            'Eres un experto Docente de Comunicación y Lenguaje de nivel olimpiada. ' +
+            'Tu misión es crear retos de análisis lingüístico, sintáctico o de comprensión. ' +
+            'PROHIBIDO TOTALMENTE usar lógica matemática, números para cálculos o fórmulas.'
+          );
+        } else if (!systemPrompt) {
+          systemPrompt = new SystemMessage('Eres un profesor de matemáticas experto en olimpiadas.');
+        }
+
         // 🔥 ESCENARIOS CREATIVOS PARA EVITAR "MÁQUINAS"
         const escenarios = [
-          'viajes espaciales (naves, combustible)', 'entrenamiento de dragones (fuego, gemas)',
-          'pociones mágicas (ingredientes, calderos)', 'reino animal (comida, rescatistas)',
-          'misiones de exploradores (brújulas, mapas)', 'deportes extremos (saltos, energía)'
+          'viajes espaciales (naves, combustible)',
+          'entrenamiento de dragones (fuego, gemas)',
+          'pociones mágicas (ingredientes, calderos)',
+          'reino animal (comida, rescatistas)',
+          'misiones de exploradores (brújulas, mapas)',
+          'deportes extremos (saltos, energía)',
         ];
-        const contextoAzar = escenarios[Math.floor(Math.random() * escenarios.length)];
+        const contextoAzar =
+          escenarios[Math.floor(Math.random() * escenarios.length)];
 
         // 🔥 PRE-CALCULADOR PARA PROPORCIONALIDAD (Proceso Inverso)
-        let guiaMatematica = "";
-        if (topicLower.includes('proporcion') || topicLower.includes('regla de tres')) {
-            let a = Math.floor(Math.random() * 12) + 2;
-            let b = Math.floor(Math.random() * 50) + 10;
-            let c = Math.floor(Math.random() * 20) + 4;
-            while ((b * c) % a !== 0) { a++; } // Aseguramos resultado entero
-            const x = (b * c) / a;
-            guiaMatematica = `DATOS OBLIGATORIOS: ValorA=${a}, ValorB=${b}, ValorC=${c}. RESPUESTA: ${x}.`;
+        let guiaMatematica = '';
+        if (
+          topicLower.includes('proporcion') ||
+          topicLower.includes('regla de tres')
+        ) {
+          let a = Math.floor(Math.random() * 12) + 2;
+          let b = Math.floor(Math.random() * 50) + 10;
+          let c = Math.floor(Math.random() * 20) + 4;
+          while ((b * c) % a !== 0) {
+            a++;
+          } // Aseguramos resultado entero
+          const x = (b * c) / a;
+          guiaMatematica = `DATOS OBLIGATORIOS: ValorA=${a}, ValorB=${b}, ValorC=${c}. RESPUESTA: ${x}.`;
         }
 
         const uniqueSeed =
           Math.random().toString(36).substring(7) + Date.now().toString();
-          
 
         if (!systemPrompt)
           systemPrompt = new SystemMessage('Eres un profesor de matemáticas.');
 
-        const messages = [
-          systemPrompt,
-          new HumanMessage(
-            `Genera un problema de "${topic}" para ${grade}.
+        const esComprension = /lect|comprensi|texto/i.test(normalizedTopic);
+
+        const promptCuerpo = esLetras 
+          ? `Actúa como un riguroso examinador de Comunicación de nivel concurso nacional de primaria.
+             Genera un reto de "${topic}" para ${grade}.
+             DIFICULTAD: ${difficulty}.
+
+             ${esComprension 
+               ? 'REGLA: Primero escribe un texto académico de 3-4 párrafos y luego formula la pregunta basada en él.' 
+               : 'REGLA CRÍTICA: PROHIBIDO escribir introducciones, historias, pautas iniciales o contextos creativos (dragones, exploradores, etc.). Ve DIRECTO a la instrucción de la pregunta.'
+             }
+
+             ESTRUCTURA OBLIGATORIA DEL JSON:
+             1. question_markdown: El texto de la pregunta (si es comprensión lectora, incluye el párrafo de lectura primero).
+             2. options: Un objeto con EXACTAMENTE 5 alternativas marcadas como A, B, C, D, E.
+             3. correct_answer: Solo la letra (A, B, C, D o E).
+             4. math_data: null.
+
+             REGLAS DE ORO:
+             - PROHIBIDO preguntas abiertas. SIEMPRE deben ser de opción múltiple.
+             - El texto debe ser profesional y de nivel concurso.
+             - No uses símbolos matemáticos ni LaTeX ($).
+
+             SEMILLA DE SEGURIDAD: ${uniqueSeed}`
+          : `Genera un problema de "${topic}" para ${grade}.
              CONTEXTO: ${contextoAzar}.
              ${guiaMatematica}
 
@@ -393,23 +452,34 @@ export class AiGeneratorService {
               Enciérralo siempre entre símbolos de dólar (ejemplo: $x^2$, $\\\\frac{1}{2}$, $\\\\sqrt{144}$).
              
               ⚠️ IMPORTANTE PARA EL JSON: Para que el sistema no rompa, usa DOBLE BARRA INVERTIDA en los comandos LaTeX (ejemplo: usa \\\\frac en lugar de \\frac, y \\\\overline en lugar de \\overline). Para numerales con barra superior usa $\\\\overline{abcd}$."
-              
-             REGLAS ESTRICTAS:
-             1. PROHIBIDO usar máquinas, fábricas, obreros o grifos.
-             2. NO calcules nada, usa los DATOS OBLIGATORIOS provistos.
-             3. solution_markdown: Pon solo "Cálculo pendiente".
-             4. Sé breve y directo.
              
-             REQUISITO DE ESTILO: ${styleConstraint}
-             SEMILLA DE SEGURIDAD: ${uniqueSeed}` // 🔥 Aquí está de vuelta, haciendo su trabajo
-          ),
-        ];
+              REGLAS ESTRICTAS:
+              1. PROHIBIDO usar máquinas, fábricas, obreros o grifos.
+              2. NO calcules nada, usa los DATOS OBLIGATORIOS provistos.
+              3. solution_markdown: Pon solo "Cálculo pendiente".
+              4. Sé breve y directo.
+             
+              REQUISITO DE ESTILO: ${styleConstraint}
+              SEMILLA DE SEGURIDAD: ${uniqueSeed}`;
+
+        const messages = [systemPrompt, new HumanMessage(promptCuerpo)];
 
         // 2. LLAMADA A LA IA
         const result = await provider.generateStructured(
           messages,
           MathProblemSchema,
         );
+
+        if (esLetras) {
+          this.logger.log(`✅ [LETRAS] Retorno Blindado para: ${topic}`);
+          result.visual_data = null;
+          result.math_data = null; 
+          return {
+            success: true,
+            data: result,
+            provider: provider.providerName,
+          };
+        }
 
         const arithmeticKeywords = [
           'fracciones',
@@ -426,9 +496,9 @@ export class AiGeneratorService {
           'reparto',
           'canjes',
           'monedas',
-          'z',             
-          'enteros',       
-          'multiplicación', 
+          'z',
+          'enteros',
+          'multiplicación',
           'división',
           'billetes',
           'sucesiones',
@@ -458,7 +528,6 @@ export class AiGeneratorService {
           'numeración',
         ];
 
-        
         const esAritmetica =
           arithmeticKeywords.some((keyword) => topicLower.includes(keyword)) ||
           result.math_data?.type === 'fraction_problem' ||
@@ -512,12 +581,12 @@ export class AiGeneratorService {
         }
 
         // Si después de todo sigue sin haber math_data, lanzar error
-        if (!result.math_data) {
+        if (!result.math_data && !esLetras) {
           throw new Error('La IA no generó math_data');
         }
 
-        const params = result.math_data.params;
-        const type = result.math_data.type;
+        const params = result.math_data?.params || {};
+        const type = result.math_data?.type || 'ia_pura';
 
         if (
           type === 'consecutive_angles' &&
@@ -566,21 +635,24 @@ export class AiGeneratorService {
         params.x_value = finalX;
         console.log('✅ [DEBUG] x_value final (IA vs Geo):', finalX);
 
-        if (esAritmetica) {
-    this.logger.log(`🔢 IA PURA: Retornando tema Z sin validar geometría.`);
-    result.visual_data = null; 
-    return { success: true, data: result, provider: provider.providerName };
-}
+        const esIAVerbal =
+          esLetras ||
+          esAritmetica ||
+          result.math_data?.type?.includes('arithmetic');
 
-        if (esAritmetica) {
-            this.logger.log(`🔢 IA PURA detectada (${topic}). Retornando sin validar geometría.`);
-            result.visual_data = null; 
-            
-            return {
-              success: true,
-              data: result,
-              provider: provider.providerName,
-            };
+        if (esIAVerbal) {
+          this.logger.log(
+            `✅ RETORNO DIRECTO: Categoría detectada (${esLetras ? 'Letras' : 'Aritmética'}).`,
+          );
+
+          result.visual_data = null;
+          if (esLetras) result.math_data = null; // Letras no necesita math_data
+
+          return {
+            success: true,
+            data: result,
+            provider: provider.providerName,
+          };
         }
 
         if (params.segments)
