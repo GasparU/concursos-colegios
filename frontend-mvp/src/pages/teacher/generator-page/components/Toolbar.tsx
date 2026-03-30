@@ -155,7 +155,7 @@ export default function Toolbar({
                 value={topic}
                 onChange={handleInput}
                 className="flex-1 bg-transparent outline-none text-sm min-w-[120px]"
-                placeholder={selectedTopics.length === 0 ? "Ej: Fracciones, Geometría..." : "Añadir otro..."}
+                
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && topic) {
                     if (suggestions.length > 0) selectTopic(suggestions[0]);

@@ -312,6 +312,23 @@ export class ParametricGeneratorService {
             if ((visualData as any).data?.respuestaSobreescrita !== undefined) delete (visualData as any).data.respuestaSobreescrita;
           }
 
+          // 🔥🔥🔥 INICIO DEL BYPASS QUIRÚRGICO CONAMAT 🔥🔥🔥
+        if (visualData && (visualData as any).opcionesSobreescritas) {
+            console.log(`🏆 [OLIMPIADA] Bypass activado. Saltando escudo y generador genérico.`);
+            return {
+              plantillaId: plantilla.id,
+              tema: plantilla.tema,
+              enunciado: (visualData as any).enunciadoSobreescrito || enunciadoFinal,
+              valores,
+              respuesta: String(respuestaFinal),
+              correct_answer: String(respuestaFinal), 
+              correctAnswer: String(respuestaFinal),  
+              options: (visualData as any).opcionesSobreescritas, 
+              visual_data: (visualData as any).visualData || null,
+              metadata: plantilla.metadata,
+            };
+        }
+
         // =====================================================================
         // 🔥 ESCUDO ANTI-CRASH INTELIGENTE (0 decimales para Geo, Redondeo para Aritmética)
         // =====================================================================

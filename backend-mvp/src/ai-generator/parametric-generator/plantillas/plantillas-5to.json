@@ -3016,61 +3016,149 @@
   "formato_respuesta": { "tipo": "entero" }
 },
 {
-"id": "rm_distrib_hombre_intermedio",
-"tema": "razonamiento_matematico",
-"subtipo": "distribucion_grafica",
-"grado": "5to",
-"etapa": ["clasificatoria", "final"],
-"dificultad": ["intermedio"],
-"bidireccional": false,
-"variables": {
-"b1": { "type": "number", "min": 2, "max": 9, "step": 1 },
-"b2": { "type": "number", "min": 2, "max": 9, "step": 1 },
-"p1": { "type": "number", "min": 2, "max": 9, "step": 1 },
-"p2": { "type": "number", "min": 2, "max": 9, "step": 1 }
-},
-"relaciones": [
-"cabeza = (b1 * b2) - (p1 + p2)"
-],
-"restricciones": [
-"cabeza > 0"
-],
-"incognita_directa": "cabeza",
-"formato_respuesta": { "tipo": "entero" },
-"enunciado": "Halla el valor de X en la cabeza del tercer hombrecito sabiendo que la relación es la misma en todos.",
-"metadata": {
-"habilidades": ["distribuciones gráficas", "operaciones combinadas"],
-"tiempo_estimado": 90,
-"requiere_calculadora": false
-}
+  "id": "rm_distrib_triangulo_basico",
+  "tema": "razonamiento_matematico",
+  "subtipo": "distribucion_grafica",
+  "grado": "5to",
+  "etapa": ["clasificatoria", "final"],
+  "dificultad": ["basico"],
+  "bidireccional": false,
+  "variables": {
+    "t1_1": { "type": "number", "min": 2, "max": 15 },
+    "l1_1": { "type": "number", "min": 2, "max": 15 },
+    "r1_1": { "type": "number", "min": 2, "max": 15 },
+    "t1_2": { "type": "number", "min": 2, "max": 15 },
+    "l1_2": { "type": "number", "min": 2, "max": 15 },
+    "r1_2": { "type": "number", "min": 2, "max": 15 },
+    "t1": { "type": "number", "min": 2, "max": 15 },
+    "l1": { "type": "number", "min": 2, "max": 15 },
+    "r1": { "type": "number", "min": 2, "max": 15 }
+  },
+  "relaciones": [
+    "center_1 = t1_1 + l1_1 + r1_1",
+    "center_2 = t1_2 + l1_2 + r1_2",
+    "center = t1 + l1 + r1"
+  ],
+  "incognita_directa": "center",
+  "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Halla el valor de X en el tercer triángulo.",
+  "visual_data": {
+    "type": "geometry_mafs",
+    "theme": "graphic_distribution",
+    "shape": "triangle",
+    "figures": [
+      { "top": "${t1_1}", "left": "${l1_1}", "right": "${r1_1}", "center": "${center_1}" },
+      { "top": "${t1_2}", "left": "${l1_2}", "right": "${r1_2}", "center": "${center_2}" },
+      { "top": "${t1}", "left": "${l1}", "right": "${r1}", "center": "X" }
+    ]
+  }
 },
 {
-"id": "rm_distrib_circular_avanzado",
-"tema": "razonamiento_matematico",
-"subtipo": "distribucion_grafica",
-"grado": "5to",
-"etapa": ["final"],
-"dificultad": ["avanzado"],
-"bidireccional": false,
-"variables": {
-"s1": { "type": "number", "min": 2, "max": 12, "step": 1 },
-"s2": { "type": "number", "min": 2, "max": 12, "step": 1 },
-"s3": { "type": "number", "min": 2, "max": 12, "step": 1 }
+  "id": "rm_distrib_hombre_intermedio",
+  "tema": "razonamiento_matematico",
+  "subtipo": "distribucion_grafica",
+  "grado": "5to",
+  "etapa": ["clasificatoria", "final"],
+  "dificultad": ["intermedio"],
+  "bidireccional": false,
+  "variables": {
+    "b1_1": { "type": "number", "min": 3, "max": 9 },
+    "b2_1": { "type": "number", "min": 3, "max": 9 },
+    "p1_1": { "type": "number", "min": 2, "max": 12 },
+    "p2_1": { "type": "number", "min": 2, "max": 12 },
+    "b1_2": { "type": "number", "min": 3, "max": 9 },
+    "b2_2": { "type": "number", "min": 3, "max": 9 },
+    "p1_2": { "type": "number", "min": 2, "max": 12 },
+    "p2_2": { "type": "number", "min": 2, "max": 12 },
+    "b1": { "type": "number", "min": 3, "max": 9 },
+    "b2": { "type": "number", "min": 3, "max": 9 },
+    "p1": { "type": "number", "min": 2, "max": 12 },
+    "p2": { "type": "number", "min": 2, "max": 12 }
+  },
+  "relaciones": [
+    "head_1 = (b1_1 * b2_1) - (p1_1 + p2_1)",
+    "head_2 = (b1_2 * b2_2) - (p1_2 + p2_2)",
+    "head = (b1 * b2) - (p1 + p2)"
+  ],
+  "restricciones": [
+    "head_1 > 0",
+    "head_2 > 0",
+    "head > 0"
+  ],
+  "incognita_directa": "head",
+  "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Descubre la ley de formación y calcula el valor de X en la cabeza.",
+  "visual_data": {
+    "type": "geometry_mafs",
+    "theme": "graphic_distribution",
+    "shape": "stickman",
+    "figures": [
+      { "head": "${head_1}", "leftArm": "${b1_1}", "rightArm": "${b2_1}", "leftLeg": "${p1_1}", "rightLeg": "${p2_1}" },
+      { "head": "${head_2}", "leftArm": "${b1_2}", "rightArm": "${b2_2}", "leftLeg": "${p1_2}", "rightLeg": "${p2_2}" },
+      { "head": "X", "leftArm": "${b1}", "rightArm": "${b2}", "leftLeg": "${p1}", "rightLeg": "${p2}" }
+    ]
+  }
 },
-"relaciones": [
-"s4 = (s2 * s3) / s1"
-],
-"restricciones": [
-"(s2 * s3) % s1 == 0"
-],
-"incognita_directa": "s4",
-"formato_respuesta": { "tipo": "entero" },
-"enunciado": "Determina el valor que falta en el sector circular.",
-"metadata": {
-"habilidades": ["distribuciones circulares", "multiplicación y división"],
-"tiempo_estimado": 120,
-"requiere_calculadora": false
-}
+{
+  "id": "rm_distrib_asterisco_avanzado",
+  "tema": "razonamiento_matematico",
+  "subtipo": "distribucion_grafica",
+  "grado": "5to",
+  "etapa": ["final"],
+  "dificultad": ["avanzado"],
+  "bidireccional": false,
+  "variables": {
+    "t1": { "type": "number", "min": 2, "max": 10 },
+    "b1": { "type": "number", "min": 2, "max": 10 },
+    "l1": { "type": "number", "min": 2, "max": 10 },
+    "r1": { "type": "number", "min": 2, "max": 10 }
+  },
+  "relaciones": [
+    "center = (t1 * b1) + (l1 * r1)"
+  ],
+  "incognita_directa": "center",
+  "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Analiza las dos primeras figuras y descubre el valor de X.",
+  "visual_data": {
+    "type": "geometry_mafs",
+    "theme": "graphic_distribution",
+    "shape": "asterisk",
+    "figures": [
+      { "top": "${t1_1}", "bottom": "${b1_1}", "left": "${l1_1}", "right": "${r1_1}", "center": "${center_1}" },
+      { "top": "${t1_2}", "bottom": "${b1_2}", "left": "${l1_2}", "right": "${r1_2}", "center": "${center_2}" },
+      { "top": "${t1}", "bottom": "${b1}", "left": "${l1}", "right": "${r1}", "center": "X" }
+    ]
+  }
+},
+{
+  "id": "rm_distrib_casita_experto",
+  "tema": "razonamiento_matematico",
+  "subtipo": "distribucion_grafica",
+  "grado": "5to",
+  "etapa": ["final"],
+  "dificultad": ["experto"],
+  "bidireccional": false,
+  "variables": {
+    "v1": { "type": "number", "min": 3, "max": 12 },
+    "v2": { "type": "number", "min": 3, "max": 12 },
+    "techo": { "type": "number", "min": 2, "max": 6 }
+  },
+  "relaciones": [
+    "p = (v1 + v2) * techo"
+  ],
+  "incognita_directa": "p",
+  "formato_respuesta": { "tipo": "entero" },
+  "enunciado": "Descubre la relación matemática oculta y halla el valor de X en la puerta.",
+  "visual_data": {
+    "type": "geometry_mafs",
+    "theme": "graphic_distribution",
+    "shape": "house",
+    "figures": [
+      { "techo": "${techo_1}", "v1": "${v1_1}", "v2": "${v2_1}", "p": "${p_1}" },
+      { "techo": "${techo_2}", "v1": "${v1_2}", "v2": "${v2_2}", "p": "${p_2}" },
+      { "techo": "${techo}", "v1": "${v1}", "v2": "${v2}", "p": "X" }
+    ]
+  }
 },
 {
 "id": "rm_conteo_triangulos_induccion_basico",
@@ -4054,8 +4142,112 @@
   "formato_respuesta": { "tipo": "entero" },
   "enunciado": "Analiza la paridad de los exponentes y determina el valor de la incógnita $J$:\n\n$$J = (-1)^{${exp}} \\cdot ({n})$$\n\nRecuerda: $(-1)^{\\text{impar}} = -1$.",
   "metadata": { "habilidades": ["análisis de paridad", "lógica"], "tiempo_estimado": 240 }
-}
+},
 
+
+
+
+
+
+
+
+
+{
+    "id": "arit_q_add_conamat_basico",
+    "tema": "aritmetica",
+    "subtipo": "adicion_sustraccion_q",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "variables": { "x": { "type": "number" }, "y": { "type": "number" } },
+    "relaciones": [],
+    "enunciado": "Si a los términos de la fracción $\\frac{${x}}{${y}}$ se les suma su propio denominador, ¿en cuánto aumenta el valor de la fracción original?",
+    "formato_respuesta": { "tipo": "fraccion" },
+    "metadata": { "habilidades": ["análisis de variaciones", "fracciones"] }
+  },
+  {
+    "id": "arit_q_add_conamat_intermedio",
+    "tema": "aritmetica",
+    "subtipo": "adicion_sustraccion_q",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "variables": { "a": { "type": "number" }, "b": { "type": "number" } },
+    "relaciones": [],
+    "enunciado": "Un caño 'A' puede llenar un tanque vacío en ${a} horas, y un desagüe 'B' puede vaciar el mismo tanque en ${b} horas. Si se abren ambos al mismo tiempo, ¿en cuántas horas se llenará el tanque?",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["reducción a la unidad", "inversas"] }
+  },
+  {
+    "id": "arit_q_add_conamat_avanzado",
+    "tema": "aritmetica",
+    "subtipo": "adicion_sustraccion_q",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "variables": { "a": { "type": "number" }, "b": { "type": "number" }, "c": { "type": "number" } },
+    "relaciones": [],
+    "enunciado": "Simplifica la siguiente fracción continua y determina su valor reducido:\n$$ E = ${a} + \\frac{1}{${b} + \\frac{1}{${c}}} $$",
+    "formato_respuesta": { "tipo": "fraccion" },
+    "metadata": { "habilidades": ["fracciones continuas", "orden jerárquico"] }
+  },
+  {
+    "id": "arit_q_add_conamat_experto",
+    "tema": "aritmetica",
+    "subtipo": "adicion_sustraccion_q",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "variables": { "n": { "type": "number" }, "next": { "type": "number" } },
+    "relaciones": [],
+    "enunciado": "Calcula el valor de la suma límite (serie telescópica):\n$$ S = \\frac{1}{1\\times 2} + \\frac{1}{2\\times 3} + \\frac{1}{3\\times 4} + \\dots + \\frac{1}{${n}\\times ${next}} $$",
+    "formato_respuesta": { "tipo": "fraccion" },
+    "metadata": { "habilidades": ["sumas telescópicas", "inducción deductiva"] }
+  },
+{
+    "id": "arit_q_mul_conamat_basico",
+    "tema": "aritmetica",
+    "subtipo": "multiplicacion_division_q",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "variables": { "n": { "type": "number" } },
+    "relaciones": [],
+    "enunciado": "Calcula el valor de 'P' si:\n$$ P = \\left(1 - \\frac{1}{2}\\right) \\cdot \\left(1 - \\frac{1}{3}\\right) \\cdot \\left(1 - \\frac{1}{4}\\right) \\dots \\left(1 - \\frac{1}{${n}}\\right) $$",
+    "formato_respuesta": { "tipo": "fraccion" },
+    "metadata": { "habilidades": ["productos infinitos", "simplificación en cadena"] }
+  },
+  {
+    "id": "arit_q_mul_conamat_intermedio",
+    "tema": "aritmetica",
+    "subtipo": "multiplicacion_division_q",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "variables": { "num": { "type": "number" }, "den": { "type": "number" }, "rebotes": { "type": "number" }, "h": { "type": "number" } },
+    "relaciones": [],
+    "enunciado": "Una pelota elástica se deja caer desde una altura de $${h}m$. Si en cada rebote se eleva $\\frac{${num}}{${den}}$ de la altura desde la cual cayó, ¿qué altura alcanzará después del tercer rebote?",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["sucesiones geométricas", "potencias en fracciones"] }
+  },
+  {
+    "id": "arit_q_mul_conamat_avanzado",
+    "tema": "aritmetica",
+    "subtipo": "multiplicacion_division_q",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "variables": { "a": { "type": "number" }, "b": { "type": "number" }, "sobra": { "type": "number" } },
+    "relaciones": [],
+    "enunciado": "En un examen de olimpiadas, Mateo resuelve $\\frac{1}{${a}}$ del total de preguntas. En la segunda hora resuelve $\\frac{1}{${b}}$ **del resto**. Si aún le faltan ${sobra} preguntas, ¿cuántas preguntas tenía el examen en total?",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["fracciones del resto", "ecuaciones racionales"] }
+  },
+  {
+    "id": "arit_q_mul_conamat_experto",
+    "tema": "aritmetica",
+    "subtipo": "multiplicacion_division_q",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "variables": { "a": { "type": "number" }, "c": { "type": "number" } },
+    "relaciones": [],
+    "enunciado": "Halla el valor simplificado de $M$ aplicando la ley de extremos y medios:\n$$ M = \\frac{\\frac{${a}}{x}}{\\frac{${c}}{x^2}} \\times \\frac{\\frac{${c}}{x^3}}{\\frac{${a}}{x^4}} $$",
+    "formato_respuesta": { "tipo": "fraccion" },
+    "metadata": { "habilidades": ["ley del sándwich", "álgebra con fracciones"] }
+  }
   
 
 

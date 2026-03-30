@@ -250,11 +250,18 @@ export default function ProblemCard({
           </div>
         )}
 
-        {/* GRAFICO (Lienzo blanco intacto) */}
+       {/* GRAFICO (Lienzo blanco intacto) */}
         {!isEditing && problem.visual_data && (
           <div className="my-1 flex justify-center overflow-hidden border border-transparent">
             <div className="w-full flex items-center justify-center">
-              {renderVisualEmbed(problem.visual_data, problem.math_data)}
+              {(() => {         
+                let parsedVisual = problem.visual_data;
+                
+                if (parsedVisual?.visualData) {
+                  parsedVisual = parsedVisual.visualData;
+                }
+                return renderVisualEmbed(parsedVisual, problem.math_data);
+              })()}
             </div>
           </div>
         )}

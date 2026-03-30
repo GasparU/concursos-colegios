@@ -54,7 +54,7 @@ export default function StudentExamList() {
             <LayoutGrid className="text-indigo-600" /> Mis Exámenes
           </h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mt-1">
-            Entrena duro para ser la mejor en CONAMAT. ¡Tú puedes, ARiana!
+            Entrena duro para ser la mejor en CONAMAT. ¡Tú puedes, Ariana!
           </p>
         </div>
         

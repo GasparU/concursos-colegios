@@ -167,6 +167,8 @@ export const TEMARIO_MAESTRO = {
     { nombre: "Proporcionalidad directa e inversa", tipo: "conamat", subtipos: ["magnitudes_proporcionales", "magnitudes_prop."] },
     { nombre: "Regla de tres simple y compuesta", tipo: "conamat", subtipos: ["directa", "rendimiento", "rendimiento_equipo"] },
     { nombre: "Porcentajes y Descuentos", tipo: "conamat", subtipos: ["descuento", "aumento"] },
+    { nombre: "Operaciones en Q: Adición y sustracción", tipo: "conamat", subtipos: ["adicion_sustraccion_q"] },
+    { nombre: "Operaciones en Q: Multiplicación y división", tipo: "conamat", subtipos: ["multiplicacion_division_q"] },
     { nombre: "Magnitudes Proporcionales (DP e IP)", tipo: "aritmetica", subtipos: ["magnitudes_proporcionales_dp", "magnitudes_proporcionales_ip", "magnitudes_proporcionales_mixta", "magnitudes_proporcionales_ecuacion"] },
 
     // GEOMETRÍA

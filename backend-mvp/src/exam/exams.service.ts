@@ -16,49 +16,48 @@ export class ExamsService {
   }
 
   // --- 🤖 IA: DEEPSEEK CHAT (CERO ALUCINACIONES, CERO LÍMITES) ---
-  async getAIDidacticExplanation(questionMarkdown: string, correctAnswer: string, options: any, category: string = 'MATH' ) {
+  async getAIDidacticExplanation(questionMarkdown: string, correctAnswer: string, options: any, category: string = 'MATH', userAnswerKey: string = '') {
 
+    const userAnswerText = options[userAnswerKey] || userAnswerKey;
+    const correctAnswerText = options[correctAnswer] || correctAnswer;
 
     const promptMath = `
-      Actúa como profesor de la academia Atiana para CONAMAT.
+      Actúa como profesor de la academia Ariana para CONAMAT.
+      El estudiante marcó la opción incorrecta: ${userAnswerText}
+      La respuesta correcta es: ${correctAnswerText}
       
-      REGLAS ESTRICTAS E INQUEBRANTABLES:
-      1. NO saludes.
-      2. NO expliques tu razonamiento interno ("Analizando...").
-      3. Ve DIRECTO AL GRANO en máximo 3 pasos muy cortos.
-      4. Usa LaTeX $...$ para toda la matemática.
-      5. Termina con un "Truco:" de 1 sola línea si es posible.
-      6. Puedes darlo en "paso 1, paso 2, paso 3". Pero no más de 6 pasos ni tantas lineas, es matematica, no te va a leer explicaciones, solo pasos directos.
-      7. Si usas palabras con tildes o la letra Ñ dentro de LaTeX $...$, DEBES envolverlas en \\text{...}. Ejemplo: $t_{\\text{término}}$ en lugar de $t_{término}$.
-
+      REGLAS ESTRICTAS:
+      1. NO saludes ni expliques tu razonamiento.
+      2. Ve DIRECTO AL GRANO en máximo 3 pasos cortos.
+      3. Usa LaTeX $...$ para toda la matemática.
+      4. Termina con un "Truco:" de 1 sola línea si es posible.
+      
       Problema: ${questionMarkdown}
-      Opciones: ${JSON.stringify(options)}
-      Clave Correcta: ${correctAnswer}
     `;
 
     const promptLetras = `
-      Actúa como Mentor Senior de la academia pre-universitaria UNI para el nivel 5to/6to de primaria.
+      Actúa como un Mentor de Letras muy humano, cálido y pedagógico para una niña de 11 años llamada Ariana.
+      
+      CONTEXTO:
+      - Ariana marcó la opción equivocada: ${userAnswerText}
+      - La respuesta correcta es: ${correctAnswerText}
 
-      REGLAS ESTRICTAS E INQUEBRANTABLES:
-      1. NO uses LaTeX (nada de signos $).
-      2. NO saludes ni des introducciones ("Analizando...", "¡Claro!").
-      3. Tono directo, lógico y didáctico.
-      4. Si la pregunta es de Sintaxis o Gramática, usa **negritas** (Markdown) para resaltar el elemento clave (ej: el **sujeto** o el **verbo**).
-      5. Estructura tu respuesta así:
-         - POR QUÉ ES LA CORRECTA: (Explicación breve)
-         - ANÁLISIS DEL ERROR COMÚN: (Por qué las otras opciones confunden)
-         - TIP PRE-U: (Un truco rápido para recordar la regla)
-
-      Problema: ${questionMarkdown}
-      Opciones: ${JSON.stringify(options)}
-      Clave Correcta: ${correctAnswer}
+      REGLAS DE ORO ESTRICTAS:
+      1. TEXTO PLANO ABSOLUTO: PROHIBIDO usar asteriscos (**), PROHIBIDO usar signos de dólar ($), y PROHIBIDO usar etiquetas como [COL]. Escribe texto normal, limpio y directo. Si necesitas resaltar una palabra, escríbela en MAYÚSCULAS.
+      2. SÉ BREVE Y DIDÁCTICO: Explica como un buen profesor, sin párrafos inmensos ni rodeos. Ve al grano.
+      3. SÉ HUMANO Y FLEXIBLE: Varía tu forma de empezar. Usa frases naturales como "¡Casi, Ariana!", "¡Por poco!" "Esta era una trampita común...", "Buena lógica, pero fíjate en este detalle...". NO uses siempre la misma frase introductoria.
+      4. ESTRUCTURA CORTA:
+         - El error: Explica rápido y con cariño por qué la opción ${userAnswerText} engañaba.
+         - La verdad: Explica por qué ${correctAnswerText} es la correcta de forma sencilla.
+         - Ejemplos: Da 2 ejemplos muy cortitos y fáciles para que fije la regla.
+      
+      Problema original: ${questionMarkdown}
     `;
 
-    const isLetras = ['COMUNICACION', 'LENGUAJE', 'RAZONAMIENTO_VERBAL', 'HISTORIA'].includes(category.toUpperCase());
+    const isLetras = /comunic|lenguaj|verbal|lect|historia|sociales|analog|sinonim|antonim|semantica/i.test(category);
     const finalPrompt = isLetras ? promptLetras : promptMath;
 
     try {
-      // Llamada nativa a la API de DeepSeek
       const response = await fetch("https://api.deepseek.com/chat/completions", {
         method: "POST",
         headers: {
@@ -66,24 +65,22 @@ export class ExamsService {
           "Authorization": `Bearer ${this.deepseekApiKey}`
         },
         body: JSON.stringify({
-          model: "deepseek-chat", // Usamos el modelo rápido y estable
-          messages: [{ role: "user", content: prompt }],
-          temperature: 0.2 // Muy bajo para que no alucine nada
+          model: "deepseek-chat", 
+          messages: [{ role: "user", content: finalPrompt }],
+          temperature: 0.3 
         })
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("❌ Error de la API DeepSeek:", errorText);
-        throw new Error("Fallo en DeepSeek");
-      }
+      if (!response.ok) throw new Error("Fallo en DeepSeek");
 
       const data = await response.json();
       return data.choices[0].message.content;
 
     } catch (error) {
       console.error("❌ Error ejecutando DeepSeek:", error);
-      return "Aplica la propiedad principal y simplifica directamente. ¡Tú puedes!";
+      return isLetras 
+        ? "¡Uy! Esta pregunta fue todo un reto. Revisa bien la relación principal entre las palabras. ¡Tú puedes, Ariana!" 
+        : "Aplica la propiedad principal y simplifica directamente. ¡Tú puedes!";
     }
   }
 
@@ -91,13 +88,14 @@ export class ExamsService {
   private async processAIInBackground(failedQuestions: any[], examCategory: string = 'MATH') {
     for (const q of failedQuestions) {
       const isDefault = !q.solutionMarkdown || 
-                         q.solutionMarkdown.length < 20 || 
-                         q.solutionMarkdown.includes("No hay solución");
+                         q.solutionMarkdown.length < 50 || 
+                         q.solutionMarkdown.includes("No hay solución") ||
+                         q.solutionMarkdown.includes("Aplica la propiedad principal");
 
       if (isDefault) {
-        console.log(`🧠 [BACKGROUND] DeepSeek analizando pregunta: ${q.id} (Categoría: ${examCategory})`);
-        // Asumo que sigues usando la función getAIDidacticExplanation de DeepSeek
-        const aiSolution = await this.getAIDidacticExplanation(q.questionMarkdown, q.correctAnswer, q.options, examCategory);
+        console.log(`🧠 [BACKGROUND] Mentor analizando error en pregunta: ${q.id}`);
+        // 🔥 PASAMOS LA RESPUESTA DE ARIANA AL MENTOR
+        const aiSolution = await this.getAIDidacticExplanation(q.questionMarkdown, q.correctAnswer, q.options, examCategory, q.userAnswerKey);
         
         await this.prisma.question.update({
           where: { id: q.id },
@@ -167,7 +165,8 @@ export class ExamsService {
         score++;
         details[nivel].correct++; 
       } else {
-        failedQuestions.push(q);
+        // 🔥 FIX QUIRÚRGICO: Guardamos qué alternativa marcó exactamente la alumna
+        failedQuestions.push({ ...q, userAnswerKey: userAns });
       }
     });
 
@@ -197,7 +196,7 @@ export class ExamsService {
       },
     });
 
-    const examCategory = (exam as any).category || (exam as any).type || (exam as any).title || 'MATH';
+    const examCategory = exam.title || 'MATH';
 
     // Procesamos IA solo para las falladas
     this.processAIInBackground(failedQuestions, examCategory).catch(err => 
@@ -467,8 +466,8 @@ export class ExamsService {
     // 2. Borramos las preguntas del examen
     await this.prisma.question.deleteMany({ where: { examId: id } });
     
-    // 3. Finalmente borramos el examen
-    return this.prisma.exam.delete({ where: { id } });
+    // 3. Finalmente borramos el examen (deleteMany evita el error si ya no existe)
+    return this.prisma.exam.deleteMany({ where: { id } });
   }
 
 

@@ -234,7 +234,7 @@ export const MathProblemSchema = z.object({
   solution_markdown: z
     .string()
     .describe(
-      'Solución FINAL y directa. MÁXIMO 5 líneas. PROHIBIDO incluir pensamientos o correcciones.',
+      'Explicación de la respuesta. Si es MATEMÁTICA: Pasos lógicos y operativos. Si es LETRAS: Mentoría empática, explicando por qué una opción es tentadora pero incorrecta, y luego explicar la respuesta correcta con un enfoque motivador y cercano. La niña se llama Ariana.',
     ),
   correct_answer: z.string(),
   math_data: MathDataSchema.describe('OBLIGATORIO: Datos para el gráfico'),

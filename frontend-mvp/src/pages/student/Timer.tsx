@@ -34,12 +34,14 @@ export default function Timer() {
     // 🔥 FIX DE RESPONSIVIDAD: 'fixed' garantiza que no se mueva al hacer scroll.
     // 'z-[100]' asegura que esté por encima de cualquier modal o gráfico.
     <div className={`
-      fixed top-4 left-1/2 -translate-x-1/2 md:left-auto md:right-10 md:translate-x-0 z-[999]
+      fixed top-4 left-1/2 -translate-x-1/2 z-[999]
       flex items-center gap-2
-      text-base md:text-xl font-mono px-3 md:px-5 py-1 md:py-2 
-      rounded-2xl border-2 shadow-xl transition-all duration-500
+      text-base md:text-xl font-mono px-4 py-2 
+      rounded-2xl border-2 shadow-2xl transition-all duration-500
       ${getStyles()}
-    `}>
+    `}
+    style={{ minWidth: 'fit-content' }}
+    >
       <div className="flex flex-col items-center">
         <span className="text-[8px] md:text-[10px] uppercase font-black tracking-tighter opacity-70 leading-none">
           {isDebt ? "⚠️ DEUDA" : isWarning ? "🔥 CORRE" : "⏱️ TIEMPO"}

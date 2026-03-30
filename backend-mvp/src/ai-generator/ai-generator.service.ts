@@ -438,16 +438,15 @@ export class AiGeneratorService {
         // 🔥 CORRECCIÓN CRÍTICA: Si es letras, el sistema NO PUEDE ser un profesor de matemáticas
         if (esLetras) {
           systemPrompt = new SystemMessage(
-            `Eres un EXAMINADOR DE LENGUAJE Y HUMANIDADES (Nivel 5to/6to Primaria CONAMAT). 
-            OLVIDA TODO LO RELACIONADO A MATEMÁTICAS, GEOMETRÍA O "PROPIEDADES".
-
-            REGLAS DE SOLUCIÓN (solution_markdown):
-            1. EMPATÍA INICIAL: Empieza con una frase como "Entiendo que pensaste en esta opción porque [COL]palabra[/COL] parece correcta, pero..."
-            2. EXPLICACIÓN DEL RETO: Explica la regla gramatical o el dato histórico de forma directa y seca (Estilo Olimpiada 369).
-            3. REGLA DE ORO: Incluye exactamente DOS ejemplos didácticos fuera de la pregunta original. 
-            4. FORMATO: Solo usa [COL] para resaltar. PROHIBIDO usar asteriscos (**).
+           `Eres un EXAMINADOR DE LENGUAJE Y HUMANIDADES (Nivel 5to/6to Primaria CONAMAT). 
+            OLVIDA LAS MATEMÁTICAS Y PROPIEDADES.
             
-            REGLA DE VARIEDAD: Usa el contexto de "${escenarioAzar}" para todas las palabras o ejemplos.`
+            REGLAS CRÍTICAS:
+            - Solo genera la pregunta y opciones.
+            - Para el campo 'solution_markdown': ESCRIBE SOLO 1 LÍNEA explicando por qué la clave es correcta. NO seas empático, NO adivines errores, el alumno aún no rinde la prueba. Ahorra tokens.
+            - Para dar ÉNFASIS usa: [COL]palabra[/COL]. PROHIBIDO usar asteriscos (**).
+            
+            Contexto temático: "${escenarioAzar}".`
           );
         } else if (!systemPrompt) {
           systemPrompt = new SystemMessage(
@@ -508,7 +507,7 @@ export class AiGeneratorService {
              - question_markdown: Enunciado limpio.
              - options: {A, B, C, D, E}.
              - correct_answer: Letra.
-             - solution_markdown: Explicación didáctica.`
+             - solution_markdown: Explicación didáctica empática con los 2 ejemplos.`
           : `Genera un problema de "${topic}" para ${grade}.
              CONTEXTO: ${contextoAzar}.
              ${guiaMatematica}
@@ -525,7 +524,9 @@ export class AiGeneratorService {
               4. Sé breve y directo.
              
               REQUISITO DE ESTILO: ${styleConstraint}
-              SEMILLA DE SEGURIDAD: ${uniqueSeed}`;
+              SEMILLA DE SEGURIDAD: ${uniqueSeed}
+              - solution_markdown: Explica la resolución paso a paso, usando LaTeX para cada operación. Sé directo y operativo.
+              `;
 
         const messages = [systemPrompt, new HumanMessage(promptCuerpo)];
 
@@ -534,6 +535,11 @@ export class AiGeneratorService {
           messages,
           MathProblemSchema,
         );
+
+        // 🔥 AÑADE ESTOS LOGS DE INMEDIATO:
+        this.logger.debug(`[DEBUG RAW] Tema detectado: ${topic}`);
+        this.logger.debug(`[DEBUG RAW] Es Letras: ${esLetras}`);
+        this.logger.debug(`[DEBUG RAW] Solution Markdown: ${result.solution_markdown}`);
 
         if (esLetras) {
           result.visual_data = null;

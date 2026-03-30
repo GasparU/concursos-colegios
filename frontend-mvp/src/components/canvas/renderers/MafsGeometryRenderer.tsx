@@ -34,9 +34,11 @@ import { StatisticsTable } from "./StatisticsTable";
 import { RenderizadorAreaTriangulo } from "./especializados/RenderizadorAreaTriangulo";
 import { VennDiagram } from "./especializados/VennDiagram";
 import { RenderizadorCilindro } from "./especializados/RenderizadorCilindro";
+import { GraphicDistribution } from "./GraphicDistribution";
+import { RenderizadorFracciones } from "./especializados/RenderizadorFracciones";
 
 export const MafsGeometryRenderer = (props: any) => {
-  // 🔥 BLINDAJE TOTAL: Acepta la data sin importar cómo llegue
+  
   const datosEntrada =
     props.datosMatematicos || props.visualData || props.visual_data || props.mathData || props.data || props;
 
@@ -57,7 +59,6 @@ export const MafsGeometryRenderer = (props: any) => {
       parametros = datosEntrada;
     }
   }
-
   switch (tipoFigura) {
     case "rectas_secantes":
       return <RenderizadorRectasSecantes parametros={parametros} />;
@@ -109,6 +110,9 @@ export const MafsGeometryRenderer = (props: any) => {
         />
       );
 
+      case "graphic_distribution":
+      return <GraphicDistribution data={parametros} />;
+
     case "thales":
       return <RenderizadorThales parametros={parametros} />;
 
@@ -124,6 +128,9 @@ export const MafsGeometryRenderer = (props: any) => {
 
     case "prisma_rectangular":
       return <RenderizadorPrismaRectangular parametros={parametros} />;
+
+      case "fraction_model":
+      return <RenderizadorFracciones parametros={parametros} />;
 
     case "prisma_triangular":
       return <RenderizadorPrismaTriangular parametros={parametros} />;

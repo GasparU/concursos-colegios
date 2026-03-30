@@ -6666,6 +6666,8 @@ export class QuintoGradoService extends BaseGradoService {
       }
     }
 
+    
+
     if (plantilla.tema === 'razonamiento_matematico') {
       switch (plantilla.id) {
 
@@ -6729,86 +6731,144 @@ export class QuintoGradoService extends BaseGradoService {
           };
         }
         
+
+        case 'rm_distrib_triangulo_basico':
+        case 'rm_distrib_hombre_intermedio':
+        case 'rm_distrib_asterisco_avanzado':
+        case 'rm_distrib_casita_experto':
         case 'rm_distribucion_hombrecito_basico':
         case 'rm_distribucion_hombrecito_intermedio':
         case 'rm_distribucion_hombrecito_avanzado':
         case 'rm_distribucion_hombrecito_experto':
-        case 'rm_distribucion_hombrecito':
         case 'distribucion_grafica': {
           const id = plantilla.id || '';
           
-          // Asignar banco de fórmulas según el nivel del ID
-          let patrones: number[] = [];
-          if (id.includes('basico')) patrones = [1, 2]; // Sumas y restas simples
-          else if (id.includes('avanzado')) patrones = [5, 6]; // Combos de Multiplicación
-          else if (id.includes('experto')) patrones = [7, 8]; // Cuadrados y combinaciones duras
-          else patrones = [3, 4]; // INTERMEDIO (Default)
+          // 🧠 LÓGICA DE DIFICULTAD
+          let nivel: 'basico' | 'intermedio' | 'avanzado' | 'experto' = 'intermedio';
+          if (id.includes('basico')) nivel = 'basico';
+          else if (id.includes('avanzado')) nivel = 'avanzado';
+          else if (id.includes('experto')) nivel = 'experto';
 
-          const patronElegido = patrones[Math.floor(Math.random() * patrones.length)];
+          const formulaIndex = Math.floor(Math.random() * 12) + 1; 
 
-          const generarHombrecito = () => {
-            let b1=0, b2=0, p1=0, p2=0, cabeza=0;
-            
-            if (patronElegido === 1) { // (b1+b2) + (p1+p2)
-                b1 = Math.floor(Math.random()*20)+1; b2 = Math.floor(Math.random()*20)+1;
-                p1 = Math.floor(Math.random()*15)+1; p2 = Math.floor(Math.random()*15)+1;
-                cabeza = b1 + b2 + p1 + p2;
-            } else if (patronElegido === 2) { // (b1+b2) - (p1+p2)
-                b1 = Math.floor(Math.random()*20)+10; b2 = Math.floor(Math.random()*20)+10;
-                // Blindaje: p1 y p2 suman menos que los brazos
-                const maxPiernas = b1 + b2 - 2; 
-                p1 = Math.floor(Math.random()*(maxPiernas/2))+1;
-                p2 = Math.floor(Math.random()*(maxPiernas/2))+1;
-                cabeza = (b1 + b2) - (p1 + p2);
-            } else if (patronElegido === 3) { // (b1 * b2) - (p1 + p2)
-                b1 = Math.floor(Math.random()*9)+3; b2 = Math.floor(Math.random()*9)+3;
-                const prod = b1 * b2;
-                p1 = Math.floor(Math.random()*(prod/2 - 1))+1;
-                p2 = Math.floor(Math.random()*(prod/2 - 1))+1;
-                cabeza = prod - (p1 + p2);
-            } else if (patronElegido === 4) { // (b1 * p1) + (b2 * p2)
-                b1 = Math.floor(Math.random()*8)+2; p1 = Math.floor(Math.random()*8)+2;
-                b2 = Math.floor(Math.random()*8)+2; p2 = Math.floor(Math.random()*8)+2;
-                cabeza = (b1 * p1) + (b2 * p2);
-            } else if (patronElegido === 5) { // (b1 * b2) - (p1 * p2)
-                b1 = Math.floor(Math.random()*7)+5; b2 = Math.floor(Math.random()*7)+5;
-                const prod = b1 * b2;
-                // Blindaje: p1*p2 debe ser menor que b1*b2
-                p1 = Math.floor(Math.random()*4)+2; // 2 a 5
-                p2 = Math.floor(Math.random()*4)+2; // 2 a 5
-                if(p1*p2 >= prod) { p1=2; p2=2; } // Seguro de emergencia
-                cabeza = prod - (p1 * p2);
-            } else if (patronElegido === 6) { // (b1 + b2) * (p1 + p2)
-                b1 = Math.floor(Math.random()*6)+2; b2 = Math.floor(Math.random()*6)+2;
-                p1 = Math.floor(Math.random()*5)+1; p2 = Math.floor(Math.random()*5)+1;
-                cabeza = (b1 + b2) * (p1 + p2);
-            } else if (patronElegido === 7) { // EXPERTO: (b1² + b2²) - (p1+p2)
-                b1 = Math.floor(Math.random()*5)+3; // 3 a 7
-                b2 = Math.floor(Math.random()*5)+3; // 3 a 7
-                const sumaCuadrados = (b1*b1) + (b2*b2);
-                p1 = Math.floor(Math.random()*(sumaCuadrados/2 - 2))+1;
-                p2 = Math.floor(Math.random()*(sumaCuadrados/2 - 2))+1;
-                cabeza = sumaCuadrados - (p1 + p2);
-            } else if (patronElegido === 8) { // EXPERTO: (b1² - p1) + (b2² - p2)
-                b1 = Math.floor(Math.random()*6)+4; // 4 a 9
-                b2 = Math.floor(Math.random()*6)+4; // 4 a 9
-                p1 = Math.floor(Math.random()*(b1*b1 - 2))+1;
-                p2 = Math.floor(Math.random()*(b2*b2 - 2))+1;
-                cabeza = (b1*b1 - p1) + (b2*b2 - p2);
+          const generarDataPro = (): any[] => {
+            let v1 = 0, v2 = 0, v3 = 0, v4 = 0, center = 0;
+            const rnd = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+            const sumDig = (n: number) => String(n).split('').reduce((a, b) => a + Number(b), 0);
+
+            // --- 🟢 NIVEL BÁSICO (12 CRITERIOS) ---
+            if (nivel === 'basico') {
+              v1=rnd(5,20); v2=rnd(5,20); v3=rnd(2,10); v4=rnd(2,10); 
+              switch (formulaIndex) {
+                case 1: center = v1 + v2 + v3 + v4; break; // Suma Total
+                case 2: center = (v1 + v2) - (v3 + v4); break; // Diferencia de Pares
+                case 3: center = v1 + v2 + v3 + v4 + 5; break; // Suma + Constante
+                case 4: v1=rnd(30,50); center = v1 - v2 - v3; break; // Resta Cascada
+                case 5: center = (v1 + v2) * 2; break; // Doble de la suma
+                case 6: center = (v1 + v4) - (v2 + v3); break; // Extremos vs Medios
+                case 7: center = Math.max(v1, v2, v3, v4); break; // El mayor
+                case 8: center = (v1 + v2 + v3 + v4) - 3; break; // Suma - Constante
+                case 9: center = v1 + v2 + 10; break; // Suma + 10
+                case 10: center = (v1 + v3) - (v2 - v4); break; // Mixta
+                case 11: center = sumDig(v1) + sumDig(v2) + sumDig(v3); break; // Suma de dígitos
+                case 12: v1=rnd(25,40); center = (v1 - v2) * 2; break; // Doble de la resta
+              }
             }
-            return [cabeza, b1, b2, p1, p2];
+
+            // --- 🟡 NIVEL INTERMEDIO (12 CRITERIOS) ---
+            else if (nivel === 'intermedio') {
+              v1=rnd(3,10); v2=rnd(3,10); v3=rnd(2,8); v4=rnd(2,8);
+              switch (formulaIndex) {
+                case 1: center = (v1 * v2) - (v3 + v4); break; // Prod - Suma
+                case 2: center = (v1 + v2) * v3; break; // Suma * Multiplicador
+                case 3: center = (v1 * v3) + (v2 * v4); break; // Prod Cruzado
+                case 4: v1=rnd(4,12); v2=rnd(4,12); center = (v1 * v2) / 2; break; // Mitad del prod
+                case 5: center = (v1 * v2) + v3; break; // Prod + Agregado
+                case 6: v1=rnd(5,15); v2=rnd(5,15); v3=rnd(5,15); v4=rnd(5,15); center = Math.floor((v1+v2+v3+v4)/2); break; // Semi-suma
+                case 7: v1=rnd(2,5); v2=rnd(2,5); v3=rnd(2,5); center = v1 * v2 * v3; break; // Triple Prod
+                case 8: center = (v1 * v2) - (v3 * v4); break; // Resta de Productos
+                case 9: center = (v1 * v2) + (v3 + v4); break; // Prod + Suma Restante
+                case 10: center = (v1 + v2) * (v3 + 1); break; 
+                case 11: center = (v1 + v2 + v3) * 3; break;
+                case 12: v1=rnd(11,99); center = Number(String(v1)[0]) * v2; break; // Dig1 * v2
+              }
+            }
+
+            // --- 🔴 NIVEL AVANZADO (12 CRITERIOS) ---
+            else if (nivel === 'avanzado') {
+              v1=rnd(2,12); v2=rnd(2,10); v3=rnd(2,5); v4=rnd(2,5);
+              switch (formulaIndex) {
+                case 1: center = (v1 * v1) + v2; break; // Cuadrado + N
+                case 2: v1=rnd(6,10); v2=rnd(2,5); center = (v1 * v1) - (v2 * v2); break; // Dif. Cuadrados
+                case 3: v1=rnd(1,9); v2=rnd(1,9); center = Number(`${v1}${v2}`); break; // Concatenación
+                case 4: const r=rnd(4,12); v1=r*r; center=r; break; // Raíz cuadrada
+                case 5: v1=rnd(2,5); v2=rnd(2,3); center = Math.pow(v1, v2); break; // Potencia
+                case 6: v1=rnd(11,99); center = sumDig(v1) * 4; break; 
+                case 7: center = (v1 * v2) + (v3 * v3); break;
+                case 8: v1=rnd(2,5); center = (v1 * v1 * v1) + v2; break; // Cubo + N
+                case 9: center = Math.abs(v1 - v2) * 5; break;
+                case 10: v1=rnd(10,30); v3=rnd(2,6); center = (v1 % v3) + 2; break; // Residuo + 2
+                case 11: center = v1 * 11; break; // Repetición
+                case 12: v1=rnd(2,5); let f=1; for(let i=1;i<=v1;i++) f*=i; center = f; break; // Factorial
+              }
+            }
+
+            // --- 🟣 NIVEL EXPERTO (12 CRITERIOS) ---
+            else {
+              v1=rnd(3,10); v2=rnd(3,10); v3=rnd(2,10); v4=rnd(2,10);
+              switch (formulaIndex) {
+                case 1: center = (v1 * v1) + (v2 * v2); break; // Suma cuadrados
+                case 2: center = sumDig(v1 * v2) * 2; break;
+                case 3: center = (v1 * v2) + (v3 * v4); break;
+                case 4: center = (v1 + v2 + v3 + v4) * 2; break;
+                case 5: v1=rnd(3,5); v2=rnd(2,5); center = Math.pow(v1, 3) - (v2 * v2); break;
+                case 6: center = sumDig(v1) * sumDig(v2); break;
+                case 7: center = (v1 * v2) - sumDig(v1 + v2); break;
+                case 8: center = (v1 + v2 + v3 + v4) * Math.abs(v1 - v2 || 2); break;
+                case 9: center = Math.pow(v1, 2) + sumDig(v2 + v3 + v4); break;
+                case 10: center = (v1 * v3) - (v2 + v4); break;
+                case 11: center = (v1 + v2) * (v3 + v4); break;
+                case 12: center = Math.pow(sumDig(v1 + v2), 2); break;
+              }
+            }
+
+            // 🔥 SEGURO ANTI-CEROS Y ANTI-NEGATIVOS:
+            // Si el resultado o cualquier variable es <= 0, repetimos la generación
+            if (center <= 0 || v1 <= 0 || v2 <= 0 || v3 <= 0 || v4 <= 0) {
+              return generarDataPro();
+            }
+
+            return [center, v1, v2, v3, v4];
           };
 
-          const fig1 = generarHombrecito();
-          const fig2 = generarHombrecito();
-          const fig3 = generarHombrecito();
-          const respuestaFinal = fig3[0];
-          fig3[0] = "x" as any;
+          // Generamos las 3 figuras con el nuevo motor
+          const fig1 = generarDataPro();
+          const fig2 = generarDataPro();
+          const fig3 = generarDataPro();
+          
+          // Guardamos el valor que será la incógnita antes de poner la "X"
+          const posList = [0, 1, 2, 3, 4];
+          const posIndex = Math.floor(Math.random() * posList.length);
+          const posX = posList[posIndex];
+          const valX = fig3[posX];
+          fig3[posX] = "X" as any;
+
+          // Variedad visual (15 formas)
+          const shapes = ['stickman', 'asterisk', 'house', 'square', 'diamond', 'molecule', 'robot', 'flower', 'triangle', 'circle_x', 'box_cross', 'root_node', 'cup', 'grid_2x2', 'tower'];
+          const shapeToDraw = shapes[Math.floor(Math.random() * shapes.length)];
+
+          const mapFigure = (f: any[]) => ({
+            center: String(f[0]), v1: String(f[1]), v2: String(f[2]), v3: String(f[3]), v4: String(f[4])
+          });
 
           return {
-            type: 'graphic_distribution',
-            data: { shape: 'stickman', figures: [fig1, fig2, fig3] },
-            respuestaSobreescrita: respuestaFinal
+            visualData: {
+              type: 'geometry_mafs',
+              theme: 'graphic_distribution',
+              shape: shapeToDraw,
+              figures: [ mapFigure(fig1), mapFigure(fig2), mapFigure(fig3) ]
+            },
+            respuestaSobreescrita: valX
           };
         }
 
@@ -6873,6 +6933,9 @@ export class QuintoGradoService extends BaseGradoService {
             respuestaSobreescrita: sumaOcultas
           };
         }
+
+
+        
 
        
       
@@ -7473,11 +7536,244 @@ export class QuintoGradoService extends BaseGradoService {
           };
         }
 
+        
+
 
 
 
       }
+      
     }
+
+
+   // ============================================================================
+    // 🔥 BLOQUE: ARITMÉTICA (NIVEL OLIMPIADA CONAMAT) - 100% PRECISIÓN Y CREATIVIDAD
+    // ============================================================================
+    if (plantilla.tema === 'aritmetica') {
+      const id = plantilla.id || '';
+      const rnd = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+      // 🔥 Utilidad Matemática Blindada: Obliga a fracciones perfectas, absorbe signos y rechaza decimales
+      const simplificarFraccion = (num: number, den: number): string => {
+        let n = Math.round(num); // Redondeo por seguridad anti-float
+        let d = Math.round(den);
+        const mcd = (a: number, b: number): number => b === 0 ? a : mcd(b, a % b);
+        const divisor = mcd(Math.abs(n), Math.abs(d));
+        n = n / divisor;
+        d = d / divisor;
+        if (d < 0) { n = -n; d = -d; } // El menos siempre arriba
+        if (d === 1) return `${n}`;
+        if (n === 0) return `0`;
+        return `\\frac{${n}}{${d}}`;
+      };
+
+      // 🧠 DICCIONARIOS DE CREATIVIDAD (Para variabilidad de texto infinita)
+      const sujetos = ["Mateo", "Ariana", "Luis", "Camila", "Sebastián", "Valentina", "Joaquín", "Lucía"];
+      const s1 = sujetos[rnd(0, sujetos.length - 1)];
+      const s2 = sujetos[rnd(0, sujetos.length - 1)];
+      
+      const alimentos = ["un bloque de queso", "una pizza familiar", "un pastel de chocolate", "una tarta de manzana"];
+      const alimento = alimentos[rnd(0, alimentos.length - 1)];
+
+      const tareas = ["pintar una pared", "armar un rompecabezas", "limpiar el jardín", "construir un muro"];
+      const tarea = tareas[rnd(0, tareas.length - 1)];
+
+      const objetos = ["Un poste de luz", "Un cable de acero", "Una varilla de metal", "Una soga de escalar"];
+      const objeto = objetos[rnd(0, objetos.length - 1)];
+
+      const liquidos = ["agua", "poción mágica", "esencia de vainilla", "jugo de naranja"];
+      const liquido = liquidos[rnd(0, liquidos.length - 1)];
+
+      // ---------------------------------------------------------
+      // TEMA 1: ADICIÓN Y SUSTRACCIÓN EN Q
+      // ---------------------------------------------------------
+      if (['arit_q_add_conamat_basico', 'arit_q_add_conamat_intermedio', 'arit_q_add_conamat_avanzado', 'arit_q_add_conamat_experto'].includes(id) || id.includes('adicion_sustraccion_q')) {
+        let enunciado = '', correcta = '', options: any = {};
+        const variante = rnd(1, 3); 
+
+        if (id.includes('basico') || !id.includes('_')) {
+          if (variante === 1) {
+            const y = rnd(4, 9); const x = rnd(1, y - 1);
+            enunciado = `Si a los términos de la fracción $\\frac{${x}}{${y}}$ se les suma su propio denominador, ¿en cuánto aumenta el valor de la fracción original?`;
+            const numRes = y - x; const denRes = 2 * y;
+            correcta = "C";
+            options = { "A": `$${simplificarFraccion(numRes + 1, denRes)}$`, "B": `$${simplificarFraccion(numRes, denRes - 1)}$`, "C": `$${simplificarFraccion(numRes, denRes)}$`, "D": `$${simplificarFraccion(x, y)}$`, "E": `$1$` };
+          } else if (variante === 2) {
+            const a = rnd(3, 6); const b = a + rnd(1, 3);
+            enunciado = `De ${alimento}, un ratón come $\\frac{1}{${a}}$ y luego un gato come $\\frac{1}{${b}}$ del total original. ¿Qué fracción de ${alimento} queda intacta?`;
+            const numRes = (a * b) - b - a; const denRes = a * b;
+            correcta = "D";
+            options = { "A": `$${simplificarFraccion(numRes + 2, denRes)}$`, "B": `$\\frac{1}{${a+b}}$`, "C": `$${simplificarFraccion(numRes, denRes + 1)}$`, "D": `$${simplificarFraccion(numRes, denRes)}$`, "E": `$${simplificarFraccion(numRes - 1, denRes)}$` };
+          } else {
+            const num = rnd(5, 15); const den = rnd(2, 4);
+            enunciado = `Convierte la fracción impropia a número mixto y suma su parte entera con su numerador: $\\frac{${num}}{${den}}$`;
+            const entero = Math.floor(num / den); const resto = num % den;
+            correcta = "A";
+            options = { "A": `$${entero + resto}$`, "B": `$${entero + resto + 1}$`, "C": `$${entero}$`, "D": `$${resto}$`, "E": `$${num - den}$` };
+          }
+        } 
+        else if (id.includes('intermedio')) {
+          if (variante === 1) {
+            const pares = [[3, 6, 6], [4, 12, 6], [2, 6, 3], [5, 20, 4]];
+            const par = pares[rnd(0, pares.length - 1)];
+            enunciado = `Un caño "A" puede llenar un tanque vacío en $${par[0]}$ horas, y un desagüe "B" puede vaciar el mismo tanque en $${par[1]}$ horas. Si se abren ambos al mismo tiempo, ¿en cuántas horas se llenará el tanque?`;
+            correcta = "B";
+            options = { "A": `$${par[2] - 1}$`, "B": `$${par[2]}$`, "C": `$${par[2] + 2}$`, "D": `$${par[0] + par[1]}$`, "E": `$${par[2] + 1}$` };
+          } else if (variante === 2) {
+            const a = rnd(2, 4); const b = rnd(3, 6);
+            enunciado = `${s1} puede ${tarea} en $${a}$ horas y ${s2} puede hacer lo mismo en $${b}$ horas. Si trabajan juntos, ¿qué fracción de la obra realizarán en 1 hora?`;
+            correcta = "E";
+            options = { "A": `$${simplificarFraccion(1, a + b)}$`, "B": `$${simplificarFraccion(a * b, a + b)}$`, "C": `$${simplificarFraccion(a, b)}$`, "D": `$${simplificarFraccion(2, a + b)}$`, "E": `$${simplificarFraccion(a + b, a * b)}$` };
+          } else {
+            const a = rnd(5, 12);
+            enunciado = `Halla la suma de lo que le falta a $\\frac{1}{${a}}$ para ser igual a la unidad, con lo que le sobra a $\\frac{${a+3}}{${a}}$ respecto a la unidad.`;
+            correcta = "A";
+            options = { "A": `$${simplificarFraccion(a + 2, a)}$`, "B": `$${simplificarFraccion(a + 1, a)}$`, "C": `$${simplificarFraccion(a + 3, a)}$`, "D": `$1$`, "E": `$\\frac{3}{${a}}$` };
+          }
+        } 
+        else if (id.includes('avanzado')) {
+          if (variante === 1) {
+            const a = rnd(1, 4); const b = rnd(1, 4); const c = rnd(2, 5);
+            enunciado = `Simplifica la siguiente fracción continua: $$ E = ${a} + \\frac{1}{${b} + \\frac{1}{${c}}} $$`;
+            const num = a * ((b * c) + 1) + c; const den = (b * c) + 1;
+            correcta = "D";
+            options = { "A": `$${simplificarFraccion(den, num)}$`, "B": `$${a + b + c}$`, "C": `$${simplificarFraccion(num + 1, den)}$`, "D": `$${simplificarFraccion(num, den)}$`, "E": `$${simplificarFraccion(num, den + 1)}$` };
+          } else if (variante === 2) {
+            // 🔥 FIX CRÍTICO: División entera obligatoria
+            const L = rnd(20, 50) * 12; 
+            enunciado = `${objeto} mide $${L}$ cm. $\\frac{1}{3}$ de su longitud está pintado de rojo, $\\frac{1}{4}$ de azul y el resto de blanco. ¿Cuántos centímetros están pintados de blanco?`;
+            const blanco = Math.round((L * 5) / 12); // Entero exacto garantizado, cero floats.
+            correcta = "C";
+            options = { "A": `$${blanco + 10}$`, "B": `$${blanco - 20}$`, "C": `$${blanco}$`, "D": `$${Math.round(L / 2)}$`, "E": `$${blanco + 5}$` };
+          } else {
+            const c = rnd(2, 5); const k = rnd(2, 5);
+            enunciado = `Halla el valor en fracción de $X$ si: $$ \\frac{X}{2} + \\frac{X}{3} = ${k * 5} $$`;
+            const resp = k * 6; 
+            correcta = "B";
+            options = { "A": `$${resp - 6}$`, "B": `$${resp}$`, "C": `$${resp + 6}$`, "D": `$${k * 2}$`, "E": `$${resp + 3}$` };
+          }
+        } 
+        else { 
+          if (variante === 1) {
+            const n = rnd(15, 30);
+            enunciado = `Calcula el límite de la serie: $$ S = \\frac{1}{1\\times 2} + \\frac{1}{2\\times 3} + \\dots + \\frac{1}{${n}\\times ${n+1}} $$`;
+            correcta = "A";
+            options = { "A": `$${simplificarFraccion(n, n + 1)}$`, "B": `$\\frac{1}{${n}}$`, "C": `$\\frac{${n+1}}{${n}}$`, "D": `$1$`, "E": `$\\frac{${n-1}}{${n}}$` };
+          } else if (variante === 2) {
+            const n = rnd(10, 20) * 2 + 1; 
+            enunciado = `Calcula el valor de la serie con salto: $$ M = \\frac{2}{1\\times 3} + \\frac{2}{3\\times 5} + \\dots + \\frac{2}{${n}\\times ${n+2}} $$`;
+            correcta = "D";
+            options = { "A": `$${simplificarFraccion(1, n+2)}$`, "B": `$${simplificarFraccion(n, n+2)}$`, "C": `$1$`, "D": `$${simplificarFraccion(n+1, n+2)}$`, "E": `$${simplificarFraccion(n+2, n+1)}$` };
+          } else {
+            const n = rnd(5, 15);
+            enunciado = `Suma las inversas de los números triangulares: $$ T = \\frac{1}{3} + \\frac{1}{6} + \\frac{1}{10} + \\dots + \\frac{1}{\\frac{${n}(${n+1})}{2}} $$`;
+            const numRes = n - 1; const denRes = n + 1;
+            correcta = "E";
+            options = { "A": `$${simplificarFraccion(n, n+1)}$`, "B": `$1$`, "C": `$${simplificarFraccion(2, n+1)}$`, "D": `$${simplificarFraccion(n-2, n+1)}$`, "E": `$${simplificarFraccion(numRes, denRes)}$` };
+          }
+        }
+        return { enunciadoSobreescrito: enunciado, opcionesSobreescritas: options, respuestaSobreescrita: correcta };
+      }
+
+      // ---------------------------------------------------------
+      // TEMA 2: MULTIPLICACIÓN Y DIVISIÓN EN Q
+      // ---------------------------------------------------------
+      if (['arit_q_mul_conamat_basico', 'arit_q_mul_conamat_intermedio', 'arit_q_mul_conamat_avanzado', 'arit_q_mul_conamat_experto'].includes(id) || id.includes('multiplicacion_division_q')) {
+        let enunciado = '', correcta = '', options: any = {};
+        const variante = rnd(1, 3); 
+
+        if (id.includes('basico') || !id.includes('_')) {
+          if (variante === 1) {
+            const n = rnd(20, 80);
+            enunciado = `Calcula el valor en fracción de $P$: $$ P = \\left(1 - \\frac{1}{2}\\right) \\cdot \\left(1 - \\frac{1}{3}\\right) \\dots \\left(1 - \\frac{1}{${n}}\\right) $$`;
+            correcta = "C";
+            options = { "A": `$\\frac{1}{${n-1}}$`, "B": `$\\frac{2}{${n}}$`, "C": `$${simplificarFraccion(1, n)}$`, "D": `$\\frac{1}{2}$`, "E": `$1$` };
+          } else if (variante === 2) {
+            const k = rnd(10, 30); const total = k * 6; 
+            enunciado = `¿Cuánto es exactamente la mitad de la tercera parte de $${total}$?`;
+            correcta = "A";
+            options = { "A": `$${k}$`, "B": `$${k*2}$`, "C": `$${k*3}$`, "D": `$${k+5}$`, "E": `$${k-2}$` };
+          } else {
+            const a = rnd(3, 7);
+            enunciado = `Efectúa y simplifica a fracción irreductible: $$ E = \\left( \\frac{${a}}{${a+1}} \\cdot \\frac{${a+1}}{${a+2}} \\cdot \\frac{${a+2}}{${a+3}} \\right) \\div \\frac{${a}}{${a+3}} $$`;
+            correcta = "D";
+            options = { "A": `$\\frac{1}{${a+3}}$`, "B": `$\\frac{${a}}{${a+3}}$`, "C": `$0$`, "D": `$1$`, "E": `$\\frac{1}{2}$` };
+          }
+        } 
+        else if (id.includes('intermedio')) {
+          if (variante === 1) {
+            const num = rnd(1, 3); const den = num + rnd(1, 2); 
+            const h_final = rnd(2, 5) * Math.pow(num, 3);
+            const h_inicial = Math.round((h_final * Math.pow(den, 3)) / Math.pow(num, 3));
+            enunciado = `Una pelota se deja caer desde $${h_inicial}$ m. Si en cada rebote se eleva $\\frac{${num}}{${den}}$ de la altura anterior, ¿qué altura entera alcanza después del tercer rebote?`;
+            correcta = "E";
+            options = { "A": `$${h_final - 2}$`, "B": `$${Math.round(h_final * 1.5)}$`, "C": `$${h_final + 4}$`, "D": `$${h_final + 1}$`, "E": `$${h_final}$` };
+          } else if (variante === 2) {
+            // 🔥 FIX CRÍTICO: Matemáticas sin decimales
+            const vol = rnd(10, 30) * 8; 
+            enunciado = `Un tanque de ${liquido} pierde $\\frac{1}{2}$ de su volumen cada hora. Si inicialmente tenía $${vol}$ litros, ¿cuántos litros se evaporaron exactamente EN la tercera hora?`;
+            const evaporado3 = Math.round(vol / 8); 
+            correcta = "B";
+            options = { "A": `$${evaporado3 * 2}$`, "B": `$${evaporado3}$`, "C": `$${Math.round(vol / 2)}$`, "D": `$${Math.round(evaporado3 / 2)}$`, "E": `$${vol - evaporado3}$` };
+          } else {
+            const k = rnd(2, 5);
+            enunciado = `Halla un número entero sabiendo que sus $\\frac{2}{3}$ multiplicados por sus $\\frac{3}{4}$ dan como resultado $${k * k * 2}$.`; 
+            const resp = 2 * k;
+            correcta = "A";
+            options = { "A": `$${resp}$`, "B": `$${resp + 2}$`, "C": `$${resp * 2}$`, "D": `$${Math.round(resp / 2)}$`, "E": `$${resp + 1}$` };
+          }
+        } 
+        else if (id.includes('avanzado')) {
+          if (variante === 1) {
+            const a = rnd(3, 5); const b = rnd(3, 5); const k = rnd(2, 6);
+            const sobra = k * (a - 1) * (b - 1);
+            const total = k * a * b; // Formula reducida directa para el total (entero)
+            enunciado = `${s1} resuelve $\\frac{1}{${a}}$ de su tarea de olimpiadas. Luego, resuelve $\\frac{1}{${b}}$ **del resto**. Si aún le faltan $${sobra}$ ejercicios, ¿cuántos ejercicios tenía la tarea en total?`;
+            correcta = "B";
+            options = { "A": `$${total - 5}$`, "B": `$${total}$`, "C": `$${total + 10}$`, "D": `$${total + 5}$`, "E": `$${sobra * 2}$` };
+          } else if (variante === 2) {
+            const a = rnd(2, 5); const b = a + rnd(1, 3); const num = rnd(10, 30);
+            enunciado = `${s2} se equivocó: en lugar de multiplicar un número por $\\frac{${a}}{${b}}$, lo dividió por $\\frac{${a}}{${b}}$, obteniendo como resultado $${num * b}$. ¿Cuál debió ser la fracción correcta resultante?`;
+            const x = num * a; 
+            correcta = "C";
+            options = { "A": `$${num}$`, "B": `$${num * a}$`, "C": `$${simplificarFraccion(x * a, b)}$`, "D": `$${x * b}$`, "E": `$${simplificarFraccion(x * b, a)}$` };
+          } else {
+            const a = rnd(3, 8);
+            enunciado = `¿Por qué fracción hay que multiplicar a $\\frac{${a}}{${a+2}}$ para que su valor no se altere si se le suma 5 a su numerador y 5 a su denominador?`;
+            const numRes = (a + 5) * (a + 2); const denRes = a * (a + 7);
+            correcta = "D";
+            options = { "A": `$1$`, "B": `$${simplificarFraccion(a+5, a+7)}$`, "C": `$${simplificarFraccion(denRes, numRes)}$`, "D": `$${simplificarFraccion(numRes, denRes)}$`, "E": `$\\frac{5}{${a}}$` };
+          }
+        } 
+        else { 
+          if (variante === 1) {
+            const b = rnd(2, 5); const d = rnd(2, 5); const e = rnd(2, 5); const f = rnd(2, 5);
+            const a = rnd(2, 7); const c = rnd(2, 7);
+            enunciado = `Halla la fracción irreductible aplicando la ley de extremos y medios: $$ M = \\frac{\\frac{${a}}{${b}}}{\\frac{${c}}{${d}}} \\times \\frac{\\frac{${c}}{${e}}}{\\frac{${a}}{${f}}} $$`;
+            correcta = "A";
+            options = { "A": `$${simplificarFraccion(d * f, b * e)}$`, "B": `$${simplificarFraccion(b * e, d * f)}$`, "C": `$${simplificarFraccion((d*f)+1, b*e)}$`, "D": `$1$`, "E": `$${simplificarFraccion(a * c, b * e)}$` };
+          } else if (variante === 2) {
+            const n = rnd(10, 30);
+            enunciado = `Calcula el valor límite en fracción de: $$ R = \\left(1 - \\frac{1}{2^2}\\right)\\left(1 - \\frac{1}{3^2}\\right)\\dots\\left(1 - \\frac{1}{${n}^2}\\right) $$`;
+            correcta = "E";
+            options = { "A": `$\\frac{1}{${n}}$`, "B": `$1$`, "C": `$\\frac{${n-1}}{2n}$`, "D": `$\\frac{${n}}{${n+1}}$`, "E": `$${simplificarFraccion(n + 1, 2 * n)}$` };
+          } else {
+            const a = rnd(2, 4); const b = rnd(3, 5); const c = rnd(2, 4);
+            enunciado = `Determina en fracción qué parte de los $\\frac{${a}}{${b}}$ de $\\frac{${b}}{${a+1}}$ son los $\\frac{${c}}{${c+1}}$ de $\\frac{${c+1}}{${c+2}}$.`;
+            const numRes = c * (a + 1); const denRes = a * (c + 2);
+            correcta = "B";
+            options = { "A": `$1$`, "B": `$${simplificarFraccion(numRes, denRes)}$`, "C": `$${simplificarFraccion(denRes, numRes)}$`, "D": `$${simplificarFraccion(a, c+2)}$`, "E": `$\\frac{1}{2}$` };
+          }
+        }
+
+        return { enunciadoSobreescrito: enunciado, opcionesSobreescritas: options, respuestaSobreescrita: correcta };
+      }
+    }
+     
+
+
+    
+    
     return null;
   }
 } 
