@@ -500,8 +500,9 @@ export class AiGeneratorService {
 
              FORMATO OBLIGATORIO:
              - question_markdown: Escribe PRIMERO la instrucción (ej: "Señala el término que no pertenece:") y DEBAJO los elementos de la serie.
-             - PROHIBIDO usar corchetes [] o etiquetas como "PREMISA".
-             - solution_markdown: Redacta la mentoría con los 2 ejemplos aquí mismo.
+             - REGLA DE ORO: Separa CADA palabra de la serie obligatoriamente con una COMA y un ESPACIO (ej: Marte, Júpiter, Saturno).
+             - PROHIBIDO TERMINANTEMENTE incluir la lista de opciones (A, B, C, D, E) dentro de "question_markdown". Las opciones van EXCLUSIVAMENTE en el objeto "options".
+             
 
              ESTRUCTURA JSON:
              - question_markdown: Enunciado limpio.
