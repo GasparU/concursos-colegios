@@ -1412,116 +1412,79 @@
 },
 
 {
-  "id": "descomp_basico",
-  "tema": "aritmetica",
-  "subtipo": "descomposicion_polinomica",
-  "grado": "5to",
-  "etapa": ["clasificatoria"],
-  "dificultad": ["basico"],
-  "bidireccional": true,
-  "enunciado": "Expresa el número $\\overline{{a}{b}{c}}$ (donde $a$, $b$, $c$ son sus dígitos) en su forma polinómica. Luego, calcula el valor de $x = a \\times 10^2 + b \\times 10 + c$.",
-  "variables": {
-    "a": { "type": "number", "min": 1, "max": 9, "step": 1 },
-    "b": { "type": "number", "min": 0, "max": 9, "step": 1 },
-    "c": { "type": "number", "min": 0, "max": 9, "step": 1 }
+    "id": "descomp_basico_v2",
+    "tema": "aritmetica",
+    "subtipo": "descomposicion_polinomica",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Si el numeral $\\overline{abc}$ es igual a $a \\times 10^2 + b \\times 10 + c$, halla el valor de $a + b + c$ en el número ${num}.",
+    "variables": {
+      "num": { "type": "number", "min": 111, "max": 999 }
+    },
+    "relaciones": [
+      "a = floor(num / 100)",
+      "b = floor((num % 100) / 10)",
+      "c = num % 10",
+      "solucion = a + b + c"
+    ],
+    "distractores": ["correcto + 1", "correcto - 1", "correcto + 2", "a + b"],
+    "incognita_directa": "solucion",
+    "metadata": { "habilidades": ["Valor posicional"], "tiempo_estimado": 45 }
   },
-  "relaciones": [
-    "x = a*100 + b*10 + c"
-  ],
-  "restricciones": [],
-  "incognita_directa": "x",
-  "incognitas_inversa": ["a", "b", "c"],
-  "formato_respuesta": { "tipo": "entero" },
-  "metadata": {
-    "habilidades": ["descomposición polinómica", "valor posicional"],
-    "tiempo_estimado": 60,
-    "requiere_calculadora": false,
-    "fuente": "Adaptado"
-  }
-},
-{
-  "id": "descomp_intermedio",
-  "tema": "aritmetica",
-  "subtipo": "descomposicion_polinomica",
-  "grado": "5to",
-  "etapa": ["clasificatoria", "final"],
-  "dificultad": ["intermedio"],
-  "bidireccional": true,
-  "enunciado": "Si $\\overline{{a}{b}} + \\overline{{b}{a}} = {suma}$, halla el valor de $a + b$ (son dígitos, $a \\neq 0$, $b \\neq 0$).",
-  "variables": {
-    "a": { "type": "number", "min": 1, "max": 8, "step": 1 },
-    "b": { "type": "number", "min": 1, "max": 9, "step": 1 }
+  {
+    "id": "descomp_intermedio_v2",
+    "tema": "aritmetica",
+    "subtipo": "descomposicion_polinomica",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "Se sabe que $\\overline{ab} + \\overline{ba} = {suma_11}$. Calcula el valor de $a + b$ (considera que $a$ y $b$ son dígitos diferentes de cero).",
+    "variables": {
+      "suma_digitos": { "type": "number", "min": 4, "max": 17 }
+    },
+    "relaciones": [
+      "suma_11 = 11 * suma_digitos",
+      "solucion = suma_digitos"
+    ],
+    "distractores": ["11", "9", "correcto + 1", "correcto - 1"],
+    "incognita_directa": "solucion",
+    "metadata": { "habilidades": ["Propiedad de inversión", "Divisibilidad por 11"] }
   },
-  "relaciones": [
-    "suma = (10*a + b) + (10*b + a)", "suma = a + b"
-  ],
-  "restricciones": [
-    "suma > 0"
-  ],
-  "incognita_directa": "suma", 
-  "incognitas_inversa": ["a", "b", "suma"],
-  "formato_respuesta": { "tipo": "entero" },
-  "metadata": {
-    "habilidades": ["descomposición polinómica", "ecuaciones con dígitos"],
-    "tiempo_estimado": 90,
-    "requiere_calculadora": false,
-    "fuente": "Adaptado"
-  }
-},
-{
-  "id": "descomp_avanzado",
+  {
+  "id": "descomp_ciclica_v1",
   "tema": "aritmetica",
   "subtipo": "descomposicion_polinomica",
   "grado": "5to",
-  "etapa": ["final"],
   "dificultad": ["avanzado"],
-  "bidireccional": true,
-  "enunciado": "Halla el número de tres cifras $\\overline{abc}$ que cumple que $\\overline{abc} = a^3 + b^3 + c^3$.",
+  "enunciado": "Si se sabe que $\\overline{abc} + \\overline{bca} + \\overline{cab} = {suma_111}$ y $a, b, c$ son dígitos diferentes entre sí, halla el valor de $a + b + c$.",
   "variables": {
-    "num_armstrong": { "type": "number", "opciones": [153, 370, 371, 407] }
+    "suma_digitos": { "type": "number", "min": 6, "max": 24 }
   },
   "relaciones": [
-    "a = (num_armstrong==153 ? 1 : num_armstrong==370 ? 3 : num_armstrong==371 ? 3 : 4)",
-    "b = (num_armstrong==153 ? 5 : num_armstrong==370 ? 7 : num_armstrong==371 ? 7 : 0)",
-    "c = (num_armstrong==153 ? 3 : num_armstrong==370 ? 0 : num_armstrong==371 ? 1 : 7)",
-    "num = num_armstrong"
+    "suma_111 = 111 * suma_digitos",
+    "solucion = suma_digitos"
   ],
-  "restricciones": [],
-  "incognita_directa": "num",
-  "incognitas_inversa": ["a", "b", "c"],
-  "formato_respuesta": { "tipo": "entero" },
-  "metadata": {
-    "habilidades": ["descomposición polinómica", "potencias", "números especiales"],
-    "tiempo_estimado": 120,
-    "requiere_calculadora": true,
-    "fuente": "Adaptado"
-  }
+  "distractores": ["solucion + 3", "solucion - 2", "18", "24"],
+  "incognita_directa": "solucion"
 },
-{
-  "id": "descomp_experto",
-  "tema": "aritmetica",
-  "subtipo": "descomposicion_polinomica",
-  "grado": "5to",
-  "etapa": ["final"],
-  "dificultad": ["experto"],
-  "bidireccional": true,
-  "enunciado": "Si $\\overline{ab} \\times \\overline{cd} = \\overline{efg}$ y se sabe que $a+b+c+d+e+f+g = {suma}$, halla el valor de $\\overline{ab} + \\overline{cd}$ (los dígitos son todos diferentes y no nulos).",
-  "variables": {
-    "suma": { "type": "number", "min": 20, "max": 30, "step": 1 }
+  {
+    "id": "descomp_experto_v2",
+    "tema": "aritmetica",
+    "subtipo": "descomposicion_polinomica",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "Halla el mayor numeral $\\overline{abc}$ tal que al sumarle la suma de sus cifras se obtiene ${resultado}$. Indica como respuesta el valor de $a + b + c$.",
+    "variables": {
+      "selector": { "type": "number", "min": 1, "max": 3 }
+    },
+    "relaciones": [
+      "resultado = (selector == 1 ? 211 : selector == 2 ? 445 : 856)",
+      "num_ganador = (selector == 1 ? 196 : selector == 2 ? 431 : 837)",
+      "solucion = (selector == 1 ? 16 : selector == 2 ? 8 : 18)"
+    ],
+    "distractores": ["correcto + 2", "correcto - 2", "10", "15"],
+    "incognita_directa": "solucion",
+    "metadata": { "habilidades": ["Reconstrucción de numerales", "Criptoaritmética"] }
   },
-  "relaciones": [
-    "solucion = 99" 
-  ],
-  "restricciones": [],
-  "incognita_directa": "solucion",
-  "formato_respuesta": { "tipo": "entero" },
-  "metadata": {
-    "habilidades": ["descomposición polinómica", "multiplicación", "deducción"],
-    "tiempo_estimado": 180,
-    "requiere_calculadora": true,
-    "fuente": "Adaptado"
-  }
-},
 {
   "id": "edades_basico",
   "tema": "razonamiento_matematico",

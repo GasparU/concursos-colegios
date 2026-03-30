@@ -19,7 +19,8 @@ export class AiGeneratorController {
   @Post('generar')
   async createProblem(@Body() body: any) {
     // 🎯 MAPEADO INTELIGENTE: Aceptamos tanto inglés como español
-    const topic = body.topic;
+    const rawTopics = body.topics || [body.topic];
+    const topics = Array.isArray(rawTopics) ? rawTopics : [rawTopics];
     const grade = body.grade || body.grado; // <--- Soporta ambos
     const difficulty = body.difficulty || body.dificultad; // <--- Soporta ambos
     const model = body.model;
@@ -27,14 +28,15 @@ export class AiGeneratorController {
     const styleConstraint = body.styleConstraint;
     const stage = body.stage || ""; // Evitamos el undefined
 
-    this.logger.log(`📥 IA Pura Request: ${topic} (${grade}) - ${difficulty}`);
+    this.logger.log(`📥 Multi-Topic Request: [${topics.join(', ')}] | Cantidad: ${quantity}`);
 
     const promises: Promise<any>[] = [];
 
     for (let i = 0; i < quantity; i++) {
+      const currentTopic = topics[i % topics.length];
       promises.push(
         this.aiService.generateProblem(
-          topic,
+          currentTopic,
           grade,
           stage,
           difficulty,

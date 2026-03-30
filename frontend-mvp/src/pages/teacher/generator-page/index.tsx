@@ -12,6 +12,7 @@ import api from "../../../services/api";
 import { getTopicsByGrade } from "../../../lib/topics";
 
 
+
 type Grade = "3ro" | "4to" | "5to" | "6to";
 type Stage = "clasificatoria" | "final";
 
@@ -28,6 +29,7 @@ export const GeneratorPage = () => {
   const setGlobalProblem = useExamStore((state) => state.setProblem);
 
   // Estados principales
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [topic, setTopic] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [problems, setProblems] = useState<any[]>([]);
@@ -167,24 +169,19 @@ export const GeneratorPage = () => {
       setProgress(0);
     }
 
-    const temaABuscar = topic;
+   
+    const topicList = selectedTopics.length > 0 ? selectedTopics : [topic];
     const cantidad = append ? cantidadExtra : (config.quantity || 1);
     const variacionInicial = append ? problems.length : 0; // Para que no repita variables
-
-   /// 🔥 BUSCAMOS LA CATEGORÍA EN EL TEMARIO MAESTRO
-    const temaEncontrado = topicOptions.find(t => t.nombre === topic);
-    const esLetras = 
-      temaEncontrado?.categoria === 'COMUNICACION' || 
-      temaEncontrado?.categoria === 'CIENCIAS_SOCIALES';
     
-    // 🔥 FORZAMOS DEEPSEEK PARA EVITAR EL ERROR 429 DE GOOGLE
-    const modeloAUsar = 'deepseek';
 
     for (let i = 0; i < cantidad; i++) {
       if (abortControllerRef.current) break; 
 
       let problemExitoso = null;
       const variacionActual = variacionInicial + i;
+
+      const currentTopic = topicList[i % topicList.length];
 
       let dificultadVariable = config.difficulty;
       if (config.difficulty === 'Mixto') {
@@ -194,13 +191,19 @@ export const GeneratorPage = () => {
         else if (ratio <= 0.70) dificultadVariable = 'intermedio';
         else dificultadVariable = 'avanzado';
       }
+      const temaEncontrado = topicOptions.find(t => t.nombre === currentTopic);
+      const esLetras = 
+        temaEncontrado?.categoria === 'COMUNICACION' || 
+        temaEncontrado?.categoria === 'CIENCIAS_SOCIALES';
+      
+      const modeloAUsar = 'deepseek';
 
       // 🔥 BIFURCACIÓN QUIRÚRGICA: Si es Letras, vamos directo al grano
       if (esLetras) {
         console.log(`📝 [MODO LETRAS] Saltando directamente a IA: ${topic}`);
         try {
           const aiResponse = await api.post("/ai/generar", { 
-            topic: topic, 
+            topic: currentTopic,
             grado: config.grade, 
             dificultad: dificultadVariable, 
             model: modeloAUsar 
@@ -223,7 +226,7 @@ export const GeneratorPage = () => {
         // 🔢 CAMINO MATEMÁTICO (Tu lógica original intacta)
         try {
           const paramRes = await api.post("/parametric/generar", {
-            topic: temaABuscar,             
+            topic: currentTopic,            
             grado: config.grade,      
             dificultad: config.difficulty,
             variacion: variacionActual, 
@@ -239,7 +242,7 @@ export const GeneratorPage = () => {
             try {
               const aiRes = await api.post("/ai/restyle", { 
                 baseText: data.enunciado, 
-                topic: topic, 
+                topic: currentTopic, 
                 grade: config.grade, 
                 model: modeloAUsar, 
                 isSimulacro: false
@@ -279,7 +282,7 @@ export const GeneratorPage = () => {
           console.warn(`Plantilla no encontrada para "${topic}". Generando vía IA Pura...`);
           try {
             const aiResponse = await api.post("/ai/generar", { 
-              topic: topic, 
+              topic: currentTopic, 
               grado: config.grade, 
               dificultad: config.difficulty, 
               model: modeloAUsar 
@@ -435,9 +438,11 @@ export const GeneratorPage = () => {
     >
       <Toolbar
         config={config}
-        setConfig={setConfig}
         topic={topic}
         setTopic={setTopic}
+        setConfig={setConfig}
+        selectedTopics={selectedTopics}
+        setSelectedTopics={setSelectedTopics}
         suggestions={suggestions}
         setSuggestions={setSuggestions}
         topicOptions={topicOptions}

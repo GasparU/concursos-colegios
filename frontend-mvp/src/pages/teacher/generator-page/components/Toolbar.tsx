@@ -6,6 +6,7 @@ import {
   ZoomIn,
   ZoomOut,
   Eraser,
+  X,
 } from "lucide-react";
 import { normalizeText } from "../../../../lib/utils";
 
@@ -14,6 +15,8 @@ interface ToolbarProps {
   setConfig: (updater: any) => void;
   topic: string;
   setTopic: (val: string) => void;
+  selectedTopics: string[];
+  setSelectedTopics: (val: string[]) => void;
   suggestions: any[];
   setSuggestions: (val: any[]) => void;
   topicOptions: any[];
@@ -34,6 +37,8 @@ export default function Toolbar({
   setConfig,
   topic,
   setTopic,
+  selectedTopics,
+  setSelectedTopics,
   suggestions,
   setSuggestions,
   topicOptions,
@@ -61,8 +66,7 @@ export default function Toolbar({
     if (val.length > 0) {
       const search = normalizeText(val).toLowerCase();
   
-      // 🔍 LOG DE DEPURACIÓN: Abre la consola (F12) para ver esto
-      console.log(`Buscando "${search}" en ${topicOptions.length} temas totales.`);
+
 
       const filtered = topicOptions
         .filter((t) => normalizeText(t.nombre || "").toLowerCase().includes(search))
@@ -83,8 +87,14 @@ export default function Toolbar({
   };
 
   const selectTopic = (t: any) => {
-    setTopic(t.nombre); // Solo mostramos el nombre en el input
+    if (!selectedTopics.includes(t.nombre)) {
+      setSelectedTopics([...selectedTopics, t.nombre]);
+    }
+    setTopic(""); // Limpiamos el buffer
     setSuggestions([]);
+  };
+  const removeTopic = (name: string) => {
+    setSelectedTopics(selectedTopics.filter((t) => t !== name));
   };
 
   // Clases comunes
@@ -117,19 +127,46 @@ export default function Toolbar({
             )}
           </div>
 
-          <div className="relative">
+          <div className={`${inputClass} cursor-text`} onClick={() => document.getElementById('topic-input')?.focus()}>
             <Search
               size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              className="text-slate-400 shrink-0"
             />
-            <input
-              value={topic}
-              onChange={handleInput}
-              className={`w-full pl-9 pr-4 ${inputClass}`}
-              placeholder="Ej: Fracciones, Geometría..."
-              onKeyDown={(e) => e.key === "Enter" && onGenerate()}
-              autoComplete="off"
-            />
+            
+            {/* TAGS DENTRO DEL BUSCADOR */}
+            <div className="flex flex-wrap gap-2 items-center">
+              {selectedTopics.map((t, i) => (
+                <span
+                  key={i}
+                  className="flex items-center gap-1 px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-200 text-xs font-bold rounded-lg border border-indigo-200 dark:border-indigo-700 animate-in zoom-in duration-200"
+                >
+                  {t}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); removeTopic(t); }}
+                    className="hover:text-red-500 transition-colors"
+                  >
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+
+              <input
+                id="topic-input"
+                value={topic}
+                onChange={handleInput}
+                className="flex-1 bg-transparent outline-none text-sm min-w-[120px]"
+                placeholder={selectedTopics.length === 0 ? "Ej: Fracciones, Geometría..." : "Añadir otro..."}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && topic) {
+                    if (suggestions.length > 0) selectTopic(suggestions[0]);
+                    else selectTopic({ nombre: topic });
+                  } else if (e.key === "Enter" && selectedTopics.length > 0) {
+                    onGenerate();
+                  }
+                }}
+                autoComplete="off"
+              />
+            </div>
             {suggestions.length > 0 && (
               <div className="absolute top-full left-0 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden">
                 {suggestions.map((s, i) => (
@@ -208,7 +245,7 @@ export default function Toolbar({
           <div className="flex gap-2 h-10">
             <button
               onClick={onGenerate}
-              disabled={isGenerating || !topic}
+              disabled={isGenerating || (selectedTopics.length === 0 && !topic)}
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 md:px-6 rounded-xl font-bold transition-all shadow-md shadow-indigo-200 dark:shadow-none flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isGenerating ? (

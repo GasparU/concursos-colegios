@@ -56,7 +56,7 @@ export const generarOpcionesAE = (respuesta: number) => {
 };
 
 interface UseGenerationProps {
-  topic: string;
+  topic: string | string[];
   config: {
     grade: Grade;
     stage: Stage;
@@ -105,6 +105,7 @@ export const useGeneration = ({
     if (dificultadParaIA === "mixto" || dificultadParaIA === "concurso") {
       dificultadParaIA = "mixto"; // Asegúrate de que tu backend entienda "mixto" o mándale "" para que no filtre
     }
+    const topicList = Array.isArray(topic) ? topic : [topic];
 
     const totalToGenerate = config.quantity;
     let successCount = 0;
@@ -131,7 +132,10 @@ export const useGeneration = ({
           Math.floor(Math.random() * 5)
         ];
 
+        const currentTopic = topicList[generatedCount % topicList.length];
+
         const chaosInstruction = `
+            TEMA ACTUAL: ${currentTopic}
             VARIACIÓN OBLIGATORIA ${generatedCount + 1}:
             - Usa la variable '${variable}' como incógnita.
             - El valor TOTAL o resultado final debe rondar: ${randomTotal}.
@@ -140,7 +144,7 @@ export const useGeneration = ({
         `;
 
         const result = await generate(
-          topic,
+          currentTopic,
           config.grade,
           config.stage,
           dificultadParaIA,
@@ -208,6 +212,36 @@ export const useGeneration = ({
     const toastId = toast.loading(`Regenerando problema ${index + 1}...`);
 
     const esParametrico = !!currentProblem.plantillaId;
+
+    if (!esParametrico || currentProblem.plantillaId === 'ia_pura') {
+      try {
+        const result = await generate(
+          currentProblem.topic || (Array.isArray(topic) ? topic[0] : topic), 
+          config.grade,
+          config.stage,
+          config.difficulty,
+          config.model,
+          1,
+          `VARIACIÓN ÚNICA: Regeneración. Debe ser distinto al anterior.`
+        );
+        if (!result) throw new Error("IA_FAIL");
+        const rawData = (result as any).data || result;
+        const newProblem = Array.isArray(rawData) ? rawData[0] : rawData;
+// 4 líneas después
+        setProblems((prev) => {
+          const updated = [...prev];
+          updated[index] = newProblem;
+          return updated;
+        });
+        toast.dismiss(toastId);
+        toast.success(`Problema ${index + 1} actualizado.`);
+        return; // Salimos de la función
+      } catch (e) {
+        toast.dismiss(toastId);
+        toast.error("Error al regenerar vía IA.");
+        return;
+      }
+    }
 
     try {
       let newProblem;

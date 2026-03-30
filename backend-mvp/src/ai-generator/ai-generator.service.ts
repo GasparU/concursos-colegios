@@ -368,9 +368,14 @@ export class AiGeneratorService {
           `🔄 Intento ${attempt}/${MAX_RETRIES} - Generando problema...`,
         );
         const topicLower = topic.toLowerCase();
-        const normalizedTopic = topic.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        const esLetras = /comunic|lenguaj|verbal|lect|gramat|comprensi|texto|ortograf|acento|tono|fonema|silaba|hiato|diptongo|triptongo|sustantivo|adjetivo|verbo|pronombre|articulo|oracion|sujeto|predicado|mayuscula|punto|coma|sintaxis|semant|sinon|anton|paron|homon|analo|termino|excluid|series|conector|plan|redacc|literat|histor|geog|civic|psicol|pobl|americ|litic|arcaic|chavin|paracas|mochica|nasca|wari|tiahua|chimu|chincha|inca|tahuant|invasion|conquist|virrein|coloni|reformas|precurs|independ|libertad|militarism|guano|salitre|guerra/i.test(normalizedTopic);
-
+        const normalizedTopic = topic
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+        const esLetras =
+          /comunic|lenguaj|verbal|lect|gramat|comprensi|texto|ortograf|acento|tono|fonema|silaba|hiato|diptongo|triptongo|sustantivo|adjetivo|verbo|pronombre|articulo|oracion|sujeto|predicado|mayuscula|punto|coma|sintaxis|semant|sinon|anton|paron|homon|analo|termino|excluid|series|conector|plan|redacc|literat|histor|geog|civic|psicol|pobl|americ|litic|arcaic|chavin|paracas|mochica|nasca|wari|tiahua|chimu|chincha|inca|tahuant|invasion|conquist|virrein|coloni|reformas|precurs|independ|libertad|militarism|guano|salitre|guerra/i.test(
+            normalizedTopic,
+          );
 
         // 1. PREPARAR PROMPT (Igual que antes)
         let systemPrompt = getSystemPrompt(topic, grade, difficulty);
@@ -379,11 +384,13 @@ export class AiGeneratorService {
         if (esLetras) {
           systemPrompt = new SystemMessage(
             'Eres un experto Docente de Humanidades y Ciencias Sociales (Historia, Geografía, Lenguaje). ' +
-            'Tu misión es crear retos de alto nivel académico para concurso en primaria' +
-            'PROHIBIDO TOTALMENTE usar lógica matemática, números para cálculos o fórmulas.'
+              'Tu misión es crear retos de alto nivel académico para concurso en primaria' +
+              'PROHIBIDO TOTALMENTE usar lógica matemática, números para cálculos o fórmulas.',
           );
         } else if (!systemPrompt) {
-          systemPrompt = new SystemMessage('Eres un profesor de matemáticas experto en olimpiadas.');
+          systemPrompt = new SystemMessage(
+            'Eres un profesor de matemáticas experto en olimpiadas.',
+          );
         }
 
         // 🔥 ESCENARIOS CREATIVOS PARA EVITAR "MÁQUINAS"
@@ -420,17 +427,21 @@ export class AiGeneratorService {
         if (!systemPrompt)
           systemPrompt = new SystemMessage('Eres un profesor de matemáticas.');
 
-        const esComprensionLectora = /^(?=.*lect)(?=.*comprensi)|^(?=.*texto)|^(?=.*jerarquia text)/i.test(normalizedTopic);
+        const esComprensionLectora =
+          /^(?=.*lect)(?=.*comprensi)|^(?=.*texto)|^(?=.*jerarquia text)/i.test(
+            normalizedTopic,
+          );
 
-        const promptCuerpo = esLetras 
+        const promptCuerpo = esLetras
           ? `Actúa como un riguroso examinador de Comunicación de nivel concurso nacional de primaria.
              Genera un reto de "${topic}" para ${grade}.
              DIFICULTAD: ${difficulty}.
 
-            ${esComprensionLectora
-               ? 'REGLA: Primero escribe un texto académico de 3-4 párrafos y luego formula la pregunta basada en él.' 
-               : 'REGLA CRÍTICA: PROHIBIDO escribir introducciones, historias, pautas iniciales o contextos creativos (dragones, exploradores, etc.). Ve DIRECTO a la instrucción de la pregunta.'
-             }
+            ${
+              esComprensionLectora
+                ? 'REGLA: Primero escribe un texto académico de 3-4 párrafos y luego formula la pregunta basada en él.'
+                : 'REGLA CRÍTICA: PROHIBIDO escribir introducciones, historias, pautas iniciales o contextos creativos (dragones, exploradores, etc.). Ve DIRECTO a la instrucción de la pregunta.'
+            }
 
              ESTRUCTURA OBLIGATORIA (JSON PLANO):
              1. topic: El nombre exacto del tema enviado.
@@ -480,7 +491,7 @@ export class AiGeneratorService {
         if (esLetras) {
           this.logger.log(`✅ [LETRAS] Retorno Blindado para: ${topic}`);
           result.visual_data = null;
-          result.math_data = null; 
+          result.math_data = null;
           return {
             success: true,
             data: result,
@@ -602,23 +613,29 @@ export class AiGeneratorService {
           throw new Error('El problema de ángulos requiere al menos 2 rayos.');
         }
 
-        // 1. Obtener x_value de forma tolerante
-        let rawX: number | undefined;
-        console.log(
-          '🔍 [DEBUG] params.x_value crudo:',
-          params?.x_value,
-          'tipo:',
-          typeof params?.x_value,
-        );
-        if (params.x_value !== undefined) {
-          if (typeof params.x_value === 'string') {
-            const match = params.x_value.match(/-?\d+(\.\d+)?/);
-            rawX = match ? parseFloat(match[0]) : NaN;
-          } else {
-            rawX = parseFloat(params.x_value);
-          }
+        // 🔥 CAMBIO QUIRÚRGICO: Búsqueda flexible (DeepSeek a veces lo pone fuera de params)
+        const mathData = result.math_data || {};
+        const xSource =
+          mathData.params?.x_value !== undefined
+            ? mathData.params.x_value
+            : mathData.x_value;
+
+        console.log('🔍 [DEBUG] x_value detectado:', xSource);
+
+        if (xSource === null || xSource === undefined) {
+          throw new Error(
+            'La IA devolvió un x_value nulo o ausente. Reintentando...',
+          );
+        }
+
+        let rawX: number;
+
+        if (typeof xSource === 'string') {
+          // 4 líneas después
+          const match = xSource.match(/-?\d+(\.\d+)?/);
+          rawX = match ? parseFloat(match[0]) : NaN;
         } else {
-          rawX = NaN;
+          rawX = Number(xSource);
         }
 
         if (
@@ -729,6 +746,51 @@ export class AiGeneratorService {
             if (arithResult) {
               result.solution_markdown = arithResult.solutionMarkdown;
               result.visual_data = null;
+              // 🔥 CAMBIO QUIRÚRGICO: Generación de Opciones Basada en Plantilla
+              const mathData = result.math_data;
+              const context = {
+                ...mathData.params,
+                ...mathData.relaciones_calculadas,
+              };
+              const incognitaKey = mathData.incognita_directa || 'solucion';
+              const correctValue =
+                context[incognitaKey] ?? arithResult.correctValue;
+
+              // Si la plantilla trae fórmulas de distractores, las usamos
+              let finalOptions: number[] = [];
+              if (
+                mathData.distractores &&
+                Array.isArray(mathData.distractores)
+              ) {
+                finalOptions = mathData.distractores.map((f) =>
+                  this.evaluateTemplateFormula(f, {
+                    ...context,
+                    correcto: correctValue,
+                  }),
+                );
+              } else {
+                // Fallback: Distractores inteligentes genéricos
+                finalOptions = [
+                  correctValue + 1,
+                  correctValue - 1,
+                  correctValue + 10,
+                  correctValue - 10,
+                ];
+              }
+
+              // Mezclar y asignar letras
+              const pool = [...new Set([correctValue, ...finalOptions])]
+                .filter((v) => !isNaN(v))
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 5);
+
+              const letters = ['A', 'B', 'C', 'D', 'E'];
+              result.options = {};
+              pool.forEach((val, i) => {
+                const letter = letters[i];
+                result.options[letter] = val.toString();
+                if (val === correctValue) result.correct_answer = letter;
+              });
               // Aquí podrías poner tu código de distractores si lo necesitas,
               // si no, el return ya es suficiente.
               return {
@@ -973,6 +1035,29 @@ export class AiGeneratorService {
         }
         lastError = error;
       }
+    }
+  }
+
+  // 🔥 EVALUADOR PARAMÉTRICO: Procesa fórmulas dinámicas de CONAMAT (incluye ternarios)
+  private evaluateTemplateFormula(
+    formula: string,
+    context: Record<string, any>,
+  ): number {
+    try {
+      let processed = formula;
+      // Ordenamos llaves por longitud (desc) para que 'abc' no sea pisado por 'a'
+      const keys = Object.keys(context).sort((a, b) => b.length - a.length);
+      keys.forEach((key) => {
+        const regex = new RegExp(`\\b${key}\\b`, 'g');
+        processed = processed.replace(regex, context[key]);
+      });
+      // Evaluación segura de la expresión resultante
+      return new Function(`return Number(${processed})`)();
+    } catch (error: any) {
+      this.logger.error(
+        `❌ Error en fórmula: ${formula} -> ${error?.message || 'Error desconocido'}`,
+      );
+      return 0;
     }
   }
 }
