@@ -102,11 +102,6 @@ export default function ExamPlayerPage() {
   if (!exam || !exam.questions || exam.questions.length === 0) return null;
 
   const question = exam.questions[currentIndex];
-  console.log("DATOS DE LA PREGUNTA ACTUAL:", {
-    id: question.id,
-    colorOriginal: question.visualData?.difficultyColor, // Aquí deberías ver 'emerald'
-    todoVisualData: question.visualData,
-  });
   const diffColor = question.visualData?.difficultyColor || "slate";
 
   // 🔥 FUNCIÓN MAESTRA PARA GUARDAR TIEMPO (Acumulativa y sin 0s)

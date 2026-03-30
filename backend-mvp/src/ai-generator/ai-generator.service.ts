@@ -34,6 +34,55 @@ const cleanAlgebraicExpression = (text: string): string => {
   );
 };
 
+const SEMANTIC_SCENARIOS = [
+  // --- CIENCIA Y NATURALEZA ---
+  'Biodiversidad de la selva peruana (flora y fauna)', 'Misterios de las profundidades marinas', 
+  'El mundo de los microbios y células', 'Fenómenos climáticos y El Niño', 
+  'Ecosistemas de la Cordillera de los Andes', 'Astronomía y galaxias lejanas',
+  
+  // --- HISTORIA Y CULTURA (Contexto Local e Internacional) ---
+  'El Imperio de los Incas y su ingeniería', 'Grandes culturas preíncas (Chavín, Nasca, Paracas)',
+  'La independencia del Perú y sus héroes', 'Civilizaciones antiguas (Egipto, Roma, Mesopotamia)',
+  'Mitología Griega, Nórdica y deidades', 'Grandes inventores de la historia',
+  
+  // --- FUTURISMO Y AVENTURA ---
+  'La vida en estaciones espaciales', 'Viajes en el tiempo y paradojas temporales',
+  'Inteligencia artificial y robots amigos', 'Arquitectura de ciudades perdidas (Machu Picchu, Atlántida)',
+  'Exploradores de la Antártida', 'Colonización de Marte y Marteformación',
+  
+  // --- LITERATURA Y ARTE ---
+  'Personajes de novelas clásicas', 'El mundo de los cuentos de hadas originales',
+  'Artistas del Renacimiento y sus obras', 'Instrumentos musicales del mundo'
+];
+
+const LETTER_TOPOLOGIES = {
+  GRAMATICA: {
+    nombre: 'Análisis Estructural',
+    enfoque: 'Se centra en la arquitectura de las palabras, silabeo, acentuación y categorías gramaticales.',
+    instruccion: 'Obligatorio realizar un silabeo mental previo para asegurar la respuesta.'
+  },
+  VERBAL: {
+    nombre: 'Razonamiento Lógico-Verbal',
+    enfoque: 'Analogías, series verbales y términos excluidos con relaciones semánticas complejas.',
+    instruccion: 'Busca relaciones que no sean obvias, usa distractores que pertenezcan al mismo campo semántico.'
+  },
+  COMPRENSION: {
+    nombre: 'Lectura Crítica e Inferencial',
+    enfoque: 'Análisis de textos complejos (4-5 párrafos) con preguntas de nivel literal, inferencial y crítico.',
+    instruccion: 'El texto debe ser rico en información y datos, no genérico.'
+  },
+  LITERATURA: {
+    nombre: 'Análisis Literario y Figuras Retóricas',
+    enfoque: 'Identificación de metáforas, hipérboles y análisis de fragmentos de obras clásicas.',
+    instruccion: 'Usa fragmentos que parezcan reales o crea poemas cortos para analizar.'
+  },
+  ETIMOLOGIA: {
+    nombre: 'Raíces Griegas y Latinas',
+    enfoque: 'Estudio del origen de las palabras para deducir significados complejos.',
+    instruccion: 'Plantea retos donde deba descomponer prefijos y sufijos.'
+  }
+};
+
 @Injectable()
 export class AiGeneratorService {
   private readonly logger = new Logger(AiGeneratorService.name);
@@ -380,12 +429,25 @@ export class AiGeneratorService {
         // 1. PREPARAR PROMPT (Igual que antes)
         let systemPrompt = getSystemPrompt(topic, grade, difficulty);
 
+        let topologia = LETTER_TOPOLOGIES.VERBAL; // Default
+        if (/lect|comprensi|texto/i.test(normalizedTopic)) topologia = LETTER_TOPOLOGIES.COMPRENSION;
+        if (/ortograf|acento|silaba|gramat|sustantivo|verbo/i.test(normalizedTopic)) topologia = LETTER_TOPOLOGIES.GRAMATICA;
+
+        const escenarioAzar = SEMANTIC_SCENARIOS[Math.floor(Math.random() * SEMANTIC_SCENARIOS.length)];
+
         // 🔥 CORRECCIÓN CRÍTICA: Si es letras, el sistema NO PUEDE ser un profesor de matemáticas
         if (esLetras) {
           systemPrompt = new SystemMessage(
-            'Eres un experto Docente de Humanidades y Ciencias Sociales (Historia, Geografía, Lenguaje). ' +
-              'Tu misión es crear retos de alto nivel académico para concurso en primaria' +
-              'PROHIBIDO TOTALMENTE usar lógica matemática, números para cálculos o fórmulas.',
+            `Eres un EXAMINADOR DE LENGUAJE Y HUMANIDADES (Nivel 5to/6to Primaria CONAMAT). 
+            OLVIDA TODO LO RELACIONADO A MATEMÁTICAS, GEOMETRÍA O "PROPIEDADES".
+
+            REGLAS DE SOLUCIÓN (solution_markdown):
+            1. EMPATÍA INICIAL: Empieza con una frase como "Entiendo que pensaste en esta opción porque [COL]palabra[/COL] parece correcta, pero..."
+            2. EXPLICACIÓN DEL RETO: Explica la regla gramatical o el dato histórico de forma directa y seca (Estilo Olimpiada 369).
+            3. REGLA DE ORO: Incluye exactamente DOS ejemplos didácticos fuera de la pregunta original. 
+            4. FORMATO: Solo usa [COL] para resaltar. PROHIBIDO usar asteriscos (**).
+            
+            REGLA DE VARIEDAD: Usa el contexto de "${escenarioAzar}" para todas las palabras o ejemplos.`
           );
         } else if (!systemPrompt) {
           systemPrompt = new SystemMessage(
@@ -433,35 +495,19 @@ export class AiGeneratorService {
           );
 
         const promptCuerpo = esLetras
-          ? `Actúa como un riguroso examinador de Comunicación de nivel concurso nacional de primaria.
-             Genera un reto de "${topic}" para ${grade}.
-             DIFICULTAD: ${difficulty}.
+          ? `Genera un reto de "${topic}" para ${grade} primaria.
+             NIVEL: ${difficulty}. Escenario: "${escenarioAzar}".
 
-            ${
-              esComprensionLectora
-                ? 'REGLA: Primero escribe un texto académico de 3-4 párrafos y luego formula la pregunta basada en él.'
-                : 'REGLA CRÍTICA: PROHIBIDO escribir introducciones, historias, pautas iniciales o contextos creativos (dragones, exploradores, etc.). Ve DIRECTO a la instrucción de la pregunta.'
-            }
+             FORMATO OBLIGATORIO:
+             - question_markdown: Escribe PRIMERO la instrucción (ej: "Señala el término que no pertenece:") y DEBAJO los elementos de la serie.
+             - PROHIBIDO usar corchetes [] o etiquetas como "PREMISA".
+             - solution_markdown: Redacta la mentoría con los 2 ejemplos aquí mismo.
 
-             ESTRUCTURA OBLIGATORIA (JSON PLANO):
-             1. topic: El nombre exacto del tema enviado.
-             2. difficulty: El nivel exacto enviado.
-             3. question_markdown: La pregunta evaluativa directa (o Texto + Pregunta si es comprensión). Asegura que el contenido sea variado y no repetitivo.
-             4. options: Un objeto con EXACTAMENTE 5 alternativas (A, B, C, D, E).
-             5. correct_answer: Solo la letra (A-E).
-             6. math_data: null.
-
-             REGLAS DE ESTILO FINALES:
-             - Tono formal, seco y académico. Sin saludos.
-             - PROHIBIDO el plagio o repetición de preguntas anteriores. Diversifica los enfoques.
-             - Si es gramática, usa **negritas** solo para las palabras clave.
-
-             🔥 REGLA DE VARIEDAD CRÍTICA:
-             - Si el tema permite múltiples enfoques, elige uno al azar: (A) Causas/Consecuencias, (B) Aspectos Económicos, (C) Aspectos Sociales, (D) Personajes/Obras o (E) Ubicación Geográfica/Cronología.
-             - PROHIBIDO repetir la misma pregunta o alternativas que en intentos previos.
-             - Semilla de Aleatoriedad: ${uniqueSeed} - ${Math.random()}
-
-             SEMILLA DE SEGURIDAD: ${uniqueSeed}`
+             ESTRUCTURA JSON:
+             - question_markdown: Enunciado limpio.
+             - options: {A, B, C, D, E}.
+             - correct_answer: Letra.
+             - solution_markdown: Explicación didáctica.`
           : `Genera un problema de "${topic}" para ${grade}.
              CONTEXTO: ${contextoAzar}.
              ${guiaMatematica}
@@ -489,7 +535,6 @@ export class AiGeneratorService {
         );
 
         if (esLetras) {
-          this.logger.log(`✅ [LETRAS] Retorno Blindado para: ${topic}`);
           result.visual_data = null;
           result.math_data = null;
           return {

@@ -18,6 +18,35 @@ interface ProblemCardProps {
   onDelete: () => void;
 }
 
+
+// 🔥 PARSER QUIRÚRGICO: Limpia asteriscos e interpreta tags [COL]
+const renderCustomText = (text: string, isDark: boolean) => {
+  if (!text) return null;
+  // Primero exterminamos asteriscos que la IA mande por error
+  const cleanText = text.replace(/\*\*/g, "");
+  // Separamos por nuestros tags personalizados
+  const parts = cleanText.split(/(\[COL\].*?\[\/COL\])/g);
+
+  return parts.map((part, i) => {
+    if (part.startsWith("[COL]") && part.endsWith("[/COL]")) {
+      const content = part.replace("[COL]", "").replace("[/COL]", "");
+      return (
+        <span
+          key={i}
+          className={clsx(
+            "font-extrabold px-1 rounded-md transition-colors mx-0.5",
+            isDark ? "text-indigo-300 bg-indigo-900/30" : "text-indigo-700 bg-indigo-50"
+          )}
+        >
+          {content}
+        </span>
+      );
+    }
+    return part;
+  });
+};
+
+
 export default function ProblemCard({
   problem,
   index,
@@ -187,14 +216,16 @@ export default function ProblemCard({
                 ],
               ]}
               components={{
-                p: ({ children }) => (
-                  <p className={`mb-3 leading-relaxed ${textBodyColor}`}>
-                    {children}
-                  </p>
-                ),
-                li: ({ children }) => (
-                  <li className={`ml-4 ${textBodyColor}`}>{children}</li>
-                ),
+                p: ({ children }) => (
+                  <p className={`mb-3 leading-relaxed ${textBodyColor}`}>
+                    {typeof children === 'string' ? renderCustomText(children, isDark) : children}
+                  </p>
+                ),
+                li: ({ children }) => (
+                  <li className={`ml-4 ${textBodyColor}`}>
+                    {typeof children === 'string' ? renderCustomText(children, isDark) : children}
+                  </li>
+                ),
                 strong: ({ children }) => (
                   <strong className={textStrongColor}>{children}</strong>
                 ),
@@ -299,14 +330,16 @@ export default function ProblemCard({
             <ReactMarkdown
               remarkPlugins={[remarkMath, remarkBreaks]}
               rehypePlugins={[rehypeKatex]}
-              components={{
-                p: ({ children }) => (
-                  <p className="mb-3 last:mb-0">{children}</p>
-                ),
-                li: ({ children }) => (
-                  <li className="ml-4 mb-1 marker:text-indigo-400">
-                    {children}
-                  </li>
+              components={{
+                p: ({ children }) => (
+                  <p className="mb-3 last:mb-0">
+                    {typeof children === 'string' ? renderCustomText(children, isDark) : children}
+                  </p>
+                ),
+                li: ({ children }) => (
+                  <li className="ml-4 mb-1 marker:text-indigo-400">
+                    {typeof children === 'string' ? renderCustomText(children, isDark) : children}
+                  </li>
                 ),
                 strong: ({ children }) => (
                   <strong className={textStrongColor}>{children}</strong>

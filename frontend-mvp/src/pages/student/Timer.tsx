@@ -13,6 +13,7 @@ export default function Timer() {
   }, [isActive, tick]);
 
   const formatTime = (seconds: number) => {
+    if (seconds === undefined || seconds === null || isNaN(seconds)) return "00:00";
     const absSecs = Math.abs(seconds);
     const mins = Math.floor(absSecs / 60);
     const secs = absSecs % 60;
@@ -20,17 +21,33 @@ export default function Timer() {
     return `${sign}${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
+  // 🔥 LÓGICA DE ADVERTENCIA: 30 segundos de pánico
+  const isWarning = currentRemaining > 0 && currentRemaining <= 30;
+
+  const getStyles = () => {
+    if (isDebt) return "bg-red-50 border-red-500 text-red-600 animate-pulse shadow-red-200/50";
+    if (isWarning) return "bg-orange-400 border-orange-600 text-white font-extrabold animate-bounce scale-110 shadow-orange-300/50";
+    return "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200";
+  };
+
   return (
+    // 🔥 FIX DE RESPONSIVIDAD: 'fixed' garantiza que no se mueva al hacer scroll.
+    // 'z-[100]' asegura que esté por encima de cualquier modal o gráfico.
     <div className={`
-      text-lg md:text-xl font-mono px-4 py-1.5 rounded-xl border-2 transition-all duration-300 shadow-sm
-      ${isDebt 
-        ? "bg-red-50 border-red-500 text-red-600 animate-pulse" 
-        : "bg-slate-100 border-slate-200 text-slate-700"}
+      fixed top-2 left-1/2 -translate-x-1/2 md:left-auto md:right-10 md:translate-x-0 z-[150]
+      flex items-center gap-2
+      text-base md:text-xl font-mono px-3 md:px-5 py-1 md:py-2 
+      rounded-2xl border-2 shadow-xl transition-all duration-500
+      ${getStyles()}
     `}>
-      <span className="text-[10px] md:text-xs uppercase font-black mr-2 opacity-50">
-        {isDebt ? "⚠️ Deuda" : "⏱️ Tiempo"}
-      </span>
-      {formatTime(currentRemaining)}
+      <div className="flex flex-col items-center">
+        <span className="text-[8px] md:text-[10px] uppercase font-black tracking-tighter opacity-70 leading-none">
+          {isDebt ? "⚠️ DEUDA" : isWarning ? "🔥 CORRE" : "⏱️ TIEMPO"}
+        </span>
+        <span className="leading-none mt-1">
+          {formatTime(currentRemaining)}
+        </span>
+      </div>
     </div>
   );
 }
