@@ -78,8 +78,14 @@ export default function ExamPlayerPage() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        setAnswers(parsed);
-        console.log("🔥 Progreso de Ariana recuperado");
+        // 🔥 Recuperamos respuestas y el índice exacto de la pregunta
+        if (parsed.answers) {
+          setAnswers(parsed.answers);
+          if (parsed.currentIndex !== undefined)
+            setCurrentIndex(parsed.currentIndex);
+        } else {
+          setAnswers(parsed);
+        }
       } catch (e) {
         console.error("Error al recuperar progreso", e);
       }
@@ -87,10 +93,12 @@ export default function ExamPlayerPage() {
   }, [id]);
 
   useEffect(() => {
-    if (Object.keys(answers).length > 0) {
-      localStorage.setItem(`progress_${id}`, JSON.stringify(answers));
+    // 🔥 Guardamos tanto las respuestas como el índice actual
+    const progressData = { answers, currentIndex };
+    if (Object.keys(answers).length > 0 || currentIndex > 0) {
+      localStorage.setItem(`progress_${id}`, JSON.stringify(progressData));
     }
-  }, [answers, id]);
+  }, [answers, currentIndex, id]);
 
   useEffect(() => {
     api.get(`/exams/${id}/check`).then((res) => {
@@ -102,7 +110,26 @@ export default function ExamPlayerPage() {
   if (!exam || !exam.questions || exam.questions.length === 0) return null;
 
   const question = exam.questions[currentIndex];
-  const diffColor = question.visualData?.difficultyColor || "slate";
+  // 🔥 DESANIDADO: Si la data viene como { visualData: { theme... } }, la sacamos de su caja
+  const visual = (() => {
+    let raw = question.visualData || question.visual_data;
+    if (!raw) return null;
+    try {
+      let data = typeof raw === "string" ? JSON.parse(raw) : raw;
+      // Si detectamos la doble envoltura que mostró tu consola, la corregimos en el acto
+      if (data.visualData && (data.visualData.theme || data.visualData.type)) {
+        return {
+          ...data.visualData,
+          difficultyColor: data.difficultyColor || "slate",
+        };
+      }
+      return data;
+    } catch (e) {
+      console.error("Error parseando data visual:", e);
+      return null;
+    }
+  })();
+  const diffColor = visual?.difficultyColor || "slate";
 
   // 🔥 FUNCIÓN MAESTRA PARA GUARDAR TIEMPO (Acumulativa y sin 0s)
   const updateTiming = () => {
@@ -166,6 +193,7 @@ export default function ExamPlayerPage() {
         </div>
 
         <div className="flex items-center gap-1 md:gap-4 scale-90 md:scale-100 origin-right whitespace-nowrap">
+          <Timer />
           <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl p-0.5 shadow-inner">
             <button
               onClick={() => setFontSize((s) => Math.max(16, s - 2))}
@@ -183,7 +211,6 @@ export default function ExamPlayerPage() {
               <Plus size={16} className="text-slate-500" />
             </button>
           </div>
-          <Timer />
         </div>
       </header>
 
@@ -211,52 +238,49 @@ export default function ExamPlayerPage() {
             </div>
           </section>
 
-          {question.visualData &&
-            (question.visualData.theme || question.visualData.type) && (
-              <div className="bg-white dark:bg-slate-900 rounded-lg lg:rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 p-1 lg:p-2 mt-1 mb-2 lg:mb-0 flex justify-center shadow-sm">
-                <div className="w-full max-w-sm md:max-w-xl lg:max-w-3xl aspect-[4/5] md:aspect-square lg:aspect-[21/8] bg-slate-50 dark:bg-slate-950 rounded-lg lg:rounded-2xl overflow-hidden">
-                  <MafsGeometryRenderer
-                    type={question.visualData.theme || question.visualData.type}
-                    params={question.visualData.params}
-                  />
-                </div>
+          {visual && (visual.theme || visual.type) && (
+            <div className="bg-white dark:bg-slate-900 rounded-lg lg:rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-800 p-1 lg:p-1.5 my-0 flex justify-center shadow-sm shrink-0">
+              <div className="w-full max-w-sm md:max-w-2xl lg:max-w-5xl min-h-[450px] md:min-h-[500px] aspect-square md:aspect-video bg-slate-50 dark:bg-slate-950 rounded-lg lg:rounded-2xl overflow-visible p-2 md:p-4">
+                <MafsGeometryRenderer visualData={visual} />
               </div>
-            )}
+            </div>
+          )}
 
-          <div className="flex flex-col gap-2 mt-4 md:mt-auto pb-10 md:pb-0">
-  {Object.entries(question.options).map(([key, value]) => (
-    <button
-      key={key}
-      onClick={() => setAnswers({ ...answers, [question.id]: key })}
-      className={`w-full py-3 px-4 rounded-xl border-2 transition-all active:scale-[0.98] flex items-center gap-4 group relative ${
-        answers[question.id] === key
-          ? "bg-indigo-600 border-indigo-600 text-white shadow-md"
-          : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30 shadow-sm"
-      }`}
-    >
-      {/* Indicador de letra (A, B, C...) */}
-      <div
-        className={`shrink-0 w-8 h-8 flex items-center justify-center rounded-lg font-black text-sm transition-colors ${
-          answers[question.id] === key 
-            ? "bg-white/20 text-white" 
-            : "bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:text-indigo-500"
-        }`}
-      >
-        {key}
-      </div>
+          {/* 🔥 CONTENEDOR ULTRA-COMPACTO: De columna a fila de 5 */}
+          <div className="grid grid-cols-5 gap-2 mt-2 md:mt-2 pb-8 md:pb-2">
+            {Object.entries(question.options).map(([key, value]) => (
+              <button
+                key={key}
+                onClick={() => setAnswers({ ...answers, [question.id]: key })}
+                className={`py-2 px-1 rounded-xl border-2 transition-all active:scale-[0.95] flex flex-col items-center justify-center gap-1 group relative ${
+                  answers[question.id] === key
+                    ? "bg-indigo-600 border-indigo-600 text-white shadow-md translate-y-[-2px]"
+                    : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:border-indigo-300 shadow-sm"
+                }`}
+              >
+                {/* Letra A, B, C... (Más pequeña) */}
+                <div
+                  className={`w-6 h-6 flex items-center justify-center rounded-full font-black text-[10px] transition-colors ${
+                    answers[question.id] === key 
+                      ? "bg-white/20 text-white" 
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-400"
+                  }`}
+                >
+                  {key}
+                </div>
 
-      {/* Texto de la alternativa - Alineado a la izquierda y sin truncate */}
-      <div className="flex-1 text-left font-bold text-sm md:text-base leading-tight">
-        <Latex>{String(value)}</Latex>
-      </div>
+                {/* Valor matemático (Centrado) */}
+                <div className="font-black text-sm md:text-lg">
+                  <Latex>{String(value)}</Latex>
+                </div>
 
-      {/* Check visual minimalista si está seleccionado */}
-      {answers[question.id] === key && (
-        <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-      )}
-    </button>
-  ))}
-</div>
+                {/* Punto indicador inferior */}
+                {answers[question.id] === key && (
+                  <div className="absolute -bottom-1 w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </main>
 
@@ -311,7 +335,9 @@ export default function ExamPlayerPage() {
               if (nextQ) {
                 // 1. Detectamos por color (Mat) o por string directo (Letras)
                 const color = nextQ.visualData?.difficultyColor;
-                const diffString = nextQ.difficulty?.toLowerCase() || nextQ.dificultad_generada?.toLowerCase();
+                const diffString =
+                  nextQ.difficulty?.toLowerCase() ||
+                  nextQ.dificultad_generada?.toLowerCase();
 
                 // 2. Mapeo inteligente de tiempo
                 let nextTime = 240; // Default: Avanzado (4 min)
