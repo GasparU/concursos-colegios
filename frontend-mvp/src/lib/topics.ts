@@ -102,7 +102,7 @@ export const TOPICS_BY_GRADE_ONLY = {
 
     // RAZONAMIENTO MATEMÁTICO
     { nombre: "Sucesiones numéricas y alfabéticas",tipo: "conamat", subtipos: ["sucesion_numerica", "sucesion_alfabetica","sucesion_alfanumerica", "sucesion_algebraica", "sucesion_intercalada", "sucesion_cuadratica"] },
-    { nombre: "Operadores Matemáticos", tipo: "conamat", subtipos: ["lineal", "cuadratico", "fraccionario", "anidado"] },
+    { nombre: "Operadores Matemáticos", tipo: "conamat", subtipos: ["basico_directo", "basico_anidado", "basico_inverso", "inter_cambio_var", "inter_ecuacion", "inter_condicional", "avanz_compuesto", "avanz_cond_magnitud", "avanz_cambio_doble", "experto_recursivo", "experto_induccion", "experto_implicito"] },
     { nombre: "Criptoaritmética", tipo: "conamat", subtipos: ["criptoaritmetica"] },
     { nombre: "Problemas de Edades", tipo: "conamat", subtipos: ["problemas_edades"] },
     { nombre: "Planteo de Ecuaciones", tipo: "conamat", subtipos: ["planteo_ecuaciones"] },
@@ -121,7 +121,7 @@ export const TOPICS_BY_GRADE_ONLY = {
     { nombre: "Sólidos 3D: Cilindros (Complemento)", tipo: "academia", subtipos: ["solidos_3d_cilindro"] },
 
 // 2. Tema exclusivo para Pirámides (Mapea al subtipo de tus JSON de pirámides)
-    { nombre: "Sólidos 3D: Pirámides (Complemento)", tipo: "academia", subtipos: ["volumen_piramide"] },
+    { nombre: "Sólidos 3D: Pirámides (Complemento)", tipo: "academia", subtipos: ["volumen_piramide", "area_piramide"] },
     { nombre: "Polinomios: Valor Numérico (Complemento)", tipo: "academia", subtipos: ["polinomios"] },
     { nombre: "Plano Cartesiano y Distancias (Complemento)", tipo: "academia", subtipos: ["plano_cartesiano"] },
     { nombre: "Intervalos Numéricos (Complemento)", tipo: "academia", subtipos: ["intervalos"] },

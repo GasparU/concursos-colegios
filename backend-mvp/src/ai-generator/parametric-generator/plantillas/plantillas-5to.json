@@ -2047,135 +2047,272 @@
   },
 
 
-   {
-    "id": "operadores_lineal_basico",
+  {
+    "id": "ope_basico_directo",
     "tema": "Operadores Matemáticos",
-    "subtipo": "lineal",
+    "subtipo": "basico_directo",
     "grado": "5to",
-    "etapa": ["clasificatoria"],
     "dificultad": ["basico"],
-    "bidireccional": true,
-    "enunciado": "Si $m \\, {sym} \\, n = {coef1} m + {coef2} n$, halla el valor de ${a} \\, {sym} \\, {b}$.",
+    "enunciado": "Se define el operador:\n$m \\, {sym} \\, n = {c1}m^{2} - {c2}\\sqrt{n}$\nCalcula el valor de: ${v1} \\, {sym} \\, {v2}$.",
     "variables": {
-      "sym": { 
-        "type": "list", 
-        "values": ["\\ast", "\\triangle", "\\square", "\\diamond", "\\star", "\\circ", "\\bullet"] 
-      },
-      "coef1": { "type": "number", "min": 2, "max": 5, "step": 1 },
-      "coef2": { "type": "number", "min": 2, "max": 5, "step": 1 },
-      "a": { "type": "number", "min": 3, "max": 8, "step": 1 },
-      "b": { "type": "number", "min": 3, "max": 8, "step": 1 }
+      "sym": { "type": "list", "values": ["\\ast", "\\star", "\\bullet", "\\diamond", "\\circ"] },
+      "c1": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "c2": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "v1": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "base_raiz": { "type": "number", "min": 2, "max": 6, "step": 1 }
     },
     "relaciones": [
-      "resultado = coef1 * a + coef2 * b"
+      "v2 = base_raiz^2",
+      "resultado = c1 * (v1^2) - c2 * base_raiz"
+    ],
+    "restricciones": ["resultado > 0"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "ope_basico_anidado",
+    "tema": "Operadores Matemáticos",
+    "subtipo": "basico_anidado",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Si $a \\, {sym} \\, b = {c1}a + b$, calcula el valor de: $({v1} \\, {sym} \\, {v2}) \\, {sym} \\, {v3}$.",
+    "variables": {
+      "sym": { "type": "list", "values": ["\\triangle", "\\square", "\\nabla", "\\lozenge"] },
+      "c1": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "v1": { "type": "number", "min": 1, "max": 4, "step": 1 },
+      "v2": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "v3": { "type": "number", "min": 1, "max": 5, "step": 1 }
+    },
+    "relaciones": [
+      "p1 = c1 * v1 + v2",
+      "resultado = c1 * p1 + v3"
     ],
     "restricciones": [],
     "incognita_directa": "resultado",
-    "incognitas_inversa": ["coef1", "coef2", "a", "b"],
-    "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["operadores", "álgebra básica"],
-      "tiempo_estimado": 60,
-      "requiere_calculadora": false
-    }
+    "formato_respuesta": { "tipo": "entero" }
   },
   {
-    "id": "operadores_cuadratico_intermedio",
+    "id": "ope_basico_inverso",
     "tema": "Operadores Matemáticos",
-    "subtipo": "cuadratico",
+    "subtipo": "basico_inverso",
     "grado": "5to",
-    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
+    "enunciado": "Se define $x \\, {sym} \\, y = {c1}y - {c2}x$.\nHalla el valor de: ${v1} \\, {sym} \\, {v2}$.\n*(¡Cuidado con el orden de las letras!)*",
+    "variables": {
+      "sym": { "type": "list", "values": ["\\otimes", "\\oplus", "\\odot"] },
+      "c1": { "type": "number", "min": 3, "max": 6, "step": 1 },
+      "c2": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "v1": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "v2": { "type": "number", "min": 4, "max": 8, "step": 1 }
+    },
+    "relaciones": [
+      "resultado = c1 * v2 - c2 * v1"
+    ],
+    "restricciones": ["resultado > 0"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "ope_inter_cambio_var",
+    "tema": "Operadores Matemáticos",
+    "subtipo": "inter_cambio_var",
+    "grado": "5to",
     "dificultad": ["intermedio"],
-    "bidireccional": true,
-    "enunciado": "Si $m \\, {sym} \\, n = {coef1} m^{2} + {coef2} n$, halla el valor de ${a} \\, {sym} \\, {b}$.",
+    "enunciado": "Se define el operador: ${sym}(x + {c}) = {coef}x - {k}$.\nCalcula el valor de: ${sym}({objetivo})$.",
     "variables": {
-      "sym": { 
-        "type": "list", 
-        "values": ["\\ast", "\\triangle", "\\square", "\\nabla", "\\star", "\\clubsuit"] 
-      },
-      "coef1": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "coef2": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "a": { "type": "number", "min": 2, "max": 6, "step": 1 },
-      "b": { "type": "number", "min": 2, "max": 6, "step": 1 }
+      "sym": { "type": "list", "values": ["\\heartsuit", "\\spadesuit", "\\clubsuit", "\\bigcirc"] },
+      "c": { "type": "number", "min": 2, "max": 8, "step": 1 },
+      "coef": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "k": { "type": "number", "min": 1, "max": 10, "step": 1 },
+      "x_real": { "type": "number", "min": 3, "max": 9, "step": 1 }
     },
     "relaciones": [
-      "resultado = coef1 * a^2 + coef2 * b"
+      "objetivo = x_real + c",
+      "resultado = coef * x_real - k"
+    ],
+    "restricciones": ["resultado > 0"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "ope_inter_ecuacion",
+    "tema": "Operadores Matemáticos",
+    "subtipo": "inter_ecuacion",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "Sabiendo que $m \\, {sym} \\, n = {c1}m + {c2}n$.\nCalcula el valor de \"$x$\" en la siguiente igualdad: $x \\, {sym} \\, {v2} = {respuesta_final}$.",
+    "variables": {
+      "sym": { "type": "list", "values": ["\\ast", "\\star", "\\bullet", "\\diamond"] },
+      "c1": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "c2": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "x": { "type": "number", "min": 3, "max": 10, "step": 1 },
+      "v2": { "type": "number", "min": 2, "max": 7, "step": 1 }
+    },
+    "relaciones": [
+      "respuesta_final = c1 * x + c2 * v2",
+      "resultado = x"
     ],
     "restricciones": [],
     "incognita_directa": "resultado",
-    "incognitas_inversa": ["coef1", "coef2", "a", "b"],
-    "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["operadores", "potencias"],
-      "tiempo_estimado": 90,
-      "requiere_calculadora": false
-    }
+    "formato_respuesta": { "tipo": "entero" }
   },
   {
-    "id": "operadores_fraccion_avanzado",
+    "id": "ope_inter_condicional_par",
     "tema": "Operadores Matemáticos",
-    "subtipo": "fraccionario",
+    "subtipo": "inter_condicional",
     "grado": "5to",
-    "etapa": ["clasificatoria"],
+    "dificultad": ["intermedio"],
+    "enunciado": "Se define ${sym}(x)$ de la siguiente manera:\nSi $x$ es PAR $\\Rightarrow {sym}(x) = 2x + {k1}$\nSi $x$ es IMPAR $\\Rightarrow {sym}(x) = 3x - {k2}$\nCalcula: ${sym}({v1}) + {sym}({v2})$.",
+    "variables": {
+      "sym": { "type": "list", "values": ["\\square", "\\triangle", "\\nabla"] },
+      "k1": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "k2": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "v1": { "type": "number", "min": 2, "max": 9, "step": 1 },
+      "v2": { "type": "number", "min": 2, "max": 9, "step": 1 }
+    },
+    "relaciones": [
+      "r1 = (v1 % 2 == 0) ? (2 * v1 + k1) : (3 * v1 - k2)",
+      "r2 = (v2 % 2 == 0) ? (2 * v2 + k1) : (3 * v2 - k2)",
+      "resultado = r1 + r2"
+    ],
+    "restricciones": ["v1 != v2", "(v1 % 2) != (v2 % 2)"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "ope_avanz_compuesto",
+    "tema": "Operadores Matemáticos",
+    "subtipo": "avanz_compuesto",
+    "grado": "5to",
     "dificultad": ["avanzado"],
-    "bidireccional": true,
-    "enunciado": "Si $m \\, {sym} \\, n = \\frac{{coef1} m + {coef2}}{n}$, halla el valor de ${a} \\, {sym} \\, {b}$ (expresa el resultado como fracción o decimal con dos decimales).",
+    "enunciado": "Se definen los operadores:\n$a \\, {sym1} \\, b = {c1}a - b$\n$m \\, {sym2} \\, n = m^{2} + n$\nCalcula el valor de: $({v1} \\, {sym1} \\, {v2}) \\, {sym2} \\, ({v3} \\, {sym1} \\, {v4})$.",
     "variables": {
-      "sym": { 
-        "type": "list", 
-        "values": ["\\divideontimes", "\\ltimes", "\\rtimes", "\\heartsuit", "\\spadesuit"] 
-      },
-      "coef1": { "type": "number", "min": 1, "max": 4, "step": 1 },
-      "coef2": { "type": "number", "min": 1, "max": 4, "step": 1 },
-      "a": { "type": "number", "min": 2, "max": 5, "step": 1 },
-      "b": { "type": "number", "min": 2, "max": 5, "step": 1 }
+      "sym1": { "type": "list", "values": ["\\oplus", "\\otimes", "\\odot"] },
+      "sym2": { "type": "list", "values": ["\\ast", "\\star", "\\bullet"] },
+      "c1": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "v1": { "type": "number", "min": 3, "max": 6, "step": 1 },
+      "v2": { "type": "number", "min": 1, "max": 4, "step": 1 },
+      "v3": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "v4": { "type": "number", "min": 1, "max": 4, "step": 1 }
     },
     "relaciones": [
-      "resultado = (coef1 * a + coef2) / b"
+      "p1 = c1 * v1 - v2",
+      "p2 = c1 * v3 - v4",
+      "resultado = p1^2 + p2"
     ],
-    "restricciones": [
-      "b != 0"
-    ],
+    "restricciones": ["p1 > 0", "p2 > 0"],
     "incognita_directa": "resultado",
-    "incognitas_inversa": ["coef1", "coef2", "a", "b"],
-    "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
-    "metadata": {
-      "habilidades": ["operadores", "fracciones"],
-      "tiempo_estimado": 120,
-      "requiere_calculadora": true
-    }
+    "formato_respuesta": { "tipo": "entero" }
   },
   {
-    "id": "operadores_anidado_experto",
+    "id": "ope_avanz_cond_magnitud",
     "tema": "Operadores Matemáticos",
-    "subtipo": "anidado",
+    "subtipo": "avanz_cond_magnitud",
     "grado": "5to",
-    "etapa": ["final"],
-    "dificultad": ["experto"],
-    "bidireccional": true,
-    "enunciado": "Se define $m \\, {sym1} \\, n = {coef1} m - {coef2} n$ y $p \\, {sym2} \\, q = p^{2} + q$. Halla el valor de $({a} \\, {sym1} \\, {b}) \\, {sym2} \\, {c}$.",
+    "dificultad": ["avanzado"],
+    "enunciado": "Se define la operación $a \\, {sym} \\, b$:\nSi $a > b \\Rightarrow a^{2} - b$\nSi $a \\leq b \\Rightarrow a + b^{2}$\nCalcula: $E = ({v1} \\, {sym} \\, {v2}) \\, {sym} \\, {v3}$.",
     "variables": {
-      "sym1": { "type": "list", "values": ["\\otimes", "\\boxtimes", "\\odot"] },
-      "sym2": { "type": "list", "values": ["\\oplus", "\\boxplus", "\\ominus"] },
-      "coef1": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "coef2": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "a": { "type": "number", "min": 2, "max": 4, "step": 1 },
-      "b": { "type": "number", "min": 2, "max": 4, "step": 1 },
-      "c": { "type": "number", "min": 2, "max": 4, "step": 1 }
+      "sym": { "type": "list", "values": ["\\blacktriangle", "\\blacksquare", "\\bigstar"] },
+      "v1": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "v2": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "v3": { "type": "number", "min": 2, "max": 15, "step": 1 }
     },
     "relaciones": [
-      "temp = coef1 * a - coef2 * b",
-      "resultado = temp^2 + c"
+      "p1 = (v1 > v2) ? (v1^2 - v2) : (v1 + v2^2)",
+      "resultado = (p1 > v3) ? (p1^2 - v3) : (p1 + v3^2)"
+    ],
+    "restricciones": ["v1 != v2", "p1 != v3"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "ope_avanz_cambio_doble",
+    "tema": "Operadores Matemáticos",
+    "subtipo": "avanz_cambio_doble",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "Se define: $({c1}x) \\, {sym} \\, (y - {c2}) = x^{2} + {c3}y$.\nCalcula el valor de: ${obj_x} \\, {sym} \\, {obj_y}$.",
+    "variables": {
+      "sym": { "type": "list", "values": ["\\heartsuit", "\\spadesuit", "\\clubsuit"] },
+      "c1": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "c2": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "c3": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "x_real": { "type": "number", "min": 2, "max": 6, "step": 1 },
+      "y_real": { "type": "number", "min": 2, "max": 6, "step": 1 }
+    },
+    "relaciones": [
+      "obj_x = c1 * x_real",
+      "obj_y = y_real - c2",
+      "resultado = (x_real^2) + c3 * y_real"
+    ],
+    "restricciones": ["obj_y > 0"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "ope_experto_recursivo",
+    "tema": "Operadores Matemáticos",
+    "subtipo": "experto_recursivo",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "Se define el operador: ${sym}(x) = {a}x - {b}$.\nCalcula el valor de: ${sym}({sym}({sym}({v})))$.",
+    "variables": {
+      "sym": { "type": "list", "values": ["\\nabla", "\\triangle", "\\square", "\\circ"] },
+      "a": { "type": "number", "min": 2, "max": 3, "step": 1 },
+      "b": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "v": { "type": "number", "min": 3, "max": 6, "step": 1 }
+    },
+    "relaciones": [
+      "p1 = a * v - b",
+      "p2 = a * p1 - b",
+      "resultado = a * p2 - b"
+    ],
+    "restricciones": ["p1 > 0", "p2 > 0"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "ope_experto_induccion",
+    "tema": "Operadores Matemáticos",
+    "subtipo": "experto_induccion",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "Observa el patrón de los siguientes operadores:\n${sym}(1) = {r1}$\n${sym}(2) = {r2}$\n${sym}(3) = {r3}$\nDescubre la ley de formación y calcula ${sym}({n})$.",
+    "variables": {
+      "sym": { "type": "list", "values": ["\\bigcirc", "\\square", "\\diamond"] },
+      "a": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "b": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "n": { "type": "number", "min": 10, "max": 25, "step": 1 }
+    },
+    "relaciones": [
+      "r1 = a * 1 + b",
+      "r2 = a * 2 + b",
+      "r3 = a * 3 + b",
+      "resultado = a * n + b"
     ],
     "restricciones": [],
     "incognita_directa": "resultado",
-    "incognitas_inversa": ["coef1", "coef2", "a", "b", "c"],
-    "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["operadores", "composición"],
-      "tiempo_estimado": 180,
-      "requiere_calculadora": false
-    }
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "ope_experto_implicito",
+    "tema": "Operadores Matemáticos",
+    "subtipo": "experto_implicito",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "Se define el operador en $\\mathbb{R}$:\n$x \\, {sym} \\, y = {c}x + y - (y \\, {sym} \\, x)$\nSimplifica la ecuación abstracta y halla el valor de: $({v1} \\, {sym} \\, {v2})$.",
+    "variables": {
+      "sym": { "type": "list", "values": ["\\ast", "\\star", "\\otimes"] },
+      "c": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "v1": { "type": "number", "min": 4, "max": 10, "step": 2 },
+      "v2": { "type": "number", "min": 2, "max": 10, "step": 2 }
+    },
+    "relaciones": [
+      "resultado = ((c + 1) * v1 + (c + 1) * v2) / 2"
+    ],
+    "restricciones": ["resultado % 1 == 0"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
   },
 
 

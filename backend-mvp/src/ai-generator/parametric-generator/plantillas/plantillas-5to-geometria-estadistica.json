@@ -2557,125 +2557,192 @@
     }
   },
   {
-    "id": "geo_piramide_cuadrangular_basico",
+    "id": "geo_piramide_volumen_basico",
     "tema": "geometria",
     "subtipo": "volumen_piramide",
     "grado": "5to",
     "etapa": ["clasificatoria"],
     "dificultad": ["basico"],
     "bidireccional": true,
-    "enunciado": "Generado dinamicamente",
+    "enunciado": "Halla el volumen de la pirámide triangular mostrada.",
     "variables": {
-      "lado": { "type": "number", "min": 4, "max": 10, "step": 1 },
-      "h": { "type": "number", "min": 6, "max": 12, "step": 1 }
+      "area_base": { "type": "number", "min": 12, "max": 60, "step": 3 },
+      "h": { "type": "number", "min": 5, "max": 15, "step": 1 }
     },
-    "relaciones": ["area_base = lado * lado", "volumen = (area_base * h) / 3"],
-    "restricciones": ["volumen > 0"],
+    "relaciones": [
+      "volumen = (area_base * h) / 3"
+    ],
+    "restricciones": ["(area_base * h) % 3 == 0"],
     "incognita_directa": "volumen",
-    "incognitas_inversa": ["lado", "h"],
-    "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
-    "metadata": {
-      "habilidades": ["volumen piramide"],
-      "tiempo_estimado": 60,
-      "requiere_calculadora": false
-    }
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["volumen piramide", "base triangular"] }
   },
   {
-    "id": "geo_piramide_cuadrangular_intermedio",
+    "id": "geo_piramide_volumen_intermedio",
     "tema": "geometria",
     "subtipo": "volumen_piramide",
     "grado": "5to",
-    "etapa": ["clasificatoria", "final"],
+    "etapa": ["clasificatoria"],
     "dificultad": ["intermedio"],
     "bidireccional": true,
-    "enunciado": "Generado dinamicamente",
+    "enunciado": "Halla el valor de 'x' si el volumen de la pirámide cuadrangular es ${volumen} u³.",
     "variables": {
       "a": { "type": "number", "min": 2, "max": 5, "step": 1 },
-      "h": { "type": "number", "min": 6, "max": 18, "step": 3 },
-      "x": { "type": "number", "min": 2, "max": 6, "step": 1 }
+      "x": { "type": "number", "min": 2, "max": 6, "step": 1 },
+      "h": { "type": "number", "min": 6, "max": 15, "step": 3 }
     },
     "relaciones": [
-      "lado = a * x",
-      "area_base = lado * lado",
+      "area_base = (a * x) * (a * x)",
       "volumen = (area_base * h) / 3"
     ],
-    "restricciones": ["lado > 0", "volumen > 0", "x > 0"],
+    "restricciones": ["(area_base * h) % 3 == 0"],
     "incognita_directa": "x",
-    "incognitas_inversa": ["a", "h", "x"],
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["ecuaciones cuadraticas simples"],
-      "tiempo_estimado": 90,
-      "requiere_calculadora": false
-    }
+    "metadata": { "habilidades": ["ecuaciones de primer grado", "base cuadrangular"] }
   },
   {
-    "id": "geo_piramide_cuadrangular_avanzado",
+    "id": "geo_piramide_volumen_avanzado",
     "tema": "geometria",
     "subtipo": "volumen_piramide",
     "grado": "5to",
     "etapa": ["final"],
     "dificultad": ["avanzado"],
     "bidireccional": true,
-    "enunciado": "Generado dinamicamente",
+    "enunciado": "Halla el valor de 'x' si el volumen de la pirámide pentagonal es ${volumen} u³.",
     "variables": {
       "a": { "type": "number", "min": 1, "max": 3, "step": 1 },
-      "b": { "type": "number", "min": 1, "max": 5, "step": 1 },
-      "h": { "type": "number", "min": 6, "max": 15, "step": 3 },
-      "x": { "type": "number", "min": 2, "max": 6, "step": 1 }
+      "b": { "type": "number", "min": 1, "max": 4, "step": 1 },
+      "x": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "h": { "type": "number", "min": 6, "max": 15, "step": 3 }
     },
     "relaciones": [
-      "lado = a * x + b",
-      "area_base = lado * lado",
+      "area_base = (a * x + b) * (a * x + b)",
       "volumen = (area_base * h) / 3"
     ],
-    "restricciones": ["lado > 0", "volumen > 0", "x > 0"],
+    "restricciones": ["(area_base * h) % 3 == 0"],
     "incognita_directa": "x",
-    "incognitas_inversa": ["a", "b", "h", "x"],
-    "formato_respuesta": { "tipo": "decimal", "decimales": 1 },
-    "metadata": {
-      "habilidades": ["binomio al cuadrado"],
-      "tiempo_estimado": 120,
-      "requiere_calculadora": true
-    }
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["binomio al cuadrado", "base pentagonal"] }
   },
   {
-    "id": "geo_piramide_cuadrangular_experto",
+    "id": "geo_piramide_volumen_experto",
     "tema": "geometria",
     "subtipo": "volumen_piramide",
     "grado": "5to",
     "etapa": ["final"],
     "dificultad": ["experto"],
     "bidireccional": true,
-    "enunciado": "Generado dinamicamente",
+    "enunciado": "Halla el valor entero de 'x' sabiendo que el volumen de la pirámide hexagonal es ${volumen} u³.",
     "variables": {
       "a": { "type": "number", "min": 1, "max": 2, "step": 1 },
-      "b": { "type": "number", "min": 1, "max": 4, "step": 1 },
+      "b": { "type": "number", "min": 1, "max": 3, "step": 1 },
       "c": { "type": "number", "min": 1, "max": 2, "step": 1 },
-      "d": { "type": "number", "min": 1, "max": 4, "step": 1 },
-      "x": { "type": "number", "min": 2, "max": 5, "step": 0.1 }
+      "d": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "x": { "type": "number", "min": 2, "max": 5, "step": 1 }
+    },
+    "relaciones": [
+      "area_base = (a * x + b) * (a * x + b)",
+      "h = (c * x + d)",
+      "volumen = (area_base * h) / 3"
+    ],
+    "restricciones": ["(area_base * h) % 3 == 0"],
+    "incognita_directa": "x",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["polinomios area y altura", "base hexagonal"] }
+  },
+  {
+    "id": "geo_piramide_area_basico",
+    "tema": "geometria",
+    "subtipo": "area_piramide",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
+    "bidireccional": true,
+    "enunciado": "Calcula el área de la superficie lateral de la pirámide triangular regular.",
+    "variables": {
+      "lado": { "type": "number", "min": 4, "max": 12, "step": 2 },
+      "h": { "type": "number", "min": 5, "max": 15, "step": 1 } 
+    },
+    "relaciones": [
+      "area_lateral = (3 * lado * h) / 2"
+    ],
+    "restricciones": ["(3 * lado * h) % 2 == 0"],
+    "incognita_directa": "area_lateral",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["area lateral piramide", "apotema"] }
+  },
+  {
+    "id": "geo_piramide_area_intermedio",
+    "tema": "geometria",
+    "subtipo": "area_piramide",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["intermedio"],
+    "bidireccional": true,
+    "enunciado": "Calcula 'x' si el área de la superficie lateral de la pirámide cuadrangular es ${area_lateral} u².",
+    "variables": {
+      "a": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "x": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "h": { "type": "number", "min": 6, "max": 15, "step": 1 }
+    },
+    "relaciones": [
+      "lado = a * x",
+      "area_lateral = (4 * lado * h) / 2"
+    ],
+    "restricciones": ["(4 * lado * h) % 2 == 0"],
+    "incognita_directa": "x",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["ecuaciones de primer grado", "apotema"] }
+  },
+  {
+    "id": "geo_piramide_area_avanzado",
+    "tema": "geometria",
+    "subtipo": "area_piramide",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": true,
+    "enunciado": "Calcula 'x' si el área de la superficie lateral de la pirámide pentagonal es ${area_lateral} u².",
+    "variables": {
+      "a": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "b": { "type": "number", "min": 1, "max": 4, "step": 1 },
+      "x": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "h": { "type": "number", "min": 6, "max": 15, "step": 2 }
+    },
+    "relaciones": [
+      "lado = a * x + b",
+      "area_lateral = (5 * lado * h) / 2"
+    ],
+    "restricciones": ["(5 * lado * h) % 2 == 0"],
+    "incognita_directa": "x",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["ecuaciones complejas", "apotema"] }
+  },
+  {
+    "id": "geo_piramide_area_experto",
+    "tema": "geometria",
+    "subtipo": "area_piramide",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
+    "bidireccional": true,
+    "enunciado": "Calcula 'x' si el área de la superficie lateral de la pirámide hexagonal es ${area_lateral} u².",
+    "variables": {
+      "a": { "type": "number", "min": 1, "max": 2, "step": 1 },
+      "b": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "c": { "type": "number", "min": 1, "max": 2, "step": 1 },
+      "d": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "x": { "type": "number", "min": 2, "max": 5, "step": 1 }
     },
     "relaciones": [
       "lado = a * x + b",
       "h = c * x + d",
-      "area_base = lado * lado",
-      "volumen = (area_base * h) / 3"
+      "area_lateral = (6 * lado * h) / 2"
     ],
-    "restricciones": [
-       "lado > 0", 
-       "h > 0", 
-       "volumen > 0", 
-       "x > 0", 
-       "(lado * lado * h) % 3 == 0" 
-    ],
+    "restricciones": ["(6 * lado * h) % 2 == 0"],
     "incognita_directa": "x",
-    "incognitas_inversa": ["a", "b", "c", "d", "x"],
-    "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
-    "metadata": {
-      "habilidades": ["polinomio grado 3"],
-      "tiempo_estimado": 150,
-      "requiere_calculadora": true
-    }
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["polinomios lado y apotema", "apotema"] }
   },
   {
     "id": "geo_circ_fig0_basico",

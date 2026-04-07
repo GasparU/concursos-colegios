@@ -4875,88 +4875,105 @@ export class QuintoGradoService extends BaseGradoService {
           };
         }
 
-        case 'volumen_piramide': {
+        case 'volumen_piramide':
+        case 'area_piramide': {
           const { a, b, c, d, x } = valores;
-          const lado_val = valores.lado;
-          const h_val = valores.h;
+          const esArea = plantilla.subtipo === 'area_piramide';
 
-          const fx = (coef: number, cte?: number, isNeg?: boolean) => {
+          // 🔥 HIDRATACIÓN BLINDADA: Cero undefineds
+          const valA = Number(a) || 1;
+          const valB = Number(b) || 0;
+          const valC = Number(c) || 1;
+          const valD = Number(d) || 0;
+          const valX = Number(x) || 1;
+
+          valores.lado = valores.lado || (valA * valX + valB);
+          valores.h = valores.h || (valC * valX + valD);
+          valores.area_base = valores.area_base || (valores.lado * valores.lado);
+
+          let n_lados = 3;
+          if (plantilla.dificultad.includes('intermedio')) n_lados = 4;
+          if (plantilla.dificultad.includes('avanzado')) n_lados = 5;
+          if (plantilla.dificultad.includes('experto')) n_lados = 6;
+
+          const fx = (coef: number, cte: number) => {
             let eq = coef === 1 ? 'x' : `${coef}x`;
-            if (cte) eq += isNeg ? ` - ${cte}` : ` + ${cte}`;
+            if (cte > 0) eq += ` + ${cte}`;
             return eq;
           };
 
-          let ladoStr = '',
-            hStr = '';
-
+          // 🔥 TEXTOS LATEX LIMPIOS
+          let txtB = '', txtH = '';
           if (plantilla.dificultad.includes('basico')) {
-            ladoStr = `${lado_val}`;
-            hStr = `${h_val}`;
-          } else if (plantilla.dificultad.includes('intermedio')) {
-            ladoStr = fx(a);
-            hStr = `${h_val}`;
-          } else if (plantilla.dificultad.includes('avanzado')) {
-            ladoStr = fx(a, b, false);
-            hStr = `${h_val}`;
+             txtB = esArea ? `$L = ${valores.lado}$` : `$A_B = ${valores.area_base}$`;
+             txtH = esArea ? `$Ap = ${valores.h}$` : `$h = ${valores.h}$`;
           } else {
-            // Experto
-            ladoStr = fx(a, b, false);
-            hStr = fx(c, d, false);
+             const polB = (plantilla.dificultad.includes('intermedio')) ? fx(valA, 0) : fx(valA, valB);
+             const polH = (plantilla.dificultad.includes('experto')) ? fx(valC, valD) : `${valores.h}`;
+             txtB = esArea ? `$L = ${polB}$` : `$A_B = (${polB})^{2}$`;
+             txtH = esArea ? `$Ap = ${polH}$` : `$h = ${polH}$`;
           }
 
-          // 🔥 MATEMÁTICA ISOMÉTRICA DE LA PIRÁMIDE
-          const anguloRad = 45 * (Math.PI / 180);
-          const profVisual = lado_val * 0.5; // Profundidad de la base
-          const despX = profVisual * Math.cos(anguloRad);
-          const despY = profVisual * Math.sin(anguloRad);
+          // 🔥 GIROS ANTI-SOLAPAMIENTO: Matemáticamente calculados para que ninguna línea tape a otra
+          let offsetBase = 0;
+          if (n_lados === 4) offsetBase = Math.PI / 8; // 22.5°
+          else if (n_lados === 6) offsetBase = Math.PI / 12; // 15°
+          // 3 y 5 lados se quedan en 0° que es su ángulo óptimo
 
-          // Vértices de la Base (Paralelogramo en el piso)
-          const p0 = [-lado_val / 2, 0] as [number, number]; // Inferior Izquierdo (Frontal)
-          const p1 = [lado_val / 2, 0] as [number, number]; // Inferior Derecho (Frontal)
-          const p2 = [lado_val / 2 + despX, despY] as [number, number]; // Inferior Derecho (Posterior)
-          const p3 = [-lado_val / 2 + despX, despY] as [number, number]; // Inferior Izquierdo (Posterior) - OCULTO
+          const radioV = 4; 
+          const vBase: [number, number][] = [];
+          for (let i = 0; i < n_lados; i++) {
+            const ang = (i * 2 * Math.PI) / n_lados + offsetBase;
+            vBase.push([radioV * Math.cos(ang), (radioV * Math.sin(ang)) * 0.35]);
+          }
 
-          // Ápice (Punta superior centrada sobre la base)
-          const apiceX = despX / 2;
-          const apiceY = h_val + despY / 2;
-          const vApice = [apiceX, apiceY] as [number, number];
+          const vApice: [number, number] = [0, 5.5]; 
+          const aSol: any[] = [], aOcu: any[] = [];
+          for (let i = 0; i < n_lados; i++) {
+            const p1 = vBase[i], p2 = vBase[(i + 1) % n_lados];
+            if (p1[1] > 0.05 && p2[1] > 0.05) aOcu.push({ inicio: p1, fin: p2, esBase: true });
+            else aSol.push({ inicio: p1, fin: p2, esBase: true });
+            if (p1[1] > 0.05) aOcu.push({ inicio: p1, fin: vApice, esBase: false });
+            else aSol.push({ inicio: p1, fin: vApice, esBase: false });
+          }
 
-          const aristasSolidas = [
-            { inicio: p0, fin: p1 },
-            { inicio: p1, fin: p2 }, // Base visible
-            { inicio: p0, fin: vApice },
-            { inicio: p1, fin: vApice },
-            { inicio: p2, fin: vApice }, // Caras visibles
-          ];
+          // 🔥 APOTEMA PERFECTA: Buscamos obligatoriamente la cara Frontal-Derecha
+          let lAlt;
+          if (esArea) {
+             let bestEdge = 0;
+             let maxScore = -Infinity;
+             for (let i = 0; i < n_lados; i++) {
+               const p1 = vBase[i], p2 = vBase[(i+1)%n_lados];
+               const midX = (p1[0] + p2[0]) / 2;
+               const midY = (p1[1] + p2[1]) / 2;
+               // Priorizamos caras que estén al frente (Y negativo) y a la derecha (X positivo)
+               const score = midX - (midY * 2); 
+               if (midY < 0 && midX > 0 && score > maxScore) {
+                 maxScore = score;
+                 bestEdge = i;
+               }
+             }
+             const pF1 = vBase[bestEdge], pF2 = vBase[(bestEdge + 1) % n_lados];
+             lAlt = { inicio: [(pF1[0]+pF2[0])/2, (pF1[1]+pF2[1])/2], fin: vApice };
+          } else {
+             // Altura normal al centro
+             lAlt = { inicio: [0, 0], fin: vApice };
+          }
 
-          const aristasOcultas = [
-            { inicio: p0, fin: p3 },
-            { inicio: p3, fin: p2 }, // Base posterior oculta
-            { inicio: p3, fin: vApice }, // Arista posterior oculta
-          ];
-
-          // Línea de altura (desde el centro de la base al ápice)
-          const lineaAltura = {
-            inicio: [apiceX, despY / 2] as [number, number],
-            fin: vApice,
-          };
-
+          // 🔥 SEPARACIÓN ABSOLUTA: Textos enviados a las esquinas opuestas de la pantalla
           const etiquetas = [
-            { texto: ladoStr, mx: 0, my: 0, nx: 0, ny: -1.2 }, // Lado base
-            { texto: hStr, mx: apiceX, my: apiceY / 2, nx: -1, ny: 0 }, // Altura pirámide
+            { texto: txtB, mx: -6, my: -3, nx: 0, ny: 0 }, // Abajo a la izquierda
+            { texto: txtH, mx: 6, my: 4, nx: 0, ny: 0 },   // Arriba a la derecha
           ];
-
-          const todosLosPuntos = [p0, p1, p2, p3, vApice];
 
           return {
             type: 'geometry_mafs',
             theme: 'piramide_cuadrangular',
-            todosLosPuntos,
-            aristasSolidas,
-            aristasOcultas,
-            lineaAltura,
+            todosLosPuntos: [...vBase, vApice],
+            aristasSolidas: aSol,
+            aristasOcultas: aOcu,
+            lineaAltura: lAlt,
             etiquetas,
-            volumen: valores.volumen,
           };
         }
 
