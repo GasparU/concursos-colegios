@@ -4384,6 +4384,391 @@
     "enunciado": "Halla el valor simplificado de $M$ aplicando la ley de extremos y medios:\n$$ M = \\frac{\\frac{${a}}{x}}{\\frac{${c}}{x^2}} \\times \\frac{\\frac{${c}}{x^3}}{\\frac{${a}}{x^4}} $$",
     "formato_respuesta": { "tipo": "fraccion" },
     "metadata": { "habilidades": ["ley del sándwich", "álgebra con fracciones"] }
+  },
+  {
+    "id": "ord_lineal_basico",
+    "tema": "Orden de Información",
+    "subtipo": "lineal_basico",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "En una carrera de 4 amigos, {n1} llegó antes que {n2}. {n3} llegó después de {n2} pero antes que {n4}. ¿Quién llegó en tercer lugar?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Ana", "Alicia", "Alba"] },
+      "n2": { "type": "list", "values": ["Beto", "Bruno", "Blas"] },
+      "n3": { "type": "list", "values": ["Carlos", "Ciro", "Cesar"] },
+      "n4": { "type": "list", "values": ["Diana", "Dora", "Dina"] }
+    },
+    "relaciones": ["resultado = n3"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_vertical_basico",
+    "tema": "Orden de Información",
+    "subtipo": "vertical_basico",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "En un edificio de 4 pisos viven 4 familias. Los {f1} viven en el 1er piso. Los {f2} viven un piso más arriba que los {f1} y un piso más abajo que los {f3}. ¿En qué piso vive la familia {f4}?",
+    "variables": {
+      "f1": { "type": "list", "values": ["Pérez", "Pinto"] },
+      "f2": { "type": "list", "values": ["García", "Gómez"] },
+      "f3": { "type": "list", "values": ["Salas", "Soto"] },
+      "f4": { "type": "list", "values": ["Ríos", "Ruiz"] }
+    },
+    "relaciones": ["resultado = 4"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "ord_circular_basico",
+    "tema": "Orden de Información",
+    "subtipo": "circular_basico",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Cuatro amigos se sientan alrededor de una mesa circular. {n1} se sienta frente a {n2} y junto a {n3}. Si {n4} está a la derecha de {n2}, ¿quién está frente a {n4}?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Hugo", "Héctor"] },
+      "n2": { "type": "list", "values": ["Paco", "Pablo"] },
+      "n3": { "type": "list", "values": ["Luis", "Lucas"] },
+      "n4": { "type": "list", "values": ["Mateo", "Marcos"] }
+    },
+    "relaciones": ["resultado = n3"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_matriz_basico",
+    "tema": "Orden de Información",
+    "subtipo": "matriz_basico",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "{n1}, {n2} y {n3} tienen diferentes profesiones: Médico, Ingeniero y Profesor. {n1} es amigo del Médico. El Ingeniero es muy amigo de {n3} y del Médico. ¿Qué profesión tiene {n2}?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Juan", "Julio"] },
+      "n2": { "type": "list", "values": ["Pedro", "Paolo"] },
+      "n3": { "type": "list", "values": ["Raúl", "Renzo"] }
+    },
+    "relaciones": ["resultado = \"Médico\""],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_lineal_intermedio",
+    "tema": "Orden de Información",
+    "subtipo": "lineal_intermedio",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "En una fila de 5 butacas se sientan 5 amigos. {n1} se sienta en un extremo. {n2} se sienta adyacente a {n3} y {n4}. Si {n5} está a la derecha de todos, ¿quién se sienta exactamente en el medio?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Arturo", "Andrés"] },
+      "n2": { "type": "list", "values": ["Beto", "Boris"] },
+      "n3": { "type": "list", "values": ["Carlos", "Camilo"] },
+      "n4": { "type": "list", "values": ["Dante", "Diego"] },
+      "n5": { "type": "list", "values": ["Edu", "Elías"] }
+    },
+    "relaciones": ["resultado = n2"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_crono_intermedio",
+    "tema": "Orden de Información",
+    "subtipo": "crono_intermedio",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "{n1} es mayor que {n2} pero menor que {n3}. {n4} no es mayor que {n2}. {n5} es mayor que {n1} pero menor que {n3}. ¿Quién es el segundo más joven?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Fiorella", "Fátima"] },
+      "n2": { "type": "list", "values": ["Gaby", "Gina"] },
+      "n3": { "type": "list", "values": ["Hilda", "Hania"] },
+      "n4": { "type": "list", "values": ["Inés", "Irma"] },
+      "n5": { "type": "list", "values": ["Julia", "Juana"] }
+    },
+    "relaciones": ["resultado = n2"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_circular_intermedio",
+    "tema": "Orden de Información",
+    "subtipo": "circular_intermedio",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "Seis amigos se sientan en una mesa circular simétrica. {n1} está frente a {n2} y a la derecha de {n3}. {n4} está frente a {n3}. Si {n5} está junto y a la izquierda de {n1}, ¿quién está frente a {n5}?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Kike", "Kevin"] },
+      "n2": { "type": "list", "values": ["Lalo", "Luis"] },
+      "n3": { "type": "list", "values": ["Memo", "Mario"] },
+      "n4": { "type": "list", "values": ["Nico", "Nino"] },
+      "n5": { "type": "list", "values": ["Omar", "Oscar"] },
+      "n6": { "type": "list", "values": ["Piero", "Paulo"] }
+    },
+    "relaciones": ["resultado = n6"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_matriz_intermedio",
+    "tema": "Orden de Información",
+    "subtipo": "matriz_intermedio",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "{n1}, {n2} y {n3} tienen un perro, un gato y un loro (no necesariamente en ese orden). El dueño del perro, que es primo de {n1}, se fue de viaje con {n2}. ¿Quién es el dueño del perro?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Renato", "Ramiro"] },
+      "n2": { "type": "list", "values": ["Saúl", "Sergio"] },
+      "n3": { "type": "list", "values": ["Tito", "Tomás"] }
+    },
+    "relaciones": ["resultado = n3"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_lineal_avanzado",
+    "tema": "Orden de Información",
+    "subtipo": "lineal_avanzado",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "En una carrera de 5 autos, el auto {c1} llegó tres puestos antes que el {c2}. El {c3} no llegó último ni junto al {c2}. El auto {c4} llegó inmediatamente después del {c1}. ¿Qué color de auto llegó tercero?",
+    "variables": {
+      "c1": { "type": "list", "values": ["Rojo", "Guinda"] },
+      "c2": { "type": "list", "values": ["Azul", "Celeste"] },
+      "c3": { "type": "list", "values": ["Verde", "Oliva"] },
+      "c4": { "type": "list", "values": ["Negro", "Gris"] },
+      "c5": { "type": "list", "values": ["Blanco", "Plata"] }
+    },
+    "relaciones": ["resultado = c3"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_vertical_avanzado",
+    "tema": "Orden de Información",
+    "subtipo": "vertical_avanzado",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "En un edificio de 6 pisos viven 4 amigos. El 2do piso está vacío. {n1} vive en un piso adyacente a dos pisos vacíos. {n2} vive más arriba que {n3} pero más abajo que {n4}. ¿En qué piso vive {n1}?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Julio", "Javier"] },
+      "n2": { "type": "list", "values": ["Mario", "Miguel"] },
+      "n3": { "type": "list", "values": ["Carlos", "Cristian"] },
+      "n4": { "type": "list", "values": ["Luis", "León"] }
+    },
+    "relaciones": ["resultado = 5"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "ord_circular_avanzado",
+    "tema": "Orden de Información",
+    "subtipo": "circular_avanzado",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "Cinco personas están en una mesa de 6 sillas distribuidas simétricamente. El asiento vacío está frente a {n1}. {n2} se sienta a dos asientos de {n3}. Si {n4} está junto y a la derecha del asiento vacío, ¿quién está a la izquierda del vacío?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Beto", "Braulio"] },
+      "n2": { "type": "list", "values": ["Ana", "Amelia"] },
+      "n3": { "type": "list", "values": ["Ciro", "Cesar"] },
+      "n4": { "type": "list", "values": ["Dina", "Delia"] },
+      "n5": { "type": "list", "values": ["Emma", "Elsa"] }
+    },
+    "relaciones": ["resultado = n5"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_matriz_avanzado",
+    "tema": "Orden de Información",
+    "subtipo": "matriz_avanzado",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "{n1}, {n2} y {n3} estudian Ingeniería, Medicina y Derecho. {n1} y el estudiante de Derecho no se conocen. {n2} es hermano del estudiante de Medicina. Si {n1} es mayor que el de Medicina, ¿qué estudia {n3}?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Leo", "Lino"] },
+      "n2": { "type": "list", "values": ["Max", "Mael"] },
+      "n3": { "type": "list", "values": ["Noé", "Nilo"] }
+    },
+    "relaciones": ["resultado = \"Medicina\""],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_lineal_experto",
+    "tema": "Orden de Información",
+    "subtipo": "lineal_experto",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "Cuatro cajas de distinto peso están en fila. La caja {c1} pesa más que la {c2} pero menos que la {c3}. Se sabe que es falso que la {c4} sea la más pesada. Si la {c4} no es la más liviana, ¿cuál es la segunda caja más pesada?",
+    "variables": {
+      "c1": { "type": "list", "values": ["Roja", "Rosada"] },
+      "c2": { "type": "list", "values": ["Azul", "Amarilla"] },
+      "c3": { "type": "list", "values": ["Verde", "Violeta"] },
+      "c4": { "type": "list", "values": ["Negra", "Naranja"] }
+    },
+    "relaciones": ["resultado = c1"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_crono_experto",
+    "tema": "Orden de Información",
+    "subtipo": "crono_experto",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "Cinco hermanos comparan fechas de nacimiento. {n1} nació 3 años después que {n2}. {n3} es mayor que {n2} pero nació 1 año después que {n4}. Si {n5} es el menor de todos, ¿quién es el segundo mayor?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Mateo", "Moisés"] },
+      "n2": { "type": "list", "values": ["Lucas", "Lázaro"] },
+      "n3": { "type": "list", "values": ["Juan", "Jacobo"] },
+      "n4": { "type": "list", "values": ["Marcos", "Miguel"] },
+      "n5": { "type": "list", "values": ["Tito", "Tomás"] }
+    },
+    "relaciones": ["resultado = n3"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "ord_circular_experto",
+    "tema": "Orden de Información",
+    "subtipo": "circular_experto",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "Ocho personas se sientan alrededor de una fogata. {n1} está diametralmente opuesto a {n2}. {n3} está a 3 asientos a la derecha de {n1} y a 2 a la izquierda de {n4}. ¿Cuántos asientos separan a {n2} de {n4} por el camino más corto?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Alex", "Abel"] },
+      "n2": { "type": "list", "values": ["Beto", "Biel"] },
+      "n3": { "type": "list", "values": ["Ciro", "Cael"] },
+      "n4": { "type": "list", "values": ["Dani", "Dino"] }
+    },
+    "relaciones": ["resultado = 1"],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "ord_matriz_experto",
+    "tema": "Orden de Información",
+    "subtipo": "matriz_experto",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "{n1} no tiene el gato. El que tiene el perro es arquitecto. El ingeniero es cuñado de {n2}. {n3} tiene el loro. Si {n1} es el ingeniero, ¿qué animal tiene el contador?",
+    "variables": {
+      "n1": { "type": "list", "values": ["Arturo", "Aarón"] },
+      "n2": { "type": "list", "values": ["Bruno", "Bastián"] },
+      "n3": { "type": "list", "values": ["Carlos", "Camilo"] }
+    },
+    "relaciones": ["resultado = \"Gato\""],
+    "restricciones": [],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "texto" }
+  },
+  {
+    "id": "alg_term_semejantes_basico",
+    "tema": "Términos Semejantes",
+    "subtipo": "reduccion_basica",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Reduce la siguiente expresión algebraica sabiendo que todos son términos semejantes (recuerda el orden de las variables):\n$M = {a}x^{m}y^{n} - {b}y^{n}x^{m} + {c}x^{m}y^{n}$\nIndica el coeficiente final.",
+    "variables": {
+      "a": { "type": "number", "min": 10, "max": 25, "step": 1 },
+      "b": { "type": "number", "min": 5, "max": 15, "step": 1 },
+      "c": { "type": "number", "min": 2, "max": 12, "step": 1 },
+      "m": { "type": "number", "min": 2, "max": 7, "step": 1 },
+      "n": { "type": "number", "min": 2, "max": 7, "step": 1 }
+    },
+    "relaciones": [
+      "resultado = a - b + c"
+    ],
+    "restricciones": ["resultado > 0", "m != n"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "alg_term_semejantes_intermedio",
+    "tema": "Términos Semejantes",
+    "subtipo": "ecuacion_exponentes",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "Si los siguientes términos algebraicos son semejantes:\n$T_1 = {c1}x^{2a - {k}}y^{m}$\n$T_2 = -{c2}x^{expX}y^{b + {j}}$\nCalcula el valor de: $a \\times b$.",
+    "variables": {
+      "c1": { "type": "number", "min": 2, "max": 9, "step": 1 },
+      "c2": { "type": "number", "min": 2, "max": 9, "step": 1 },
+      "a": { "type": "number", "min": 4, "max": 10, "step": 1 },
+      "b": { "type": "number", "min": 3, "max": 9, "step": 1 },
+      "k": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "j": { "type": "number", "min": 1, "max": 5, "step": 1 }
+    },
+    "relaciones": [
+      "expX = 2 * a - k",
+      "m = b + j",
+      "resultado = a * b"
+    ],
+    "restricciones": ["expX > 0", "m > 0"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "alg_term_semejantes_avanzado",
+    "tema": "Términos Semejantes",
+    "subtipo": "reduccion_avanzada",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "Se sabe que la siguiente expresión polinómica se reduce a **un solo término**:\n$P(x,y) = (m + {c1})x^{p}y^{n - {c2}} + (n - {c3})x^{m + {d}}y^{q}$\nHalla el coeficiente final de dicha expresión.",
+    "variables": {
+      "m": { "type": "number", "min": 3, "max": 8, "step": 1 },
+      "n": { "type": "number", "min": 4, "max": 9, "step": 1 },
+      "c1": { "type": "number", "min": 1, "max": 5, "step": 1 },
+      "c2": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "c3": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "d": { "type": "number", "min": 2, "max": 6, "step": 1 }
+    },
+    "relaciones": [
+      "p = m + d",
+      "q = n - c2",
+      "coef1 = m + c1",
+      "coef2 = n - c3",
+      "resultado = coef1 + coef2"
+    ],
+    "restricciones": ["q > 0", "coef2 > 0"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "alg_term_semejantes_experto",
+    "tema": "Términos Semejantes",
+    "subtipo": "sistema_ecuaciones",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "Si los términos algebraicos dados son semejantes:\n$A = (2p - q)x^{p + q}y^{e2}$\n$B = {c}x^{e1}y^{p - q + {d}}$\nHalla la suma de sus coeficientes.",
+    "variables": {
+      "p": { "type": "number", "min": 4, "max": 8, "step": 1 },
+      "q": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "d": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "c": { "type": "number", "min": 3, "max": 9, "step": 1 }
+    },
+    "relaciones": [
+      "e1 = p + q",
+      "e2 = p - q + d",
+      "coefA = 2 * p - q",
+      "resultado = coefA + c"
+    ],
+    "restricciones": ["p > q", "coefA > 0"],
+    "incognita_directa": "resultado",
+    "formato_respuesta": { "tipo": "entero" }
   }
   
 

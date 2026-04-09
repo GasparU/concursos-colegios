@@ -320,39 +320,46 @@ export class QuintoGradoService extends BaseGradoService {
       return enunciado;
     }
 
-   // 🔥 ESTE BLOQUE AHORA CONTROLA AMBOS TEMAS DE LA CIRCUNFERENCIA
-    if (plantilla.subtipo === 'angulos_circunferencia' || plantilla.subtipo === 'propiedades_circunferencia') {
+    // 🔥 ESTE BLOQUE AHORA CONTROLA AMBOS TEMAS DE LA CIRCUNFERENCIA
+    if (
+      plantilla.subtipo === 'angulos_circunferencia' ||
+      plantilla.subtipo === 'propiedades_circunferencia'
+    ) {
       let enunciado = plantilla.enunciado;
       const dif = plantilla.dificultad[0];
 
       // Formateador algebraico para el TEXTO
       const getTextAlg = (varName: string) => {
         if (dif === 'basico') {
-           if (plantilla.variables && !plantilla.variables[varName]) return 'x';
-           // Retorna el número limpio (El JSON ya incluye la 'u' o el '°' en el texto)
-           return valores[varName] !== undefined ? `${valores[varName]}` : 'x';
+          if (plantilla.variables && !plantilla.variables[varName]) return 'x';
+          // Retorna el número limpio (El JSON ya incluye la 'u' o el '°' en el texto)
+          return valores[varName] !== undefined ? `${valores[varName]}` : 'x';
         }
-        
-        const rel = plantilla.relaciones?.find((r: string) => r.startsWith(varName + ' ='));
-        if (!rel) return valores[varName] !== undefined ? `${valores[varName]}` : 'x';
+
+        const rel = plantilla.relaciones?.find((r: string) =>
+          r.startsWith(varName + ' ='),
+        );
+        if (!rel)
+          return valores[varName] !== undefined ? `${valores[varName]}` : 'x';
 
         let expr = rel.split('=')[1].trim();
 
         const tokens = expr.match(/[a-zA-Z_]\w*/g) || [];
-        tokens.forEach(token => {
-           if (token === 'x') return; 
-           if (valores[token] !== undefined) {
-              const regex = new RegExp(`\\b${token}\\b`, 'g');
-              expr = expr.replace(regex, valores[token]);
-           }
+        tokens.forEach((token) => {
+          if (token === 'x') return;
+          if (valores[token] !== undefined) {
+            const regex = new RegExp(`\\b${token}\\b`, 'g');
+            expr = expr.replace(regex, valores[token]);
+          }
         });
 
         // Limpieza matemática visual
-        expr = expr.replace(/x\s*\*\s*x/g, 'x²')
-                   .replace(/\s*\*\s*/g, '')
-                   .replace(/\+\s*-/g, '- ')
-                   .replace(/\s+/g, ' ')
-                   .trim();
+        expr = expr
+          .replace(/x\s*\*\s*x/g, 'x²')
+          .replace(/\s*\*\s*/g, '')
+          .replace(/\+\s*-/g, '- ')
+          .replace(/\s+/g, ' ')
+          .trim();
 
         if (expr.includes('undefined')) return 'x';
         return expr;
@@ -451,7 +458,7 @@ export class QuintoGradoService extends BaseGradoService {
       }
       throw new BadRequestException('Subtipo de fracción no reconocido');
     }
-   
+
     // 🔥 NARRATIVA: PERÍMETROS (SISTEMA DE 16 FIGURAS AISLADAS)
     if (plantilla.subtipo === 'triangulo_perimetro') {
       const v = valores;
@@ -461,29 +468,32 @@ export class QuintoGradoService extends BaseGradoService {
       // 1. Auto-Reemplazo: Busca {h_techo}, {base}, etc. en el JSON y los cambia por sus valores reales
       Object.keys(v).forEach((key) => {
         if (v[key] !== undefined && typeof v[key] !== 'function') {
-          enunciado = enunciado.replace(new RegExp(`\\{${key}\\}`, 'g'), String(v[key]));
+          enunciado = enunciado.replace(
+            new RegExp(`\\{${key}\\}`, 'g'),
+            String(v[key]),
+          );
         }
       });
 
       // 2. Formateador de Polinomios exacto para el nivel Experto (ax² + c)
       const fPoly = (a: number, c: number) => {
-         const aStr = a === 1 ? `x²` : `${a}x²`;
-         if (c === 0) return aStr;
-         return c < 0 ? `${aStr} - ${Math.abs(c)}` : `${aStr} + ${c}`;
+        const aStr = a === 1 ? `x²` : `${a}x²`;
+        if (c === 0) return aStr;
+        return c < 0 ? `${aStr} - ${Math.abs(c)}` : `${aStr} + ${c}`;
       };
 
       // 3. Inyección directa de álgebra para los 4 casos Expertos
       if (id === 'geo_perim_ninja_exp') {
-         return `La "Estrella Ninja" tiene 8 lados externos de igual longitud. Calcula su perímetro numérico y halla "x" sabiendo que dicho perímetro equivale a la expresión ( ${fPoly(v.a, v.b_cte)} ).`;
+        return `La "Estrella Ninja" tiene 8 lados externos de igual longitud. Calcula su perímetro numérico y halla "x" sabiendo que dicho perímetro equivale a la expresión ( ${fPoly(v.a, v.b_cte)} ).`;
       }
       if (id === 'geo_perim_cometa_exp') {
-         return `La cometa está formada por dos triángulos isósceles. Deduce los lados usando las diagonales mostradas. Si su perímetro total es ( ${fPoly(v.a, v.b_cte)} ), halla "x".`;
+        return `La cometa está formada por dos triángulos isósceles. Deduce los lados usando las diagonales mostradas. Si su perímetro total es ( ${fPoly(v.a, v.b_cte)} ), halla "x".`;
       }
       if (id === 'geo_perim_corona_tri_exp') {
-         return `Calcula el perímetro total de la figura (borde exterior más el borde del hueco interior). Si dicho perímetro equivale a la expresión ( ${fPoly(v.a, v.b_cte)} ), determina el valor positivo de "x".`;
+        return `Calcula el perímetro total de la figura (borde exterior más el borde del hueco interior). Si dicho perímetro equivale a la expresión ( ${fPoly(v.a, v.b_cte)} ), determina el valor positivo de "x".`;
       }
       if (id === 'geo_perim_hex_hueco_exp') {
-         return `La figura es un hexágono regular de lado ${v.lado_hex} cm con un recorte rectangular en la base inferior. Deduce el contorno exterior final y halla "x" si el perímetro total se expresa como ( ${fPoly(v.a, v.b_cte)} ).`;
+        return `La figura es un hexágono regular de lado ${v.lado_hex} cm con un recorte rectangular en la base inferior. Deduce el contorno exterior final y halla "x" si el perímetro total se expresa como ( ${fPoly(v.a, v.b_cte)} ).`;
       }
 
       // 4. Si es Básico, Intermedio o Avanzado, simplemente retorna el texto ya reemplazado en el Paso 1
@@ -491,21 +501,24 @@ export class QuintoGradoService extends BaseGradoService {
     }
 
     // 🔥 ENUNCIADOS: CONTEO DE FIGURAS UNIVERSAL 🔥
-    if (plantilla.subtipo === 'conteo_figuras' || plantilla.id.includes('conteo')) {
+    if (
+      plantilla.subtipo === 'conteo_figuras' ||
+      plantilla.id.includes('conteo')
+    ) {
       if (plantilla.id.includes('cuadrilatero')) {
         return `Calcula la cantidad total de cuadriláteros que se pueden identificar en la figura.`;
-      } 
-      else if (plantilla.id.includes('angulo')) {
+      } else if (plantilla.id.includes('angulo')) {
         return `Determina el número total de ángulos agudos que se pueden contar en el gráfico.`;
-      } 
-      else if (plantilla.id.includes('sectores')) {
+      } else if (plantilla.id.includes('sectores')) {
         return `Calcula el número de sectores circulares en la figura mostrada.`;
-      } 
-      else if (plantilla.id.includes('cubos')) {
+      } else if (plantilla.id.includes('cubos')) {
         return `Determina el número exacto de cubitos simples que conforman la siguiente estructura 3D.`;
-      } 
-      else { // Triángulos
-        if (plantilla.id.includes('basico') || plantilla.id.includes('intermedio')) {
+      } else {
+        // Triángulos
+        if (
+          plantilla.id.includes('basico') ||
+          plantilla.id.includes('intermedio')
+        ) {
           return `Determina el número total de triángulos que se pueden contar como máximo en la figura.`;
         } else {
           return `Aplica el método inductivo y halla la cantidad total de triángulos en el gráfico mostrado.`;
@@ -696,19 +709,26 @@ export class QuintoGradoService extends BaseGradoService {
       scope.texto_angulo_2 = `${valores.val_c}°`;
     }
 
-
-  // 🔥 ENUNCIADOS BLINDADOS (Cero undefined, Cero spoilers) 🔥
-    if (plantilla.subtipo === 'area_triangulo' || plantilla.id.includes('area_triangulo')) {
+    // 🔥 ENUNCIADOS BLINDADOS (Cero undefined, Cero spoilers) 🔥
+    if (
+      plantilla.subtipo === 'area_triangulo' ||
+      plantilla.id.includes('area_triangulo')
+    ) {
       const v_t = Number(valores.var_t ?? 0);
       const v_k = Number(valores.var_k ?? 1);
       const v_x = Number(valores.var_x ?? 3);
       const v_flip = Number(valores.var_flip ?? 0);
       const v_hide = Number(valores.var_hide ?? 0);
 
-      const ternas = [ {a:3, b:4, c:5}, {a:5, b:12, c:13}, {a:8, b:15, c:17}, {a:6, b:8, c:10} ];
+      const ternas = [
+        { a: 3, b: 4, c: 5 },
+        { a: 5, b: 12, c: 13 },
+        { a: 8, b: 15, c: 17 },
+        { a: 6, b: 8, c: 10 },
+      ];
       const t = ternas[v_t % 4];
-      const cat1 = t.a * v_k; 
-      const cat2 = t.b * v_k; 
+      const cat1 = t.a * v_k;
+      const cat2 = t.b * v_k;
       const hipo = t.c * v_k;
       const variante = (v_t + v_flip) % 3;
 
@@ -718,35 +738,32 @@ export class QuintoGradoService extends BaseGradoService {
         } else {
           return `Calcula el área del triángulo rectángulo mostrado. Sabiendo que su base mide ${cat1} u y su hipotenusa ${hipo} u.`;
         }
-      } 
-      else if (plantilla.id.includes('intermedio')) {
+      } else if (plantilla.id.includes('intermedio')) {
         if (variante === 0) {
-           return `Dado el triángulo isósceles, cuya base mide ${cat1 * 2} cm y sus lados congruentes ${hipo} cm, calcula el área total.`;
+          return `Dado el triángulo isósceles, cuya base mide ${cat1 * 2} cm y sus lados congruentes ${hipo} cm, calcula el área total.`;
         } else if (variante === 1) {
-           return `Halla el área del triángulo mostrado. Considera que la altura interna mide ${hipo} cm y divide la base en dos segmentos de ${cat1} cm y ${cat2} cm.`;
+          return `Halla el área del triángulo mostrado. Considera que la altura interna mide ${hipo} cm y divide la base en dos segmentos de ${cat1} cm y ${cat2} cm.`;
         } else {
-           return `Calcula el área del triángulo isósceles tumbado. Su base mide ${cat1 * 2} cm y sus lados congruentes ${hipo} cm.`;
+          return `Calcula el área del triángulo isósceles tumbado. Su base mide ${cat1 * 2} cm y sus lados congruentes ${hipo} cm.`;
         }
-      } 
-      else if (plantilla.id.includes('avanzado')) {
+      } else if (plantilla.id.includes('avanzado')) {
         // 🔥 FIX: Base 100% dinámica y proporcional
-        const baseAvanzado = 8 * v_k; 
+        const baseAvanzado = 8 * v_k;
         return `Calcula el área de la región sombreada. Sabiendo que la base del triángulo principal es ${baseAvanzado} m, además, su proyección es de ${cat1} m y la diagonal mide ${hipo} m.`;
-      } 
-      else if (plantilla.id.includes('experto')) {
+      } else if (plantilla.id.includes('experto')) {
         if (variante === 0) {
-           return `El perímetro del triángulo rectángulo es ${3*v_x + 4*v_x + 5*v_x} u. Calcula el área.`;
+          return `El perímetro del triángulo rectángulo es ${3 * v_x + 4 * v_x + 5 * v_x} u. Calcula el área.`;
         } else if (variante === 1) {
-           return `El perímetro del triángulo isósceles mostrado es ${6*v_x + 5*v_x + 5*v_x} u. Calcular el área de la región triangular.`;
+          return `El perímetro del triángulo isósceles mostrado es ${6 * v_x + 5 * v_x + 5 * v_x} u. Calcular el área de la región triangular.`;
         } else {
-           return `El perímetro del triángulo isósceles es ${12*v_x + 10*v_x + 10*v_x} u. Halla el área total de la figura.`;
+          return `El perímetro del triángulo isósceles es ${12 * v_x + 10 * v_x + 10 * v_x} u. Halla el área total de la figura.`;
         }
       }
     }
 
-   if (plantilla.id.includes('geo_secantes')) {
+    if (plantilla.id.includes('geo_secantes')) {
       const v = valores || {};
-      
+
       // Formateador anti "1x"
       const ax = v.a === 1 ? 'x' : `${v.a}x`;
       const cx = v.c === 1 ? 'x' : `${v.c}x`;
@@ -754,19 +771,14 @@ export class QuintoGradoService extends BaseGradoService {
 
       if (plantilla.id.includes('basico')) {
         return `En el gráfico, las rectas L1 y L2 se intersecan en el punto O. Si las medidas de los ángulos opuestos por el vértice son ${ax} + ${v.b}° y ${cx} + ${v.d}°, halle el valor de x.`;
-      } 
-      else if (plantilla.id.includes('intermedio')) {
+      } else if (plantilla.id.includes('intermedio')) {
         return `Dados los rayos concurrentes en O que forman un par lineal sobre una recta, determine el valor de x sabiendo que los ángulos adyacentes miden ${ax} + ${v.b}° y ${cx} + ${v.d}°.`;
-      } 
-      else if (plantilla.id.includes('avanzado')) {
+      } else if (plantilla.id.includes('avanzado')) {
         return `En la figura, se muestran rayos concurrentes en el punto O que completan una vuelta entera (360°). A partir de los datos proporcionados, calcule el valor de x.`;
-      }
-      else {
+      } else {
         return `Analice la siguiente configuración geométrica de ángulos alrededor del punto O. Determine el valor entero de la incógnita x.`;
       }
     }
-
-
 
     // 🔥 2. Narrativa dinámica para la posición del punto P (Rectángulo Diagonal)
     if (plantilla.id === 'geo_rectangulo_punto_diagonal_01') {
@@ -825,7 +837,6 @@ export class QuintoGradoService extends BaseGradoService {
   }
 
   generarVisualData(plantilla: Plantilla, valores: Record<string, any>): any {
-
     const getTicks = (vals: number[]) => {
       const maxVal = Math.max(...vals, 0);
       const step = maxVal > 20 ? 5 : 2;
@@ -833,9 +844,8 @@ export class QuintoGradoService extends BaseGradoService {
       for (let i = 0; i <= maxVal + step; i += step) ticks.push(i);
       return ticks;
     };
-    
-    if (plantilla.tema === 'estadistica') {
 
+    if (plantilla.tema === 'estadistica') {
       switch (
         plantilla.id // 🔥 Usamos el ID para mayor precisión
       ) {
@@ -869,116 +879,123 @@ export class QuintoGradoService extends BaseGradoService {
             ],
           };
 
-          case 'estadistica_tabla_variable_k': {
-              // Generamos un k exacto
-              const k = Math.floor(Math.random() * 5) + 5; // k entre 5 y 9
-              const total = (2 * k) + (3 * k) + (4 * k) + k; // Total = 10k
-              
-              // Sincronizamos para el enunciado
-              valores.total_personas = total;
-              valores.edad_preguntada = "11"; // Pediremos la de 3k
+        case 'estadistica_tabla_variable_k': {
+          // Generamos un k exacto
+          const k = Math.floor(Math.random() * 5) + 5; // k entre 5 y 9
+          const total = 2 * k + 3 * k + 4 * k + k; // Total = 10k
 
-              return {
-                type: 'frequency_table',
-                headers: ["Edad", "N° de Estudiantes (fi)"],
-                rows: [
-                  ["10 años", "2k"],
-                  ["11 años", "3k"],
-                  ["12 años", "4k"],
-                  ["13 años", "k"],
-                  ["Total", total]
-                ],
-                colorAccent: "#3b82f6",
-                // La respuesta es 3 * k
-                respuestaSobreescrita: (3 * k) 
-              };
-            }
+          // Sincronizamos para el enunciado
+          valores.total_personas = total;
+          valores.edad_preguntada = '11'; // Pediremos la de 3k
 
-            // 🔥 CASO 2: Ecuación Textual para hallar 'm' (La imagen de los colores)
-            case 'estadistica_tabla_ecuacion_m': {
-              // Condición del problema: (Rojo + m) / 3 = (Azul + Verde) / 2
-              // Aseguramos que (Azul + Verde) sea par y múltiplo de 2
-              const azul = Math.floor(Math.random() * 5) + 16; // ej. 20
-              const verde = Math.floor(Math.random() * 5) + 16; // ej. 18
-              const sumaAV = azul + verde; // ej. 38
-              
-              // (Azul + Verde)/2 * 3 = Rojo + m
-              const valorDerecho = (sumaAV / 2) * 3; // ej. (38/2)*3 = 57
-              
-              // Elegimos un Rojo menor a valorDerecho
-              const rojo = Math.floor(Math.random() * 5) + 12; // ej. 15
-              
-              // Calculamos 'm' exacto
-              const m = valorDerecho - rojo; // ej. 57 - 15 = 42
+          return {
+            type: 'frequency_table',
+            headers: ['Edad', 'N° de Estudiantes (fi)'],
+            rows: [
+              ['10 años', '2k'],
+              ['11 años', '3k'],
+              ['12 años', '4k'],
+              ['13 años', 'k'],
+              ['Total', total],
+            ],
+            colorAccent: '#3b82f6',
+            // La respuesta es 3 * k
+            respuestaSobreescrita: 3 * k,
+          };
+        }
 
-              return {
-                type: 'frequency_table',
-                headers: ["Color Favorito", "Cantidad"],
-                rows: [
-                  ["Azul", azul],
-                  ["Rojo", rojo],
-                  ["Amarillo", "m"],
-                  ["Verde", verde]
-                ],
-                colorAccent: "#f59e0b",
-                respuestaSobreescrita: m 
-              };
-            }
+        // 🔥 CASO 2: Ecuación Textual para hallar 'm' (La imagen de los colores)
+        case 'estadistica_tabla_ecuacion_m': {
+          // Condición del problema: (Rojo + m) / 3 = (Azul + Verde) / 2
+          // Aseguramos que (Azul + Verde) sea par y múltiplo de 2
+          const azul = Math.floor(Math.random() * 5) + 16; // ej. 20
+          const verde = Math.floor(Math.random() * 5) + 16; // ej. 18
+          const sumaAV = azul + verde; // ej. 38
 
-           // 🔥 CASO 3: Gráfico Combinado (Dinámico y Exacto)
-            case 'estadistica_grafico_combinado': {
-              // 1. Datos del gráfico de Barras (Múltiplos de 100 para garantizar enteros)
-              const prod2022 = Math.floor(Math.random() * 5) * 100 + 1000; // 1000 a 1400
-              const prod2023 = Math.floor(Math.random() * 5) * 100 + 1500; // 1500 a 1900
-              const prod2024 = Math.floor(Math.random() * 5) * 100 + 2000; // 2000 a 2400
+          // (Azul + Verde)/2 * 3 = Rojo + m
+          const valorDerecho = (sumaAV / 2) * 3; // ej. (38/2)*3 = 57
 
-              // 2. Tríos Perfectos: Porcentajes que suman 100 y son múltiplos de 5
-              const distribuciones = [
-                { r: 40, a: 35, n: 25 },
-                { r: 50, a: 30, n: 20 },
-                { r: 45, a: 35, n: 20 },
-                { r: 60, a: 25, n: 15 },
-                { r: 35, a: 45, n: 20 }
-              ];
-              // Elegimos una distribución al azar
-              const dist = distribuciones[Math.floor(Math.random() * distribuciones.length)];
+          // Elegimos un Rojo menor a valorDerecho
+          const rojo = Math.floor(Math.random() * 5) + 12; // ej. 15
 
-              // 3. Elegir el color objetivo de la pregunta al azar
-              const coloresObj = [
-                { nombre: "rojo", pct: dist.r },
-                { nombre: "azul", pct: dist.a },
-                { nombre: "negro", pct: dist.n }
-              ];
-              const objetivo = coloresObj[Math.floor(Math.random() * coloresObj.length)];
+          // Calculamos 'm' exacto
+          const m = valorDerecho - rojo; // ej. 57 - 15 = 42
 
-              // 4. Sincronizamos el enunciado
-              valores.anio_objetivo = "2024";
-              valores.color_objetivo = objetivo.nombre;
+          return {
+            type: 'frequency_table',
+            headers: ['Color Favorito', 'Cantidad'],
+            rows: [
+              ['Azul', azul],
+              ['Rojo', rojo],
+              ['Amarillo', 'm'],
+              ['Verde', verde],
+            ],
+            colorAccent: '#f59e0b',
+            respuestaSobreescrita: m,
+          };
+        }
 
-              // 5. Respuesta: El % objetivo aplicado a la producción de 2024
-              // Al ser prod2024 múltiplo de 100, la división entre 100 siempre es exacta.
-              const respuestaFinal = (objetivo.pct / 100) * prod2024;
+        // 🔥 CASO 3: Gráfico Combinado (Dinámico y Exacto)
+        case 'estadistica_grafico_combinado': {
+          // 1. Datos del gráfico de Barras (Múltiplos de 100 para garantizar enteros)
+          const prod2022 = Math.floor(Math.random() * 5) * 100 + 1000; // 1000 a 1400
+          const prod2023 = Math.floor(Math.random() * 5) * 100 + 1500; // 1500 a 1900
+          const prod2024 = Math.floor(Math.random() * 5) * 100 + 2000; // 2000 a 2400
 
-              return {
-                type: 'chart_combined',
-                data: {
-                  barData: [
-                    { name: "2022", value: prod2022 },
-                    { name: "2023", value: prod2023 },
-                    { name: "2024", value: prod2024 }
-                  ],
-                  pieData: [
-                    { name: `Rojo (${dist.r}%)`, value: Math.round(dist.r * 3.6) }, // Grados exactos
-                    { name: `Azul (${dist.a}%)`, value: Math.round(dist.a * 3.6) },
-                    { name: `Negro (${dist.n}%)`, value: Math.round(dist.n * 3.6) }
-                  ],
-                  pieLabels: [`Rojo ${dist.r}%`, `Azul ${dist.a}%`, `Negro ${dist.n}%`] 
-                },
-                respuestaSobreescrita: respuestaFinal
-              };
-            }
+          // 2. Tríos Perfectos: Porcentajes que suman 100 y son múltiplos de 5
+          const distribuciones = [
+            { r: 40, a: 35, n: 25 },
+            { r: 50, a: 30, n: 20 },
+            { r: 45, a: 35, n: 20 },
+            { r: 60, a: 25, n: 15 },
+            { r: 35, a: 45, n: 20 },
+          ];
+          // Elegimos una distribución al azar
+          const dist =
+            distribuciones[Math.floor(Math.random() * distribuciones.length)];
 
-        case 'estadistica_circular_angulo': { // El texto te da el Porcentaje
+          // 3. Elegir el color objetivo de la pregunta al azar
+          const coloresObj = [
+            { nombre: 'rojo', pct: dist.r },
+            { nombre: 'azul', pct: dist.a },
+            { nombre: 'negro', pct: dist.n },
+          ];
+          const objetivo =
+            coloresObj[Math.floor(Math.random() * coloresObj.length)];
+
+          // 4. Sincronizamos el enunciado
+          valores.anio_objetivo = '2024';
+          valores.color_objetivo = objetivo.nombre;
+
+          // 5. Respuesta: El % objetivo aplicado a la producción de 2024
+          // Al ser prod2024 múltiplo de 100, la división entre 100 siempre es exacta.
+          const respuestaFinal = (objetivo.pct / 100) * prod2024;
+
+          return {
+            type: 'chart_combined',
+            data: {
+              barData: [
+                { name: '2022', value: prod2022 },
+                { name: '2023', value: prod2023 },
+                { name: '2024', value: prod2024 },
+              ],
+              pieData: [
+                { name: `Rojo (${dist.r}%)`, value: Math.round(dist.r * 3.6) }, // Grados exactos
+                { name: `Azul (${dist.a}%)`, value: Math.round(dist.a * 3.6) },
+                { name: `Negro (${dist.n}%)`, value: Math.round(dist.n * 3.6) },
+              ],
+              pieLabels: [
+                `Rojo ${dist.r}%`,
+                `Azul ${dist.a}%`,
+                `Negro ${dist.n}%`,
+              ],
+            },
+            respuestaSobreescrita: respuestaFinal,
+          };
+        }
+
+        case 'estadistica_circular_angulo': {
+          // El texto te da el Porcentaje
           // 1. Capturamos el porcentaje EXACTO del texto
           const pctReal = Number(valores.porcentaje);
 
@@ -986,14 +1003,15 @@ export class QuintoGradoService extends BaseGradoService {
             type: 'chart_pie',
             data: [
               { name: 'Rojo', value: pctReal }, // Dibuja la tajada roja EXACTA al texto
-              { name: 'Resto', value: 100 - pctReal }
+              { name: 'Resto', value: 100 - pctReal },
             ],
             // 2. Calcula la respuesta en grados y la redondea a entero
-            respuestaSobreescrita: Math.round(pctReal * 3.6) + '°'
+            respuestaSobreescrita: Math.round(pctReal * 3.6) + '°',
           };
         }
 
-       case 'estadistica_circular_porcentaje': { // El texto te da el Ángulo
+        case 'estadistica_circular_porcentaje': {
+          // El texto te da el Ángulo
           // 1. Capturamos el valor EXACTO que el motor ya imprimió en el texto
           const anguloReal = Number(valores.angulo);
 
@@ -1001,10 +1019,10 @@ export class QuintoGradoService extends BaseGradoService {
             type: 'chart_pie',
             data: [
               { name: 'Rojo', value: anguloReal }, // Dibuja la tajada roja EXACTA al texto
-              { name: 'Resto', value: 360 - anguloReal } // Dibuja el resto
+              { name: 'Resto', value: 360 - anguloReal }, // Dibuja el resto
             ],
             // 2. Calcula la respuesta y la redondea a entero
-            respuestaSobreescrita: Math.round(anguloReal / 3.6) + '%' 
+            respuestaSobreescrita: Math.round(anguloReal / 3.6) + '%',
           };
         }
         case 'estadistica_probabilidad_01': {
@@ -1036,13 +1054,13 @@ export class QuintoGradoService extends BaseGradoService {
           const n1 = Math.floor(Math.random() * 5) + 12; // 12 a 16
           const n2 = Math.floor(Math.random() * 5) + 10; // 10 a 14
           const n3 = Math.floor(Math.random() * 5) + 13; // 13 a 17
-          
+
           // Definimos un promedio objetivo que sea alcanzable (ej. 15)
-          const promedioObjetivo = Math.floor(Math.random() * 3) + 14; 
-          
+          const promedioObjetivo = Math.floor(Math.random() * 3) + 14;
+
           // Calculamos la nota faltante para 4 notas en total
           // Suma total necesaria = promedio * 4
-          const notaFaltante = (promedioObjetivo * 4) - n1 - n2 - n3;
+          const notaFaltante = promedioObjetivo * 4 - n1 - n2 - n3;
 
           // Actualizamos el objeto de valores para el motor de texto
           valores.nota1 = n1;
@@ -1052,15 +1070,15 @@ export class QuintoGradoService extends BaseGradoService {
 
           return {
             type: 'frequency_table',
-            headers: ["Examen", "Nota"],
+            headers: ['Examen', 'Nota'],
             rows: [
-              ["1° Examen", n1],
-              ["2° Examen", n2],
-              ["3° Examen", n3],
-              ["4° Examen", "?"], // La incógnita
+              ['1° Examen', n1],
+              ['2° Examen', n2],
+              ['3° Examen', n3],
+              ['4° Examen', '?'], // La incógnita
             ],
-            colorAccent: "#6366f1",
-            respuestaSobreescrita: notaFaltante 
+            colorAccent: '#6366f1',
+            respuestaSobreescrita: notaFaltante,
           };
         }
 
@@ -1083,18 +1101,20 @@ export class QuintoGradoService extends BaseGradoService {
     }
 
     // ========== CONJUNTOS Y DIAGRAMAS DE VENN ==========
-    if (plantilla.tema === 'Conjuntos y Diagramas de Venn' || plantilla.tema === 'Conjuntos y Diagramas de Venn (Extra)') {
+    if (
+      plantilla.tema === 'Conjuntos y Diagramas de Venn' ||
+      plantilla.tema === 'Conjuntos y Diagramas de Venn (Extra)'
+    ) {
       switch (plantilla.subtipo) {
         case 'venn_grafico_elementos':
         case 'conjuntos_venn_diferencia_basico':
         case 'conjuntos_venn_complemento_intermedio':
-        case 'venn_grafico_interseccion':       
-        case 'venn_grafico_union':              
-        case 'venn_grafico_diferencia_simetrica': 
-       {
+        case 'venn_grafico_interseccion':
+        case 'venn_grafico_union':
+        case 'venn_grafico_diferencia_simetrica': {
           // 🔥 ESTE LOG NOS DIRÁ SI EL BACKEND POR FIN ESTÁ FUNCIONANDO
-          console.log('🎨 Generando visual para Diagrama de Venn...'); 
-          
+          console.log('🎨 Generando visual para Diagrama de Venn...');
+
           return {
             type: 'geometry_mafs', // El pase VIP
             theme: 'venn_grafico_elementos',
@@ -1117,8 +1137,8 @@ export class QuintoGradoService extends BaseGradoService {
               eB2: valores.eB2,
               eB3: valores.eB3,
               eU1: valores.eU1,
-              eU2: valores.eU2
-            }
+              eU2: valores.eU2,
+            },
           };
         }
       }
@@ -1129,38 +1149,118 @@ export class QuintoGradoService extends BaseGradoService {
       switch (plantilla.subtipo) {
         case 'cubo_grafico_volumen_basico':
         case 'cubo_grafico_area_intermedio': {
-          console.log('🧊 Generando visual para Cubo...'); 
+          console.log('🧊 Generando visual para Cubo...');
           return {
             type: 'geometry_mafs',
             theme: 'cubo',
-            params: { 
-              arista: valores.a, 
-              color: '#0ea5e9' 
-            }
+            params: {
+              arista: valores.a,
+              color: '#0ea5e9',
+            },
           };
         }
       }
     }
-    
 
-    
     // ========== GEOMETRÍA ==========
-    if (plantilla.tema === 'geometria') {
+    if (plantilla.tema === 'geometria' || plantilla.tema === 'El Cono') {
       switch (plantilla.subtipo) {
-     
         case 'solidos_3d_cilindro': {
-  console.log('🧪 Generando visual para Cilindro...');
-  return {
-    type: 'geometry_mafs', // Mismo type que usas para que el frontend lo reconozca
-    theme: 'cilindro',     // Este es el discriminador para tu componente
-    params: {
-      r: valores.r,
-      h: valores.h,
-      // Generamos la orientación aquí para que sea persistente en el examen
-      orientacion: Math.random() > 0.5 ? 'vertical' : 'horizontal'
-    }
-  };
-}
+          console.log('🧪 Generando visual para Cilindro...');
+          return {
+            type: 'geometry_mafs', // Mismo type que usas para que el frontend lo reconozca
+            theme: 'cilindro', // Este es el discriminador para tu componente
+            params: {
+              r: valores.r,
+              h: valores.h,
+              // Generamos la orientación aquí para que sea persistente en el examen
+              orientacion: Math.random() > 0.5 ? 'vertical' : 'horizontal',
+            },
+          };
+        }
+
+        // Casos que SÍ requieren dibujar el cono 3D
+        case 'cono_basico':
+        case 'cono_basico_diametro':
+        case 'cono_basico_areabase':
+        case 'cono_inverso':
+        case 'cono_equilatero':
+        case 'cono_notable':
+        case 'cono_algebraico': {
+          const v = valores;
+          const r = Number(v.r);
+          const h = Number(v.h);
+          const g = Number(v.g);
+
+          if (isNaN(r) || isNaN(h) || isNaN(g)) {
+            return null;
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'cono_3d',
+            params: {
+              r,
+              h,
+              g,
+              unidad: v.unidad || 'u',
+              dif_g: v.dif_g || 0,
+              etiquetasAlgebraicas:
+                plantilla.metadata?.etiquetas_algebraicas || false,
+              ocultar: plantilla.metadata?.ocultar || null,
+              etiquetasCustom: plantilla.metadata?.etiquetas_custom || null,
+              anguloNotable: plantilla.metadata?.angulo_notable || null,
+            },
+          };
+        }
+
+        // Casos que SÍ requieren dibujar el cono 3D
+        case 'cono_basico':
+        case 'cono_basico_diametro':
+        case 'cono_basico_areabase':
+        case 'cono_inverso':
+        case 'cono_equilatero':
+        case 'cono_notable':
+        case 'cono_algebraico': {
+          const v = valores;
+          const r = Number(v.r);
+          const h = Number(v.h);
+          const g = Number(v.g);
+
+          if (isNaN(r) || isNaN(h) || isNaN(g)) {
+            return null;
+          }
+
+          return {
+            type: 'geometry_mafs',
+            theme: 'cono_3d',
+            params: {
+              r,
+              h,
+              g,
+              unidad: v.unidad || 'u',
+              dif_g: v.dif_g || 0,
+              etiquetasAlgebraicas:
+                plantilla.metadata?.etiquetas_algebraicas || false,
+              ocultar: plantilla.metadata?.ocultar || null,
+              etiquetasCustom: plantilla.metadata?.etiquetas_custom || null,
+              anguloNotable: plantilla.metadata?.angulo_notable || null,
+            },
+          };
+        }
+
+        // 🔥 Casos que NO requieren gráfico (Puro texto para forzar razonamiento)
+        // Devuelve null pacíficamente para que el frontend no lance errores 422
+        case 'cono_variacion':
+        case 'cono_texto_proporcional':
+        case 'cono_texto_areas':
+        case 'cono_semejanza':
+        case 'cono_desarrollo': {
+          console.log(
+            `🧠 [Service] Plantilla abstracta detectada (${plantilla.subtipo}). No se requiere visual.`,
+          );
+          return null;
+        }
 
         case 'triangulo_ecuaciones': {
           console.log('🎨 Generando visual para triángulo con ecuaciones');
@@ -2990,55 +3090,89 @@ export class QuintoGradoService extends BaseGradoService {
         }
         // 🔥 FIN DEL BLOQUE PARA ÁNGULOS RADIALES
 
-      case 'rectas_secantes': {
+        case 'rectas_secantes': {
           const id = plantilla.id || '';
           const v = valores || {};
           const lines: any[] = [];
           const labels: any[] = [];
-          const colorCeleste = "#38bdf8"; 
-          const colorVerde = "#22c55e"; 
+          const colorCeleste = '#38bdf8';
+          const colorVerde = '#22c55e';
 
           // 🔥 Helper maestro para formatear álgebra (1x -> x, 2x -> 2x)
-          const fx = (coef: number) => coef === 1 ? 'x' : `${coef}x`;
+          const fx = (coef: number) => (coef === 1 ? 'x' : `${coef}x`);
 
           const addRayo = (angleDeg: number, letra: string) => {
             const rad = (angleDeg * Math.PI) / 180;
             const r = 10;
             const pX = r * Math.cos(rad);
             const pY = r * Math.sin(rad);
-            
+
             if (!isNaN(pX) && !isNaN(pY)) {
-                lines.push({ puntos: [[0, 0], [pX, pY]], color: colorCeleste, weight: 2 });
-                labels.push({ pos: [pX * 1.15, pY * 1.15], dir: [0,0], texto: letra, tipo: 'vertice' });
+              lines.push({
+                puntos: [
+                  [0, 0],
+                  [pX, pY],
+                ],
+                color: colorCeleste,
+                weight: 2,
+              });
+              labels.push({
+                pos: [pX * 1.15, pY * 1.15],
+                dir: [0, 0],
+                texto: letra,
+                tipo: 'vertice',
+              });
             }
           };
 
-          const addAnguloLabel = (angS: number, angE: number, texto: string) => {
+          const addAnguloLabel = (
+            angS: number,
+            angE: number,
+            texto: string,
+          ) => {
             const mid = ((angS + angE) / 2) * (Math.PI / 180);
             const dist = 6.2;
             const posX = dist * Math.cos(mid);
             const posY = dist * Math.sin(mid);
 
             if (!isNaN(posX) && !isNaN(posY)) {
-               labels.push({ pos: [posX, posY], dir: [0,0], texto, tipo: 'valor', color: colorVerde });
-               const arcoPts: [number, number][] = [];
-               for(let a=angS; a<=angE; a+=2) arcoPts.push([3 * Math.cos(a*Math.PI/180), 3 * Math.sin(a*Math.PI/180)]);
-               arcoPts.push([3 * Math.cos(angE*Math.PI/180), 3 * Math.sin(angE*Math.PI/180)]);
-               lines.push({ puntos: arcoPts, color: colorVerde, weight: 2 });
+              labels.push({
+                pos: [posX, posY],
+                dir: [0, 0],
+                texto,
+                tipo: 'valor',
+                color: colorVerde,
+              });
+              const arcoPts: [number, number][] = [];
+              for (let a = angS; a <= angE; a += 2)
+                arcoPts.push([
+                  3 * Math.cos((a * Math.PI) / 180),
+                  3 * Math.sin((a * Math.PI) / 180),
+                ]);
+              arcoPts.push([
+                3 * Math.cos((angE * Math.PI) / 180),
+                3 * Math.sin((angE * Math.PI) / 180),
+              ]);
+              lines.push({ puntos: arcoPts, color: colorVerde, weight: 2 });
             }
           };
 
-          labels.push({ pos: [-0.8, -0.8], dir: [0,0], texto: "O", tipo: "vertice" });
+          labels.push({
+            pos: [-0.8, -0.8],
+            dir: [0, 0],
+            texto: 'O',
+            tipo: 'vertice',
+          });
 
           // ==========================================
           // 🟢 BÁSICO / 🟡 INTERMEDIO
           // ==========================================
           if (id.includes('basico') || id.includes('intermedio')) {
             const a1 = 50;
-            addRayo(0, "A");
-            addRayo(a1, "B");
-            addRayo(180, "C");
-            addRayo(180 + a1, "D");
+            addRayo(0, 'A');
+            addRayo(a1, 'B');
+            addRayo(180, 'C');
+            addRayo(180 + a1, 'D');
 
             if (id.includes('basico')) {
               // Aplicamos fx() para limpiar las etiquetas
@@ -3048,40 +3182,41 @@ export class QuintoGradoService extends BaseGradoService {
               addAnguloLabel(0, a1, `${fx(v.a)} + ${v.b}°`);
               addAnguloLabel(a1, 180, `${fx(v.c)} + ${v.d}°`);
             }
-          } 
+          }
           // ==========================================
           // 🔴 AVANZADO / 💀 EXPERTO (360° Seguro)
           // ==========================================
           else {
-            const x = v.x || 10; 
-            const val1 = (v.a * x + v.b) || 40;
-            const val2 = (v.c * x + v.d) || 60;
-            
-            let val3 = 0, val4 = 0;
+            const x = v.x || 10;
+            const val1 = v.a * x + v.b || 40;
+            const val2 = v.c * x + v.d || 60;
+
+            let val3 = 0,
+              val4 = 0;
             if (id.includes('avanzado')) {
-                val3 = (v.e * x + v.f) || 120;
-                val4 = 360 - (val1 + val2 + val3);
+              val3 = v.e * x + v.f || 120;
+              val4 = 360 - (val1 + val2 + val3);
             } else {
-                val3 = v.ang_base || 110;
-                val4 = 360 - (val1 + val2 + val3);
+              val3 = v.ang_base || 110;
+              val4 = 360 - (val1 + val2 + val3);
             }
 
             const angB = val1;
-            const angC = (val1 + val2) > 360 ? 350 : (val1 + val2);
-            const angD = (val1 + val2 + val3) > 360 ? 355 : (val1 + val2 + val3);
+            const angC = val1 + val2 > 360 ? 350 : val1 + val2;
+            const angD = val1 + val2 + val3 > 360 ? 355 : val1 + val2 + val3;
 
-            addRayo(0, "A");
-            addRayo(angB, "B");
-            addRayo(angC, "C");
-            addRayo(angD, "D");
+            addRayo(0, 'A');
+            addRayo(angB, 'B');
+            addRayo(angC, 'C');
+            addRayo(angD, 'D');
 
             // Aplicamos fx() para limpiar las etiquetas en avanzado y experto
             addAnguloLabel(0, angB, `${fx(v.a)} + ${v.b}°`);
             addAnguloLabel(angB, angC, `${fx(v.c)} + ${v.d}°`);
-            
+
             if (id.includes('avanzado')) {
               addAnguloLabel(angC, angD, `${fx(v.e)} + ${v.f}°`);
-              addAnguloLabel(angD, 360, `${Math.max(1, Math.round(val4))}°`); 
+              addAnguloLabel(angD, 360, `${Math.max(1, Math.round(val4))}°`);
             } else {
               addAnguloLabel(angC, angD, `${Math.max(1, Math.round(val3))}°`);
               addAnguloLabel(angD, 360, `${fx(v.e)} + ${v.f}°`);
@@ -3093,13 +3228,19 @@ export class QuintoGradoService extends BaseGradoService {
           v.respuesta = resNum;
 
           return {
-            valores: v, respuesta: resNum, tipo_render: 'geometry_mafs',
+            valores: v,
+            respuesta: resNum,
+            tipo_render: 'geometry_mafs',
             data: {
-              type: 'geometry_mafs', theme: 'area_triangulo',
-              puntos: [], 
-              esArea: false, etiquetas: labels, lineasExtra: lines, arcos: [],
-              respuestaSobreescrita: resNum
-            }
+              type: 'geometry_mafs',
+              theme: 'area_triangulo',
+              puntos: [],
+              esArea: false,
+              etiquetas: labels,
+              lineasExtra: lines,
+              arcos: [],
+              respuestaSobreescrita: resNum,
+            },
           };
         }
 
@@ -4887,9 +5028,9 @@ export class QuintoGradoService extends BaseGradoService {
           const valD = Number(d) || 0;
           const valX = Number(x) || 1;
 
-          valores.lado = valores.lado || (valA * valX + valB);
-          valores.h = valores.h || (valC * valX + valD);
-          valores.area_base = valores.area_base || (valores.lado * valores.lado);
+          valores.lado = valores.lado || valA * valX + valB;
+          valores.h = valores.h || valC * valX + valD;
+          valores.area_base = valores.area_base || valores.lado * valores.lado;
 
           let n_lados = 3;
           if (plantilla.dificultad.includes('intermedio')) n_lados = 4;
@@ -4903,67 +5044,84 @@ export class QuintoGradoService extends BaseGradoService {
           };
 
           // 🔥 TEXTOS LATEX LIMPIOS
-          let txtB = '', txtH = '';
+          let txtB = '',
+            txtH = '';
           if (plantilla.dificultad.includes('basico')) {
-             txtB = esArea ? `$L = ${valores.lado}$` : `$A_B = ${valores.area_base}$`;
-             txtH = esArea ? `$Ap = ${valores.h}$` : `$h = ${valores.h}$`;
+            txtB = esArea
+              ? `$L = ${valores.lado}$`
+              : `$A_B = ${valores.area_base}$`;
+            txtH = esArea ? `$Ap = ${valores.h}$` : `$h = ${valores.h}$`;
           } else {
-             const polB = (plantilla.dificultad.includes('intermedio')) ? fx(valA, 0) : fx(valA, valB);
-             const polH = (plantilla.dificultad.includes('experto')) ? fx(valC, valD) : `${valores.h}`;
-             txtB = esArea ? `$L = ${polB}$` : `$A_B = (${polB})^{2}$`;
-             txtH = esArea ? `$Ap = ${polH}$` : `$h = ${polH}$`;
+            const polB = plantilla.dificultad.includes('intermedio')
+              ? fx(valA, 0)
+              : fx(valA, valB);
+            const polH = plantilla.dificultad.includes('experto')
+              ? fx(valC, valD)
+              : `${valores.h}`;
+            txtB = esArea ? `$L = ${polB}$` : `$A_B = (${polB})^{2}$`;
+            txtH = esArea ? `$Ap = ${polH}$` : `$h = ${polH}$`;
           }
 
           // 🔥 GIROS ANTI-SOLAPAMIENTO: Matemáticamente calculados para que ninguna línea tape a otra
           let offsetBase = 0;
-          if (n_lados === 4) offsetBase = Math.PI / 8; // 22.5°
+          if (n_lados === 4)
+            offsetBase = Math.PI / 8; // 22.5°
           else if (n_lados === 6) offsetBase = Math.PI / 12; // 15°
           // 3 y 5 lados se quedan en 0° que es su ángulo óptimo
 
-          const radioV = 4; 
+          const radioV = 4;
           const vBase: [number, number][] = [];
           for (let i = 0; i < n_lados; i++) {
             const ang = (i * 2 * Math.PI) / n_lados + offsetBase;
-            vBase.push([radioV * Math.cos(ang), (radioV * Math.sin(ang)) * 0.35]);
+            vBase.push([radioV * Math.cos(ang), radioV * Math.sin(ang) * 0.35]);
           }
 
-          const vApice: [number, number] = [0, 5.5]; 
-          const aSol: any[] = [], aOcu: any[] = [];
+          const vApice: [number, number] = [0, 5.5];
+          const aSol: any[] = [],
+            aOcu: any[] = [];
           for (let i = 0; i < n_lados; i++) {
-            const p1 = vBase[i], p2 = vBase[(i + 1) % n_lados];
-            if (p1[1] > 0.05 && p2[1] > 0.05) aOcu.push({ inicio: p1, fin: p2, esBase: true });
+            const p1 = vBase[i],
+              p2 = vBase[(i + 1) % n_lados];
+            if (p1[1] > 0.05 && p2[1] > 0.05)
+              aOcu.push({ inicio: p1, fin: p2, esBase: true });
             else aSol.push({ inicio: p1, fin: p2, esBase: true });
-            if (p1[1] > 0.05) aOcu.push({ inicio: p1, fin: vApice, esBase: false });
+            if (p1[1] > 0.05)
+              aOcu.push({ inicio: p1, fin: vApice, esBase: false });
             else aSol.push({ inicio: p1, fin: vApice, esBase: false });
           }
 
           // 🔥 APOTEMA PERFECTA: Buscamos obligatoriamente la cara Frontal-Derecha
           let lAlt;
           if (esArea) {
-             let bestEdge = 0;
-             let maxScore = -Infinity;
-             for (let i = 0; i < n_lados; i++) {
-               const p1 = vBase[i], p2 = vBase[(i+1)%n_lados];
-               const midX = (p1[0] + p2[0]) / 2;
-               const midY = (p1[1] + p2[1]) / 2;
-               // Priorizamos caras que estén al frente (Y negativo) y a la derecha (X positivo)
-               const score = midX - (midY * 2); 
-               if (midY < 0 && midX > 0 && score > maxScore) {
-                 maxScore = score;
-                 bestEdge = i;
-               }
-             }
-             const pF1 = vBase[bestEdge], pF2 = vBase[(bestEdge + 1) % n_lados];
-             lAlt = { inicio: [(pF1[0]+pF2[0])/2, (pF1[1]+pF2[1])/2], fin: vApice };
+            let bestEdge = 0;
+            let maxScore = -Infinity;
+            for (let i = 0; i < n_lados; i++) {
+              const p1 = vBase[i],
+                p2 = vBase[(i + 1) % n_lados];
+              const midX = (p1[0] + p2[0]) / 2;
+              const midY = (p1[1] + p2[1]) / 2;
+              // Priorizamos caras que estén al frente (Y negativo) y a la derecha (X positivo)
+              const score = midX - midY * 2;
+              if (midY < 0 && midX > 0 && score > maxScore) {
+                maxScore = score;
+                bestEdge = i;
+              }
+            }
+            const pF1 = vBase[bestEdge],
+              pF2 = vBase[(bestEdge + 1) % n_lados];
+            lAlt = {
+              inicio: [(pF1[0] + pF2[0]) / 2, (pF1[1] + pF2[1]) / 2],
+              fin: vApice,
+            };
           } else {
-             // Altura normal al centro
-             lAlt = { inicio: [0, 0], fin: vApice };
+            // Altura normal al centro
+            lAlt = { inicio: [0, 0], fin: vApice };
           }
 
           // 🔥 SEPARACIÓN ABSOLUTA: Textos enviados a las esquinas opuestas de la pantalla
           const etiquetas = [
             { texto: txtB, mx: -6, my: -3, nx: 0, ny: 0 }, // Abajo a la izquierda
-            { texto: txtH, mx: 6, my: 4, nx: 0, ny: 0 },   // Arriba a la derecha
+            { texto: txtH, mx: 6, my: 4, nx: 0, ny: 0 }, // Arriba a la derecha
           ];
 
           return {
@@ -6464,199 +6622,778 @@ export class QuintoGradoService extends BaseGradoService {
             arcos: [],
           };
         }
-     
-       case 'geo_area_triangulo_basico':
+
+        case 'geo_area_triangulo_basico':
         case 'geo_area_triangulo_intermedio':
         case 'geo_area_triangulo_avanzado':
         case 'geo_area_triangulo_experto':
         case 'area_triangulo': {
           const id = plantilla.id || '';
           const v = valores || {};
-          
+
           const v_t = Number(v.var_t ?? 0);
           const v_k = Number(v.var_k ?? 1);
-          const v_x = Number(v.var_x ?? 3); 
+          const v_x = Number(v.var_x ?? 3);
           const v_flip = Number(v.var_flip ?? 0);
           const v_hide = Number(v.var_hide ?? 0);
 
-          const ternas = [ {a:3, b:4, c:5}, {a:5, b:12, c:13}, {a:8, b:15, c:17}, {a:6, b:8, c:10} ];
+          const ternas = [
+            { a: 3, b: 4, c: 5 },
+            { a: 5, b: 12, c: 13 },
+            { a: 8, b: 15, c: 17 },
+            { a: 6, b: 8, c: 10 },
+          ];
           const terna = ternas[v_t % 4];
-          const cat1 = terna.a * v_k; 
-          const cat2 = terna.b * v_k; 
+          const cat1 = terna.a * v_k;
+          const cat2 = terna.b * v_k;
           const hipo = terna.c * v_k;
 
-          const flipX = (v_flip & 1) ? -1 : 1;
-          const flipY = (v_flip & 2) ? -1 : 1;
+          const flipX = v_flip & 1 ? -1 : 1;
+          const flipY = v_flip & 2 ? -1 : 1;
           const swapXY = (v_flip & 4) !== 0;
 
           // 🔥 MOTOR DE 12 ARQUETIPOS
-          const variante = (v_t + v_flip) % 3; 
+          const variante = (v_t + v_flip) % 3;
 
           let ptsBase: [number, number][] = [];
           const labels: any[] = [];
           const lines: any[] = [];
           let resFinal = 0;
-          let bFin=0, hFin=0, hiFin=0;
+          let bFin = 0,
+            hFin = 0,
+            hiFin = 0;
 
-          const sym90 = { puntos: [[0, 1], [1, 1], [1, 0]], color: "red", tipo: 'angulo' };
+          const sym90 = {
+            puntos: [
+              [0, 1],
+              [1, 1],
+              [1, 0],
+            ],
+            color: 'red',
+            tipo: 'angulo',
+          };
 
           // 📐 NIVEL BÁSICO
           if (id.includes('basico')) {
-            bFin = cat1; hFin = cat2; hiFin = hipo;
+            bFin = cat1;
+            hFin = cat2;
+            hiFin = hipo;
             resFinal = (bFin * hFin) / 2;
 
             if (variante === 0) {
-              ptsBase = [[0,0], [bFin,0], [0,hFin]]; lines.push(sym90);
-              labels.push({ pos: [0, hFin], dir: [-1, 1], texto: 'A', tipo: 'vertice' });
-              labels.push({ pos: [0, 0], dir: [-1, -1], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [bFin, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
-              labels.push({ pos: [bFin/2, 0], dir: [0, -1], texto: (v_hide===0)? `x` : `${bFin} u`, tipo: "base" });
-              labels.push({ pos: [0, hFin/2], dir: [-1, 0], texto: (v_hide===0)? `${hFin} u` : `h`, tipo: "h" });
-              labels.push({ pos: [bFin/2, hFin/2], dir: [1, 1], texto: `${hiFin} u`, tipo: "hipo" });
+              ptsBase = [
+                [0, 0],
+                [bFin, 0],
+                [0, hFin],
+              ];
+              lines.push(sym90);
+              labels.push({
+                pos: [0, hFin],
+                dir: [-1, 1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [0, 0],
+                dir: [-1, -1],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin, 0],
+                dir: [1, -1],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin / 2, 0],
+                dir: [0, -1],
+                texto: v_hide === 0 ? `x` : `${bFin} u`,
+                tipo: 'base',
+              });
+              labels.push({
+                pos: [0, hFin / 2],
+                dir: [-1, 0],
+                texto: v_hide === 0 ? `${hFin} u` : `h`,
+                tipo: 'h',
+              });
+              labels.push({
+                pos: [bFin / 2, hFin / 2],
+                dir: [1, 1],
+                texto: `${hiFin} u`,
+                tipo: 'hipo',
+              });
             } else if (variante === 1) {
-              ptsBase = [[0,hFin], [bFin,hFin], [0,0]]; lines.push({ puntos: [[0, hFin-1], [1, hFin-1], [1, hFin]], color: "red", tipo:'angulo' });
-              labels.push({ pos: [0, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
-              labels.push({ pos: [0, hFin], dir: [-1, 1], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [bFin, hFin], dir: [1, 1], texto: 'C', tipo: 'vertice' });
-              labels.push({ pos: [bFin/2, hFin], dir: [0, 1], texto: (v_hide===0)? `x` : `${bFin} u`, tipo: "base" });
-              labels.push({ pos: [0, hFin/2], dir: [-1, 0], texto: (v_hide===0)? `${hFin} u` : `h`, tipo: "h" });
-              labels.push({ pos: [bFin/2, hFin/2], dir: [1, -1], texto: `${hiFin} u`, tipo: "hipo" });
+              ptsBase = [
+                [0, hFin],
+                [bFin, hFin],
+                [0, 0],
+              ];
+              lines.push({
+                puntos: [
+                  [0, hFin - 1],
+                  [1, hFin - 1],
+                  [1, hFin],
+                ],
+                color: 'red',
+                tipo: 'angulo',
+              });
+              labels.push({
+                pos: [0, 0],
+                dir: [-1, -1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [0, hFin],
+                dir: [-1, 1],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin, hFin],
+                dir: [1, 1],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin / 2, hFin],
+                dir: [0, 1],
+                texto: v_hide === 0 ? `x` : `${bFin} u`,
+                tipo: 'base',
+              });
+              labels.push({
+                pos: [0, hFin / 2],
+                dir: [-1, 0],
+                texto: v_hide === 0 ? `${hFin} u` : `h`,
+                tipo: 'h',
+              });
+              labels.push({
+                pos: [bFin / 2, hFin / 2],
+                dir: [1, -1],
+                texto: `${hiFin} u`,
+                tipo: 'hipo',
+              });
             } else {
-              ptsBase = [[0,0], [bFin,0], [bFin,hFin]]; lines.push({ puntos: [[bFin-1, 0], [bFin-1, 1], [bFin, 1]], color: "red", tipo:'angulo' });
-              labels.push({ pos: [0, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
-              labels.push({ pos: [bFin, 0], dir: [1, -1], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [bFin, hFin], dir: [1, 1], texto: 'C', tipo: 'vertice' });
-              labels.push({ pos: [bFin/2, 0], dir: [0, -1], texto: (v_hide===0)? `x` : `${bFin} u`, tipo: "base" });
-              labels.push({ pos: [bFin, hFin/2], dir: [1, 0], texto: (v_hide===0)? `${hFin} u` : `h`, tipo: "h" });
-              labels.push({ pos: [bFin/2, hFin/2], dir: [-1, 1], texto: `${hiFin} u`, tipo: "hipo" });
+              ptsBase = [
+                [0, 0],
+                [bFin, 0],
+                [bFin, hFin],
+              ];
+              lines.push({
+                puntos: [
+                  [bFin - 1, 0],
+                  [bFin - 1, 1],
+                  [bFin, 1],
+                ],
+                color: 'red',
+                tipo: 'angulo',
+              });
+              labels.push({
+                pos: [0, 0],
+                dir: [-1, -1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin, 0],
+                dir: [1, -1],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin, hFin],
+                dir: [1, 1],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin / 2, 0],
+                dir: [0, -1],
+                texto: v_hide === 0 ? `x` : `${bFin} u`,
+                tipo: 'base',
+              });
+              labels.push({
+                pos: [bFin, hFin / 2],
+                dir: [1, 0],
+                texto: v_hide === 0 ? `${hFin} u` : `h`,
+                tipo: 'h',
+              });
+              labels.push({
+                pos: [bFin / 2, hFin / 2],
+                dir: [-1, 1],
+                texto: `${hiFin} u`,
+                tipo: 'hipo',
+              });
             }
-          } 
+          }
           // 📐 NIVEL INTERMEDIO
           else if (id.includes('intermedio')) {
             if (variante === 0) {
-              bFin = cat1 * 2; hFin = cat2; hiFin = hipo; resFinal = (bFin * hFin) / 2;
-              ptsBase = [[-cat1, 0], [cat1, 0], [0, hFin]];
-              labels.push({ pos: [-cat1, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
-              labels.push({ pos: [0, hFin], dir: [0, 1], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [cat1, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
-              lines.push({ puntos: [[0, hFin], [0, 0]], color: "green", estilo: "dashed" }); 
-              lines.push({ puntos: [[-1, 0], [-1, 1], [0, 1]], color: "red", tipo:'angulo' }); 
-              labels.push({ pos: [0, 0], dir: [0, -1], texto: `${bFin} cm`, tipo: "base" });
-              labels.push({ pos: [0, hFin/2], dir: [1, 0], texto: `h`, tipo: "h" });
-              labels.push({ pos: [cat1/2, hFin/2], dir: [1, 1], texto: `${hiFin} cm`, tipo: "hipo" });
+              bFin = cat1 * 2;
+              hFin = cat2;
+              hiFin = hipo;
+              resFinal = (bFin * hFin) / 2;
+              ptsBase = [
+                [-cat1, 0],
+                [cat1, 0],
+                [0, hFin],
+              ];
+              labels.push({
+                pos: [-cat1, 0],
+                dir: [-1, -1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [0, hFin],
+                dir: [0, 1],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [cat1, 0],
+                dir: [1, -1],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              lines.push({
+                puntos: [
+                  [0, hFin],
+                  [0, 0],
+                ],
+                color: 'green',
+                estilo: 'dashed',
+              });
+              lines.push({
+                puntos: [
+                  [-1, 0],
+                  [-1, 1],
+                  [0, 1],
+                ],
+                color: 'red',
+                tipo: 'angulo',
+              });
+              labels.push({
+                pos: [0, 0],
+                dir: [0, -1],
+                texto: `${bFin} cm`,
+                tipo: 'base',
+              });
+              labels.push({
+                pos: [0, hFin / 2],
+                dir: [1, 0],
+                texto: `h`,
+                tipo: 'h',
+              });
+              labels.push({
+                pos: [cat1 / 2, hFin / 2],
+                dir: [1, 1],
+                texto: `${hiFin} cm`,
+                tipo: 'hipo',
+              });
             } else if (variante === 1) {
-              hFin = hipo; bFin = cat1 + cat2; resFinal = (bFin * hFin) / 2;
-              ptsBase = [[-cat1, 0], [cat2, 0], [0, hFin]]; 
-              labels.push({ pos: [-cat1, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
-              labels.push({ pos: [0, hFin], dir: [0, 1], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [cat2, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
-              lines.push({ puntos: [[0, hFin], [0, 0]], color: "green", estilo: "dashed" }); 
-              lines.push({ puntos: [[-1, 0], [-1, 1], [0, 1]], color: "red", tipo:'angulo' }); 
-              labels.push({ pos: [-cat1/2, 0], dir: [0, -1], texto: `${cat1} cm`, tipo: "base" });
-              labels.push({ pos: [cat2/2, 0], dir: [0, -1], texto: `${cat2} cm`, tipo: "base" });
-              labels.push({ pos: [0, hFin/2], dir: [1, 0], texto: `h`, tipo: "h" });
+              hFin = hipo;
+              bFin = cat1 + cat2;
+              resFinal = (bFin * hFin) / 2;
+              ptsBase = [
+                [-cat1, 0],
+                [cat2, 0],
+                [0, hFin],
+              ];
+              labels.push({
+                pos: [-cat1, 0],
+                dir: [-1, -1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [0, hFin],
+                dir: [0, 1],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [cat2, 0],
+                dir: [1, -1],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              lines.push({
+                puntos: [
+                  [0, hFin],
+                  [0, 0],
+                ],
+                color: 'green',
+                estilo: 'dashed',
+              });
+              lines.push({
+                puntos: [
+                  [-1, 0],
+                  [-1, 1],
+                  [0, 1],
+                ],
+                color: 'red',
+                tipo: 'angulo',
+              });
+              labels.push({
+                pos: [-cat1 / 2, 0],
+                dir: [0, -1],
+                texto: `${cat1} cm`,
+                tipo: 'base',
+              });
+              labels.push({
+                pos: [cat2 / 2, 0],
+                dir: [0, -1],
+                texto: `${cat2} cm`,
+                tipo: 'base',
+              });
+              labels.push({
+                pos: [0, hFin / 2],
+                dir: [1, 0],
+                texto: `h`,
+                tipo: 'h',
+              });
             } else {
-              bFin = cat1 * 2; hFin = cat2; hiFin = hipo; resFinal = (bFin * hFin) / 2;
-              ptsBase = [[0, -cat1], [0, cat1], [hFin, 0]];
-              labels.push({ pos: [0, cat1], dir: [-1, 1], texto: 'A', tipo: 'vertice' });
-              labels.push({ pos: [hFin, 0], dir: [1, 0], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [0, -cat1], dir: [-1, -1], texto: 'C', tipo: 'vertice' });
-              lines.push({ puntos: [[hFin, 0], [0, 0]], color: "green", estilo: "dashed" }); 
-              lines.push({ puntos: [[0, 1], [1, 1], [1, 0]], color: "red", tipo:'angulo' }); 
-              labels.push({ pos: [0, 0], dir: [-1.4, 0], texto: `${bFin} cm`, tipo: "base_tumbada" });
-              labels.push({ pos: [hFin/2, 0], dir: [0, -1.3], texto: `h`, tipo: "h_tumbada" });
-              labels.push({ pos: [hFin/2, cat1/2], dir: [1.3, 1], texto: `${hiFin} cm`, tipo: "hipo_tumbada" });
+              bFin = cat1 * 2;
+              hFin = cat2;
+              hiFin = hipo;
+              resFinal = (bFin * hFin) / 2;
+              ptsBase = [
+                [0, -cat1],
+                [0, cat1],
+                [hFin, 0],
+              ];
+              labels.push({
+                pos: [0, cat1],
+                dir: [-1, 1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [hFin, 0],
+                dir: [1, 0],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [0, -cat1],
+                dir: [-1, -1],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              lines.push({
+                puntos: [
+                  [hFin, 0],
+                  [0, 0],
+                ],
+                color: 'green',
+                estilo: 'dashed',
+              });
+              lines.push({
+                puntos: [
+                  [0, 1],
+                  [1, 1],
+                  [1, 0],
+                ],
+                color: 'red',
+                tipo: 'angulo',
+              });
+              labels.push({
+                pos: [0, 0],
+                dir: [-1.4, 0],
+                texto: `${bFin} cm`,
+                tipo: 'base_tumbada',
+              });
+              labels.push({
+                pos: [hFin / 2, 0],
+                dir: [0, -1.3],
+                texto: `h`,
+                tipo: 'h_tumbada',
+              });
+              labels.push({
+                pos: [hFin / 2, cat1 / 2],
+                dir: [1.3, 1],
+                texto: `${hiFin} cm`,
+                tipo: 'hipo_tumbada',
+              });
             }
-          } 
+          }
           // 📐 NIVEL AVANZADO
-         else if (id.includes('avanzado')) {
+          else if (id.includes('avanzado')) {
             // 🔥 FIX: Base dinámica (8 * v_k) en lugar de un 8 fijo
-            bFin = 8 * v_k; 
-            hFin = cat2; 
-            hiFin = hipo; 
+            bFin = 8 * v_k;
+            hFin = cat2;
+            hiFin = hipo;
             const proy = cat1;
             resFinal = (bFin * hFin) / 2;
 
             if (variante === 0) {
-              ptsBase = [[0,0], [bFin,0], [-proy, hFin]];
-              labels.push({ pos: [0, 0], dir: [0.5, -1], texto: 'A', tipo: 'vertice' }); 
-              labels.push({ pos: [-proy, hFin], dir: [-1, 1], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [bFin, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
-              lines.push({ puntos: [[-proy, hFin], [-proy, 0], [0, 0]], color: "green", estilo: "dashed" }); 
-              lines.push({ puntos: [[-proy, 1], [-proy+1, 1], [-proy+1, 0]], color: "red", tipo:'angulo' }); 
-              labels.push({ pos: [bFin/2, 0], dir: [0, -1.2], texto: `${bFin} m`, tipo: "base" });
-              labels.push({ pos: [-proy, hFin/2], dir: [-1.2, 0], texto: `h`, tipo: "h" });
-              labels.push({ pos: [-proy/2, 0], dir: [0, -1.2], texto: `${proy} m`, tipo: "proy" });
-              labels.push({ pos: [-proy/2, hFin/2], dir: [-1, 1.2], texto: `${hiFin} m`, tipo: "hipo_ext" });
+              ptsBase = [
+                [0, 0],
+                [bFin, 0],
+                [-proy, hFin],
+              ];
+              labels.push({
+                pos: [0, 0],
+                dir: [0.5, -1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [-proy, hFin],
+                dir: [-1, 1],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin, 0],
+                dir: [1, -1],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              lines.push({
+                puntos: [
+                  [-proy, hFin],
+                  [-proy, 0],
+                  [0, 0],
+                ],
+                color: 'green',
+                estilo: 'dashed',
+              });
+              lines.push({
+                puntos: [
+                  [-proy, 1],
+                  [-proy + 1, 1],
+                  [-proy + 1, 0],
+                ],
+                color: 'red',
+                tipo: 'angulo',
+              });
+              labels.push({
+                pos: [bFin / 2, 0],
+                dir: [0, -1.2],
+                texto: `${bFin} m`,
+                tipo: 'base',
+              });
+              labels.push({
+                pos: [-proy, hFin / 2],
+                dir: [-1.2, 0],
+                texto: `h`,
+                tipo: 'h',
+              });
+              labels.push({
+                pos: [-proy / 2, 0],
+                dir: [0, -1.2],
+                texto: `${proy} m`,
+                tipo: 'proy',
+              });
+              labels.push({
+                pos: [-proy / 2, hFin / 2],
+                dir: [-1, 1.2],
+                texto: `${hiFin} m`,
+                tipo: 'hipo_ext',
+              });
             } else if (variante === 1) {
-              ptsBase = [[0,0], [bFin,0], [bFin + proy, hFin]];
-              labels.push({ pos: [0, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' }); 
-              labels.push({ pos: [bFin + proy, hFin], dir: [1, 1], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [bFin, 0], dir: [-0.5, -1], texto: 'C', tipo: 'vertice' });
-              lines.push({ puntos: [[bFin + proy, hFin], [bFin + proy, 0], [bFin, 0]], color: "green", estilo: "dashed" }); 
-              lines.push({ puntos: [[bFin + proy - 1, 0], [bFin + proy - 1, 1], [bFin + proy, 1]], color: "red", tipo:'angulo' }); 
-              labels.push({ pos: [bFin/2, 0], dir: [0, -1.2], texto: `${bFin} m`, tipo: "base" });
-              labels.push({ pos: [bFin + proy, hFin/2], dir: [1.2, 0], texto: `h`, tipo: "h" });
-              labels.push({ pos: [bFin + proy/2, 0], dir: [0, -1.2], texto: `${proy} m`, tipo: "proy" });
-              labels.push({ pos: [bFin + proy/2, hFin/2], dir: [1.2, 1], texto: `${hiFin} m`, tipo: "hipo_ext" });
+              ptsBase = [
+                [0, 0],
+                [bFin, 0],
+                [bFin + proy, hFin],
+              ];
+              labels.push({
+                pos: [0, 0],
+                dir: [-1, -1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin + proy, hFin],
+                dir: [1, 1],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin, 0],
+                dir: [-0.5, -1],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              lines.push({
+                puntos: [
+                  [bFin + proy, hFin],
+                  [bFin + proy, 0],
+                  [bFin, 0],
+                ],
+                color: 'green',
+                estilo: 'dashed',
+              });
+              lines.push({
+                puntos: [
+                  [bFin + proy - 1, 0],
+                  [bFin + proy - 1, 1],
+                  [bFin + proy, 1],
+                ],
+                color: 'red',
+                tipo: 'angulo',
+              });
+              labels.push({
+                pos: [bFin / 2, 0],
+                dir: [0, -1.2],
+                texto: `${bFin} m`,
+                tipo: 'base',
+              });
+              labels.push({
+                pos: [bFin + proy, hFin / 2],
+                dir: [1.2, 0],
+                texto: `h`,
+                tipo: 'h',
+              });
+              labels.push({
+                pos: [bFin + proy / 2, 0],
+                dir: [0, -1.2],
+                texto: `${proy} m`,
+                tipo: 'proy',
+              });
+              labels.push({
+                pos: [bFin + proy / 2, hFin / 2],
+                dir: [1.2, 1],
+                texto: `${hiFin} m`,
+                tipo: 'hipo_ext',
+              });
             } else {
-              ptsBase = [[0,0], [0, bFin], [hFin, -proy]];
-              labels.push({ pos: [0, bFin], dir: [-1, 1], texto: 'A', tipo: 'vertice' }); 
-              labels.push({ pos: [hFin, -proy], dir: [1, -1], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [0, 0], dir: [-1, 0.5], texto: 'C', tipo: 'vertice' });
-              lines.push({ puntos: [[hFin, -proy], [0, -proy], [0, 0]], color: "green", estilo: "dashed" }); 
-              lines.push({ puntos: [[0, -proy + 1], [1, -proy + 1], [1, -proy]], color: "red", tipo:'angulo' }); 
-              labels.push({ pos: [0, bFin/2], dir: [-1.2, 0], texto: `${bFin} m`, tipo: "base" });
-              labels.push({ pos: [hFin/2, -proy], dir: [0, -1.2], texto: `h`, tipo: "h" });
-              labels.push({ pos: [0, -proy/2], dir: [-1.2, 0], texto: `${proy} m`, tipo: "proy" });
-              labels.push({ pos: [hFin/2, -proy/2], dir: [1.2, -1], texto: `${hiFin} m`, tipo: "hipo_ext" });
+              ptsBase = [
+                [0, 0],
+                [0, bFin],
+                [hFin, -proy],
+              ];
+              labels.push({
+                pos: [0, bFin],
+                dir: [-1, 1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [hFin, -proy],
+                dir: [1, -1],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [0, 0],
+                dir: [-1, 0.5],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              lines.push({
+                puntos: [
+                  [hFin, -proy],
+                  [0, -proy],
+                  [0, 0],
+                ],
+                color: 'green',
+                estilo: 'dashed',
+              });
+              lines.push({
+                puntos: [
+                  [0, -proy + 1],
+                  [1, -proy + 1],
+                  [1, -proy],
+                ],
+                color: 'red',
+                tipo: 'angulo',
+              });
+              labels.push({
+                pos: [0, bFin / 2],
+                dir: [-1.2, 0],
+                texto: `${bFin} m`,
+                tipo: 'base',
+              });
+              labels.push({
+                pos: [hFin / 2, -proy],
+                dir: [0, -1.2],
+                texto: `h`,
+                tipo: 'h',
+              });
+              labels.push({
+                pos: [0, -proy / 2],
+                dir: [-1.2, 0],
+                texto: `${proy} m`,
+                tipo: 'proy',
+              });
+              labels.push({
+                pos: [hFin / 2, -proy / 2],
+                dir: [1.2, -1],
+                texto: `${hiFin} m`,
+                tipo: 'hipo_ext',
+              });
             }
-          } 
+          }
           // 📐 NIVEL EXPERTO
-          else { 
+          else {
             if (variante === 0) {
-              bFin = 3*v_x; hFin = 4*v_x; resFinal = (bFin * hFin) / 2;
-              ptsBase = [[0,0], [bFin,0], [0,hFin]]; lines.push(sym90);
-              labels.push({ pos: [0, hFin], dir: [-1, 1], texto: 'A', tipo: 'vertice' });
-              labels.push({ pos: [0, 0], dir: [-1, -1], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [bFin, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
-              labels.push({ pos: [bFin/2, 0], dir: [0, -1], texto: `3x`, tipo: "algebra" });
-              labels.push({ pos: [0, hFin/2], dir: [-1, 0], texto: `4x`, tipo: "algebra" });
-              labels.push({ pos: [bFin/2, hFin/2], dir: [1, 1], texto: `5x`, tipo: "algebra" });
+              bFin = 3 * v_x;
+              hFin = 4 * v_x;
+              resFinal = (bFin * hFin) / 2;
+              ptsBase = [
+                [0, 0],
+                [bFin, 0],
+                [0, hFin],
+              ];
+              lines.push(sym90);
+              labels.push({
+                pos: [0, hFin],
+                dir: [-1, 1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [0, 0],
+                dir: [-1, -1],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin, 0],
+                dir: [1, -1],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin / 2, 0],
+                dir: [0, -1],
+                texto: `3x`,
+                tipo: 'algebra',
+              });
+              labels.push({
+                pos: [0, hFin / 2],
+                dir: [-1, 0],
+                texto: `4x`,
+                tipo: 'algebra',
+              });
+              labels.push({
+                pos: [bFin / 2, hFin / 2],
+                dir: [1, 1],
+                texto: `5x`,
+                tipo: 'algebra',
+              });
             } else if (variante === 1) {
-              bFin = 6*v_x; hFin = 4*v_x; resFinal = (bFin * hFin) / 2;
-              ptsBase = [[-bFin/2, 0], [bFin/2, 0], [0, hFin]];
-              labels.push({ pos: [-bFin/2, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
-              labels.push({ pos: [0, hFin], dir: [0, 1], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [bFin/2, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
-              labels.push({ pos: [0, 0], dir: [0, -1], texto: `6x`, tipo: "algebra" });
-              labels.push({ pos: [-bFin/4, hFin/2], dir: [-1, 1], texto: `5x`, tipo: "algebra" });
-              labels.push({ pos: [bFin/4, hFin/2], dir: [1, 1], texto: `5x`, tipo: "algebra" });
+              bFin = 6 * v_x;
+              hFin = 4 * v_x;
+              resFinal = (bFin * hFin) / 2;
+              ptsBase = [
+                [-bFin / 2, 0],
+                [bFin / 2, 0],
+                [0, hFin],
+              ];
+              labels.push({
+                pos: [-bFin / 2, 0],
+                dir: [-1, -1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [0, hFin],
+                dir: [0, 1],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin / 2, 0],
+                dir: [1, -1],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [0, 0],
+                dir: [0, -1],
+                texto: `6x`,
+                tipo: 'algebra',
+              });
+              labels.push({
+                pos: [-bFin / 4, hFin / 2],
+                dir: [-1, 1],
+                texto: `5x`,
+                tipo: 'algebra',
+              });
+              labels.push({
+                pos: [bFin / 4, hFin / 2],
+                dir: [1, 1],
+                texto: `5x`,
+                tipo: 'algebra',
+              });
             } else {
-              bFin = 12*v_x; hFin = 8*v_x; resFinal = (bFin * hFin) / 2;
-              ptsBase = [[-bFin/2, 0], [bFin/2, 0], [0, hFin]];
-              labels.push({ pos: [-bFin/2, 0], dir: [-1, -1], texto: 'A', tipo: 'vertice' });
-              labels.push({ pos: [0, hFin], dir: [0, 1], texto: 'B', tipo: 'vertice' });
-              labels.push({ pos: [bFin/2, 0], dir: [1, -1], texto: 'C', tipo: 'vertice' });
-              labels.push({ pos: [0, 0], dir: [0, -1], texto: `12x`, tipo: "algebra" });
-              labels.push({ pos: [-bFin/4, hFin/2], dir: [-1, 1], texto: `10x`, tipo: "algebra" });
-              labels.push({ pos: [bFin/4, hFin/2], dir: [1, 1], texto: `10x`, tipo: "algebra" });
+              bFin = 12 * v_x;
+              hFin = 8 * v_x;
+              resFinal = (bFin * hFin) / 2;
+              ptsBase = [
+                [-bFin / 2, 0],
+                [bFin / 2, 0],
+                [0, hFin],
+              ];
+              labels.push({
+                pos: [-bFin / 2, 0],
+                dir: [-1, -1],
+                texto: 'A',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [0, hFin],
+                dir: [0, 1],
+                texto: 'B',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [bFin / 2, 0],
+                dir: [1, -1],
+                texto: 'C',
+                tipo: 'vertice',
+              });
+              labels.push({
+                pos: [0, 0],
+                dir: [0, -1],
+                texto: `12x`,
+                tipo: 'algebra',
+              });
+              labels.push({
+                pos: [-bFin / 4, hFin / 2],
+                dir: [-1, 1],
+                texto: `10x`,
+                tipo: 'algebra',
+              });
+              labels.push({
+                pos: [bFin / 4, hFin / 2],
+                dir: [1, 1],
+                texto: `10x`,
+                tipo: 'algebra',
+              });
             }
           }
 
           // ROTACIONES
           const rotar = (px: number, py: number): [number, number] => {
-            let nx = px * flipX; let ny = py * flipY;
-            if (swapXY) { const tmp = nx; nx = ny; ny = tmp; }
+            let nx = px * flipX;
+            let ny = py * flipY;
+            if (swapXY) {
+              const tmp = nx;
+              nx = ny;
+              ny = tmp;
+            }
             return [nx, ny];
           };
 
           const pts = ptsBase.map(([px, py]) => rotar(px, py));
-          const lineasExtra = lines.map(l => ({ ...l, puntos: l.puntos.map(([px, py]) => rotar(px, py)) }));
-          const etiquetas = labels.map(l => ({ ...l, pos: rotar(l.pos[0], l.pos[1]), dir: rotar(l.dir[0], l.dir[1]) }));
+          const lineasExtra = lines.map((l) => ({
+            ...l,
+            puntos: l.puntos.map(([px, py]) => rotar(px, py)),
+          }));
+          const etiquetas = labels.map((l) => ({
+            ...l,
+            pos: rotar(l.pos[0], l.pos[1]),
+            dir: rotar(l.dir[0], l.dir[1]),
+          }));
 
           return {
-            valores: v, 
+            valores: v,
             respuesta: Math.round(resFinal),
             tipo_render: 'geometry_mafs',
             data: {
@@ -6667,8 +7404,8 @@ export class QuintoGradoService extends BaseGradoService {
               etiquetas,
               lineasExtra,
               arcos: [],
-              respuestaSobreescrita: Math.round(resFinal)
-            }
+              respuestaSobreescrita: Math.round(resFinal),
+            },
           };
         }
 
@@ -6683,59 +7420,53 @@ export class QuintoGradoService extends BaseGradoService {
       }
     }
 
-    
-
     if (plantilla.tema === 'razonamiento_matematico') {
       switch (plantilla.id) {
-
         case 'rm_conteo_triangulos_basico':
         case 'rm_conteo_triangulos_intermedio':
         case 'rm_conteo_triangulos_avanzado':
         case 'rm_conteo_triangulos_experto': {
           const id = plantilla.id || '';
-          let typeShape = "";
+          let typeShape = '';
           let params = {};
           let total = 0;
 
           if (id.includes('basico')) {
             // Triángulo simple con N cevianas (Fórmula: n*(n+1)/2)
             const n = Math.floor(Math.random() * 5) + 2; // 2 a 6 espacios
-            typeShape = "cevianas_base";
+            typeShape = 'cevianas_base';
             params = { espacios: n };
             total = (n * (n + 1)) / 2;
-          } 
-          else if (id.includes('intermedio')) {
+          } else if (id.includes('intermedio')) {
             // Triángulo con cevianas Y líneas horizontales
             const n = Math.floor(Math.random() * 4) + 2; // 2 a 5 espacios base
             const h = Math.floor(Math.random() * 3) + 2; // 2 a 4 pisos horizontales
-            typeShape = "cevianas_malla";
+            typeShape = 'cevianas_malla';
             params = { espacios: n, pisos: h };
             total = h * ((n * (n + 1)) / 2);
-          }
-          else if (id.includes('avanzado')) {
+          } else if (id.includes('avanzado')) {
             // Cuadriláteros cruzados (El clásico cuadrado con 2 diagonales = 8 triángulos)
             // Variación: Cuadrado cruzado con cruz interna (16 triángulos)
             const varA = Math.random() > 0.5 ? 1 : 2;
             if (varA === 1) {
-              typeShape = "cuadrado_diagonales"; // Cuadrado con X
+              typeShape = 'cuadrado_diagonales'; // Cuadrado con X
               total = 8;
             } else {
-              typeShape = "cuadrado_asterisco"; // Cuadrado con X y + cruzados
+              typeShape = 'cuadrado_asterisco'; // Cuadrado con X y + cruzados
               total = 16;
             }
-          }
-          else {
+          } else {
             // Experto: Estrellas y Mallas Compuestas
             const varE = Math.floor(Math.random() * 3);
             if (varE === 0) {
-              typeShape = "estrella_5"; // Estrella de 5 puntas continua (siempre 10 triángulos)
+              typeShape = 'estrella_5'; // Estrella de 5 puntas continua (siempre 10 triángulos)
               total = 10;
             } else if (varE === 1) {
-              typeShape = "estrella_david"; // Dos triángulos superpuestos (Estrella de 6) -> 8 triángulos
+              typeShape = 'estrella_david'; // Dos triángulos superpuestos (Estrella de 6) -> 8 triángulos
               total = 8;
             } else {
               // Triángulo con cevianas y una transversal que cruza todo (Fórmula compleja, la daremos fija para evitar errores visuales)
-              typeShape = "cevianas_transversal";
+              typeShape = 'cevianas_transversal';
               params = { espacios: 4 }; // Fijo para el gráfico experto
               total = 27; // 4 base, 1 transversal cruzando todos
             }
@@ -6744,10 +7475,9 @@ export class QuintoGradoService extends BaseGradoService {
           return {
             type: 'graphic_counting',
             data: { shape: typeShape, params },
-            respuestaSobreescrita: total
+            respuestaSobreescrita: total,
           };
         }
-        
 
         case 'rm_distrib_triangulo_basico':
         case 'rm_distrib_hombre_intermedio':
@@ -6759,93 +7489,239 @@ export class QuintoGradoService extends BaseGradoService {
         case 'rm_distribucion_hombrecito_experto':
         case 'distribucion_grafica': {
           const id = plantilla.id || '';
-          
+
           // 🧠 LÓGICA DE DIFICULTAD
-          let nivel: 'basico' | 'intermedio' | 'avanzado' | 'experto' = 'intermedio';
+          let nivel: 'basico' | 'intermedio' | 'avanzado' | 'experto' =
+            'intermedio';
           if (id.includes('basico')) nivel = 'basico';
           else if (id.includes('avanzado')) nivel = 'avanzado';
           else if (id.includes('experto')) nivel = 'experto';
 
-          const formulaIndex = Math.floor(Math.random() * 12) + 1; 
+          const formulaIndex = Math.floor(Math.random() * 12) + 1;
 
           const generarDataPro = (): any[] => {
-            let v1 = 0, v2 = 0, v3 = 0, v4 = 0, center = 0;
-            const rnd = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
-            const sumDig = (n: number) => String(n).split('').reduce((a, b) => a + Number(b), 0);
+            let v1 = 0,
+              v2 = 0,
+              v3 = 0,
+              v4 = 0,
+              center = 0;
+            const rnd = (min: number, max: number) =>
+              Math.floor(Math.random() * (max - min + 1)) + min;
+            const sumDig = (n: number) =>
+              String(n)
+                .split('')
+                .reduce((a, b) => a + Number(b), 0);
 
             // --- 🟢 NIVEL BÁSICO (12 CRITERIOS) ---
             if (nivel === 'basico') {
-              v1=rnd(5,20); v2=rnd(5,20); v3=rnd(2,10); v4=rnd(2,10); 
+              v1 = rnd(5, 20);
+              v2 = rnd(5, 20);
+              v3 = rnd(2, 10);
+              v4 = rnd(2, 10);
               switch (formulaIndex) {
-                case 1: center = v1 + v2 + v3 + v4; break; // Suma Total
-                case 2: center = (v1 + v2) - (v3 + v4); break; // Diferencia de Pares
-                case 3: center = v1 + v2 + v3 + v4 + 5; break; // Suma + Constante
-                case 4: v1=rnd(30,50); center = v1 - v2 - v3; break; // Resta Cascada
-                case 5: center = (v1 + v2) * 2; break; // Doble de la suma
-                case 6: center = (v1 + v4) - (v2 + v3); break; // Extremos vs Medios
-                case 7: center = Math.max(v1, v2, v3, v4); break; // El mayor
-                case 8: center = (v1 + v2 + v3 + v4) - 3; break; // Suma - Constante
-                case 9: center = v1 + v2 + 10; break; // Suma + 10
-                case 10: center = (v1 + v3) - (v2 - v4); break; // Mixta
-                case 11: center = sumDig(v1) + sumDig(v2) + sumDig(v3); break; // Suma de dígitos
-                case 12: v1=rnd(25,40); center = (v1 - v2) * 2; break; // Doble de la resta
+                case 1:
+                  center = v1 + v2 + v3 + v4;
+                  break; // Suma Total
+                case 2:
+                  center = v1 + v2 - (v3 + v4);
+                  break; // Diferencia de Pares
+                case 3:
+                  center = v1 + v2 + v3 + v4 + 5;
+                  break; // Suma + Constante
+                case 4:
+                  v1 = rnd(30, 50);
+                  center = v1 - v2 - v3;
+                  break; // Resta Cascada
+                case 5:
+                  center = (v1 + v2) * 2;
+                  break; // Doble de la suma
+                case 6:
+                  center = v1 + v4 - (v2 + v3);
+                  break; // Extremos vs Medios
+                case 7:
+                  center = Math.max(v1, v2, v3, v4);
+                  break; // El mayor
+                case 8:
+                  center = v1 + v2 + v3 + v4 - 3;
+                  break; // Suma - Constante
+                case 9:
+                  center = v1 + v2 + 10;
+                  break; // Suma + 10
+                case 10:
+                  center = v1 + v3 - (v2 - v4);
+                  break; // Mixta
+                case 11:
+                  center = sumDig(v1) + sumDig(v2) + sumDig(v3);
+                  break; // Suma de dígitos
+                case 12:
+                  v1 = rnd(25, 40);
+                  center = (v1 - v2) * 2;
+                  break; // Doble de la resta
               }
             }
 
             // --- 🟡 NIVEL INTERMEDIO (12 CRITERIOS) ---
             else if (nivel === 'intermedio') {
-              v1=rnd(3,10); v2=rnd(3,10); v3=rnd(2,8); v4=rnd(2,8);
+              v1 = rnd(3, 10);
+              v2 = rnd(3, 10);
+              v3 = rnd(2, 8);
+              v4 = rnd(2, 8);
               switch (formulaIndex) {
-                case 1: center = (v1 * v2) - (v3 + v4); break; // Prod - Suma
-                case 2: center = (v1 + v2) * v3; break; // Suma * Multiplicador
-                case 3: center = (v1 * v3) + (v2 * v4); break; // Prod Cruzado
-                case 4: v1=rnd(4,12); v2=rnd(4,12); center = (v1 * v2) / 2; break; // Mitad del prod
-                case 5: center = (v1 * v2) + v3; break; // Prod + Agregado
-                case 6: v1=rnd(5,15); v2=rnd(5,15); v3=rnd(5,15); v4=rnd(5,15); center = Math.floor((v1+v2+v3+v4)/2); break; // Semi-suma
-                case 7: v1=rnd(2,5); v2=rnd(2,5); v3=rnd(2,5); center = v1 * v2 * v3; break; // Triple Prod
-                case 8: center = (v1 * v2) - (v3 * v4); break; // Resta de Productos
-                case 9: center = (v1 * v2) + (v3 + v4); break; // Prod + Suma Restante
-                case 10: center = (v1 + v2) * (v3 + 1); break; 
-                case 11: center = (v1 + v2 + v3) * 3; break;
-                case 12: v1=rnd(11,99); center = Number(String(v1)[0]) * v2; break; // Dig1 * v2
+                case 1:
+                  center = v1 * v2 - (v3 + v4);
+                  break; // Prod - Suma
+                case 2:
+                  center = (v1 + v2) * v3;
+                  break; // Suma * Multiplicador
+                case 3:
+                  center = v1 * v3 + v2 * v4;
+                  break; // Prod Cruzado
+                case 4:
+                  v1 = rnd(4, 12);
+                  v2 = rnd(4, 12);
+                  center = (v1 * v2) / 2;
+                  break; // Mitad del prod
+                case 5:
+                  center = v1 * v2 + v3;
+                  break; // Prod + Agregado
+                case 6:
+                  v1 = rnd(5, 15);
+                  v2 = rnd(5, 15);
+                  v3 = rnd(5, 15);
+                  v4 = rnd(5, 15);
+                  center = Math.floor((v1 + v2 + v3 + v4) / 2);
+                  break; // Semi-suma
+                case 7:
+                  v1 = rnd(2, 5);
+                  v2 = rnd(2, 5);
+                  v3 = rnd(2, 5);
+                  center = v1 * v2 * v3;
+                  break; // Triple Prod
+                case 8:
+                  center = v1 * v2 - v3 * v4;
+                  break; // Resta de Productos
+                case 9:
+                  center = v1 * v2 + (v3 + v4);
+                  break; // Prod + Suma Restante
+                case 10:
+                  center = (v1 + v2) * (v3 + 1);
+                  break;
+                case 11:
+                  center = (v1 + v2 + v3) * 3;
+                  break;
+                case 12:
+                  v1 = rnd(11, 99);
+                  center = Number(String(v1)[0]) * v2;
+                  break; // Dig1 * v2
               }
             }
 
             // --- 🔴 NIVEL AVANZADO (12 CRITERIOS) ---
             else if (nivel === 'avanzado') {
-              v1=rnd(2,12); v2=rnd(2,10); v3=rnd(2,5); v4=rnd(2,5);
+              v1 = rnd(2, 12);
+              v2 = rnd(2, 10);
+              v3 = rnd(2, 5);
+              v4 = rnd(2, 5);
               switch (formulaIndex) {
-                case 1: center = (v1 * v1) + v2; break; // Cuadrado + N
-                case 2: v1=rnd(6,10); v2=rnd(2,5); center = (v1 * v1) - (v2 * v2); break; // Dif. Cuadrados
-                case 3: v1=rnd(1,9); v2=rnd(1,9); center = Number(`${v1}${v2}`); break; // Concatenación
-                case 4: const r=rnd(4,12); v1=r*r; center=r; break; // Raíz cuadrada
-                case 5: v1=rnd(2,5); v2=rnd(2,3); center = Math.pow(v1, v2); break; // Potencia
-                case 6: v1=rnd(11,99); center = sumDig(v1) * 4; break; 
-                case 7: center = (v1 * v2) + (v3 * v3); break;
-                case 8: v1=rnd(2,5); center = (v1 * v1 * v1) + v2; break; // Cubo + N
-                case 9: center = Math.abs(v1 - v2) * 5; break;
-                case 10: v1=rnd(10,30); v3=rnd(2,6); center = (v1 % v3) + 2; break; // Residuo + 2
-                case 11: center = v1 * 11; break; // Repetición
-                case 12: v1=rnd(2,5); let f=1; for(let i=1;i<=v1;i++) f*=i; center = f; break; // Factorial
+                case 1:
+                  center = v1 * v1 + v2;
+                  break; // Cuadrado + N
+                case 2:
+                  v1 = rnd(6, 10);
+                  v2 = rnd(2, 5);
+                  center = v1 * v1 - v2 * v2;
+                  break; // Dif. Cuadrados
+                case 3:
+                  v1 = rnd(1, 9);
+                  v2 = rnd(1, 9);
+                  center = Number(`${v1}${v2}`);
+                  break; // Concatenación
+                case 4:
+                  const r = rnd(4, 12);
+                  v1 = r * r;
+                  center = r;
+                  break; // Raíz cuadrada
+                case 5:
+                  v1 = rnd(2, 5);
+                  v2 = rnd(2, 3);
+                  center = Math.pow(v1, v2);
+                  break; // Potencia
+                case 6:
+                  v1 = rnd(11, 99);
+                  center = sumDig(v1) * 4;
+                  break;
+                case 7:
+                  center = v1 * v2 + v3 * v3;
+                  break;
+                case 8:
+                  v1 = rnd(2, 5);
+                  center = v1 * v1 * v1 + v2;
+                  break; // Cubo + N
+                case 9:
+                  center = Math.abs(v1 - v2) * 5;
+                  break;
+                case 10:
+                  v1 = rnd(10, 30);
+                  v3 = rnd(2, 6);
+                  center = (v1 % v3) + 2;
+                  break; // Residuo + 2
+                case 11:
+                  center = v1 * 11;
+                  break; // Repetición
+                case 12:
+                  v1 = rnd(2, 5);
+                  let f = 1;
+                  for (let i = 1; i <= v1; i++) f *= i;
+                  center = f;
+                  break; // Factorial
               }
             }
 
             // --- 🟣 NIVEL EXPERTO (12 CRITERIOS) ---
             else {
-              v1=rnd(3,10); v2=rnd(3,10); v3=rnd(2,10); v4=rnd(2,10);
+              v1 = rnd(3, 10);
+              v2 = rnd(3, 10);
+              v3 = rnd(2, 10);
+              v4 = rnd(2, 10);
               switch (formulaIndex) {
-                case 1: center = (v1 * v1) + (v2 * v2); break; // Suma cuadrados
-                case 2: center = sumDig(v1 * v2) * 2; break;
-                case 3: center = (v1 * v2) + (v3 * v4); break;
-                case 4: center = (v1 + v2 + v3 + v4) * 2; break;
-                case 5: v1=rnd(3,5); v2=rnd(2,5); center = Math.pow(v1, 3) - (v2 * v2); break;
-                case 6: center = sumDig(v1) * sumDig(v2); break;
-                case 7: center = (v1 * v2) - sumDig(v1 + v2); break;
-                case 8: center = (v1 + v2 + v3 + v4) * Math.abs(v1 - v2 || 2); break;
-                case 9: center = Math.pow(v1, 2) + sumDig(v2 + v3 + v4); break;
-                case 10: center = (v1 * v3) - (v2 + v4); break;
-                case 11: center = (v1 + v2) * (v3 + v4); break;
-                case 12: center = Math.pow(sumDig(v1 + v2), 2); break;
+                case 1:
+                  center = v1 * v1 + v2 * v2;
+                  break; // Suma cuadrados
+                case 2:
+                  center = sumDig(v1 * v2) * 2;
+                  break;
+                case 3:
+                  center = v1 * v2 + v3 * v4;
+                  break;
+                case 4:
+                  center = (v1 + v2 + v3 + v4) * 2;
+                  break;
+                case 5:
+                  v1 = rnd(3, 5);
+                  v2 = rnd(2, 5);
+                  center = Math.pow(v1, 3) - v2 * v2;
+                  break;
+                case 6:
+                  center = sumDig(v1) * sumDig(v2);
+                  break;
+                case 7:
+                  center = v1 * v2 - sumDig(v1 + v2);
+                  break;
+                case 8:
+                  center = (v1 + v2 + v3 + v4) * Math.abs(v1 - v2 || 2);
+                  break;
+                case 9:
+                  center = Math.pow(v1, 2) + sumDig(v2 + v3 + v4);
+                  break;
+                case 10:
+                  center = v1 * v3 - (v2 + v4);
+                  break;
+                case 11:
+                  center = (v1 + v2) * (v3 + v4);
+                  break;
+                case 12:
+                  center = Math.pow(sumDig(v1 + v2), 2);
+                  break;
               }
             }
 
@@ -6862,20 +7738,40 @@ export class QuintoGradoService extends BaseGradoService {
           const fig1 = generarDataPro();
           const fig2 = generarDataPro();
           const fig3 = generarDataPro();
-          
+
           // Guardamos el valor que será la incógnita antes de poner la "X"
           const posList = [0, 1, 2, 3, 4];
           const posIndex = Math.floor(Math.random() * posList.length);
           const posX = posList[posIndex];
           const valX = fig3[posX];
-          fig3[posX] = "X" as any;
+          fig3[posX] = 'X' as any;
 
           // Variedad visual (15 formas)
-          const shapes = ['stickman', 'asterisk', 'house', 'square', 'diamond', 'molecule', 'robot', 'flower', 'triangle', 'circle_x', 'box_cross', 'root_node', 'cup', 'grid_2x2', 'tower'];
+          const shapes = [
+            'stickman',
+            'asterisk',
+            'house',
+            'square',
+            'diamond',
+            'molecule',
+            'robot',
+            'flower',
+            'triangle',
+            'circle_x',
+            'box_cross',
+            'root_node',
+            'cup',
+            'grid_2x2',
+            'tower',
+          ];
           const shapeToDraw = shapes[Math.floor(Math.random() * shapes.length)];
 
           const mapFigure = (f: any[]) => ({
-            center: String(f[0]), v1: String(f[1]), v2: String(f[2]), v3: String(f[3]), v4: String(f[4])
+            center: String(f[0]),
+            v1: String(f[1]),
+            v2: String(f[2]),
+            v3: String(f[3]),
+            v4: String(f[4]),
           });
 
           return {
@@ -6883,9 +7779,9 @@ export class QuintoGradoService extends BaseGradoService {
               type: 'geometry_mafs',
               theme: 'graphic_distribution',
               shape: shapeToDraw,
-              figures: [ mapFigure(fig1), mapFigure(fig2), mapFigure(fig3) ]
+              figures: [mapFigure(fig1), mapFigure(fig2), mapFigure(fig3)],
             },
-            respuestaSobreescrita: valX
+            respuestaSobreescrita: valX,
           };
         }
 
@@ -6897,26 +7793,33 @@ export class QuintoGradoService extends BaseGradoService {
         case 'rm_criptoaritmetica_suma':
         case 'criptoaritmetica': {
           const id = plantilla.id || '';
-          
+
           // 1. Dificultad determina el tamaño del número
-          let min = 100, max = 899; // Básico (3 cifras)
+          let min = 100,
+            max = 899; // Básico (3 cifras)
           let cantOcultas = 1;
-          
+
           if (id.includes('intermedio')) {
-            min = 1000; max = 8999; cantOcultas = 2; // 4 cifras
+            min = 1000;
+            max = 8999;
+            cantOcultas = 2; // 4 cifras
           } else if (id.includes('avanzado')) {
-            min = 10000; max = 89999; cantOcultas = 2; // 5 cifras
+            min = 10000;
+            max = 89999;
+            cantOcultas = 2; // 5 cifras
           } else if (id.includes('experto')) {
-            min = 10000; max = 89999; cantOcultas = 3; // 5 cifras, más ocultas
+            min = 10000;
+            max = 89999;
+            cantOcultas = 3; // 5 cifras, más ocultas
           }
 
           // 2. Elegimos si es suma o resta (Básico siempre es suma)
           const esSuma = id.includes('basico') ? true : Math.random() > 0.5;
-          
+
           // 3. Generación matemática estricta (num1 > num2 siempre para evitar negativos)
-          const num1 = Math.floor(Math.random() * max) + min; 
-          const num2 = Math.floor(Math.random() * (num1 - min)) + min; 
-          
+          const num1 = Math.floor(Math.random() * max) + min;
+          const num2 = Math.floor(Math.random() * (num1 - min)) + min;
+
           const resultado = esSuma ? num1 + num2 : num1 - num2;
 
           const str1 = num1.toString().split('');
@@ -6927,15 +7830,15 @@ export class QuintoGradoService extends BaseGradoService {
 
           // Función segura para ocultar asteriscos sin pasarse
           const ocultarAlAzar = (arr: string[], maxOcultas: number) => {
-            let indices = Array.from({length: arr.length}, (_, i) => i);
-            indices.sort(() => Math.random() - 0.5); 
+            let indices = Array.from({ length: arr.length }, (_, i) => i);
+            indices.sort(() => Math.random() - 0.5);
             // Nunca ocultar TODO el número, dejar al menos 1 pista
             const aOcultar = Math.min(maxOcultas, arr.length - 1);
-            for(let i = 0; i < aOcultar; i++) {
+            for (let i = 0; i < aOcultar; i++) {
               let idx = indices[i];
-              if (arr[idx] !== "*") {
+              if (arr[idx] !== '*') {
                 sumaOcultas += Number(arr[idx]);
-                arr[idx] = "*";
+                arr[idx] = '*';
               }
             }
           };
@@ -6946,45 +7849,43 @@ export class QuintoGradoService extends BaseGradoService {
 
           return {
             type: 'crypto_grid',
-            data: { operator: esSuma ? "+" : "-", rows: [str1, str2, strRes] },
-            respuestaSobreescrita: sumaOcultas
+            data: { operator: esSuma ? '+' : '-', rows: [str1, str2, strRes] },
+            respuestaSobreescrita: sumaOcultas,
           };
         }
 
-
-        
-
-       
-      
-       // 🔥 RM: CRIPTOARITMÉTICA MULTIPLICACIÓN (VERSIÓN BLINDADA CONAMAT) 🔥
+        // 🔥 RM: CRIPTOARITMÉTICA MULTIPLICACIÓN (VERSIÓN BLINDADA CONAMAT) 🔥
         case 'rm_criptoaritmetica_mult_basico':
         case 'rm_criptoaritmetica_mult_intermedio':
         case 'rm_criptoaritmetica_mult_avanzado':
         case 'rm_criptoaritmetica_mult_experto':
         case 'rm_criptoaritmetica_mult': {
           const id = plantilla.id || '';
-          
-          let num1 = 0, num2 = 0, cantOcultas = 1;
-          
+
+          let num1 = 0,
+            num2 = 0,
+            cantOcultas = 1;
+
           // FORZAMOS RANGOS ESTRICTOS
-          if (id.includes('basico')) { 
+          if (id.includes('basico')) {
             num1 = Math.floor(Math.random() * 89) + 10; // 10 a 98
             num2 = Math.floor(Math.random() * 89) + 10; // 10 a 98 -> 2 DÍGITOS SÍ O SÍ
             cantOcultas = 4;
-          } else if (id.includes('intermedio')) { 
+          } else if (id.includes('intermedio')) {
             num1 = Math.floor(Math.random() * 899) + 100; // 100 a 999
-            num2 = Math.floor(Math.random() * 89) + 10;  // 10 a 99
+            num2 = Math.floor(Math.random() * 89) + 10; // 10 a 99
             cantOcultas = 5;
-          } else if (id.includes('avanzado')) { 
-            num1 = Math.floor(Math.random() * 899) + 100; 
+          } else if (id.includes('avanzado')) {
+            num1 = Math.floor(Math.random() * 899) + 100;
             num2 = Math.floor(Math.random() * 899) + 100; // 3 DÍGITOS
             cantOcultas = 7;
           } else if (id.includes('experto')) {
-            num1 = Math.floor(Math.random() * 8999) + 1000; 
-            num2 = Math.floor(Math.random() * 899) + 100; 
+            num1 = Math.floor(Math.random() * 8999) + 1000;
+            num2 = Math.floor(Math.random() * 899) + 100;
             cantOcultas = 9;
           } else {
-            num1 = 25; num2 = 15; // Emergencia
+            num1 = 25;
+            num2 = 15; // Emergencia
           }
 
           const productoFinal = num1 * num2;
@@ -6998,8 +7899,8 @@ export class QuintoGradoService extends BaseGradoService {
             for (let i = strNum2.length - 1; i >= 0; i--) {
               const digito = Number(strNum2[i]);
               const subProd = (num1 * digito).toString().split('');
-              const cerosDesplazamiento = (strNum2.length - 1) - i;
-              for (let s = 0; s < cerosDesplazamiento; s++) subProd.push(" "); 
+              const cerosDesplazamiento = strNum2.length - 1 - i;
+              for (let s = 0; s < cerosDesplazamiento; s++) subProd.push(' ');
               rows.push(subProd);
             }
           }
@@ -7009,23 +7910,27 @@ export class QuintoGradoService extends BaseGradoService {
           let sumaOcultas = 0;
           let asteriscosPuestos = 0;
           let totalNumeros = 0;
-          rows.forEach(r => r.forEach(c => { if(c !== " " && c !== "*") totalNumeros++; }));
-          const maxAocultar = Math.min(cantOcultas, totalNumeros - 2); 
+          rows.forEach((r) =>
+            r.forEach((c) => {
+              if (c !== ' ' && c !== '*') totalNumeros++;
+            }),
+          );
+          const maxAocultar = Math.min(cantOcultas, totalNumeros - 2);
 
           while (asteriscosPuestos < maxAocultar) {
             const f = Math.floor(Math.random() * rows.length);
             const c = Math.floor(Math.random() * rows[f].length);
-            if (rows[f][c] !== "*" && rows[f][c] !== " ") { 
+            if (rows[f][c] !== '*' && rows[f][c] !== ' ') {
               sumaOcultas += Number(rows[f][c]);
-              rows[f][c] = "*";
+              rows[f][c] = '*';
               asteriscosPuestos++;
             }
           }
 
           return {
             type: 'crypto_mult',
-            data: { operator: "x", rows: rows },
-            respuestaSobreescrita: sumaOcultas
+            data: { operator: 'x', rows: rows },
+            respuestaSobreescrita: sumaOcultas,
           };
         }
 
@@ -7035,71 +7940,116 @@ export class QuintoGradoService extends BaseGradoService {
         case 'rm_distribucion_casita_experto':
         case 'rm_distribucion_casita': {
           const id = plantilla.id || '';
-          
+
           let patrones: number[] = [];
-          if (id.includes('basico')) patrones = [1, 2]; // Operaciones combinadas
-          else if (id.includes('intermedio')) patrones = [3, 4]; // Cuadrados y dobles
-          else if (id.includes('avanzado')) patrones = [5, 6, 7]; // Raíces y diferencias
+          if (id.includes('basico'))
+            patrones = [1, 2]; // Operaciones combinadas
+          else if (id.includes('intermedio'))
+            patrones = [3, 4]; // Cuadrados y dobles
+          else if (id.includes('avanzado'))
+            patrones = [5, 6, 7]; // Raíces y diferencias
           else patrones = [8, 9, 10]; // EXPERTO: Suma de cifras, potencias
 
-          const patronElegido = patrones[Math.floor(Math.random() * patrones.length)];
+          const patronElegido =
+            patrones[Math.floor(Math.random() * patrones.length)];
 
           const generarCasita = (esIncognita = false) => {
-            let v1=0, v2=0, p=0, techo=0;
-            
+            let v1 = 0,
+              v2 = 0,
+              p = 0,
+              techo = 0;
+
             switch (patronElegido) {
               case 1: // (V1 * V2) - P
-                v1 = Math.floor(Math.random()*8)+3; v2 = Math.floor(Math.random()*8)+3; 
-                p = Math.floor(Math.random()*5)+1; techo = (v1 * v2) - p; break;
+                v1 = Math.floor(Math.random() * 8) + 3;
+                v2 = Math.floor(Math.random() * 8) + 3;
+                p = Math.floor(Math.random() * 5) + 1;
+                techo = v1 * v2 - p;
+                break;
               case 2: // (V1 + V2) * P
-                v1 = Math.floor(Math.random()*9)+1; v2 = Math.floor(Math.random()*9)+1;
-                p = Math.floor(Math.random()*4)+2; techo = (v1 + v2) * p; break;
+                v1 = Math.floor(Math.random() * 9) + 1;
+                v2 = Math.floor(Math.random() * 9) + 1;
+                p = Math.floor(Math.random() * 4) + 2;
+                techo = (v1 + v2) * p;
+                break;
               case 3: // V1² + V2² - P
-                v1 = Math.floor(Math.random()*6)+2; v2 = Math.floor(Math.random()*6)+2;
-                p = Math.floor(Math.random()*10)+1; techo = (v1*v1) + (v2*v2) - p; break;
+                v1 = Math.floor(Math.random() * 6) + 2;
+                v2 = Math.floor(Math.random() * 6) + 2;
+                p = Math.floor(Math.random() * 10) + 1;
+                techo = v1 * v1 + v2 * v2 - p;
+                break;
               case 4: // (V1 * P) + V2²
-                v1 = Math.floor(Math.random()*6)+3; p = Math.floor(Math.random()*5)+2;
-                v2 = Math.floor(Math.random()*5)+2; techo = (v1 * p) + (v2*v2); break;
+                v1 = Math.floor(Math.random() * 6) + 3;
+                p = Math.floor(Math.random() * 5) + 2;
+                v2 = Math.floor(Math.random() * 5) + 2;
+                techo = v1 * p + v2 * v2;
+                break;
               case 5: // √(V1) * √(V2) + P (Cuadrados perfectos)
-                let base1 = Math.floor(Math.random()*6)+2; let base2 = Math.floor(Math.random()*6)+2;
-                v1 = base1*base1; v2 = base2*base2; 
-                p = Math.floor(Math.random()*10)+1; techo = (base1 * base2) + p; break;
+                let base1 = Math.floor(Math.random() * 6) + 2;
+                let base2 = Math.floor(Math.random() * 6) + 2;
+                v1 = base1 * base1;
+                v2 = base2 * base2;
+                p = Math.floor(Math.random() * 10) + 1;
+                techo = base1 * base2 + p;
+                break;
               case 6: // V1² - V2² + P
-                v1 = Math.floor(Math.random()*5)+5; v2 = Math.floor(Math.random()*4)+1; // v1 > v2
-                p = Math.floor(Math.random()*15)+1; techo = (v1*v1) - (v2*v2) + p; break;
+                v1 = Math.floor(Math.random() * 5) + 5;
+                v2 = Math.floor(Math.random() * 4) + 1; // v1 > v2
+                p = Math.floor(Math.random() * 15) + 1;
+                techo = v1 * v1 - v2 * v2 + p;
+                break;
               case 7: // (V1 * V2) / P (División exacta)
-                p = Math.floor(Math.random()*4)+2; // 2 a 5
-                v1 = p * (Math.floor(Math.random()*4)+1); v2 = Math.floor(Math.random()*6)+2;
-                techo = (v1 * v2) / p; break;
+                p = Math.floor(Math.random() * 4) + 2; // 2 a 5
+                v1 = p * (Math.floor(Math.random() * 4) + 1);
+                v2 = Math.floor(Math.random() * 6) + 2;
+                techo = (v1 * v2) / p;
+                break;
               case 8: // V1 elevado a la V2 + P
-                v1 = Math.floor(Math.random()*4)+2; v2 = Math.floor(Math.random()*2)+2; // max 5^3
-                p = Math.floor(Math.random()*20)+1; techo = Math.pow(v1, v2) + p; break;
+                v1 = Math.floor(Math.random() * 4) + 2;
+                v2 = Math.floor(Math.random() * 2) + 2; // max 5^3
+                p = Math.floor(Math.random() * 20) + 1;
+                techo = Math.pow(v1, v2) + p;
+                break;
               case 9: // Suma de cifras de (V1 * V2 * P)
-                v1 = Math.floor(Math.random()*9)+5; v2 = Math.floor(Math.random()*9)+5; p = Math.floor(Math.random()*5)+3;
+                v1 = Math.floor(Math.random() * 9) + 5;
+                v2 = Math.floor(Math.random() * 9) + 5;
+                p = Math.floor(Math.random() * 5) + 3;
                 let prodStr = (v1 * v2 * p).toString();
-                techo = prodStr.split('').reduce((acc, curr) => acc + Number(curr), 0); break;
+                techo = prodStr
+                  .split('')
+                  .reduce((acc, curr) => acc + Number(curr), 0);
+                break;
               case 10: // (V1 + P)² - V2
-                v1 = Math.floor(Math.random()*4)+1; p = Math.floor(Math.random()*4)+1;
-                v2 = Math.floor(Math.random()*10)+1; techo = Math.pow(v1 + p, 2) - v2; break;
+                v1 = Math.floor(Math.random() * 4) + 1;
+                p = Math.floor(Math.random() * 4) + 1;
+                v2 = Math.floor(Math.random() * 10) + 1;
+                techo = Math.pow(v1 + p, 2) - v2;
+                break;
             }
 
             let obj = { techo, v1, v2, p, incognitaReal: 0 };
             if (esIncognita) {
               // Solo pedimos puerta si es fácil de despejar
-              if (Math.random() > 0.6 && patronElegido <= 2) { 
-                obj.incognitaReal = p; obj.p = "x" as any;
+              if (Math.random() > 0.6 && patronElegido <= 2) {
+                obj.incognitaReal = p;
+                obj.p = 'x' as any;
               } else {
-                obj.incognitaReal = techo; obj.techo = "x" as any;
+                obj.incognitaReal = techo;
+                obj.techo = 'x' as any;
               }
             }
             return obj;
           };
 
-          const c1 = generarCasita(); const c2 = generarCasita(); const c3 = generarCasita(true);
-          return { type: 'graphic_distribution', data: { shape: 'house', figures: [c1, c2, c3] }, respuestaSobreescrita: c3.incognitaReal };
+          const c1 = generarCasita();
+          const c2 = generarCasita();
+          const c3 = generarCasita(true);
+          return {
+            type: 'graphic_distribution',
+            data: { shape: 'house', figures: [c1, c2, c3] },
+            respuestaSobreescrita: c3.incognitaReal,
+          };
         }
-
-
 
         // 🔥 RM: CRIPTOARITMÉTICA DIVISIÓN (MOTOR DE CASCADA EXACTA)
         case 'rm_criptoaritmetica_div_basico':
@@ -7107,35 +8057,54 @@ export class QuintoGradoService extends BaseGradoService {
         case 'rm_criptoaritmetica_div_avanzado':
         case 'rm_criptoaritmetica_div_experto': {
           const id = plantilla.id || '';
-          let dsr = 0, q = 0;
+          let dsr = 0,
+            q = 0;
 
           // RANGOS ESTRICTOS CONAMAT (Garantiza divisibilidad y proceso inverso)
-          if (id.includes('basico')) { dsr = Math.floor(Math.random()*7)+3; q = Math.floor(Math.random()*9)+10; } 
-          else if (id.includes('intermedio')) { dsr = Math.floor(Math.random()*8)+2; q = Math.floor(Math.random()*40)+20; }
-          else if (id.includes('avanzado')) { dsr = Math.floor(Math.random()*40)+11; q = Math.floor(Math.random()*80)+20; }
-          else { dsr = Math.floor(Math.random()*40)+11; q = Math.floor(Math.random()*80)+20; }
+          if (id.includes('basico')) {
+            dsr = Math.floor(Math.random() * 7) + 3;
+            q = Math.floor(Math.random() * 9) + 10;
+          } else if (id.includes('intermedio')) {
+            dsr = Math.floor(Math.random() * 8) + 2;
+            q = Math.floor(Math.random() * 40) + 20;
+          } else if (id.includes('avanzado')) {
+            dsr = Math.floor(Math.random() * 40) + 11;
+            q = Math.floor(Math.random() * 80) + 20;
+          } else {
+            dsr = Math.floor(Math.random() * 40) + 11;
+            q = Math.floor(Math.random() * 80) + 20;
+          }
 
           const dnd = dsr * q; // Exacta (puedes sumar +residuo luego si quieres inexactas)
           const dndS = dnd.toString();
           const dsrS = dsr.toString();
           const qS = q.toString();
-          
+
           let steps: any[] = [];
-          
+
           // --- ALGORITMO DE CASCADA MATEMÁTICA ---
           let dIdx = 0;
-          let chunk = "";
-          
+          let chunk = '';
+
           // Buscar el primer bloque que se puede dividir
           while (dIdx < dndS.length && Number(chunk + dndS[dIdx]) < dsr) {
-            chunk += dndS[dIdx]; dIdx++;
+            chunk += dndS[dIdx];
+            dIdx++;
           }
-          if (dIdx < dndS.length) { chunk += dndS[dIdx]; dIdx++; }
+          if (dIdx < dndS.length) {
+            chunk += dndS[dIdx];
+            dIdx++;
+          }
 
           // Función para alinear a la derecha dentro de la cuadrícula
-          const alinearDerecha = (str: string, endIdx: number, length: number) => {
-            let row = Array(length).fill(" ");
-            for (let i = 0; i < str.length; i++) row[endIdx - str.length + 1 + i] = str[i];
+          const alinearDerecha = (
+            str: string,
+            endIdx: number,
+            length: number,
+          ) => {
+            let row = Array(length).fill(' ');
+            for (let i = 0; i < str.length; i++)
+              row[endIdx - str.length + 1 + i] = str[i];
             return row;
           };
 
@@ -7147,22 +8116,30 @@ export class QuintoGradoService extends BaseGradoService {
             // Producto alineado con el último dígito usado (dIdx - 1)
             const prodRow = alinearDerecha(prodStr, dIdx - 1, dndS.length);
             const resta = Number(chunk) - prod;
-            let restaRow = Array(dndS.length).fill(" ");
+            let restaRow = Array(dndS.length).fill(' ');
 
-            if (i === qS.length - 1) { // ÚLTIMO PASO
+            if (i === qS.length - 1) {
+              // ÚLTIMO PASO
               if (resta === 0) {
                 // Rayitas exactas bajo el producto
-                for (let j = 0; j < prodStr.length; j++) restaRow[dIdx - 1 - j] = "-";
+                for (let j = 0; j < prodStr.length; j++)
+                  restaRow[dIdx - 1 - j] = '-';
               } else {
-                restaRow = alinearDerecha(resta.toString(), dIdx - 1, dndS.length);
+                restaRow = alinearDerecha(
+                  resta.toString(),
+                  dIdx - 1,
+                  dndS.length,
+                );
               }
-            } else { // PASOS INTERMEDIOS
-              let restaStr = resta === 0 ? "" : resta.toString();
+            } else {
+              // PASOS INTERMEDIOS
+              let restaStr = resta === 0 ? '' : resta.toString();
               let nextDigit = dndS[dIdx];
               chunk = restaStr + nextDigit;
 
               // Alinear el residuo y bajar el siguiente número
-              for (let j = 0; j < restaStr.length; j++) restaRow[dIdx - 1 - restaStr.length + 1 + j] = restaStr[j];
+              for (let j = 0; j < restaStr.length; j++)
+                restaRow[dIdx - 1 - restaStr.length + 1 + j] = restaStr[j];
               restaRow[dIdx] = nextDigit;
               dIdx++;
             }
@@ -7173,7 +8150,7 @@ export class QuintoGradoService extends BaseGradoService {
             dividendo: dndS.split(''),
             divisor: dsrS.split(''),
             cociente: qS.split(''),
-            pasos: steps
+            pasos: steps,
           };
 
           // --- SISTEMA DE OCULTAMIENTO (Cajas Rojas) ---
@@ -7181,97 +8158,141 @@ export class QuintoGradoService extends BaseGradoService {
           const ocultar = (arr: any[]) => {
             if (!Array.isArray(arr)) return;
             arr.forEach((char, idx) => {
-              if (char !== " " && char !== "-" && Math.random() > 0.6) {
+              if (char !== ' ' && char !== '-' && Math.random() > 0.6) {
                 sumaOcultas += Number(char);
-                arr[idx] = "*";
+                arr[idx] = '*';
               }
             });
           };
 
           // Ocultamos manteniendo siempre la primera cifra del divisor visible
           ocultar(data.dividendo);
-          for(let i=1; i<data.divisor.length; i++) { if(Math.random()>0.5){ sumaOcultas+=Number(data.divisor[i]); data.divisor[i]="*"; } }
+          for (let i = 1; i < data.divisor.length; i++) {
+            if (Math.random() > 0.5) {
+              sumaOcultas += Number(data.divisor[i]);
+              data.divisor[i] = '*';
+            }
+          }
           ocultar(data.cociente);
-          data.pasos.forEach(p => { ocultar(p.producto); ocultar(p.resta); });
+          data.pasos.forEach((p) => {
+            ocultar(p.producto);
+            ocultar(p.resta);
+          });
 
           return {
             type: 'crypto_div',
             data: data,
-            respuestaSobreescrita: sumaOcultas
+            respuestaSobreescrita: sumaOcultas,
           };
         }
 
-
-
-
-
-
-
-       case 'rm_distribucion_circular_basico':
+        case 'rm_distribucion_circular_basico':
         case 'rm_distribucion_circular_intermedio':
         case 'rm_distribucion_circular_avanzado':
         case 'rm_distribucion_circular_experto':
         case 'rm_distribucion_circular': {
           const id = plantilla.id || '';
-          
+
           let patronesC: number[] = [];
-          if (id.includes('basico')) patronesC = [1, 2]; 
-          else if (id.includes('intermedio')) patronesC = [3, 4, 5]; 
-          else if (id.includes('avanzado')) patronesC = [6, 7, 8]; 
+          if (id.includes('basico')) patronesC = [1, 2];
+          else if (id.includes('intermedio')) patronesC = [3, 4, 5];
+          else if (id.includes('avanzado')) patronesC = [6, 7, 8];
           else patronesC = [9, 10]; // EXPERTO PURO
 
-          const patronElegido = patronesC[Math.floor(Math.random() * patronesC.length)];
+          const patronElegido =
+            patronesC[Math.floor(Math.random() * patronesC.length)];
 
           const generarCirculo = (esX = false) => {
-            let n1=0, n2=0, n3=0, centro=0;
+            let n1 = 0,
+              n2 = 0,
+              n3 = 0,
+              centro = 0;
 
-            switch(patronElegido) {
+            switch (patronElegido) {
               case 1: // (n1 * n2) - n3
-                n1 = Math.floor(Math.random()*8)+3; n2 = Math.floor(Math.random()*8)+3; n3 = Math.floor(Math.random()*15)+1;
-                centro = (n1 * n2) - n3; break;
+                n1 = Math.floor(Math.random() * 8) + 3;
+                n2 = Math.floor(Math.random() * 8) + 3;
+                n3 = Math.floor(Math.random() * 15) + 1;
+                centro = n1 * n2 - n3;
+                break;
               case 2: // (n1 + n2) * n3
-                n1 = Math.floor(Math.random()*9)+2; n2 = Math.floor(Math.random()*9)+2; n3 = Math.floor(Math.random()*5)+2;
-                centro = (n1 + n2) * n3; break;
+                n1 = Math.floor(Math.random() * 9) + 2;
+                n2 = Math.floor(Math.random() * 9) + 2;
+                n3 = Math.floor(Math.random() * 5) + 2;
+                centro = (n1 + n2) * n3;
+                break;
               case 3: // n1² + (n2 * n3)
-                n1 = Math.floor(Math.random()*7)+3; n2 = Math.floor(Math.random()*9)+2; n3 = Math.floor(Math.random()*9)+2;
-                centro = (n1 * n1) + (n2 * n3); break;
+                n1 = Math.floor(Math.random() * 7) + 3;
+                n2 = Math.floor(Math.random() * 9) + 2;
+                n3 = Math.floor(Math.random() * 9) + 2;
+                centro = n1 * n1 + n2 * n3;
+                break;
               case 4: // √(n1) * n2 + n3
-                let b1 = Math.floor(Math.random()*7)+2; n1 = b1*b1;
-                n2 = Math.floor(Math.random()*6)+2; n3 = Math.floor(Math.random()*20)+1;
-                centro = (b1 * n2) + n3; break;
+                let b1 = Math.floor(Math.random() * 7) + 2;
+                n1 = b1 * b1;
+                n2 = Math.floor(Math.random() * 6) + 2;
+                n3 = Math.floor(Math.random() * 20) + 1;
+                centro = b1 * n2 + n3;
+                break;
               case 5: // n1² - n2² + n3
-                n1 = Math.floor(Math.random()*6)+5; n2 = Math.floor(Math.random()*4)+1; n3 = Math.floor(Math.random()*15)+1;
-                centro = (n1 * n1) - (n2 * n2) + n3; break;
+                n1 = Math.floor(Math.random() * 6) + 5;
+                n2 = Math.floor(Math.random() * 4) + 1;
+                n3 = Math.floor(Math.random() * 15) + 1;
+                centro = n1 * n1 - n2 * n2 + n3;
+                break;
               case 6: // (n1 * n2 * n3) / 2
-                n1 = Math.floor(Math.random()*5)*2 + 2; n2 = Math.floor(Math.random()*5)+2; n3 = Math.floor(Math.random()*5)+2;
-                centro = (n1 * n2 * n3) / 2; break;
+                n1 = Math.floor(Math.random() * 5) * 2 + 2;
+                n2 = Math.floor(Math.random() * 5) + 2;
+                n3 = Math.floor(Math.random() * 5) + 2;
+                centro = (n1 * n2 * n3) / 2;
+                break;
               case 7: // n1³ + n2 - n3
-                n1 = Math.floor(Math.random()*4)+2; n2 = Math.floor(Math.random()*20)+5; n3 = Math.floor(Math.random()*10)+1;
-                centro = Math.pow(n1, 3) + n2 - n3; break;
+                n1 = Math.floor(Math.random() * 4) + 2;
+                n2 = Math.floor(Math.random() * 20) + 5;
+                n3 = Math.floor(Math.random() * 10) + 1;
+                centro = Math.pow(n1, 3) + n2 - n3;
+                break;
               case 8: // Suma de cifras de (n1² * n2)
-                n1 = Math.floor(Math.random()*6)+4; n2 = Math.floor(Math.random()*6)+4; n3 = Math.floor(Math.random()*20)+1;
-                let calc = ((n1*n1) * n2).toString();
-                centro = calc.split('').reduce((a, b) => a + Number(b), 0) + n3; break;
+                n1 = Math.floor(Math.random() * 6) + 4;
+                n2 = Math.floor(Math.random() * 6) + 4;
+                n3 = Math.floor(Math.random() * 20) + 1;
+                let calc = (n1 * n1 * n2).toString();
+                centro = calc.split('').reduce((a, b) => a + Number(b), 0) + n3;
+                break;
               case 9: // √(n1 + n2) * n3
-                let b2 = Math.floor(Math.random()*6)+3; let sumPerfecta = b2*b2;
-                n1 = Math.floor(Math.random()*(sumPerfecta-2))+1; n2 = sumPerfecta - n1;
-                n3 = Math.floor(Math.random()*8)+3;
-                centro = b2 * n3; break;
+                let b2 = Math.floor(Math.random() * 6) + 3;
+                let sumPerfecta = b2 * b2;
+                n1 = Math.floor(Math.random() * (sumPerfecta - 2)) + 1;
+                n2 = sumPerfecta - n1;
+                n3 = Math.floor(Math.random() * 8) + 3;
+                centro = b2 * n3;
+                break;
               case 10: // n1 elevado a la (n2 - n3)
-                n1 = Math.floor(Math.random()*3)+2; // base 2 a 4
-                let exp = Math.floor(Math.random()*3)+1; // exp 1 a 3
-                n2 = Math.floor(Math.random()*10)+exp+1; n3 = n2 - exp;
-                centro = Math.pow(n1, exp); break;
+                n1 = Math.floor(Math.random() * 3) + 2; // base 2 a 4
+                let exp = Math.floor(Math.random() * 3) + 1; // exp 1 a 3
+                n2 = Math.floor(Math.random() * 10) + exp + 1;
+                n3 = n2 - exp;
+                centro = Math.pow(n1, exp);
+                break;
             }
-            return { vals: [n1, n2, n3], centro: esX ? "x" : centro, real: centro };
+            return {
+              vals: [n1, n2, n3],
+              centro: esX ? 'x' : centro,
+              real: centro,
+            };
           };
 
-          const f1 = generarCirculo(); const f2 = generarCirculo(); const f3 = generarCirculo(true);
-          return { type: 'graphic_distribution', data: { shape: 'circle', figures: [f1, f2, f3] }, respuestaSobreescrita: f3.real };
+          const f1 = generarCirculo();
+          const f2 = generarCirculo();
+          const f3 = generarCirculo(true);
+          return {
+            type: 'graphic_distribution',
+            data: { shape: 'circle', figures: [f1, f2, f3] },
+            respuestaSobreescrita: f3.real,
+          };
         }
 
-
-      // 🔥 MEGA-MOTOR UNIVERSAL: CATÁLOGO MASIVO (Letras, Escaleras, Estrellas, Trapecios) 🔥
+        // 🔥 MEGA-MOTOR UNIVERSAL: CATÁLOGO MASIVO (Letras, Escaleras, Estrellas, Trapecios) 🔥
         case 'rm_conteo_triangulos_basico':
         case 'rm_conteo_triangulos_intermedio':
         case 'rm_conteo_triangulos_avanzado':
@@ -7287,177 +8308,436 @@ export class QuintoGradoService extends BaseGradoService {
           const v = valores || {};
           let resFinal = 0;
           const lines: any[] = [];
-          const polys3D: any[] = []; 
-          
+          const polys3D: any[] = [];
+
           let tipo = 'tri';
           if (id.includes('cuadrilatero')) tipo = 'cuad';
           else if (id.includes('angulo')) tipo = 'ang';
           else if (id.includes('sectore')) tipo = 'sec';
           else if (id.includes('cubo')) tipo = 'cub';
 
-          const lineColor = "#16a34a"; 
+          const lineColor = '#16a34a';
           const w = 2;
 
           // ==========================================
           // 📐 1. TRIÁNGULOS Y ÁNGULOS (Variedad Extrema)
           // ==========================================
           if (tipo === 'tri' || tipo === 'ang') {
-            
             // Filtro por dificultad (Le decimos a TypeScript que es un array de strings)
             let opciones: string[] = [];
-            
-            if (id.includes('basico')) opciones = ['triangulo_pisos', 'cuadrado_x'];
-            else if (id.includes('intermedio')) opciones = ['triangulo_pisos', 'cuadrado_cruz', 'trapecio'];
-            else if (id.includes('avanzado')) opciones = ['cuadrado_cruz', 'rectangulo_doble', 'trapecio', 'estrella'];
+
+            if (id.includes('basico'))
+              opciones = ['triangulo_pisos', 'cuadrado_x'];
+            else if (id.includes('intermedio'))
+              opciones = ['triangulo_pisos', 'cuadrado_cruz', 'trapecio'];
+            else if (id.includes('avanzado'))
+              opciones = [
+                'cuadrado_cruz',
+                'rectangulo_doble',
+                'trapecio',
+                'estrella',
+              ];
             else opciones = ['triangulo_pisos', 'rectangulo_doble', 'estrella']; // Experto
 
-            const formaElegida = opciones[Math.floor(Math.random() * opciones.length)];
+            const formaElegida =
+              opciones[Math.floor(Math.random() * opciones.length)];
 
             if (formaElegida === 'triangulo_pisos') {
-              const n = Math.floor(Math.random() * 4) + 3; 
-              const m = id.includes('basico') ? 1 : Math.floor(Math.random() * 3) + 2; 
+              const n = Math.floor(Math.random() * 4) + 3;
+              const m = id.includes('basico')
+                ? 1
+                : Math.floor(Math.random() * 3) + 2;
               resFinal = m * ((n * (n + 1)) / 2);
-              const b = 16, h = 14, xA = -b/2, xC = b/2;
-              const xB = [-5, 0, 5][Math.floor(Math.random() * 3)]; 
-              
-              lines.push({ puntos: [[xA, 0], [xC, 0], [xB, h], [xA, 0]], color: lineColor, weight: w });
-              for (let i = 1; i < n; i++) lines.push({ puntos: [[xB, h], [xA + (b/n)*i, 0]], color: lineColor, weight: w });
+              const b = 16,
+                h = 14,
+                xA = -b / 2,
+                xC = b / 2;
+              const xB = [-5, 0, 5][Math.floor(Math.random() * 3)];
+
+              lines.push({
+                puntos: [
+                  [xA, 0],
+                  [xC, 0],
+                  [xB, h],
+                  [xA, 0],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              for (let i = 1; i < n; i++)
+                lines.push({
+                  puntos: [
+                    [xB, h],
+                    [xA + (b / n) * i, 0],
+                  ],
+                  color: lineColor,
+                  weight: w,
+                });
               for (let j = 1; j < m; j++) {
-                const yk = (h/m)*j;
-                lines.push({ puntos: [[xA + (xB - xA)*(yk/h), yk], [xC + (xB - xC)*(yk/h), yk]], color: lineColor, weight: w });
+                const yk = (h / m) * j;
+                lines.push({
+                  puntos: [
+                    [xA + (xB - xA) * (yk / h), yk],
+                    [xC + (xB - xC) * (yk / h), yk],
+                  ],
+                  color: lineColor,
+                  weight: w,
+                });
               }
-            } 
-            else if (formaElegida === 'cuadrado_x') {
+            } else if (formaElegida === 'cuadrado_x') {
               resFinal = 8;
               const a = 8;
-              lines.push({ puntos: [[-a,-a], [a,-a], [a,a], [-a,a], [-a,-a]], color: lineColor, weight: w });
-              lines.push({ puntos: [[-a,-a], [a,a]], color: lineColor, weight: w });
-              lines.push({ puntos: [[-a,a], [a,-a]], color: lineColor, weight: w });
-            }
-            else if (formaElegida === 'cuadrado_cruz') {
+              lines.push({
+                puntos: [
+                  [-a, -a],
+                  [a, -a],
+                  [a, a],
+                  [-a, a],
+                  [-a, -a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [-a, -a],
+                  [a, a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [-a, a],
+                  [a, -a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+            } else if (formaElegida === 'cuadrado_cruz') {
               resFinal = 16;
               const a = 8;
-              lines.push({ puntos: [[-a,-a], [a,-a], [a,a], [-a,a], [-a,-a]], color: lineColor, weight: w });
-              lines.push({ puntos: [[-a,-a], [a,a]], color: lineColor, weight: w });
-              lines.push({ puntos: [[-a,a], [a,-a]], color: lineColor, weight: w });
-              lines.push({ puntos: [[-a,0], [a,0]], color: lineColor, weight: w });
-              lines.push({ puntos: [[0,-a], [0,a]], color: lineColor, weight: w });
-            }
-            else if (formaElegida === 'rectangulo_doble') {
+              lines.push({
+                puntos: [
+                  [-a, -a],
+                  [a, -a],
+                  [a, a],
+                  [-a, a],
+                  [-a, -a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [-a, -a],
+                  [a, a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [-a, a],
+                  [a, -a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [-a, 0],
+                  [a, 0],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [0, -a],
+                  [0, a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+            } else if (formaElegida === 'rectangulo_doble') {
               resFinal = 16; // 8 en el izq, 8 en el der
               const a = 6;
               // Contorno y division
-              lines.push({ puntos: [[-a*2,-a], [a*2,-a], [a*2,a], [-a*2,a], [-a*2,-a]], color: lineColor, weight: w });
-              lines.push({ puntos: [[0,-a], [0,a]], color: lineColor, weight: w });
+              lines.push({
+                puntos: [
+                  [-a * 2, -a],
+                  [a * 2, -a],
+                  [a * 2, a],
+                  [-a * 2, a],
+                  [-a * 2, -a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [0, -a],
+                  [0, a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
               // X izquierda y X derecha
-              lines.push({ puntos: [[-a*2,-a], [0,a]], color: lineColor, weight: w });
-              lines.push({ puntos: [[-a*2,a], [0,-a]], color: lineColor, weight: w });
-              lines.push({ puntos: [[0,-a], [a*2,a]], color: lineColor, weight: w });
-              lines.push({ puntos: [[0,a], [a*2,-a]], color: lineColor, weight: w });
-            }
-            else if (formaElegida === 'trapecio') {
+              lines.push({
+                puntos: [
+                  [-a * 2, -a],
+                  [0, a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [-a * 2, a],
+                  [0, -a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [0, -a],
+                  [a * 2, a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [0, a],
+                  [a * 2, -a],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+            } else if (formaElegida === 'trapecio') {
               resFinal = 8;
-              const bM = 8, bm = 4, h = 6;
-              lines.push({ puntos: [[-bM, -h/2], [bM, -h/2], [bm, h/2], [-bm, h/2], [-bM, -h/2]], color: lineColor, weight: w });
-              lines.push({ puntos: [[-bM, -h/2], [bm, h/2]], color: lineColor, weight: w });
-              lines.push({ puntos: [[bM, -h/2], [-bm, h/2]], color: lineColor, weight: w });
-            }
-            else if (formaElegida === 'estrella') {
+              const bM = 8,
+                bm = 4,
+                h = 6;
+              lines.push({
+                puntos: [
+                  [-bM, -h / 2],
+                  [bM, -h / 2],
+                  [bm, h / 2],
+                  [-bm, h / 2],
+                  [-bM, -h / 2],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [-bM, -h / 2],
+                  [bm, h / 2],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+              lines.push({
+                puntos: [
+                  [bM, -h / 2],
+                  [-bm, h / 2],
+                ],
+                color: lineColor,
+                weight: w,
+              });
+            } else if (formaElegida === 'estrella') {
               resFinal = 10;
-              const R = 10, pE: [number, number][] = [];
-              for(let i=0; i<5; i++) pE.push([R * Math.cos(Math.PI/2 + i*(4*Math.PI/5)), R * Math.sin(Math.PI/2 + i*(4*Math.PI/5))]);
-              lines.push({ puntos: [...pE, pE[0]], color: lineColor, weight: w });
+              const R = 10,
+                pE: [number, number][] = [];
+              for (let i = 0; i < 5; i++)
+                pE.push([
+                  R * Math.cos(Math.PI / 2 + i * ((4 * Math.PI) / 5)),
+                  R * Math.sin(Math.PI / 2 + i * ((4 * Math.PI) / 5)),
+                ]);
+              lines.push({
+                puntos: [...pE, pE[0]],
+                color: lineColor,
+                weight: w,
+              });
             }
           }
           // ==========================================
           // 🟩 2. CUADRILÁTEROS
           // ==========================================
           else if (tipo === 'cuad') {
-            const cols = Math.floor(Math.random() * 4) + 3; 
-            const rows = Math.floor(Math.random() * 3) + 2; 
+            const cols = Math.floor(Math.random() * 4) + 3;
+            const rows = Math.floor(Math.random() * 3) + 2;
             resFinal = ((cols * (cols + 1)) / 2) * ((rows * (rows + 1)) / 2);
-            
-            const skew = id.includes('experto') ? 0.5 : 0; 
-            const wl = 16, hl = 10, dx = wl/cols, dy = hl/rows;
-            const getPt = (c: number, r: number): [number, number] => [-wl/2 + c*dx + (-hl/2 + r*dy)*skew, -hl/2 + r*dy];
 
-            const colorC = "#8b5cf6"; 
-            lines.push({ puntos: [getPt(0,0), getPt(cols,0), getPt(cols,rows), getPt(0,rows), getPt(0,0)], color: colorC, weight: 2 });
-            for(let i=1; i<cols; i++) lines.push({ puntos: [getPt(i,0), getPt(i,rows)], color: colorC, weight: 2 });
-            for(let j=1; j<rows; j++) lines.push({ puntos: [getPt(0,j), getPt(cols,j)], color: colorC, weight: 2 });
+            const skew = id.includes('experto') ? 0.5 : 0;
+            const wl = 16,
+              hl = 10,
+              dx = wl / cols,
+              dy = hl / rows;
+            const getPt = (c: number, r: number): [number, number] => [
+              -wl / 2 + c * dx + (-hl / 2 + r * dy) * skew,
+              -hl / 2 + r * dy,
+            ];
+
+            const colorC = '#8b5cf6';
+            lines.push({
+              puntos: [
+                getPt(0, 0),
+                getPt(cols, 0),
+                getPt(cols, rows),
+                getPt(0, rows),
+                getPt(0, 0),
+              ],
+              color: colorC,
+              weight: 2,
+            });
+            for (let i = 1; i < cols; i++)
+              lines.push({
+                puntos: [getPt(i, 0), getPt(i, rows)],
+                color: colorC,
+                weight: 2,
+              });
+            for (let j = 1; j < rows; j++)
+              lines.push({
+                puntos: [getPt(0, j), getPt(cols, j)],
+                color: colorC,
+                weight: 2,
+              });
           }
           // ==========================================
           // 🍕 3. SECTORES CIRCULARES
           // ==========================================
           else if (tipo === 'sec') {
-            const n = Math.floor(Math.random() * 5) + 4; 
-            const m = Math.floor(Math.random() * 3) + 2; 
+            const n = Math.floor(Math.random() * 5) + 4;
+            const m = Math.floor(Math.random() * 3) + 2;
             resFinal = m * ((n * (n + 1)) / 2);
 
-            const R = 12, angMin = Math.PI/6, angMax = 5*Math.PI/6, step = (angMax - angMin)/n;
-            const colorS = "#f97316"; 
+            const R = 12,
+              angMin = Math.PI / 6,
+              angMax = (5 * Math.PI) / 6,
+              step = (angMax - angMin) / n;
+            const colorS = '#f97316';
 
-            for(let j=1; j<=m; j++) {
-              const rAct = (R/m) * j;
+            for (let j = 1; j <= m; j++) {
+              const rAct = (R / m) * j;
               const arcoPts: [number, number][] = [];
-              for(let a = angMin; a <= angMax; a += 0.05) arcoPts.push([rAct * Math.cos(a), rAct * Math.sin(a)]);
+              for (let a = angMin; a <= angMax; a += 0.05)
+                arcoPts.push([rAct * Math.cos(a), rAct * Math.sin(a)]);
               arcoPts.push([rAct * Math.cos(angMax), rAct * Math.sin(angMax)]); // Cierre perfecto
               lines.push({ puntos: arcoPts, color: colorS, weight: 2 });
             }
-            for(let i=0; i<=n; i++) {
-              lines.push({ puntos: [[0,0], [R * Math.cos(angMin + i * step), R * Math.sin(angMin + i * step)]], color: colorS, weight: 2 });
+            for (let i = 0; i <= n; i++) {
+              lines.push({
+                puntos: [
+                  [0, 0],
+                  [
+                    R * Math.cos(angMin + i * step),
+                    R * Math.sin(angMin + i * step),
+                  ],
+                ],
+                color: colorS,
+                weight: 2,
+              });
             }
           }
-         
-         
-         // ==========================================
+
+          // ==========================================
           // 📦 FAMILIA 4: CUBOS ISOMÉTRICOS (DISEÑOS COMPLEJOS Y VOLUMÉTRICOS)
           // ==========================================
           else if (tipo === 'cub') {
-            const sc = 1.8; 
-            const proj = (x: number, y: number, z: number): [number, number] => {
-                return [(x - y) * 0.866 * sc, (-x * 0.5 - y * 0.5 + z) * sc];
+            const sc = 1.8;
+            const proj = (
+              x: number,
+              y: number,
+              z: number,
+            ): [number, number] => {
+              return [(x - y) * 0.866 * sc, (-x * 0.5 - y * 0.5 + z) * sc];
             };
 
             // 🔥 CATÁLOGO MAESTRO DE DISEÑOS ARQUITECTÓNICOS (Blueprints) 🔥
             const designs = {
-                geometric: {
-                    cross: [[0,1,0],[1,1,1],[0,1,0]],
-                    u:     [[1,0,1],[1,0,1],[1,1,1]],
-                    t:     [[1,1,1],[0,1,0],[0,1,0]],
-                    square: [[1,1],[1,1]]
-                },
-                letters: {
-                    f: [[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,0,0,0]],
-                    l: [[1,0,0,0],[1,0,0,0],[1,0,0,0],[1,1,1,1]], // ✅ Ahora está aquí
-                    s: [[1,1,1,1],[1,0,0,0],[1,1,1,1],[0,0,0,1],[1,1,1,1]],
-                    e: [[1,1,1,1],[1,0,0,0],[1,1,1,0],[1,0,0,0],[1,1,1,1]],
-                    plus:[[0,2,0],[2,3,2],[0,2,0]]
-                },
-                volume: {
-                    // Volumetric Pyramid (Step Pyramid)
-                    pyramid: [
-                        [1,1,1,1,1],
-                        [1,2,2,2,1],
-                        [1,2,3,2,1],
-                        [1,2,2,2,1],
-                        [1,1,1,1,1]
-                    ],
-                    // Volumetric ZigZag/Spiral Complex Stair
-                    zigzag: [
-                        [3,2,1,0],
-                        [2,1,0,1],
-                        [1,0,1,2],
-                        [0,1,2,3]
-                    ],
-                    // Complex City/Castle with Towers
-                    castle: [
-                        [3,1,1,3],
-                        [1,1,1,1],
-                        [1,2,2,1],
-                        [3,1,1,3]
-                    ]
-                }
+              geometric: {
+                cross: [
+                  [0, 1, 0],
+                  [1, 1, 1],
+                  [0, 1, 0],
+                ],
+                u: [
+                  [1, 0, 1],
+                  [1, 0, 1],
+                  [1, 1, 1],
+                ],
+                t: [
+                  [1, 1, 1],
+                  [0, 1, 0],
+                  [0, 1, 0],
+                ],
+                square: [
+                  [1, 1],
+                  [1, 1],
+                ],
+              },
+              letters: {
+                f: [
+                  [1, 1, 1, 1],
+                  [1, 0, 0, 0],
+                  [1, 1, 1, 0],
+                  [1, 0, 0, 0],
+                  [1, 0, 0, 0],
+                ],
+                l: [
+                  [1, 0, 0, 0],
+                  [1, 0, 0, 0],
+                  [1, 0, 0, 0],
+                  [1, 1, 1, 1],
+                ], // ✅ Ahora está aquí
+                s: [
+                  [1, 1, 1, 1],
+                  [1, 0, 0, 0],
+                  [1, 1, 1, 1],
+                  [0, 0, 0, 1],
+                  [1, 1, 1, 1],
+                ],
+                e: [
+                  [1, 1, 1, 1],
+                  [1, 0, 0, 0],
+                  [1, 1, 1, 0],
+                  [1, 0, 0, 0],
+                  [1, 1, 1, 1],
+                ],
+                plus: [
+                  [0, 2, 0],
+                  [2, 3, 2],
+                  [0, 2, 0],
+                ],
+              },
+              volume: {
+                // Volumetric Pyramid (Step Pyramid)
+                pyramid: [
+                  [1, 1, 1, 1, 1],
+                  [1, 2, 2, 2, 1],
+                  [1, 2, 3, 2, 1],
+                  [1, 2, 2, 2, 1],
+                  [1, 1, 1, 1, 1],
+                ],
+                // Volumetric ZigZag/Spiral Complex Stair
+                zigzag: [
+                  [3, 2, 1, 0],
+                  [2, 1, 0, 1],
+                  [1, 0, 1, 2],
+                  [0, 1, 2, 3],
+                ],
+                // Complex City/Castle with Towers
+                castle: [
+                  [3, 1, 1, 3],
+                  [1, 1, 1, 1],
+                  [1, 2, 2, 1],
+                  [3, 1, 1, 3],
+                ],
+              },
             };
 
             // 1. SELECCIÓN DE MATRIZ BASE (Blueprint)
@@ -7466,331 +8746,587 @@ export class QuintoGradoService extends BaseGradoService {
 
             // Lógica de complejidad paramétrica
             if (id.includes('basico')) {
-                // Letras simples (F, L, U), achatadas (H:1-2). Total 3-9 cubos.
-                if (rnd < 0.4) matrix = Math.random()>0.5 ? designs.letters.f : designs.letters.l;
-                else if (rnd < 0.7) matrix = designs.geometric.u;
-                else matrix = [[2,1,0],[2,1,0],[2,1,0]]; // Escalera simple
-                // Aplanar: randomize a alturas 1 o 2 max.
-                matrix = matrix.map(r => r.map(v => v > 0 ? (Math.random()>0.5?2:1) : 0));
-            } 
-            else if (id.includes('intermedio')) {
-                // Matrices volumetricas (Piramide, Letras complejas S,E), alturas 1-3. Total 10-20.
-                if (rnd < 0.4) {
-                    matrix = designs.volume.pyramid;
-                    matrix = matrix.map(r => r.map(v => v > 2 ? 2 : v)); // Flatten slightly
-                } else {
-                    matrix = Math.random()>0.5 ? designs.letters.s : designs.letters.e;
-                    matrix = matrix.map(r => r.map(v => v > 0 ? (Math.floor(Math.random()*3)+1) : 0)); // Alturas 1-3
-                }
-            }
-            else { // AVANZADO / EXPERTO
-                // Arquitectura compleja multi-nivel (Ciudad, Escaleras espirales, Piramide con Torres). Total 20-40+.
-                if (rnd < 0.4) { // Pyramid Base + Towers
-                    matrix = designs.volume.pyramid;
-                    // Exageramos paramétricamente las torres
-                    matrix = matrix.map(r => r.map(v => v > 1 ? (v + (Math.random()>0.7?2:1)) : v));
-                } else if (rnd < 0.8) { // Volumetric City/Castle + Complex Pillars
-                    matrix = designs.volume.castle;
-                    // Exageramos paramétricamente las torres randomly +2 o +3
-                    matrix = matrix.map(r => r.map(v => v > 1 ? (v + Math.floor(Math.random()*3)+1) : v));
-                } else { // Dynamic Stairs Complex
-                    matrix = designs.volume.zigzag;
-                }
-                // Asegurar base conectada para que no floten
-                matrix = matrix.map(r => r.map(v => v > 0 ? v : (Math.random()>0.97?1:0)));
+              // Letras simples (F, L, U), achatadas (H:1-2). Total 3-9 cubos.
+              if (rnd < 0.4)
+                matrix =
+                  Math.random() > 0.5 ? designs.letters.f : designs.letters.l;
+              else if (rnd < 0.7) matrix = designs.geometric.u;
+              else
+                matrix = [
+                  [2, 1, 0],
+                  [2, 1, 0],
+                  [2, 1, 0],
+                ]; // Escalera simple
+              // Aplanar: randomize a alturas 1 o 2 max.
+              matrix = matrix.map((r) =>
+                r.map((v) => (v > 0 ? (Math.random() > 0.5 ? 2 : 1) : 0)),
+              );
+            } else if (id.includes('intermedio')) {
+              // Matrices volumetricas (Piramide, Letras complejas S,E), alturas 1-3. Total 10-20.
+              if (rnd < 0.4) {
+                matrix = designs.volume.pyramid;
+                matrix = matrix.map((r) => r.map((v) => (v > 2 ? 2 : v))); // Flatten slightly
+              } else {
+                matrix =
+                  Math.random() > 0.5 ? designs.letters.s : designs.letters.e;
+                matrix = matrix.map((r) =>
+                  r.map((v) => (v > 0 ? Math.floor(Math.random() * 3) + 1 : 0)),
+                ); // Alturas 1-3
+              }
+            } else {
+              // AVANZADO / EXPERTO
+              // Arquitectura compleja multi-nivel (Ciudad, Escaleras espirales, Piramide con Torres). Total 20-40+.
+              if (rnd < 0.4) {
+                // Pyramid Base + Towers
+                matrix = designs.volume.pyramid;
+                // Exageramos paramétricamente las torres
+                matrix = matrix.map((r) =>
+                  r.map((v) => (v > 1 ? v + (Math.random() > 0.7 ? 2 : 1) : v)),
+                );
+              } else if (rnd < 0.8) {
+                // Volumetric City/Castle + Complex Pillars
+                matrix = designs.volume.castle;
+                // Exageramos paramétricamente las torres randomly +2 o +3
+                matrix = matrix.map((r) =>
+                  r.map((v) =>
+                    v > 1 ? v + Math.floor(Math.random() * 3) + 1 : v,
+                  ),
+                );
+              } else {
+                // Dynamic Stairs Complex
+                matrix = designs.volume.zigzag;
+              }
+              // Asegurar base conectada para que no floten
+              matrix = matrix.map((r) =>
+                r.map((v) => (v > 0 ? v : Math.random() > 0.97 ? 1 : 0)),
+              );
             }
 
             const maxX = matrix.length;
             const maxY = matrix[0].length;
 
             let maxZ = 0;
-            for(let x=0; x<maxX; x++) {
-              for(let y=0; y<maxY; y++) {
+            for (let x = 0; x < maxX; x++) {
+              for (let y = 0; y < maxY; y++) {
                 resFinal += matrix[x][y];
                 if (matrix[x][y] > maxZ) maxZ = matrix[x][y];
               }
             }
 
             // Colores de sombreado (Mantenemos técnica Z-Oclusión)
-            const cTop = "#ffffff", cLeft = "#f1f5f9", cRight = "#cbd5e1", bColor = "#1e293b";
+            const cTop = '#ffffff',
+              cLeft = '#f1f5f9',
+              cRight = '#cbd5e1',
+              bColor = '#1e293b';
 
             // 🔥 ALGORITMO DEL PINTOR (Oclusión Sólida)
-            for(let z = 0; z < maxZ; z++) {
-                for(let x = 0; x < maxX; x++) {
-                    for(let y = 0; y < maxY; y++) {
-                        if (z < matrix[x][y]) {
-                            
-                            // Vértices frontales
-                            const vFB = proj(x+1, y+1, z), vRB = proj(x+1, y, z), vLB = proj(x, y+1, z);
-                            const vFT = proj(x+1, y+1, z+1), vRT = proj(x+1, y, z+1), vLT = proj(x, y+1, z+1), vBT = proj(x, y, z+1);
+            for (let z = 0; z < maxZ; z++) {
+              for (let x = 0; x < maxX; x++) {
+                for (let y = 0; y < maxY; y++) {
+                  if (z < matrix[x][y]) {
+                    // Vértices frontales
+                    const vFB = proj(x + 1, y + 1, z),
+                      vRB = proj(x + 1, y, z),
+                      vLB = proj(x, y + 1, z);
+                    const vFT = proj(x + 1, y + 1, z + 1),
+                      vRT = proj(x + 1, y, z + 1),
+                      vLT = proj(x, y + 1, z + 1),
+                      vBT = proj(x, y, z + 1);
 
-                            // Caras frontales sólidas
-                            const pT: [number, number][]   = [vFT, vRT, vBT, vLT];
-                            const pR: [number, number][] = [vFT, vFB, vRB, vRT];
-                            const pL: [number, number][]  = [vFT, vLT, vLB, vFB];
+                    // Caras frontales sólidas
+                    const pT: [number, number][] = [vFT, vRT, vBT, vLT];
+                    const pR: [number, number][] = [vFT, vFB, vRB, vRT];
+                    const pL: [number, number][] = [vFT, vLT, vLB, vFB];
 
-                            polys3D.push({ puntos: pR, color: cRight, borde: bColor });
-                            polys3D.push({ puntos: pL, color: cLeft, borde: bColor });
-                            polys3D.push({ puntos: pT, color: cTop, borde: bColor });
-                        }
-                    }
+                    polys3D.push({ puntos: pR, color: cRight, borde: bColor });
+                    polys3D.push({ puntos: pL, color: cLeft, borde: bColor });
+                    polys3D.push({ puntos: pT, color: cTop, borde: bColor });
+                  }
                 }
+              }
             }
           }
 
-          v.total = resFinal; v.respuesta = resFinal;
+          v.total = resFinal;
+          v.respuesta = resFinal;
 
           return {
-            valores: v, respuesta: resFinal, tipo_render: 'geometry_mafs',
+            valores: v,
+            respuesta: resFinal,
+            tipo_render: 'geometry_mafs',
             data: {
-              type: 'geometry_mafs', theme: 'area_triangulo',
-              puntos: [], 
-              poligonosExtra: polys3D, 
-              esArea: false, etiquetas: [],
-              lineasExtra: lines, arcos: [],
-              respuestaSobreescrita: resFinal
-            }
+              type: 'geometry_mafs',
+              theme: 'area_triangulo',
+              puntos: [],
+              poligonosExtra: polys3D,
+              esArea: false,
+              etiquetas: [],
+              lineasExtra: lines,
+              arcos: [],
+              respuestaSobreescrita: resFinal,
+            },
           };
         }
-
-        
-
-
-
-
       }
-      
     }
 
-
-   // ============================================================================
+    // ============================================================================
     // 🔥 BLOQUE: ARITMÉTICA (NIVEL OLIMPIADA CONAMAT) - 100% PRECISIÓN Y CREATIVIDAD
     // ============================================================================
     if (plantilla.tema === 'aritmetica') {
       const id = plantilla.id || '';
-      const rnd = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const rnd = (min: number, max: number) =>
+        Math.floor(Math.random() * (max - min + 1)) + min;
 
       // 🔥 Utilidad Matemática Blindada: Obliga a fracciones perfectas, absorbe signos y rechaza decimales
       const simplificarFraccion = (num: number, den: number): string => {
         let n = Math.round(num); // Redondeo por seguridad anti-float
         let d = Math.round(den);
-        const mcd = (a: number, b: number): number => b === 0 ? a : mcd(b, a % b);
+        const mcd = (a: number, b: number): number =>
+          b === 0 ? a : mcd(b, a % b);
         const divisor = mcd(Math.abs(n), Math.abs(d));
         n = n / divisor;
         d = d / divisor;
-        if (d < 0) { n = -n; d = -d; } // El menos siempre arriba
+        if (d < 0) {
+          n = -n;
+          d = -d;
+        } // El menos siempre arriba
         if (d === 1) return `${n}`;
         if (n === 0) return `0`;
         return `\\frac{${n}}{${d}}`;
       };
 
       // 🧠 DICCIONARIOS DE CREATIVIDAD (Para variabilidad de texto infinita)
-      const sujetos = ["Mateo", "Ariana", "Luis", "Camila", "Sebastián", "Valentina", "Joaquín", "Lucía"];
+      const sujetos = [
+        'Mateo',
+        'Ariana',
+        'Luis',
+        'Camila',
+        'Sebastián',
+        'Valentina',
+        'Joaquín',
+        'Lucía',
+      ];
       const s1 = sujetos[rnd(0, sujetos.length - 1)];
       const s2 = sujetos[rnd(0, sujetos.length - 1)];
-      
-      const alimentos = ["un bloque de queso", "una pizza familiar", "un pastel de chocolate", "una tarta de manzana"];
+
+      const alimentos = [
+        'un bloque de queso',
+        'una pizza familiar',
+        'un pastel de chocolate',
+        'una tarta de manzana',
+      ];
       const alimento = alimentos[rnd(0, alimentos.length - 1)];
 
-      const tareas = ["pintar una pared", "armar un rompecabezas", "limpiar el jardín", "construir un muro"];
+      const tareas = [
+        'pintar una pared',
+        'armar un rompecabezas',
+        'limpiar el jardín',
+        'construir un muro',
+      ];
       const tarea = tareas[rnd(0, tareas.length - 1)];
 
-      const objetos = ["Un poste de luz", "Un cable de acero", "Una varilla de metal", "Una soga de escalar"];
+      const objetos = [
+        'Un poste de luz',
+        'Un cable de acero',
+        'Una varilla de metal',
+        'Una soga de escalar',
+      ];
       const objeto = objetos[rnd(0, objetos.length - 1)];
 
-      const liquidos = ["agua", "poción mágica", "esencia de vainilla", "jugo de naranja"];
+      const liquidos = [
+        'agua',
+        'poción mágica',
+        'esencia de vainilla',
+        'jugo de naranja',
+      ];
       const liquido = liquidos[rnd(0, liquidos.length - 1)];
 
       // ---------------------------------------------------------
       // TEMA 1: ADICIÓN Y SUSTRACCIÓN EN Q
       // ---------------------------------------------------------
-      if (['arit_q_add_conamat_basico', 'arit_q_add_conamat_intermedio', 'arit_q_add_conamat_avanzado', 'arit_q_add_conamat_experto'].includes(id) || id.includes('adicion_sustraccion_q')) {
-        let enunciado = '', correcta = '', options: any = {};
-        const variante = rnd(1, 3); 
+      if (
+        [
+          'arit_q_add_conamat_basico',
+          'arit_q_add_conamat_intermedio',
+          'arit_q_add_conamat_avanzado',
+          'arit_q_add_conamat_experto',
+        ].includes(id) ||
+        id.includes('adicion_sustraccion_q')
+      ) {
+        let enunciado = '',
+          correcta = '',
+          options: any = {};
+        const variante = rnd(1, 3);
 
         if (id.includes('basico') || !id.includes('_')) {
           if (variante === 1) {
-            const y = rnd(4, 9); const x = rnd(1, y - 1);
+            const y = rnd(4, 9);
+            const x = rnd(1, y - 1);
             enunciado = `Si a los términos de la fracción $\\frac{${x}}{${y}}$ se les suma su propio denominador, ¿en cuánto aumenta el valor de la fracción original?`;
-            const numRes = y - x; const denRes = 2 * y;
-            correcta = "C";
-            options = { "A": `$${simplificarFraccion(numRes + 1, denRes)}$`, "B": `$${simplificarFraccion(numRes, denRes - 1)}$`, "C": `$${simplificarFraccion(numRes, denRes)}$`, "D": `$${simplificarFraccion(x, y)}$`, "E": `$1$` };
+            const numRes = y - x;
+            const denRes = 2 * y;
+            correcta = 'C';
+            options = {
+              A: `$${simplificarFraccion(numRes + 1, denRes)}$`,
+              B: `$${simplificarFraccion(numRes, denRes - 1)}$`,
+              C: `$${simplificarFraccion(numRes, denRes)}$`,
+              D: `$${simplificarFraccion(x, y)}$`,
+              E: `$1$`,
+            };
           } else if (variante === 2) {
-            const a = rnd(3, 6); const b = a + rnd(1, 3);
+            const a = rnd(3, 6);
+            const b = a + rnd(1, 3);
             enunciado = `De ${alimento}, un ratón come $\\frac{1}{${a}}$ y luego un gato come $\\frac{1}{${b}}$ del total original. ¿Qué fracción de ${alimento} queda intacta?`;
-            const numRes = (a * b) - b - a; const denRes = a * b;
-            correcta = "D";
-            options = { "A": `$${simplificarFraccion(numRes + 2, denRes)}$`, "B": `$\\frac{1}{${a+b}}$`, "C": `$${simplificarFraccion(numRes, denRes + 1)}$`, "D": `$${simplificarFraccion(numRes, denRes)}$`, "E": `$${simplificarFraccion(numRes - 1, denRes)}$` };
+            const numRes = a * b - b - a;
+            const denRes = a * b;
+            correcta = 'D';
+            options = {
+              A: `$${simplificarFraccion(numRes + 2, denRes)}$`,
+              B: `$\\frac{1}{${a + b}}$`,
+              C: `$${simplificarFraccion(numRes, denRes + 1)}$`,
+              D: `$${simplificarFraccion(numRes, denRes)}$`,
+              E: `$${simplificarFraccion(numRes - 1, denRes)}$`,
+            };
           } else {
-            const num = rnd(5, 15); const den = rnd(2, 4);
+            const num = rnd(5, 15);
+            const den = rnd(2, 4);
             enunciado = `Convierte la fracción impropia a número mixto y suma su parte entera con su numerador: $\\frac{${num}}{${den}}$`;
-            const entero = Math.floor(num / den); const resto = num % den;
-            correcta = "A";
-            options = { "A": `$${entero + resto}$`, "B": `$${entero + resto + 1}$`, "C": `$${entero}$`, "D": `$${resto}$`, "E": `$${num - den}$` };
+            const entero = Math.floor(num / den);
+            const resto = num % den;
+            correcta = 'A';
+            options = {
+              A: `$${entero + resto}$`,
+              B: `$${entero + resto + 1}$`,
+              C: `$${entero}$`,
+              D: `$${resto}$`,
+              E: `$${num - den}$`,
+            };
           }
-        } 
-        else if (id.includes('intermedio')) {
+        } else if (id.includes('intermedio')) {
           if (variante === 1) {
-            const pares = [[3, 6, 6], [4, 12, 6], [2, 6, 3], [5, 20, 4]];
+            const pares = [
+              [3, 6, 6],
+              [4, 12, 6],
+              [2, 6, 3],
+              [5, 20, 4],
+            ];
             const par = pares[rnd(0, pares.length - 1)];
             enunciado = `Un caño "A" puede llenar un tanque vacío en $${par[0]}$ horas, y un desagüe "B" puede vaciar el mismo tanque en $${par[1]}$ horas. Si se abren ambos al mismo tiempo, ¿en cuántas horas se llenará el tanque?`;
-            correcta = "B";
-            options = { "A": `$${par[2] - 1}$`, "B": `$${par[2]}$`, "C": `$${par[2] + 2}$`, "D": `$${par[0] + par[1]}$`, "E": `$${par[2] + 1}$` };
+            correcta = 'B';
+            options = {
+              A: `$${par[2] - 1}$`,
+              B: `$${par[2]}$`,
+              C: `$${par[2] + 2}$`,
+              D: `$${par[0] + par[1]}$`,
+              E: `$${par[2] + 1}$`,
+            };
           } else if (variante === 2) {
-            const a = rnd(2, 4); const b = rnd(3, 6);
+            const a = rnd(2, 4);
+            const b = rnd(3, 6);
             enunciado = `${s1} puede ${tarea} en $${a}$ horas y ${s2} puede hacer lo mismo en $${b}$ horas. Si trabajan juntos, ¿qué fracción de la obra realizarán en 1 hora?`;
-            correcta = "E";
-            options = { "A": `$${simplificarFraccion(1, a + b)}$`, "B": `$${simplificarFraccion(a * b, a + b)}$`, "C": `$${simplificarFraccion(a, b)}$`, "D": `$${simplificarFraccion(2, a + b)}$`, "E": `$${simplificarFraccion(a + b, a * b)}$` };
+            correcta = 'E';
+            options = {
+              A: `$${simplificarFraccion(1, a + b)}$`,
+              B: `$${simplificarFraccion(a * b, a + b)}$`,
+              C: `$${simplificarFraccion(a, b)}$`,
+              D: `$${simplificarFraccion(2, a + b)}$`,
+              E: `$${simplificarFraccion(a + b, a * b)}$`,
+            };
           } else {
             const a = rnd(5, 12);
-            enunciado = `Halla la suma de lo que le falta a $\\frac{1}{${a}}$ para ser igual a la unidad, con lo que le sobra a $\\frac{${a+3}}{${a}}$ respecto a la unidad.`;
-            correcta = "A";
-            options = { "A": `$${simplificarFraccion(a + 2, a)}$`, "B": `$${simplificarFraccion(a + 1, a)}$`, "C": `$${simplificarFraccion(a + 3, a)}$`, "D": `$1$`, "E": `$\\frac{3}{${a}}$` };
+            enunciado = `Halla la suma de lo que le falta a $\\frac{1}{${a}}$ para ser igual a la unidad, con lo que le sobra a $\\frac{${a + 3}}{${a}}$ respecto a la unidad.`;
+            correcta = 'A';
+            options = {
+              A: `$${simplificarFraccion(a + 2, a)}$`,
+              B: `$${simplificarFraccion(a + 1, a)}$`,
+              C: `$${simplificarFraccion(a + 3, a)}$`,
+              D: `$1$`,
+              E: `$\\frac{3}{${a}}$`,
+            };
           }
-        } 
-        else if (id.includes('avanzado')) {
+        } else if (id.includes('avanzado')) {
           if (variante === 1) {
-            const a = rnd(1, 4); const b = rnd(1, 4); const c = rnd(2, 5);
+            const a = rnd(1, 4);
+            const b = rnd(1, 4);
+            const c = rnd(2, 5);
             enunciado = `Simplifica la siguiente fracción continua: $$ E = ${a} + \\frac{1}{${b} + \\frac{1}{${c}}} $$`;
-            const num = a * ((b * c) + 1) + c; const den = (b * c) + 1;
-            correcta = "D";
-            options = { "A": `$${simplificarFraccion(den, num)}$`, "B": `$${a + b + c}$`, "C": `$${simplificarFraccion(num + 1, den)}$`, "D": `$${simplificarFraccion(num, den)}$`, "E": `$${simplificarFraccion(num, den + 1)}$` };
+            const num = a * (b * c + 1) + c;
+            const den = b * c + 1;
+            correcta = 'D';
+            options = {
+              A: `$${simplificarFraccion(den, num)}$`,
+              B: `$${a + b + c}$`,
+              C: `$${simplificarFraccion(num + 1, den)}$`,
+              D: `$${simplificarFraccion(num, den)}$`,
+              E: `$${simplificarFraccion(num, den + 1)}$`,
+            };
           } else if (variante === 2) {
             // 🔥 FIX CRÍTICO: División entera obligatoria
-            const L = rnd(20, 50) * 12; 
+            const L = rnd(20, 50) * 12;
             enunciado = `${objeto} mide $${L}$ cm. $\\frac{1}{3}$ de su longitud está pintado de rojo, $\\frac{1}{4}$ de azul y el resto de blanco. ¿Cuántos centímetros están pintados de blanco?`;
             const blanco = Math.round((L * 5) / 12); // Entero exacto garantizado, cero floats.
-            correcta = "C";
-            options = { "A": `$${blanco + 10}$`, "B": `$${blanco - 20}$`, "C": `$${blanco}$`, "D": `$${Math.round(L / 2)}$`, "E": `$${blanco + 5}$` };
+            correcta = 'C';
+            options = {
+              A: `$${blanco + 10}$`,
+              B: `$${blanco - 20}$`,
+              C: `$${blanco}$`,
+              D: `$${Math.round(L / 2)}$`,
+              E: `$${blanco + 5}$`,
+            };
           } else {
-            const c = rnd(2, 5); const k = rnd(2, 5);
+            const c = rnd(2, 5);
+            const k = rnd(2, 5);
             enunciado = `Halla el valor en fracción de $X$ si: $$ \\frac{X}{2} + \\frac{X}{3} = ${k * 5} $$`;
-            const resp = k * 6; 
-            correcta = "B";
-            options = { "A": `$${resp - 6}$`, "B": `$${resp}$`, "C": `$${resp + 6}$`, "D": `$${k * 2}$`, "E": `$${resp + 3}$` };
+            const resp = k * 6;
+            correcta = 'B';
+            options = {
+              A: `$${resp - 6}$`,
+              B: `$${resp}$`,
+              C: `$${resp + 6}$`,
+              D: `$${k * 2}$`,
+              E: `$${resp + 3}$`,
+            };
           }
-        } 
-        else { 
+        } else {
           if (variante === 1) {
             const n = rnd(15, 30);
-            enunciado = `Calcula el límite de la serie: $$ S = \\frac{1}{1\\times 2} + \\frac{1}{2\\times 3} + \\dots + \\frac{1}{${n}\\times ${n+1}} $$`;
-            correcta = "A";
-            options = { "A": `$${simplificarFraccion(n, n + 1)}$`, "B": `$\\frac{1}{${n}}$`, "C": `$\\frac{${n+1}}{${n}}$`, "D": `$1$`, "E": `$\\frac{${n-1}}{${n}}$` };
+            enunciado = `Calcula el límite de la serie: $$ S = \\frac{1}{1\\times 2} + \\frac{1}{2\\times 3} + \\dots + \\frac{1}{${n}\\times ${n + 1}} $$`;
+            correcta = 'A';
+            options = {
+              A: `$${simplificarFraccion(n, n + 1)}$`,
+              B: `$\\frac{1}{${n}}$`,
+              C: `$\\frac{${n + 1}}{${n}}$`,
+              D: `$1$`,
+              E: `$\\frac{${n - 1}}{${n}}$`,
+            };
           } else if (variante === 2) {
-            const n = rnd(10, 20) * 2 + 1; 
-            enunciado = `Calcula el valor de la serie con salto: $$ M = \\frac{2}{1\\times 3} + \\frac{2}{3\\times 5} + \\dots + \\frac{2}{${n}\\times ${n+2}} $$`;
-            correcta = "D";
-            options = { "A": `$${simplificarFraccion(1, n+2)}$`, "B": `$${simplificarFraccion(n, n+2)}$`, "C": `$1$`, "D": `$${simplificarFraccion(n+1, n+2)}$`, "E": `$${simplificarFraccion(n+2, n+1)}$` };
+            const n = rnd(10, 20) * 2 + 1;
+            enunciado = `Calcula el valor de la serie con salto: $$ M = \\frac{2}{1\\times 3} + \\frac{2}{3\\times 5} + \\dots + \\frac{2}{${n}\\times ${n + 2}} $$`;
+            correcta = 'D';
+            options = {
+              A: `$${simplificarFraccion(1, n + 2)}$`,
+              B: `$${simplificarFraccion(n, n + 2)}$`,
+              C: `$1$`,
+              D: `$${simplificarFraccion(n + 1, n + 2)}$`,
+              E: `$${simplificarFraccion(n + 2, n + 1)}$`,
+            };
           } else {
             const n = rnd(5, 15);
-            enunciado = `Suma las inversas de los números triangulares: $$ T = \\frac{1}{3} + \\frac{1}{6} + \\frac{1}{10} + \\dots + \\frac{1}{\\frac{${n}(${n+1})}{2}} $$`;
-            const numRes = n - 1; const denRes = n + 1;
-            correcta = "E";
-            options = { "A": `$${simplificarFraccion(n, n+1)}$`, "B": `$1$`, "C": `$${simplificarFraccion(2, n+1)}$`, "D": `$${simplificarFraccion(n-2, n+1)}$`, "E": `$${simplificarFraccion(numRes, denRes)}$` };
+            enunciado = `Suma las inversas de los números triangulares: $$ T = \\frac{1}{3} + \\frac{1}{6} + \\frac{1}{10} + \\dots + \\frac{1}{\\frac{${n}(${n + 1})}{2}} $$`;
+            const numRes = n - 1;
+            const denRes = n + 1;
+            correcta = 'E';
+            options = {
+              A: `$${simplificarFraccion(n, n + 1)}$`,
+              B: `$1$`,
+              C: `$${simplificarFraccion(2, n + 1)}$`,
+              D: `$${simplificarFraccion(n - 2, n + 1)}$`,
+              E: `$${simplificarFraccion(numRes, denRes)}$`,
+            };
           }
         }
-        return { enunciadoSobreescrito: enunciado, opcionesSobreescritas: options, respuestaSobreescrita: correcta };
+        return {
+          enunciadoSobreescrito: enunciado,
+          opcionesSobreescritas: options,
+          respuestaSobreescrita: correcta,
+        };
       }
 
       // ---------------------------------------------------------
       // TEMA 2: MULTIPLICACIÓN Y DIVISIÓN EN Q
       // ---------------------------------------------------------
-      if (['arit_q_mul_conamat_basico', 'arit_q_mul_conamat_intermedio', 'arit_q_mul_conamat_avanzado', 'arit_q_mul_conamat_experto'].includes(id) || id.includes('multiplicacion_division_q')) {
-        let enunciado = '', correcta = '', options: any = {};
-        const variante = rnd(1, 3); 
+      if (
+        [
+          'arit_q_mul_conamat_basico',
+          'arit_q_mul_conamat_intermedio',
+          'arit_q_mul_conamat_avanzado',
+          'arit_q_mul_conamat_experto',
+        ].includes(id) ||
+        id.includes('multiplicacion_division_q')
+      ) {
+        let enunciado = '',
+          correcta = '',
+          options: any = {};
+        const variante = rnd(1, 3);
 
         if (id.includes('basico') || !id.includes('_')) {
           if (variante === 1) {
             const n = rnd(20, 80);
             enunciado = `Calcula el valor en fracción de $P$: $$ P = \\left(1 - \\frac{1}{2}\\right) \\cdot \\left(1 - \\frac{1}{3}\\right) \\dots \\left(1 - \\frac{1}{${n}}\\right) $$`;
-            correcta = "C";
-            options = { "A": `$\\frac{1}{${n-1}}$`, "B": `$\\frac{2}{${n}}$`, "C": `$${simplificarFraccion(1, n)}$`, "D": `$\\frac{1}{2}$`, "E": `$1$` };
+            correcta = 'C';
+            options = {
+              A: `$\\frac{1}{${n - 1}}$`,
+              B: `$\\frac{2}{${n}}$`,
+              C: `$${simplificarFraccion(1, n)}$`,
+              D: `$\\frac{1}{2}$`,
+              E: `$1$`,
+            };
           } else if (variante === 2) {
-            const k = rnd(10, 30); const total = k * 6; 
+            const k = rnd(10, 30);
+            const total = k * 6;
             enunciado = `¿Cuánto es exactamente la mitad de la tercera parte de $${total}$?`;
-            correcta = "A";
-            options = { "A": `$${k}$`, "B": `$${k*2}$`, "C": `$${k*3}$`, "D": `$${k+5}$`, "E": `$${k-2}$` };
+            correcta = 'A';
+            options = {
+              A: `$${k}$`,
+              B: `$${k * 2}$`,
+              C: `$${k * 3}$`,
+              D: `$${k + 5}$`,
+              E: `$${k - 2}$`,
+            };
           } else {
             const a = rnd(3, 7);
-            enunciado = `Efectúa y simplifica a fracción irreductible: $$ E = \\left( \\frac{${a}}{${a+1}} \\cdot \\frac{${a+1}}{${a+2}} \\cdot \\frac{${a+2}}{${a+3}} \\right) \\div \\frac{${a}}{${a+3}} $$`;
-            correcta = "D";
-            options = { "A": `$\\frac{1}{${a+3}}$`, "B": `$\\frac{${a}}{${a+3}}$`, "C": `$0$`, "D": `$1$`, "E": `$\\frac{1}{2}$` };
+            enunciado = `Efectúa y simplifica a fracción irreductible: $$ E = \\left( \\frac{${a}}{${a + 1}} \\cdot \\frac{${a + 1}}{${a + 2}} \\cdot \\frac{${a + 2}}{${a + 3}} \\right) \\div \\frac{${a}}{${a + 3}} $$`;
+            correcta = 'D';
+            options = {
+              A: `$\\frac{1}{${a + 3}}$`,
+              B: `$\\frac{${a}}{${a + 3}}$`,
+              C: `$0$`,
+              D: `$1$`,
+              E: `$\\frac{1}{2}$`,
+            };
           }
-        } 
-        else if (id.includes('intermedio')) {
+        } else if (id.includes('intermedio')) {
           if (variante === 1) {
-            const num = rnd(1, 3); const den = num + rnd(1, 2); 
+            const num = rnd(1, 3);
+            const den = num + rnd(1, 2);
             const h_final = rnd(2, 5) * Math.pow(num, 3);
-            const h_inicial = Math.round((h_final * Math.pow(den, 3)) / Math.pow(num, 3));
+            const h_inicial = Math.round(
+              (h_final * Math.pow(den, 3)) / Math.pow(num, 3),
+            );
             enunciado = `Una pelota se deja caer desde $${h_inicial}$ m. Si en cada rebote se eleva $\\frac{${num}}{${den}}$ de la altura anterior, ¿qué altura entera alcanza después del tercer rebote?`;
-            correcta = "E";
-            options = { "A": `$${h_final - 2}$`, "B": `$${Math.round(h_final * 1.5)}$`, "C": `$${h_final + 4}$`, "D": `$${h_final + 1}$`, "E": `$${h_final}$` };
+            correcta = 'E';
+            options = {
+              A: `$${h_final - 2}$`,
+              B: `$${Math.round(h_final * 1.5)}$`,
+              C: `$${h_final + 4}$`,
+              D: `$${h_final + 1}$`,
+              E: `$${h_final}$`,
+            };
           } else if (variante === 2) {
             // 🔥 FIX CRÍTICO: Matemáticas sin decimales
-            const vol = rnd(10, 30) * 8; 
+            const vol = rnd(10, 30) * 8;
             enunciado = `Un tanque de ${liquido} pierde $\\frac{1}{2}$ de su volumen cada hora. Si inicialmente tenía $${vol}$ litros, ¿cuántos litros se evaporaron exactamente EN la tercera hora?`;
-            const evaporado3 = Math.round(vol / 8); 
-            correcta = "B";
-            options = { "A": `$${evaporado3 * 2}$`, "B": `$${evaporado3}$`, "C": `$${Math.round(vol / 2)}$`, "D": `$${Math.round(evaporado3 / 2)}$`, "E": `$${vol - evaporado3}$` };
+            const evaporado3 = Math.round(vol / 8);
+            correcta = 'B';
+            options = {
+              A: `$${evaporado3 * 2}$`,
+              B: `$${evaporado3}$`,
+              C: `$${Math.round(vol / 2)}$`,
+              D: `$${Math.round(evaporado3 / 2)}$`,
+              E: `$${vol - evaporado3}$`,
+            };
           } else {
             const k = rnd(2, 5);
-            enunciado = `Halla un número entero sabiendo que sus $\\frac{2}{3}$ multiplicados por sus $\\frac{3}{4}$ dan como resultado $${k * k * 2}$.`; 
+            enunciado = `Halla un número entero sabiendo que sus $\\frac{2}{3}$ multiplicados por sus $\\frac{3}{4}$ dan como resultado $${k * k * 2}$.`;
             const resp = 2 * k;
-            correcta = "A";
-            options = { "A": `$${resp}$`, "B": `$${resp + 2}$`, "C": `$${resp * 2}$`, "D": `$${Math.round(resp / 2)}$`, "E": `$${resp + 1}$` };
+            correcta = 'A';
+            options = {
+              A: `$${resp}$`,
+              B: `$${resp + 2}$`,
+              C: `$${resp * 2}$`,
+              D: `$${Math.round(resp / 2)}$`,
+              E: `$${resp + 1}$`,
+            };
           }
-        } 
-        else if (id.includes('avanzado')) {
+        } else if (id.includes('avanzado')) {
           if (variante === 1) {
-            const a = rnd(3, 5); const b = rnd(3, 5); const k = rnd(2, 6);
+            const a = rnd(3, 5);
+            const b = rnd(3, 5);
+            const k = rnd(2, 6);
             const sobra = k * (a - 1) * (b - 1);
             const total = k * a * b; // Formula reducida directa para el total (entero)
             enunciado = `${s1} resuelve $\\frac{1}{${a}}$ de su tarea de olimpiadas. Luego, resuelve $\\frac{1}{${b}}$ **del resto**. Si aún le faltan $${sobra}$ ejercicios, ¿cuántos ejercicios tenía la tarea en total?`;
-            correcta = "B";
-            options = { "A": `$${total - 5}$`, "B": `$${total}$`, "C": `$${total + 10}$`, "D": `$${total + 5}$`, "E": `$${sobra * 2}$` };
+            correcta = 'B';
+            options = {
+              A: `$${total - 5}$`,
+              B: `$${total}$`,
+              C: `$${total + 10}$`,
+              D: `$${total + 5}$`,
+              E: `$${sobra * 2}$`,
+            };
           } else if (variante === 2) {
-            const a = rnd(2, 5); const b = a + rnd(1, 3); const num = rnd(10, 30);
+            const a = rnd(2, 5);
+            const b = a + rnd(1, 3);
+            const num = rnd(10, 30);
             enunciado = `${s2} se equivocó: en lugar de multiplicar un número por $\\frac{${a}}{${b}}$, lo dividió por $\\frac{${a}}{${b}}$, obteniendo como resultado $${num * b}$. ¿Cuál debió ser la fracción correcta resultante?`;
-            const x = num * a; 
-            correcta = "C";
-            options = { "A": `$${num}$`, "B": `$${num * a}$`, "C": `$${simplificarFraccion(x * a, b)}$`, "D": `$${x * b}$`, "E": `$${simplificarFraccion(x * b, a)}$` };
+            const x = num * a;
+            correcta = 'C';
+            options = {
+              A: `$${num}$`,
+              B: `$${num * a}$`,
+              C: `$${simplificarFraccion(x * a, b)}$`,
+              D: `$${x * b}$`,
+              E: `$${simplificarFraccion(x * b, a)}$`,
+            };
           } else {
             const a = rnd(3, 8);
-            enunciado = `¿Por qué fracción hay que multiplicar a $\\frac{${a}}{${a+2}}$ para que su valor no se altere si se le suma 5 a su numerador y 5 a su denominador?`;
-            const numRes = (a + 5) * (a + 2); const denRes = a * (a + 7);
-            correcta = "D";
-            options = { "A": `$1$`, "B": `$${simplificarFraccion(a+5, a+7)}$`, "C": `$${simplificarFraccion(denRes, numRes)}$`, "D": `$${simplificarFraccion(numRes, denRes)}$`, "E": `$\\frac{5}{${a}}$` };
+            enunciado = `¿Por qué fracción hay que multiplicar a $\\frac{${a}}{${a + 2}}$ para que su valor no se altere si se le suma 5 a su numerador y 5 a su denominador?`;
+            const numRes = (a + 5) * (a + 2);
+            const denRes = a * (a + 7);
+            correcta = 'D';
+            options = {
+              A: `$1$`,
+              B: `$${simplificarFraccion(a + 5, a + 7)}$`,
+              C: `$${simplificarFraccion(denRes, numRes)}$`,
+              D: `$${simplificarFraccion(numRes, denRes)}$`,
+              E: `$\\frac{5}{${a}}$`,
+            };
           }
-        } 
-        else { 
+        } else {
           if (variante === 1) {
-            const b = rnd(2, 5); const d = rnd(2, 5); const e = rnd(2, 5); const f = rnd(2, 5);
-            const a = rnd(2, 7); const c = rnd(2, 7);
+            const b = rnd(2, 5);
+            const d = rnd(2, 5);
+            const e = rnd(2, 5);
+            const f = rnd(2, 5);
+            const a = rnd(2, 7);
+            const c = rnd(2, 7);
             enunciado = `Halla la fracción irreductible aplicando la ley de extremos y medios: $$ M = \\frac{\\frac{${a}}{${b}}}{\\frac{${c}}{${d}}} \\times \\frac{\\frac{${c}}{${e}}}{\\frac{${a}}{${f}}} $$`;
-            correcta = "A";
-            options = { "A": `$${simplificarFraccion(d * f, b * e)}$`, "B": `$${simplificarFraccion(b * e, d * f)}$`, "C": `$${simplificarFraccion((d*f)+1, b*e)}$`, "D": `$1$`, "E": `$${simplificarFraccion(a * c, b * e)}$` };
+            correcta = 'A';
+            options = {
+              A: `$${simplificarFraccion(d * f, b * e)}$`,
+              B: `$${simplificarFraccion(b * e, d * f)}$`,
+              C: `$${simplificarFraccion(d * f + 1, b * e)}$`,
+              D: `$1$`,
+              E: `$${simplificarFraccion(a * c, b * e)}$`,
+            };
           } else if (variante === 2) {
             const n = rnd(10, 30);
             enunciado = `Calcula el valor límite en fracción de: $$ R = \\left(1 - \\frac{1}{2^2}\\right)\\left(1 - \\frac{1}{3^2}\\right)\\dots\\left(1 - \\frac{1}{${n}^2}\\right) $$`;
-            correcta = "E";
-            options = { "A": `$\\frac{1}{${n}}$`, "B": `$1$`, "C": `$\\frac{${n-1}}{2n}$`, "D": `$\\frac{${n}}{${n+1}}$`, "E": `$${simplificarFraccion(n + 1, 2 * n)}$` };
+            correcta = 'E';
+            options = {
+              A: `$\\frac{1}{${n}}$`,
+              B: `$1$`,
+              C: `$\\frac{${n - 1}}{2n}$`,
+              D: `$\\frac{${n}}{${n + 1}}$`,
+              E: `$${simplificarFraccion(n + 1, 2 * n)}$`,
+            };
           } else {
-            const a = rnd(2, 4); const b = rnd(3, 5); const c = rnd(2, 4);
-            enunciado = `Determina en fracción qué parte de los $\\frac{${a}}{${b}}$ de $\\frac{${b}}{${a+1}}$ son los $\\frac{${c}}{${c+1}}$ de $\\frac{${c+1}}{${c+2}}$.`;
-            const numRes = c * (a + 1); const denRes = a * (c + 2);
-            correcta = "B";
-            options = { "A": `$1$`, "B": `$${simplificarFraccion(numRes, denRes)}$`, "C": `$${simplificarFraccion(denRes, numRes)}$`, "D": `$${simplificarFraccion(a, c+2)}$`, "E": `$\\frac{1}{2}$` };
+            const a = rnd(2, 4);
+            const b = rnd(3, 5);
+            const c = rnd(2, 4);
+            enunciado = `Determina en fracción qué parte de los $\\frac{${a}}{${b}}$ de $\\frac{${b}}{${a + 1}}$ son los $\\frac{${c}}{${c + 1}}$ de $\\frac{${c + 1}}{${c + 2}}$.`;
+            const numRes = c * (a + 1);
+            const denRes = a * (c + 2);
+            correcta = 'B';
+            options = {
+              A: `$1$`,
+              B: `$${simplificarFraccion(numRes, denRes)}$`,
+              C: `$${simplificarFraccion(denRes, numRes)}$`,
+              D: `$${simplificarFraccion(a, c + 2)}$`,
+              E: `$\\frac{1}{2}$`,
+            };
           }
         }
 
-        return { enunciadoSobreescrito: enunciado, opcionesSobreescritas: options, respuestaSobreescrita: correcta };
+        return {
+          enunciadoSobreescrito: enunciado,
+          opcionesSobreescritas: options,
+          respuestaSobreescrita: correcta,
+        };
       }
     }
-     
 
-
-    
-    
     return null;
   }
-} 
+}

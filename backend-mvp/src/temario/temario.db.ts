@@ -179,15 +179,14 @@ export const TEMARIO_MAESTRO = {
     { nombre: "Figuras planas: Áreas y perímetros", tipo: "conamat", subtipos: ["area_triangulo", "area_rectangulo", "area_rombo", "area_trapecio", "area_paralelogramo"] },
     { nombre: "Área de regiones sombreadas", tipo: "conamat", subtipos: ["area_sombreada"] },
     { nombre: "Sólidos 3D: Prisma y Paralelepípedo", tipo: "conamat", subtipos: ["volumen_prisma", "volumen_prisma_triangular"] },
-    { 
-      nombre: "Sólidos Geométricos: Cubo y Prisma", 
-      tipo: "geometria", 
-      subtipos: ["cubo_conamat_area_volumen", "cubo_conamat_aristas", "cubo_grafico_volumen_basico", "cubo_grafico_area_intermedio"] 
-    },
+    { nombre: "Sólidos Geométricos: Cubo y Prisma", tipo: "geometria", subtipos: ["cubo_conamat_area_volumen", "cubo_conamat_aristas", "cubo_grafico_volumen_basico", "cubo_grafico_area_intermedio"] },
+    { nombre: "El Cono", tipo: "conamat", categoria: "GEOMETRIA", subtipos: ["cono_basico", "cono_basico_diametro", "cono_basico_areabase", "cono_inverso", "cono_equilatero", "cono_variacion", "cono_notable", "cono_texto_proporcional", "cono_texto_areas", "cono_algebraico", "cono_semejanza", "cono_desarrollo"] },
 
     // ESTADÍSTICA Y PROBABILIDAD
     { nombre: "Gráficos estadísticos (barras, poligonales, circulares)", tipo: "conamat", subtipos: ["grafico_barras", "grafico_barras_doble", "grafico_circular", "tabla_frecuencias", "pictograma"] },
     { nombre: "Sucesos numéricos probables e improbables", tipo: "conamat", subtipos: ["probabilidad_basica", "probabilidad_fraccion", "suceso_contrario", "extraccion_doble"] },
+     { nombre: "Términos Semejantes", tipo: "conamat", subtipos: ["reduccion_basica", "ecuacion_exponentes", "reduccion_avanzada", "sistema_ecuaciones"] },
+     { nombre: "Orden de Información", tipo: "conamat", subtipos: ["lineal_basico", "vertical_basico", "circular_basico", "matriz_basico", "lineal_intermedio", "crono_intermedio", "circular_intermedio", "matriz_intermedio", "lineal_avanzado", "vertical_avanzado", "circular_avanzado", "matriz_avanzado", "lineal_experto", "crono_experto", "circular_experto", "matriz_experto"] },
 
     // RAZONAMIENTO MATEMÁTICO
     { nombre: "Sucesiones numéricas y alfabéticas",tipo: "conamat", subtipos: ["sucesion_numerica", "sucesion_alfabetica","sucesion_alfanumerica", "sucesion_algebraica", "sucesion_intercalada", "sucesion_cuadratica"] },

@@ -391,7 +391,8 @@ export class ParametricGeneratorService {
         // 🔥 CIRUGÍA 2: GENERADOR INTELIGENTE DE ALTERNATIVAS CON LATEX Y LETRA VERDE
         let opcionesMap: Record<string, string> = {};
         const subtipo = plantilla.subtipo || '';
-        const resStr = String(respuestaFinal);
+        const unidadActual = valores.unidad || '';
+        const resStr = formatRespuesta(respuestaFinal, plantilla.formato_respuesta, unidadActual);
         let distractores: string[] = [];
 
         try {
@@ -428,7 +429,8 @@ export class ParametricGeneratorService {
             } else {
                 const num = Number(resStr);
                 if (!isNaN(num)) {
-                    const diff = (num > 20) ? 2 : 1;
+                    const diff = (num > 20) ? 4 : 2;
+                    const fmt = (n: number) => formatRespuesta(n, plantilla.formato_respuesta, unidadActual);
                     distractores = [String(num + diff), String(num - diff), String(num + diff * 2), String(num - diff * 2)];
                 }
             }
@@ -541,4 +543,30 @@ export class ParametricGeneratorService {
     // 3. Imprimimos el orden (1, 2, 3...) para que la UI lo respete
     return problemas.map((p, index) => ({ ...p, order: index + 1 }));
   }
+
+
+  
 }
+
+export const formatRespuesta = (respuesta: any, formato: any, unidad: string = 'u'): any => {
+  if (!formato) return respuesta;
+  
+  const sufijo = (formato.sufijo || '').replace('{unidad}', unidad);
+
+  // 🔥 CASO MAESTRO: Renderizado de Pi y LaTeX
+  if (formato.tipo === 'latex' || formato.tipo === 'expresion_pi') {
+    return `$${respuesta}${sufijo}$`; 
+  }
+
+  // if (formato.tipo === 'entero') {
+  //   return Math.round(respuesta);
+  // } else if (formato.tipo === 'decimal') {
+  //   return parseFloat(respuesta.toFixed(formato.decimales || 2));
+  // }
+
+  if (formato.tipo === 'entero') return Math.round(respuesta);
+  if (formato.tipo === 'decimal') return parseFloat(respuesta.toFixed(formato.decimales || 2));
+  
+  // ... resto de tu código de fracciones
+  return respuesta;
+};

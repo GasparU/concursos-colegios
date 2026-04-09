@@ -80,7 +80,7 @@ const ArcoSimple = ({
 };
 
 export const RenderizadorAngulos = ({ parametros }: { parametros: any }) => {
-  const { rays, x_value, vertex, total_label } = parametros;
+  const { rays, x_value } = parametros;
 
   if (!rays || !Array.isArray(rays) || rays.length === 0) return null;
 
@@ -225,7 +225,6 @@ export const RenderizadorAngulos = ({ parametros }: { parametros: any }) => {
           const rad = toRad(deg + rotacion);
           const tipX = ANGULOS_CONFIG.RADIO_RAYOS * Math.cos(rad);
           const tipY = ANGULOS_CONFIG.RADIO_RAYOS * Math.sin(rad);
-          const rotationDeg = deg + rotacion; // no se usa directamente
 
           return (
             <g key={`ray-${i}`}>

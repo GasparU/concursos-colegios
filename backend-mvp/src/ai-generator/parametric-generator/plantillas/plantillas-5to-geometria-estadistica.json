@@ -4242,6 +4242,170 @@
       "prefijo_opciones": "$A_T = ",
       "sufijo_opciones": " \\text{ u}^2$"
     }
+  },
+
+
+  {
+    "id": "geo_cono_basico_01",
+    "tema": "El Cono",
+    "subtipo": "cono_basico",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "Calcula el volumen del cono circular recto mostrado, si su radio mide ${r}{unidad}$ y su generatriz mide ${g}{unidad}$.",
+    "variables": { "k": { "type": "number", "min": 1, "max": 3, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
+    "relaciones": [ "r = 3 * k", "h = 4 * k", "g = 5 * k", "volumen = (r * r * h) / 3" ],
+    "incognita_directa": "volumen",
+    "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
+    "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 90 }
+  },
+  {
+    "id": "geo_cono_basico_02",
+    "tema": "El Cono",
+    "subtipo": "cono_basico_area",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "El diámetro de la base de un cono mide ${d}{unidad}$ y su altura mide ${h}{unidad}$. Calcula el área de su superficie lateral.",
+    "variables": { "k": { "type": "number", "min": 2, "max": 4, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
+    "relaciones": [ "r = 4 * k", "d = 8 * k", "h = 3 * k", "g = 5 * k", "area_lateral = r * g" ],
+    "incognita_directa": "area_lateral",
+    "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{2}" },
+    "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 90 }
+  },
+  {
+    "id": "geo_cono_basico_03",
+    "tema": "El Cono",
+    "subtipo": "cono_basico_areabase",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "enunciado": "La base de un cono tiene un área de ${area_base}\\pi {unidad}^{2}$. Si su generatriz mide ${g}{unidad}$, calcula el volumen del cono.",
+    "variables": { "k": { "type": "number", "min": 1, "max": 2, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
+    "relaciones": [ "r = 3 * k", "area_base = r * r", "h = 4 * k", "g = 5 * k", "volumen = (r * r * h) / 3" ],
+    "incognita_directa": "volumen",
+    "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
+    "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 120 }
+  },
+
+  
+  {
+    "id": "geo_cono_intermedio_01",
+    "tema": "El Cono",
+    "subtipo": "cono_inverso",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "Un cono de revolución tiene un volumen de ${volumen}\\pi {unidad}^{3}$. Si el radio de su base mide ${r}{unidad}$, calcula el área lateral del sólido.",
+    "variables": { "k": { "type": "number", "min": 1, "max": 2, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
+    "relaciones": [ "r = 5 * k", "h = 12 * k", "g = 13 * k", "volumen = (r * r * h) / 3", "area_lateral = r * g" ],
+    "incognita_directa": "area_lateral",
+    "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{2}" },
+    "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 150 }
+  },
+  {
+    "id": "geo_cono_intermedio_02",
+    "tema": "El Cono",
+    "subtipo": "cono_equilatero",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "En un cono equilátero, la generatriz mide ${g}{unidad}$. Calcula el volumen del sólido.",
+    "variables": { "k": { "type": "number", "min": 1, "max": 3, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
+    "relaciones": [ "r = 3 * k", "g = 6 * k", "h = 3 * k", "vol_coef = 9 * k * k * k" ],
+    "incognita_directa": "vol_coef",
+    "formato_respuesta": { "tipo": "latex", "sufijo": "\\sqrt{3}\\pi {unidad}^{3}" },
+    "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 150 }
+  },
+  {
+    "id": "geo_cono_intermedio_03",
+    "tema": "El Cono",
+    "subtipo": "cono_variacion",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "enunciado": "Si el radio de un cono se duplica y su altura se reduce a la mitad, ¿cuántas veces mayor es el nuevo volumen respecto al original?",
+    "variables": {},
+    "relaciones": ["k_val = 2"],
+    "incognita_directa": "k_val",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "visual_type": "none", "tiempo_estimado": 120 }
+  },
+
+
+  {
+    "id": "geo_cono_avanzado_01",
+    "tema": "El Cono",
+    "subtipo": "cono_notable",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "En un cono circular recto, la generatriz y el radio de la base forman un ángulo notable de $53^\\circ$. Si la altura mide ${h}{unidad}$, calcula el área lateral.",
+    "variables": { "k": { "type": "number", "min": 2, "max": 4, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
+    "relaciones": [ "r = 3 * k", "h = 4 * k", "g = 5 * k", "area_lateral = r * g" ],
+    "incognita_directa": "area_lateral",
+    "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{2}" },
+    "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 120 }
+  },
+  {
+    "id": "geo_cono_avanzado_02",
+    "tema": "El Cono",
+    "subtipo": "cono_texto_proporcional",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "El radio de la base y la altura de un cono están en relación de $3$ a $4$. Si su generatriz mide ${g}{unidad}$, halla su volumen.",
+    "variables": { "k": { "type": "number", "min": 2, "max": 5, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
+    "relaciones": [ "r = 3 * k", "h = 4 * k", "g = 5 * k", "volumen = (r * r * h) / 3" ],
+    "incognita_directa": "volumen",
+    "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
+    "metadata": { "visual_type": "none", "tiempo_estimado": 150 }
+  },
+  {
+    "id": "geo_cono_avanzado_03",
+    "tema": "El Cono",
+    "subtipo": "cono_texto_areas",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "enunciado": "El área lateral de un cono es el doble del área de su base. Si el radio mide ${r}{unidad}$, halla su volumen.",
+    "variables": { "k": { "type": "number", "min": 1, "max": 3, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
+    "relaciones": [ "r = 3 * k", "vol_coef = 9 * k * k * k" ],
+    "incognita_directa": "vol_coef",
+    "formato_respuesta": { "tipo": "latex", "sufijo": "\\sqrt{3}\\pi {unidad}^{3}" },
+    "metadata": { "visual_type": "none", "tiempo_estimado": 150 }
+  },
+
+
+  {
+    "id": "geo_cono_experto_01",
+    "tema": "El Cono",
+    "subtipo": "cono_algebraico",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "En el cono mostrado, su altura mide $15{unidad}$. Su radio mide $x$ y su generatriz mide $x + 9$. Calcula el volumen del sólido.",
+    "variables": { "unidad": { "type": "list", "values": ["u", "cm"] } },
+    "relaciones": [ "x = 8", "r = x", "h = 15", "volumen = (r * r * h) / 3" ],
+    "incognita_directa": "volumen",
+    "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
+    "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 180 }
+  },
+  {
+    "id": "geo_cono_experto_02",
+    "tema": "El Cono",
+    "subtipo": "cono_semejanza",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "Se tiene una copa cónica llena de agua hasta la mitad de su altura. Si el volumen del agua es ${v_agua}\\pi {unidad}^3$, calcula el volumen total de la copa.",
+    "variables": { "k": { "type": "number", "min": 2, "max": 10, "step": 2 }, "unidad": { "type": "list", "values": ["cm"] } },
+    "relaciones": [ "v_agua = k", "volumen_total = k * 8" ],
+    "incognita_directa": "volumen_total",
+    "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
+    "metadata": { "visual_type": "none", "tiempo_estimado": 180 }
+  },
+  {
+    "id": "geo_cono_experto_03",
+    "tema": "El Cono",
+    "subtipo": "cono_desarrollo",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "enunciado": "El desarrollo lateral de un cono es un sector circular de $216^\\circ$ cuyo radio mide ${g}{unidad}$. Calcula el volumen del cono.",
+    "variables": { "k": { "type": "number", "min": 1, "max": 3, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
+    "relaciones": [ "r = 3 * k", "h = 4 * k", "g = 5 * k", "volumen = (r * r * h) / 3" ],
+    "incognita_directa": "volumen",
+    "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
+    "metadata": { "visual_type": "none", "tiempo_estimado": 180 }
   }
 
 ]

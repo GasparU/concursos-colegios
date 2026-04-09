@@ -1,5 +1,5 @@
 // src/components/canvas/renderers/especializados/RenderizadorBisectrizAngulos.tsx
-import { Mafs, Line, Text, Point } from "mafs";
+import { Mafs, Line, Text} from "mafs";
 import { CONFIG_GEOMETRIA } from "./ConstantesVisuales";
 import { ArcoAngulo } from "./ArcoAngulo";
 

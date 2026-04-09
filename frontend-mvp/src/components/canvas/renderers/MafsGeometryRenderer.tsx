@@ -36,6 +36,7 @@ import { VennDiagram } from "./especializados/VennDiagram";
 import { RenderizadorCilindro } from "./especializados/RenderizadorCilindro";
 import { GraphicDistribution } from "./GraphicDistribution";
 import { RenderizadorFracciones } from "./especializados/RenderizadorFracciones";
+import { RenderizadorCono } from "./especializados/RenderizadorCono";
 
 export const MafsGeometryRenderer = (props: any) => {
   
@@ -77,6 +78,10 @@ export const MafsGeometryRenderer = (props: any) => {
       );
     case "paralelas_ecuaciones":
       return <RenderizadorParalelasEcuaciones parametros={parametros} />;
+
+    case "cono_3d":
+      return <RenderizadorCono parametros={parametros} />;
+
     case "rectangulo":
       return (
         <RenderizadorRectangulo

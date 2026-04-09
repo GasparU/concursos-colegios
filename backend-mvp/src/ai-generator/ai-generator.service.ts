@@ -174,6 +174,8 @@ export class AiGeneratorService {
 
     const esOperadores = topicLower.includes('operador');
 
+    const esLogicaOAlgebra = /orden|semejante|operador|razonamiento/i.test(topicLower);
+
     // 2. Arsenal de contextos creativos (Para que nunca se repita)
     const contextos = [
       'Chefs preparando banquetes o pasteles',
@@ -198,14 +200,27 @@ export class AiGeneratorService {
     Tema: "${topic}"
     Texto original: "${baseText}"
 
+    ${esLogicaOAlgebra ? `
+    🛡️ REGLA DE PROTECCIÓN DE LÓGICA/ÁLGEBRA:
+    - EL TEXTO ORIGINAL ES SAGRADO E INMUTABLE.
+    - PROHIBIDO resumir, omitir premisas o simplificar el planteamiento.
+    - Mantén todas las frases y condiciones intactas. Solo puedes mejorar la redacción sin quitar información.
+    - NO apliques la regla de brevedad de 2 líneas.
+    ` : ''}
+
     Tu misión es REESCRIBIR el texto siguiendo estas reglas según el MODO seleccionado:
 
-    ${
-      isSimulacro && !esGeometria
-        ? `
+    ${isSimulacro && !esGeometria && !esLogicaOAlgebra ? `
     🌟 MODO SIMULACRO (NARRATIVO):
     - Crea una historia breve basada en el contexto: "${contextoAleatorio}".
     - Adapta los personajes y acciones para que el problema parezca un reto de la vida real.
+    - ${esLogicaOAlgebra ? 'MANTÉN TODA LA ESTRUCTURA LÓGICA.' : 'Brevedad máxima.'}
+
+    REGLAS INQUEBRANTABLES:
+    1. ${esLogicaOAlgebra ? 'LONGITUD: La necesaria para no perder lógica.' : 'BREVEDAD: Máximo 2 líneas.'}
+    2. NÚMEROS Y VARIABLES INTACTOS.
+    3. FORMATO LATEX OBLIGATORIO: Todo símbolo o número entre $.
+    4. Devuelve ÚNICAMENTE el texto redactado.
     `
         : `
     ⚡ MODO ENTRENAMIENTO (DIRECTO):
@@ -488,16 +503,14 @@ export class AiGeneratorService {
         if (!systemPrompt)
           systemPrompt = new SystemMessage('Eres un profesor de matemáticas.');
 
-        const esComprensionLectora =
-          /^(?=.*lect)(?=.*comprensi)|^(?=.*texto)|^(?=.*jerarquia text)/i.test(
-            normalizedTopic,
-          );
+        
 
         const promptCuerpo = esLetras
           ? `Genera un reto de "${topic}" para ${grade} primaria.
              NIVEL: ${difficulty}. Escenario: "${escenarioAzar}".
 
              FORMATO OBLIGATORIO:
+             - Si es Ordenamiento, especifica claramente el entorno (Mesa circular, Edificio de X pisos, Fila de butacas, etc.).
              - question_markdown: Escribe PRIMERO la instrucción (ej: "Señala el término que no pertenece:") y DEBAJO los elementos de la serie.
              - REGLA DE ORO: Separa CADA palabra de la serie obligatoriamente con una COMA y un ESPACIO (ej: Marte, Júpiter, Saturno).
              - PROHIBIDO TERMINANTEMENTE incluir la lista de opciones (A, B, C, D, E) dentro de "question_markdown". Las opciones van EXCLUSIVAMENTE en el objeto "options".
@@ -552,6 +565,8 @@ export class AiGeneratorService {
         }
 
         const arithmeticKeywords = [
+          'edades', 
+          'razonamiento',
           'fracciones',
           'aritmética',
           'operaciones',
@@ -600,6 +615,9 @@ export class AiGeneratorService {
 
         const esAritmetica =
           arithmeticKeywords.some((keyword) => topicLower.includes(keyword)) ||
+          topicLower.includes('edades') || 
+          result.math_data?.type?.includes('edades') || 
+          result.math_data?.type === 'fraction_problem' ||
           result.math_data?.type === 'fraction_problem' ||
           result.math_data?.type === 'arithmetic_problem' ||
           result.math_data?.type === 'mcd_problem' ||
@@ -971,6 +989,16 @@ export class AiGeneratorService {
               if (opt.isCorrect) result.correct_answer = letter;
             }
           });
+
+          if (esAritmetica || esLetras) {
+          this.logger.log(`✅ RETORNO PREVENTIVO: Evitando GeometryFactory para ${topic}`);
+          result.visual_data = null; 
+          return {
+            success: true,
+            data: result,
+            provider: provider.providerName,
+          };
+        }
 
           return {
             success: true,
