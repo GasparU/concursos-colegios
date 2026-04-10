@@ -112,23 +112,37 @@ export default function ExamPlayerPage() {
   const question = exam.questions[currentIndex];
   // 🔥 DESANIDADO: Si la data viene como { visualData: { theme... } }, la sacamos de su caja
   const visual = (() => {
-    let raw = question.visualData || question.visual_data;
-    if (!raw) return null;
-    try {
-      let data = typeof raw === "string" ? JSON.parse(raw) : raw;
-      // Si detectamos la doble envoltura que mostró tu consola, la corregimos en el acto
-      if (data.visualData && (data.visualData.theme || data.visualData.type)) {
+  // 1. Tomamos la data venga de donde venga
+  let raw = question.visualData || question.visual_data;
+  if (!raw) return null;
+
+  try {
+    // 2. Parseamos si es string
+    let data = typeof raw === "string" ? JSON.parse(raw) : raw;
+
+    // 3. CASO 1: Viene anidado en data.visualData.visualData (Error común de doble envoltura)
+    if (data.visualData?.visualData) {
         return {
-          ...data.visualData,
-          difficultyColor: data.difficultyColor || "slate",
+            ...data.visualData.visualData,
+            difficultyColor: data.difficultyColor || "slate"
         };
-      }
-      return data;
-    } catch (e) {
-      console.error("Error parseando data visual:", e);
-      return null;
     }
-  })();
+
+    // 4. CASO 2: Viene anidado en data.visualData
+    if (data.visualData && (data.visualData.theme || data.visualData.type)) {
+      return {
+        ...data.visualData,
+        difficultyColor: data.difficultyColor || "slate",
+      };
+    }
+
+    // 5. CASO 3: Viene directo
+    return data;
+  } catch (e) {
+    console.error("Error parseando data visual:", e);
+    return null;
+  }
+})();
   const diffColor = visual?.difficultyColor || "slate";
 
   // 🔥 FUNCIÓN MAESTRA PARA GUARDAR TIEMPO (Acumulativa y sin 0s)
