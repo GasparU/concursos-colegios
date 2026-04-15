@@ -306,6 +306,7 @@ export class ParametricGeneratorService {
           if (sobreescrita !== undefined) {
             // 2. Si la encontramos, actualizamos la respuesta final del problema
             respuestaFinal = sobreescrita;
+            respuesta = sobreescrita;
 
             // 3. Limpiamos para no ensuciar el JSON que va al frontend
             if ((visualData as any).respuestaSobreescrita !== undefined) delete (visualData as any).respuestaSobreescrita;
@@ -389,10 +390,33 @@ export class ParametricGeneratorService {
         
         
         // 🔥 CIRUGÍA 2: GENERADOR INTELIGENTE DE ALTERNATIVAS CON LATEX Y LETRA VERDE
+
+    
         let opcionesMap: Record<string, string> = {};
         const subtipo = plantilla.subtipo || '';
-        const unidadActual = valores.unidad || '';
-        const resStr = formatRespuesta(respuestaFinal, plantilla.formato_respuesta, unidadActual);
+        const unidadActual = valores.unit || valores.unidad || 'u';
+
+        const numBase = typeof respuesta === 'number' ? respuesta : Number(respuesta);
+        const esValido = !isNaN(numBase) && respuesta !== null;
+
+        console.log("---------------- DEBUG GENERADOR ----------------");
+        console.log("1. Raw Respuesta (desde scope):", respuesta, "| Tipo:", typeof respuesta);
+        console.log("2. Formato Plantilla:", JSON.stringify(plantilla.formato_respuesta));
+        console.log("3. Unidad:", unidadActual);
+
+        // 1. Mantenemos el valor puro para cálculos de distractores
+        const valorAConvertir = (respuesta !== undefined && respuesta !== null) ? respuesta : respuestaFinal;
+        const valorPuro = Number(valorAConvertir);
+        const esRespuestaNumerica = !isNaN(valorPuro) && valorAConvertir !== null && typeof valorAConvertir !== 'boolean';
+
+        console.log("4. Resultado Conversión:", valorPuro);
+        console.log("5. ¿Es Numérica?:", esRespuestaNumerica);
+
+        // 2. Formateamos la respuesta CORRECTA (La que Ariana verá)
+        const resStr = formatRespuesta(respuesta, plantilla.formato_respuesta, unidadActual);
+        console.log(">>> [DEBUG] CORRECTA FORMATEADA:", resStr);
+
+
         let distractores: string[] = [];
 
         try {
@@ -426,24 +450,28 @@ export class ParametricGeneratorService {
                 // 🔥 Inyectamos los $ para los cuadrados
                 const fmtC = (a: number, b: number, c: number) => `$${a}n^2 ${b < 0 ? '-' : '+'} ${Math.abs(b)}n ${c < 0 ? '-' : '+'} ${Math.abs(c)}$`;
                 distractores = [fmtC(A+1, B, C), fmtC(A, B+1, C), fmtC(A, B, C+1), fmtC(A, B-1, C)];
-            } else {
-                const num = Number(resStr);
-                if (!isNaN(num)) {
-                    const diff = (num > 20) ? 4 : 2;
-                    const fmt = (n: number) => formatRespuesta(n, plantilla.formato_respuesta, unidadActual);
-                    distractores = [String(num + diff), String(num - diff), String(num + diff * 2), String(num - diff * 2)];
-                }
+            } else if (esValido) {
+                const diff = (numBase > 20) ? 4 : 2;
+                const fmt = (n: number) => formatRespuesta(n, plantilla.formato_respuesta, unidadActual);
+                distractores = [fmt(numBase + diff), fmt(numBase - diff), fmt(numBase + diff * 2), fmt(numBase - diff * 2)];
             }
         } catch(e) { console.error("Error generando distractores", e); }
 
         let opcionesArray = [...new Set([resStr, ...distractores])].filter(Boolean);
         let saltos = 1;
+
         while (opcionesArray.length < 5) {
-            if (!isNaN(Number(resStr))) opcionesArray.push(String(Number(resStr) + saltos * 3));
-            else opcionesArray.push(`N.A. ${saltos}`);
+            if (esValido) { // <-- Ahora sí usará el valor 'true' de arriba
+                const falso = numBase + (saltos * 3);
+                opcionesArray.push(formatRespuesta(falso, plantilla.formato_respuesta, unidadActual));
+            } else {
+                opcionesArray.push(`N.A. ${saltos}`);
+            }
             opcionesArray = [...new Set(opcionesArray)];
             saltos++;
         }
+        console.log("6. Opciones Finales:", opcionesArray);
+        console.log("-------------------------------------------------");
         opcionesArray = opcionesArray.slice(0, 5).sort(() => Math.random() - 0.5);
         const letras = ['A', 'B', 'C', 'D', 'E'];
         let letraCorrecta = 'A'; // Valor por defecto de seguridad
