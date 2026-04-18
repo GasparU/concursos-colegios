@@ -983,7 +983,9 @@
     "restricciones": ["base > altura", "x > 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["sistemas de ecuaciones", "área y perímetro"] }
+    "metadata": {
+      "habilidades": ["sistemas de ecuaciones", "área y perímetro"]
+    }
   },
   {
     "id": "geo_rombo_basico",
@@ -1086,7 +1088,9 @@
     "restricciones": [],
     "incognita_directa": "area",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["Teorema de Pitágoras", "deducción de diagonales"] }
+    "metadata": {
+      "habilidades": ["Teorema de Pitágoras", "deducción de diagonales"]
+    }
   },
   {
     "id": "geo_trapecio_basico",
@@ -1100,12 +1104,9 @@
     "variables": {
       "B": { "type": "number", "min": 5, "max": 20, "step": 1 },
       "b": { "type": "number", "min": 3, "max": 15, "step": 1 },
-      "k": { "type": "number", "min": 1, "max": 5, "step": 1 } 
+      "k": { "type": "number", "min": 1, "max": 5, "step": 1 }
     },
-    "relaciones": [
-      "h = k * 2", 
-      "area = ((B + b) * h) / 2"
-    ],
+    "relaciones": ["h = k * 2", "area = ((B + b) * h) / 2"],
     "restricciones": ["B > b", "area > 0"],
     "incognita_directa": "area",
     "incognitas_inversa": ["B", "b", "h"],
@@ -1127,11 +1128,7 @@
       "k": { "type": "number", "min": 1, "max": 4, "step": 1 },
       "x": { "type": "number", "min": 1, "max": 10, "step": 1 }
     },
-    "relaciones": [
-      "h = k * 2",
-      "B = a * x", 
-      "area = ((B + b) * h) / 2"
-    ],
+    "relaciones": ["h = k * 2", "B = a * x", "area = ((B + b) * h) / 2"],
     "restricciones": ["B > b", "x > 0", "area > 0"],
     "incognita_directa": "x",
     "incognitas_inversa": ["a", "b", "h", "x"],
@@ -1189,7 +1186,7 @@
       "B = a * x + b",
       "bmenor = c * x + d",
       "h_temp = e * x + f",
-      "h = h_temp + (h_temp % 2)", 
+      "h = h_temp + (h_temp % 2)",
       "area = ((B + bmenor) * h) / 2",
       "f = h - (e * x)"
     ],
@@ -1197,7 +1194,9 @@
     "incognita_directa": "x",
     "incognitas_inversa": ["a", "b", "c", "d", "e", "f", "x"],
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["área de trapecio", "ecuaciones cuadráticas"] }
+    "metadata": {
+      "habilidades": ["área de trapecio", "ecuaciones cuadráticas"]
+    }
   },
   {
     "id": "geo_paralelogramo_basico",
@@ -1250,7 +1249,9 @@
     "restricciones": ["B > L"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["ecuaciones lineales", "triángulos notables"] }
+    "metadata": {
+      "habilidades": ["ecuaciones lineales", "triángulos notables"]
+    }
   },
   {
     "id": "geo_paralelogramo_avanzado",
@@ -1280,7 +1281,9 @@
     "restricciones": ["B > L"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["sistemas de ecuaciones", "proyección de altura"] }
+    "metadata": {
+      "habilidades": ["sistemas de ecuaciones", "proyección de altura"]
+    }
   },
   {
     "id": "geo_paralelogramo_experto",
@@ -1327,16 +1330,16 @@
       "v1": { "type": "number", "min": 9, "max": 25, "step": 1 },
       "v2": { "type": "number", "min": 3, "max": 9, "step": 1 }
     },
-   "relaciones": [
-    "area_cuad = v1 * v1",
-    "A_0 = area_cuad - (v1 * v2 / 2)",
-    "A_1 = area_cuad - (v2 * v2)",
-    "A_2 = area_cuad - (v1 * v2 / 2)",
-    "A_3 = (v1 * v2) / 2",
-    "A_4 = area_cuad - (v1 * v2)",
-    "idx = tipo_fig + 1",
-    "respuesta = [A_0, A_1, A_2, A_3, A_4][idx]"
-  ],
+    "relaciones": [
+      "area_cuad = v1 * v1",
+      "A_0 = area_cuad - (v1 * v2 / 2)",
+      "A_1 = area_cuad - (v2 * v2)",
+      "A_2 = area_cuad - (v1 * v2 / 2)",
+      "A_3 = (v1 * v2) / 2",
+      "A_4 = area_cuad - (v1 * v2)",
+      "idx = tipo_fig + 1",
+      "respuesta = [A_0, A_1, A_2, A_3, A_4][idx]"
+    ],
     "restricciones": ["v1 > v2"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
@@ -1357,94 +1360,92 @@
       "r": { "type": "number", "min": 2, "max": 8, "step": 1 }
     },
     "relaciones": [
-    "pi = 3.14",
-    "A_0 = pi * (R*R - r*r)",
-    "A_1 = (R*R) - (pi * (R/2)*(R/2))",
-    "A_2 = (pi * (R*R - r*r)) / 2",
-    "A_3 = (pi * (R*R - r*r)) / 4",
-    "idx = tipo_fig + 1",
-    "respuesta = [A_0, A_1, A_2, A_3][idx]"
-  ],
+      "pi = 3.14",
+      "A_0 = pi * (R*R - r*r)",
+      "A_1 = (R*R) - (pi * (R/2)*(R/2))",
+      "A_2 = (pi * (R*R - r*r)) / 2",
+      "A_3 = (pi * (R*R - r*r)) / 4",
+      "idx = tipo_fig + 1",
+      "respuesta = [A_0, A_1, A_2, A_3][idx]"
+    ],
     "restricciones": ["R > r * 2"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
     "metadata": { "habilidades": ["anillos circulares", "uso de pi"] }
   },
- {
-  "id": "geo_area_sombreada_avanzado",
-  "tema": "geometria",
-  "subtipo": "area_sombreada",
-  "grado": "5to",
-  "etapa": ["final"],
-  "dificultad": ["avanzado"],
-  "bidireccional": true,
-  "enunciado": "Generado dinamicamente",
-  "variables": {
-    "tipo_fig": { "type": "number", "min": 0, "max": 7, "step": 1 },
-    "k": { "type": "number", "min": 1, "max": 3, "step": 1 },
-    "x": { "type": "number", "min": 3, "max": 7, "step": 1 }
-  },
-  "relaciones": [
-    "areas_base = [126, 120, 80, 210, 70, 104, 96, 150]",
-    "idx_f = tipo_fig + 1",
-    "respuesta = areas_base[idx_f] * k * k"
-  ],
-  "restricciones": ["x > 0"],
-  "incognita_directa": "respuesta",
-  "formato_respuesta": { "tipo": "decimal", "decimales": 0 },
-  "metadata": { "habilidades": ["triadas pitagóricas", "igualación de catetos"] }
-},
   {
-  "id": "geo_area_sombreada_experto",
-  "tema": "geometria",
-  "subtipo": "area_sombreada",
-  "grado": "5to",
-  "etapa": ["final"],
-  "dificultad": ["experto"],
-  "bidireccional": true,
-  "enunciado": "Generado dinamicamente",
-  "variables": {
-    "tipo_fig": { "type": "number", "min": 0, "max": 3, "step": 1 },
-    "num_aros": { "type": "number", "min": 2, "max": 5, "step": 1 },
-    "x": { "type": "number", "min": 2, "max": 5, "step": 1 },
-    "a": { "type": "number", "min": 2, "max": 4, "step": 1 },
-    "b": { "type": "number", "min": 1, "max": 4, "step": 1 }
+    "id": "geo_area_sombreada_avanzado",
+    "tema": "geometria",
+    "subtipo": "area_sombreada",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": true,
+    "enunciado": "Generado dinamicamente",
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 7, "step": 1 },
+      "k": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "x": { "type": "number", "min": 3, "max": 7, "step": 1 }
+    },
+    "relaciones": [
+      "areas_base = [126, 120, 80, 210, 70, 104, 96, 150]",
+      "idx_f = tipo_fig + 1",
+      "respuesta = areas_base[idx_f] * k * k"
+    ],
+    "restricciones": ["x > 0"],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "decimal", "decimales": 0 },
+    "metadata": {
+      "habilidades": ["triadas pitagóricas", "igualación de catetos"]
+    }
   },
-  "relaciones": [
-    "pi = 3.14",
-    "R = a * x + b",
-    "r = x + 1",
-    "area_un_aro = pi * (R*R - r*r)",
-    "area = area_un_aro * num_aros",
-    "respuesta = x"
-  ],
-  "restricciones": ["R > (r + 1)"],
-  "incognita_directa": "respuesta",
-  "formato_respuesta": { "tipo": "entero", "decimales": 0 },
-  "metadata": {
-    "habilidades": ["cadenas entrelazadas", "ecuaciones cuadráticas"],
-    "tiempo_estimado": 150,
-    "requiere_calculadora": true,
-    "fuente": "CONAMAT"
-  }
-},
-{
+  {
+    "id": "geo_area_sombreada_experto",
+    "tema": "geometria",
+    "subtipo": "area_sombreada",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
+    "bidireccional": true,
+    "enunciado": "Generado dinamicamente",
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 3, "step": 1 },
+      "num_aros": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "x": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "a": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "b": { "type": "number", "min": 1, "max": 4, "step": 1 }
+    },
+    "relaciones": [
+      "pi = 3.14",
+      "R = a * x + b",
+      "r = x + 1",
+      "area_un_aro = pi * (R*R - r*r)",
+      "area = area_un_aro * num_aros",
+      "respuesta = x"
+    ],
+    "restricciones": ["R > (r + 1)"],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero", "decimales": 0 },
+    "metadata": {
+      "habilidades": ["cadenas entrelazadas", "ecuaciones cuadráticas"],
+      "tiempo_estimado": 150,
+      "requiere_calculadora": true,
+      "fuente": "CONAMAT"
+    }
+  },
+  {
     "id": "geo_secantes_basico",
     "tema": "geometria",
     "subtipo": "rectas_secantes",
     "grado": "5to",
     "dificultad": ["basico"],
-    "variables": { 
-      "a": { "type": "number", "min": 2, "max": 4 }, 
+    "variables": {
+      "a": { "type": "number", "min": 2, "max": 4 },
       "c": { "type": "number", "min": 1, "max": 2 },
       "b": { "type": "number", "min": 10, "max": 20 },
       "x_res": { "type": "number", "min": 5, "max": 15 }
     },
-    "relaciones": [
-      "x = x_res",
-      "d = b + (a - c) * x",
-      "total = x"
-    ],
+    "relaciones": ["x = x_res", "d = b + (a - c) * x", "total = x"],
     "restricciones": ["d > 0"],
     "incognita_directa": "total",
     "formato_respuesta": { "tipo": "entero" }
@@ -1455,17 +1456,13 @@
     "subtipo": "rectas_secantes",
     "grado": "5to",
     "dificultad": ["intermedio"],
-    "variables": { 
-      "a": { "type": "number", "min": 2, "max": 4 }, 
+    "variables": {
+      "a": { "type": "number", "min": 2, "max": 4 },
       "c": { "type": "number", "min": 1, "max": 2 },
       "b": { "type": "number", "min": 5, "max": 15 },
       "x_res": { "type": "number", "min": 10, "max": 20 }
     },
-    "relaciones": [
-      "x = x_res",
-      "d = 180 - (a + c) * x - b",
-      "total = x"
-    ],
+    "relaciones": ["x = x_res", "d = 180 - (a + c) * x - b", "total = x"],
     "restricciones": ["d > 5"],
     "incognita_directa": "total",
     "formato_respuesta": { "tipo": "entero" }
@@ -1476,11 +1473,11 @@
     "subtipo": "rectas_secantes",
     "grado": "5to",
     "dificultad": ["avanzado"],
-    "variables": { 
-      "a": { "type": "number", "min": 2, "max": 3 }, 
-      "c": { "type": "number", "min": 2, "max": 3 }, 
+    "variables": {
+      "a": { "type": "number", "min": 2, "max": 3 },
+      "c": { "type": "number", "min": 2, "max": 3 },
       "e": { "type": "number", "min": 1, "max": 2 },
-      "b": { "type": "number", "min": 5, "max": 15 }, 
+      "b": { "type": "number", "min": 5, "max": 15 },
       "d": { "type": "number", "min": 5, "max": 15 },
       "f": { "type": "number", "min": 5, "max": 15 },
       "x_res": { "type": "number", "min": 10, "max": 15 }
@@ -1501,18 +1498,18 @@
     "subtipo": "rectas_secantes",
     "grado": "5to",
     "dificultad": ["experto"],
-    "variables": { 
-      "a": { "type": "number", "min": 3, "max": 4 }, 
-      "c": { "type": "number", "min": 2, "max": 3 }, 
+    "variables": {
+      "a": { "type": "number", "min": 3, "max": 4 },
+      "c": { "type": "number", "min": 2, "max": 3 },
       "e": { "type": "number", "min": 2, "max": 3 },
-      "b": { "type": "number", "min": 10, "max": 20 }, 
+      "b": { "type": "number", "min": 10, "max": 20 },
       "d": { "type": "number", "min": 10, "max": 20 },
       "ang_base": { "type": "number", "min": 70, "max": 110 },
       "x_res": { "type": "number", "min": 12, "max": 18 }
     },
     "relaciones": [
       "x = x_res",
-      "val_f = 360 - (a+c+e)*x - (b+d) - ang_base", 
+      "val_f = 360 - (a+c+e)*x - (b+d) - ang_base",
       "f = val_f",
       "total = x"
     ],
@@ -1652,11 +1649,26 @@
     "dificultad": ["basico"],
     "bidireccional": true,
     "enunciado": "El triángulo isósceles mostrado tiene un perímetro de {perimetro_real} cm. Sabiendo que los dos lados inclinados son iguales, calcula el valor de x.",
-    "variables": { "k": { "type": "number", "min": 1, "max": 4, "step": 1 }, "x": { "type": "number", "min": 3, "max": 8, "step": 1 }, "coef": { "type": "number", "min": 2, "max": 5, "step": 1 } },
-    "relaciones": [ "base_real = 10 * k", "lado_real = 13 * k", "perimetro_real = base_real + (lado_real * 2)", "cte = lado_real - (coef * x)", "respuesta = x" ],
+    "variables": {
+      "k": { "type": "number", "min": 1, "max": 4, "step": 1 },
+      "x": { "type": "number", "min": 3, "max": 8, "step": 1 },
+      "coef": { "type": "number", "min": 2, "max": 5, "step": 1 }
+    },
+    "relaciones": [
+      "base_real = 10 * k",
+      "lado_real = 13 * k",
+      "perimetro_real = base_real + (lado_real * 2)",
+      "cte = lado_real - (coef * x)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["ecuaciones lineales", "triángulos isósceles"], "tiempo_estimado": 60, "requiere_calculadora": false, "fuente": "CONAMAT Nivel 1" }
+    "metadata": {
+      "habilidades": ["ecuaciones lineales", "triángulos isósceles"],
+      "tiempo_estimado": 60,
+      "requiere_calculadora": false,
+      "fuente": "CONAMAT Nivel 1"
+    }
   },
   {
     "id": "geo_perim_equi_bas",
@@ -1667,11 +1679,25 @@
     "dificultad": ["basico"],
     "bidireccional": true,
     "enunciado": "El triángulo equilátero de la figura tiene un perímetro de {perimetro_real} cm. Halla el valor de x.",
-    "variables": { "k": { "type": "number", "min": 2, "max": 6, "step": 1 }, "x": { "type": "number", "min": 2, "max": 7, "step": 1 }, "coef": { "type": "number", "min": 2, "max": 4, "step": 1 } },
-    "relaciones": [ "lado_real = 10 * k", "perimetro_real = lado_real * 3", "cte = lado_real - (coef * x)", "respuesta = x" ],
+    "variables": {
+      "k": { "type": "number", "min": 2, "max": 6, "step": 1 },
+      "x": { "type": "number", "min": 2, "max": 7, "step": 1 },
+      "coef": { "type": "number", "min": 2, "max": 4, "step": 1 }
+    },
+    "relaciones": [
+      "lado_real = 10 * k",
+      "perimetro_real = lado_real * 3",
+      "cte = lado_real - (coef * x)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["polígonos regulares", "ecuaciones"], "tiempo_estimado": 60, "requiere_calculadora": false, "fuente": "CONAMAT Nivel 1" }
+    "metadata": {
+      "habilidades": ["polígonos regulares", "ecuaciones"],
+      "tiempo_estimado": 60,
+      "requiere_calculadora": false,
+      "fuente": "CONAMAT Nivel 1"
+    }
   },
   {
     "id": "geo_perim_rombo_bas",
@@ -1682,11 +1708,25 @@
     "dificultad": ["basico"],
     "bidireccional": true,
     "enunciado": "El perímetro del rombo mostrado es {perimetro_real} cm. Deduce la medida de sus lados y calcula el valor de x.",
-    "variables": { "k": { "type": "number", "min": 2, "max": 5, "step": 1 }, "x": { "type": "number", "min": 4, "max": 9, "step": 1 }, "coef": { "type": "number", "min": 2, "max": 3, "step": 1 } },
-    "relaciones": [ "lado_real = 5 * k", "perimetro_real = lado_real * 4", "cte = lado_real - (coef * x)", "respuesta = x" ],
+    "variables": {
+      "k": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "x": { "type": "number", "min": 4, "max": 9, "step": 1 },
+      "coef": { "type": "number", "min": 2, "max": 3, "step": 1 }
+    },
+    "relaciones": [
+      "lado_real = 5 * k",
+      "perimetro_real = lado_real * 4",
+      "cte = lado_real - (coef * x)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["propiedades del rombo", "álgebra básica"], "tiempo_estimado": 60, "requiere_calculadora": false, "fuente": "Olimpiada Regional" }
+    "metadata": {
+      "habilidades": ["propiedades del rombo", "álgebra básica"],
+      "tiempo_estimado": 60,
+      "requiere_calculadora": false,
+      "fuente": "Olimpiada Regional"
+    }
   },
   {
     "id": "geo_perim_escaleno_bas",
@@ -1697,27 +1737,49 @@
     "dificultad": ["basico"],
     "bidireccional": true,
     "enunciado": "En el triángulo rectángulo, el perímetro total es {perimetro_real} cm. Utiliza la expresión de la hipotenusa para hallar x.",
-    "variables": { "k": { "type": "number", "min": 2, "max": 5, "step": 1 }, "x": { "type": "number", "min": 2, "max": 6, "step": 1 }, "coef": { "type": "number", "min": 2, "max": 4, "step": 1 } },
-    "relaciones": [ "c1 = 3 * k", "c2 = 4 * k", "hip = 5 * k", "perimetro_real = c1 + c2 + hip", "cte = hip - (coef * x)", "respuesta = x" ],
+    "variables": {
+      "k": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "x": { "type": "number", "min": 2, "max": 6, "step": 1 },
+      "coef": { "type": "number", "min": 2, "max": 4, "step": 1 }
+    },
+    "relaciones": [
+      "c1 = 3 * k",
+      "c2 = 4 * k",
+      "hip = 5 * k",
+      "perimetro_real = c1 + c2 + hip",
+      "cte = hip - (coef * x)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["suma de contornos", "ecuaciones lineales"], "tiempo_estimado": 60, "requiere_calculadora": false, "fuente": "CONAMAT Nivel 1" }
+    "metadata": {
+      "habilidades": ["suma de contornos", "ecuaciones lineales"],
+      "tiempo_estimado": 60,
+      "requiere_calculadora": false,
+      "fuente": "CONAMAT Nivel 1"
+    }
   },
   {
-  "id": "geo_perim_casita_int",
-  "tema": "geometria",
-  "subtipo": "triangulo_perimetro",
-  "grado": "5to",
-  "etapa": ["clasificatoria", "final"],
-  "dificultad": ["intermedio"],
-  "bidireccional": true,
-  "enunciado": "La figura es una casa formada por un rectángulo y un techo triangular. La altura punteada del techo mide {h_techo} cm y la base del rectángulo mide {b_rect} cm. Deduce los lados inclinados usando el Teorema de Pitágoras y calcula el perímetro del contorno exterior.",
-  "variables": { "k": { "type": "number", "min": 2, "max": 10, "step": 1 } },
-  "relaciones": [ "b_rect = 10 * k", "h_rect = 6 * k", "h_techo = 12 * k", "lado_techo = 13 * k", "respuesta = b_rect + (h_rect * 2) + (lado_techo * 2)" ],
-  "incognita_directa": "respuesta",
-  "formato_respuesta": { "tipo": "entero" },
-  "metadata": { "habilidades": ["Pitágoras", "figuras compuestas"] }
-},
+    "id": "geo_perim_casita_int",
+    "tema": "geometria",
+    "subtipo": "triangulo_perimetro",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
+    "bidireccional": true,
+    "enunciado": "La figura es una casa formada por un rectángulo y un techo triangular. La altura punteada del techo mide {h_techo} cm y la base del rectángulo mide {b_rect} cm. Deduce los lados inclinados usando el Teorema de Pitágoras y calcula el perímetro del contorno exterior.",
+    "variables": { "k": { "type": "number", "min": 2, "max": 10, "step": 1 } },
+    "relaciones": [
+      "b_rect = 10 * k",
+      "h_rect = 6 * k",
+      "h_techo = 12 * k",
+      "lado_techo = 13 * k",
+      "respuesta = b_rect + (h_rect * 2) + (lado_techo * 2)"
+    ],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["Pitágoras", "figuras compuestas"] }
+  },
   {
     "id": "geo_perim_flecha_int",
     "tema": "geometria",
@@ -1728,10 +1790,21 @@
     "bidireccional": true,
     "enunciado": "La flecha está formada por un rectángulo y una punta triangular. La punta sobresale {saliente} cm a la derecha de la base. Calcula el perímetro total de la figura.",
     "variables": { "k": { "type": "number", "min": 2, "max": 5, "step": 1 } },
-    "relaciones": [ "b_rect = 10 * k", "h_rect = 6 * k", "saliente = 4 * k", "lado_punta = 5 * k", "respuesta = (b_rect * 2) + h_rect + (lado_punta * 2)" ],
+    "relaciones": [
+      "b_rect = 10 * k",
+      "h_rect = 6 * k",
+      "saliente = 4 * k",
+      "lado_punta = 5 * k",
+      "respuesta = (b_rect * 2) + h_rect + (lado_punta * 2)"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["Pitágoras", "visión espacial"], "tiempo_estimado": 90, "requiere_calculadora": false, "fuente": "Olimpiada Regional" }
+    "metadata": {
+      "habilidades": ["Pitágoras", "visión espacial"],
+      "tiempo_estimado": 90,
+      "requiere_calculadora": false,
+      "fuente": "Olimpiada Regional"
+    }
   },
   {
     "id": "geo_perim_trap_rect_int",
@@ -1743,39 +1816,60 @@
     "bidireccional": true,
     "enunciado": "En el trapecio rectángulo, se trazó la altura punteada. Usa los datos para deducir el lado inclinado y calcula el perímetro total del trapecio.",
     "variables": { "k": { "type": "number", "min": 1, "max": 4, "step": 1 } },
-    "relaciones": [ "b_sup = 10 * k", "b_inf = 15 * k", "h = 12 * k", "lado_oblicuo = 13 * k", "respuesta = b_sup + b_inf + h + lado_oblicuo" ],
+    "relaciones": [
+      "b_sup = 10 * k",
+      "b_inf = 15 * k",
+      "h = 12 * k",
+      "lado_oblicuo = 13 * k",
+      "respuesta = b_sup + b_inf + h + lado_oblicuo"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["proyecciones ortogonales", "Pitágoras"], "tiempo_estimado": 90, "requiere_calculadora": false, "fuente": "Libro de Retos" }
+    "metadata": {
+      "habilidades": ["proyecciones ortogonales", "Pitágoras"],
+      "tiempo_estimado": 90,
+      "requiere_calculadora": false,
+      "fuente": "Libro de Retos"
+    }
   },
   {
-  "id": "geo_perim_cruz_int",
-  "tema": "geometria",
-  "subtipo": "triangulo_perimetro",
-  "grado": "5to",
-  "etapa": ["clasificatoria", "final"],
-  "dificultad": ["intermedio"],
-  "bidireccional": true,
-  "enunciado": "La figura en forma de cruz tiene todos sus ángulos rectos (90°). Usa el método de traslación de lados hacia el perímetro punteado para deducir el perímetro total. (Considera la medida horizontal total como {ancho} cm).",
-  "variables": { "k": { "type": "number", "min": 3, "max": 15, "step": 1 } },
-  "relaciones": [ "ancho = 16 * k", "alto = 16 * k", "respuesta = (ancho * 2) + (alto * 2)" ],
-  "incognita_directa": "respuesta",
-  "formato_respuesta": { "tipo": "entero" }
-},{
-  "id": "geo_perim_romboide_30_avz",
-  "tema": "geometria",
-  "subtipo": "triangulo_perimetro",
-  "grado": "5to",
-  "etapa": ["final"],
-  "dificultad": ["avanzado"],
-  "bidireccional": true,
-  "enunciado": "En el romboide mostrado, la altura es h = {h} cm y el ángulo agudo es de 30°. Si la base mide {base} cm, deduce el lado inclinado usando las proporciones de 30°/60° y calcula el perímetro total.",
-  "variables": { "k": { "type": "number", "min": 2, "max": 12, "step": 1 } },
-  "relaciones": [ "h = 5 * k", "base = 18 * k", "lado_oblicuo = 10 * k", "respuesta = (base * 2) + (lado_oblicuo * 2)" ],
-  "incognita_directa": "respuesta",
-  "formato_respuesta": { "tipo": "entero" },
-  "metadata": { "habilidades": ["triángulo notable 30° y 60°"] }
-},
+    "id": "geo_perim_cruz_int",
+    "tema": "geometria",
+    "subtipo": "triangulo_perimetro",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
+    "bidireccional": true,
+    "enunciado": "La figura en forma de cruz tiene todos sus ángulos rectos (90°). Usa el método de traslación de lados hacia el perímetro punteado para deducir el perímetro total. (Considera la medida horizontal total como {ancho} cm).",
+    "variables": { "k": { "type": "number", "min": 3, "max": 15, "step": 1 } },
+    "relaciones": [
+      "ancho = 16 * k",
+      "alto = 16 * k",
+      "respuesta = (ancho * 2) + (alto * 2)"
+    ],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
+    "id": "geo_perim_romboide_30_avz",
+    "tema": "geometria",
+    "subtipo": "triangulo_perimetro",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": true,
+    "enunciado": "En el romboide mostrado, la altura es h = {h} cm y el ángulo agudo es de 30°. Si la base mide {base} cm, deduce el lado inclinado usando las proporciones de 30°/60° y calcula el perímetro total.",
+    "variables": { "k": { "type": "number", "min": 2, "max": 12, "step": 1 } },
+    "relaciones": [
+      "h = 5 * k",
+      "base = 18 * k",
+      "lado_oblicuo = 10 * k",
+      "respuesta = (base * 2) + (lado_oblicuo * 2)"
+    ],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" },
+    "metadata": { "habilidades": ["triángulo notable 30° y 60°"] }
+  },
   {
     "id": "geo_perim_reloj_avz",
     "tema": "geometria",
@@ -1786,10 +1880,20 @@
     "bidireccional": true,
     "enunciado": "Las bases superior e inferior del reloj de arena son paralelas. Utiliza el ángulo notable y la altura central para deducir las medidas ocultas y calcular el perímetro del contorno exterior.",
     "variables": { "k": { "type": "number", "min": 1, "max": 3, "step": 1 } },
-    "relaciones": [ "h_mitad = 12 * k", "b_total = 32 * k", "lado_tri = 20 * k", "respuesta = (b_total * 2) + (lado_tri * 4)" ],
+    "relaciones": [
+      "h_mitad = 12 * k",
+      "b_total = 32 * k",
+      "lado_tri = 20 * k",
+      "respuesta = (b_total * 2) + (lado_tri * 4)"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["triángulos notables 37°", "semejanza"], "tiempo_estimado": 120, "requiere_calculadora": false, "fuente": "CONAMAT Final" }
+    "metadata": {
+      "habilidades": ["triángulos notables 37°", "semejanza"],
+      "tiempo_estimado": 120,
+      "requiere_calculadora": false,
+      "fuente": "CONAMAT Final"
+    }
   },
   {
     "id": "geo_perim_trap_isosc_avz",
@@ -1801,38 +1905,49 @@
     "bidireccional": true,
     "enunciado": "La figura es un trapecio isósceles. Deduce las bases y lados inclinados utilizando la altura punteada y el ángulo de 53°. Calcula su perímetro.",
     "variables": { "k": { "type": "number", "min": 2, "max": 4, "step": 1 } },
-    "relaciones": [ "h = 12 * k", "b_sup = 10 * k", "b_inf = 28 * k", "lado = 15 * k", "respuesta = b_sup + b_inf + (lado * 2)" ],
+    "relaciones": [
+      "h = 12 * k",
+      "b_sup = 10 * k",
+      "b_inf = 28 * k",
+      "lado = 15 * k",
+      "respuesta = b_sup + b_inf + (lado * 2)"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["triángulos notables 53°", "trazos auxiliares"], "tiempo_estimado": 120, "requiere_calculadora": false, "fuente": "Selectivo Nacional" }
+    "metadata": {
+      "habilidades": ["triángulos notables 53°", "trazos auxiliares"],
+      "tiempo_estimado": 120,
+      "requiere_calculadora": false,
+      "fuente": "Selectivo Nacional"
+    }
   },
   {
-  "id": "geo_perim_paralelogramo_avz",
-  "tema": "geometria",
-  "subtipo": "triangulo_perimetro",
-  "grado": "5to",
-  "etapa": ["final"],
-  "dificultad": ["avanzado"],
-  "bidireccional": true,
-  "enunciado": "En el paralelogramo se ha trazado la altura h = {h} cm relativa a la base de {base} cm. Usa el ángulo de 45° para deducir el lado oblicuo y calcula el perímetro total. (Dato: Usa √2 = 1.41).",
-  "variables": { 
-    "k": { "type": "number", "min": 2, "max": 10, "step": 1 } 
+    "id": "geo_perim_paralelogramo_avz",
+    "tema": "geometria",
+    "subtipo": "triangulo_perimetro",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
+    "bidireccional": true,
+    "enunciado": "En el paralelogramo se ha trazado la altura h = {h} cm relativa a la base de {base} cm. Usa el ángulo de 45° para deducir el lado oblicuo y calcula el perímetro total. (Dato: Usa √2 = 1.41).",
+    "variables": {
+      "k": { "type": "number", "min": 2, "max": 10, "step": 1 }
+    },
+    "relaciones": [
+      "h = 10 * k",
+      "base = 25 * k",
+      "lado_oblicuo = h * 1.41",
+      "respuesta = (base * 2) + (lado_oblicuo * 2)"
+    ],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
+    "metadata": {
+      "habilidades": ["triángulos notables 45°", "operaciones con decimales"],
+      "tiempo_estimado": 120,
+      "requiere_calculadora": true,
+      "fuente": "Olimpiada Regional"
+    }
   },
-  "relaciones": [ 
-    "h = 10 * k", 
-    "base = 25 * k", 
-    "lado_oblicuo = h * 1.41", 
-    "respuesta = (base * 2) + (lado_oblicuo * 2)" 
-  ],
-  "incognita_directa": "respuesta",
-  "formato_respuesta": { "tipo": "decimal", "decimales": 2 },
-  "metadata": { 
-    "habilidades": ["triángulos notables 45°", "operaciones con decimales"], 
-    "tiempo_estimado": 120, 
-    "requiere_calculadora": true, 
-    "fuente": "Olimpiada Regional" 
-  }
-},
   {
     "id": "geo_perim_escudo_avz",
     "tema": "geometria",
@@ -1843,10 +1958,20 @@
     "bidireccional": true,
     "enunciado": "Calcula el perímetro TOTAL de la figura (suma el contorno del triángulo exterior más el borde del rombo blanco interior).",
     "variables": { "k": { "type": "number", "min": 1, "max": 2, "step": 1 } },
-    "relaciones": [ "base_tri = 16 * k", "lado_tri = 17 * k", "lado_rombo = 5 * k", "respuesta = base_tri + (lado_tri * 2) + (lado_rombo * 4)" ],
+    "relaciones": [
+      "base_tri = 16 * k",
+      "lado_tri = 17 * k",
+      "lado_rombo = 5 * k",
+      "respuesta = base_tri + (lado_tri * 2) + (lado_rombo * 4)"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["fronteras múltiples", "triadas 8-15-17 y 3-4-5"], "tiempo_estimado": 120, "requiere_calculadora": false, "fuente": "CONAMAT Final" }
+    "metadata": {
+      "habilidades": ["fronteras múltiples", "triadas 8-15-17 y 3-4-5"],
+      "tiempo_estimado": 120,
+      "requiere_calculadora": false,
+      "fuente": "CONAMAT Final"
+    }
   },
   {
     "id": "geo_perim_ninja_exp",
@@ -1857,11 +1982,25 @@
     "dificultad": ["experto"],
     "bidireccional": true,
     "enunciado": "La 'Estrella Ninja' tiene 8 lados externos de igual longitud. Calcula primero su perímetro numérico y luego halla 'x' sabiendo que el perímetro equivale a la expresión algebraica mostrada.",
-    "variables": { "k": { "type": "number", "min": 2, "max": 4, "step": 1 }, "x": { "type": "number", "min": 5, "max": 9, "step": 1 }, "a": { "type": "number", "min": 2, "max": 3, "step": 1 } },
-    "relaciones": [ "lado_estrella = 5 * k", "perimetro_real = lado_estrella * 8", "b_cte = perimetro_real - (a * x * x)", "respuesta = x" ],
+    "variables": {
+      "k": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "x": { "type": "number", "min": 5, "max": 9, "step": 1 },
+      "a": { "type": "number", "min": 2, "max": 3, "step": 1 }
+    },
+    "relaciones": [
+      "lado_estrella = 5 * k",
+      "perimetro_real = lado_estrella * 8",
+      "b_cte = perimetro_real - (a * x * x)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["ecuaciones cuadráticas", "polígonos estrellados"], "tiempo_estimado": 180, "requiere_calculadora": false, "fuente": "Selectivo Internacional" }
+    "metadata": {
+      "habilidades": ["ecuaciones cuadráticas", "polígonos estrellados"],
+      "tiempo_estimado": 180,
+      "requiere_calculadora": false,
+      "fuente": "Selectivo Internacional"
+    }
   },
   {
     "id": "geo_perim_cometa_exp",
@@ -1872,11 +2011,29 @@
     "dificultad": ["experto"],
     "bidireccional": true,
     "enunciado": "La 'cometa' está formada por dos triángulos isósceles unidos por su base. Deduce los lados usando las diagonales ortogonales. Si su perímetro total es igual al polinomio mostrado, halla el valor de 'x'.",
-    "variables": { "k": { "type": "number", "min": 1, "max": 2, "step": 1 }, "x": { "type": "number", "min": 4, "max": 7, "step": 1 }, "a": { "type": "number", "min": 2, "max": 5, "step": 1 } },
-    "relaciones": [ "lado_mayor = 30 * k", "lado_menor = 25 * k", "perimetro_real = (lado_mayor * 2) + (lado_menor * 2)", "b_cte = perimetro_real - (a * x * x)", "respuesta = x" ],
+    "variables": {
+      "k": { "type": "number", "min": 1, "max": 2, "step": 1 },
+      "x": { "type": "number", "min": 4, "max": 7, "step": 1 },
+      "a": { "type": "number", "min": 2, "max": 5, "step": 1 }
+    },
+    "relaciones": [
+      "lado_mayor = 30 * k",
+      "lado_menor = 25 * k",
+      "perimetro_real = (lado_mayor * 2) + (lado_menor * 2)",
+      "b_cte = perimetro_real - (a * x * x)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["doble Pitágoras (7-24-25, 18-24-30)", "álgebra avanzada"], "tiempo_estimado": 180, "requiere_calculadora": false, "fuente": "CONAMAT Final" }
+    "metadata": {
+      "habilidades": [
+        "doble Pitágoras (7-24-25, 18-24-30)",
+        "álgebra avanzada"
+      ],
+      "tiempo_estimado": 180,
+      "requiere_calculadora": false,
+      "fuente": "CONAMAT Final"
+    }
   },
   {
     "id": "geo_perim_corona_tri_exp",
@@ -1887,27 +2044,53 @@
     "dificultad": ["experto"],
     "bidireccional": true,
     "enunciado": "Calcula el perímetro total (exterior más el hueco blanco interior) de la corona triangular formada por dos triángulos equiláteros. Luego, halla 'x' sabiendo que dicho perímetro es igual a la expresión indicada.",
-    "variables": { "k": { "type": "number", "min": 1, "max": 3, "step": 1 }, "x": { "type": "number", "min": 3, "max": 8, "step": 1 }, "a": { "type": "number", "min": 2, "max": 4, "step": 1 } },
-    "relaciones": [ "lado_ext = 24 * k", "lado_int = 12 * k", "perimetro_real = (lado_ext * 3) + (lado_int * 3)", "b_cte = perimetro_real - (a * x * x)", "respuesta = x" ],
+    "variables": {
+      "k": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "x": { "type": "number", "min": 3, "max": 8, "step": 1 },
+      "a": { "type": "number", "min": 2, "max": 4, "step": 1 }
+    },
+    "relaciones": [
+      "lado_ext = 24 * k",
+      "lado_int = 12 * k",
+      "perimetro_real = (lado_ext * 3) + (lado_int * 3)",
+      "b_cte = perimetro_real - (a * x * x)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["perímetros concéntricos", "ecuaciones no lineales"], "tiempo_estimado": 180, "requiere_calculadora": false, "fuente": "Entrenamiento Élite" }
+    "metadata": {
+      "habilidades": ["perímetros concéntricos", "ecuaciones no lineales"],
+      "tiempo_estimado": 180,
+      "requiere_calculadora": false,
+      "fuente": "Entrenamiento Élite"
+    }
   },
   {
-  "id": "geo_perim_hex_hueco_exp",
-  "tema": "geometria",
-  "subtipo": "triangulo_perimetro",
-  "grado": "5to",
-  "etapa": ["final"],
-  "dificultad": ["experto"],
-  "bidireccional": true,
-  "enunciado": "La figura es un hexágono regular de lado {lado_hex} cm al que se le ha hecho un recorte rectangular (hueco) en el borde inferior. Calcula su perímetro numérico real y luego halla 'x' sabiendo que dicho perímetro es igual al polinomio.",
-  "variables": { "k": { "type": "number", "min": 2, "max": 8, "step": 1 }, "x": { "type": "number", "min": 5, "max": 12, "step": 1 }, "a": { "type": "number", "min": 2, "max": 5, "step": 1 } },
-  "relaciones": [ "lado_hex = 10 * k", "hueco_b = 4 * k", "hueco_h = 3 * k", "perimetro_real = (lado_hex * 6) - hueco_b + (hueco_h * 2) + hueco_b", "b_cte = perimetro_real - (a * x * x)", "respuesta = x" ],
-  "incognita_directa": "respuesta",
-  "formato_respuesta": { "tipo": "entero" }
-},
-{
+    "id": "geo_perim_hex_hueco_exp",
+    "tema": "geometria",
+    "subtipo": "triangulo_perimetro",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
+    "bidireccional": true,
+    "enunciado": "La figura es un hexágono regular de lado {lado_hex} cm al que se le ha hecho un recorte rectangular (hueco) en el borde inferior. Calcula su perímetro numérico real y luego halla 'x' sabiendo que dicho perímetro es igual al polinomio.",
+    "variables": {
+      "k": { "type": "number", "min": 2, "max": 8, "step": 1 },
+      "x": { "type": "number", "min": 5, "max": 12, "step": 1 },
+      "a": { "type": "number", "min": 2, "max": 5, "step": 1 }
+    },
+    "relaciones": [
+      "lado_hex = 10 * k",
+      "hueco_b = 4 * k",
+      "hueco_h = 3 * k",
+      "perimetro_real = (lado_hex * 6) - hueco_b + (hueco_h * 2) + hueco_b",
+      "b_cte = perimetro_real - (a * x * x)",
+      "respuesta = x"
+    ],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" }
+  },
+  {
     "id": "geo_thales_bas_01",
     "tema": "geometria",
     "subtipo": "thales",
@@ -1916,9 +2099,30 @@
     "dificultad": ["basico"],
     "bidireccional": true,
     "enunciado": "En la figura mostrada, las rectas horizontales son paralelas (L1 // L2 // L3). Aplicando el Teorema de Thales, calcula el valor de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "x": { "type": "number", "min": 2, "max": 6 }, "num": { "type": "number", "min": 3, "max": 7 }, "den": { "type": "number", "min": 4, "max": 8 }, "k1": { "type": "number", "min": 3, "max": 6 }, "k2": { "type": "number", "min": 3, "max": 6 }, "c_TL": { "type": "number", "min": 1, "max": 3 }, "c_BL": { "type": "number", "min": 0, "max": 0 }, "c_TR": { "type": "number", "min": 0, "max": 0 }, "c_BR": { "type": "number", "min": 0, "max": 0 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL - c_TL * x", "k_BL = BL", "k_TR = TR", "k_BR = BR", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_TL > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "x": { "type": "number", "min": 2, "max": 6 },
+      "num": { "type": "number", "min": 3, "max": 7 },
+      "den": { "type": "number", "min": 4, "max": 8 },
+      "k1": { "type": "number", "min": 3, "max": 6 },
+      "k2": { "type": "number", "min": 3, "max": 6 },
+      "c_TL": { "type": "number", "min": 1, "max": 3 },
+      "c_BL": { "type": "number", "min": 0, "max": 0 },
+      "c_TR": { "type": "number", "min": 0, "max": 0 },
+      "c_BR": { "type": "number", "min": 0, "max": 0 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL - c_TL * x",
+      "k_BL = BL",
+      "k_TR = TR",
+      "k_BR = BR",
+      "respuesta = x"
+    ],
+    "restricciones": ["num != den", "k1 != k2", "k_TL > 0"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -1931,9 +2135,30 @@
     "dificultad": ["basico"],
     "bidireccional": true,
     "enunciado": "El segmento intermedio es paralelo a la base del triángulo. Utiliza el teorema de proporcionalidad para hallar 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "x": { "type": "number", "min": 3, "max": 8 }, "num": { "type": "number", "min": 4, "max": 9 }, "den": { "type": "number", "min": 3, "max": 7 }, "k1": { "type": "number", "min": 2, "max": 5 }, "k2": { "type": "number", "min": 2, "max": 5 }, "c_TL": { "type": "number", "min": 0, "max": 0 }, "c_BL": { "type": "number", "min": 0, "max": 0 }, "c_TR": { "type": "number", "min": 2, "max": 4 }, "c_BR": { "type": "number", "min": 0, "max": 0 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL", "k_BL = BL", "k_TR = TR - c_TR * x", "k_BR = BR", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_TR > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "x": { "type": "number", "min": 3, "max": 8 },
+      "num": { "type": "number", "min": 4, "max": 9 },
+      "den": { "type": "number", "min": 3, "max": 7 },
+      "k1": { "type": "number", "min": 2, "max": 5 },
+      "k2": { "type": "number", "min": 2, "max": 5 },
+      "c_TL": { "type": "number", "min": 0, "max": 0 },
+      "c_BL": { "type": "number", "min": 0, "max": 0 },
+      "c_TR": { "type": "number", "min": 2, "max": 4 },
+      "c_BR": { "type": "number", "min": 0, "max": 0 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL",
+      "k_BL = BL",
+      "k_TR = TR - c_TR * x",
+      "k_BR = BR",
+      "respuesta = x"
+    ],
+    "restricciones": ["num != den", "k1 != k2", "k_TR > 0"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -1946,22 +2171,64 @@
     "dificultad": ["basico"],
     "bidireccional": true,
     "enunciado": "En la figura tipo 'corbata', las bases superior e inferior son paralelas. Determina el valor de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "x": { "type": "number", "min": 4, "max": 10 }, "num": { "type": "number", "min": 2, "max": 5 }, "den": { "type": "number", "min": 5, "max": 10 }, "k1": { "type": "number", "min": 3, "max": 6 }, "k2": { "type": "number", "min": 3, "max": 6 }, "c_TL": { "type": "number", "min": 0, "max": 0 }, "c_BL": { "type": "number", "min": 0, "max": 0 }, "c_TR": { "type": "number", "min": 0, "max": 0 }, "c_BR": { "type": "number", "min": 1, "max": 3 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL", "k_BL = BL", "k_TR = TR", "k_BR = BR - c_BR * x", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_BR > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "x": { "type": "number", "min": 4, "max": 10 },
+      "num": { "type": "number", "min": 2, "max": 5 },
+      "den": { "type": "number", "min": 5, "max": 10 },
+      "k1": { "type": "number", "min": 3, "max": 6 },
+      "k2": { "type": "number", "min": 3, "max": 6 },
+      "c_TL": { "type": "number", "min": 0, "max": 0 },
+      "c_BL": { "type": "number", "min": 0, "max": 0 },
+      "c_TR": { "type": "number", "min": 0, "max": 0 },
+      "c_BR": { "type": "number", "min": 1, "max": 3 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL",
+      "k_BL = BL",
+      "k_TR = TR",
+      "k_BR = BR - c_BR * x",
+      "respuesta = x"
+    ],
+    "restricciones": ["num != den", "k1 != k2", "k_BR > 0"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
-{
+  {
     "id": "geo_thales_int_01",
     "tema": "geometria",
     "subtipo": "thales",
     "grado": "5to",
     "etapa": ["clasificatoria", "final"],
     "dificultad": ["intermedio"],
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "x": { "type": "number", "min": 3, "max": 7 }, "num": { "type": "number", "min": 4, "max": 8 }, "den": { "type": "number", "min": 5, "max": 9 }, "k1": { "type": "number", "min": 3, "max": 6 }, "k2": { "type": "number", "min": 3, "max": 6 }, "c_TL": { "type": "number", "min": 1, "max": 3 }, "c_BL": { "type": "number", "min": 1, "max": 3 }, "c_TR": { "type": "number", "min": 0, "max": 0 }, "c_BR": { "type": "number", "min": 0, "max": 0 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL - c_TL * x", "k_BL = BL - c_BL * x", "k_TR = TR", "k_BR = BR", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_TL > 0", "k_BL > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "x": { "type": "number", "min": 3, "max": 7 },
+      "num": { "type": "number", "min": 4, "max": 8 },
+      "den": { "type": "number", "min": 5, "max": 9 },
+      "k1": { "type": "number", "min": 3, "max": 6 },
+      "k2": { "type": "number", "min": 3, "max": 6 },
+      "c_TL": { "type": "number", "min": 1, "max": 3 },
+      "c_BL": { "type": "number", "min": 1, "max": 3 },
+      "c_TR": { "type": "number", "min": 0, "max": 0 },
+      "c_BR": { "type": "number", "min": 0, "max": 0 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL - c_TL * x",
+      "k_BL = BL - c_BL * x",
+      "k_TR = TR",
+      "k_BR = BR",
+      "respuesta = x"
+    ],
+    "restricciones": ["num != den", "k1 != k2", "k_TL > 0", "k_BL > 0"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -1972,9 +2239,30 @@
     "grado": "5to",
     "etapa": ["clasificatoria", "final"],
     "dificultad": ["intermedio"],
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "x": { "type": "number", "min": 4, "max": 9 }, "num": { "type": "number", "min": 3, "max": 6 }, "den": { "type": "number", "min": 7, "max": 12 }, "k1": { "type": "number", "min": 2, "max": 5 }, "k2": { "type": "number", "min": 2, "max": 5 }, "c_TL": { "type": "number", "min": 0, "max": 0 }, "c_BL": { "type": "number", "min": 0, "max": 0 }, "c_TR": { "type": "number", "min": 1, "max": 3 }, "c_BR": { "type": "number", "min": 1, "max": 3 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL", "k_BL = BL", "k_TR = TR - c_TR * x", "k_BR = BR - c_BR * x", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_TR > 0", "k_BR > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "x": { "type": "number", "min": 4, "max": 9 },
+      "num": { "type": "number", "min": 3, "max": 6 },
+      "den": { "type": "number", "min": 7, "max": 12 },
+      "k1": { "type": "number", "min": 2, "max": 5 },
+      "k2": { "type": "number", "min": 2, "max": 5 },
+      "c_TL": { "type": "number", "min": 0, "max": 0 },
+      "c_BL": { "type": "number", "min": 0, "max": 0 },
+      "c_TR": { "type": "number", "min": 1, "max": 3 },
+      "c_BR": { "type": "number", "min": 1, "max": 3 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL",
+      "k_BL = BL",
+      "k_TR = TR - c_TR * x",
+      "k_BR = BR - c_BR * x",
+      "respuesta = x"
+    ],
+    "restricciones": ["num != den", "k1 != k2", "k_TR > 0", "k_BR > 0"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -1985,22 +2273,64 @@
     "grado": "5to",
     "etapa": ["clasificatoria", "final"],
     "dificultad": ["intermedio"],
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "x": { "type": "number", "min": 2, "max": 7 }, "num": { "type": "number", "min": 5, "max": 10 }, "den": { "type": "number", "min": 4, "max": 8 }, "k1": { "type": "number", "min": 3, "max": 7 }, "k2": { "type": "number", "min": 3, "max": 7 }, "c_TL": { "type": "number", "min": 1, "max": 4 }, "c_BL": { "type": "number", "min": 0, "max": 0 }, "c_TR": { "type": "number", "min": 1, "max": 4 }, "c_BR": { "type": "number", "min": 0, "max": 0 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL - c_TL * x", "k_BL = BL", "k_TR = TR - c_TR * x", "k_BR = BR", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_TL > 0", "k_TR > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "x": { "type": "number", "min": 2, "max": 7 },
+      "num": { "type": "number", "min": 5, "max": 10 },
+      "den": { "type": "number", "min": 4, "max": 8 },
+      "k1": { "type": "number", "min": 3, "max": 7 },
+      "k2": { "type": "number", "min": 3, "max": 7 },
+      "c_TL": { "type": "number", "min": 1, "max": 4 },
+      "c_BL": { "type": "number", "min": 0, "max": 0 },
+      "c_TR": { "type": "number", "min": 1, "max": 4 },
+      "c_BR": { "type": "number", "min": 0, "max": 0 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL - c_TL * x",
+      "k_BL = BL",
+      "k_TR = TR - c_TR * x",
+      "k_BR = BR",
+      "respuesta = x"
+    ],
+    "restricciones": ["num != den", "k1 != k2", "k_TL > 0", "k_TR > 0"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
-{
+  {
     "id": "geo_thales_avz_01",
     "tema": "geometria",
     "subtipo": "thales",
     "grado": "5to",
     "etapa": ["final"],
     "dificultad": ["avanzado"],
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "x": { "type": "number", "min": 5, "max": 10 }, "num": { "type": "number", "min": 5, "max": 9 }, "den": { "type": "number", "min": 6, "max": 11 }, "k1": { "type": "number", "min": 3, "max": 5 }, "k2": { "type": "number", "min": 3, "max": 5 }, "c_TL": { "type": "number", "min": 2, "max": 4 }, "c_BL": { "type": "number", "min": 0, "max": 0 }, "c_TR": { "type": "number", "min": 0, "max": 0 }, "c_BR": { "type": "number", "min": 2, "max": 4 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL - c_TL * x", "k_BL = BL", "k_TR = TR", "k_BR = BR - c_BR * x", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_TL > 0", "k_BR > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "x": { "type": "number", "min": 5, "max": 10 },
+      "num": { "type": "number", "min": 5, "max": 9 },
+      "den": { "type": "number", "min": 6, "max": 11 },
+      "k1": { "type": "number", "min": 3, "max": 5 },
+      "k2": { "type": "number", "min": 3, "max": 5 },
+      "c_TL": { "type": "number", "min": 2, "max": 4 },
+      "c_BL": { "type": "number", "min": 0, "max": 0 },
+      "c_TR": { "type": "number", "min": 0, "max": 0 },
+      "c_BR": { "type": "number", "min": 2, "max": 4 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL - c_TL * x",
+      "k_BL = BL",
+      "k_TR = TR",
+      "k_BR = BR - c_BR * x",
+      "respuesta = x"
+    ],
+    "restricciones": ["num != den", "k1 != k2", "k_TL > 0", "k_BR > 0"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2011,9 +2341,30 @@
     "grado": "5to",
     "etapa": ["final"],
     "dificultad": ["avanzado"],
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "x": { "type": "number", "min": 3, "max": 9 }, "num": { "type": "number", "min": 4, "max": 12 }, "den": { "type": "number", "min": 3, "max": 8 }, "k1": { "type": "number", "min": 4, "max": 6 }, "k2": { "type": "number", "min": 4, "max": 6 }, "c_TL": { "type": "number", "min": 0, "max": 0 }, "c_BL": { "type": "number", "min": 2, "max": 4 }, "c_TR": { "type": "number", "min": 2, "max": 4 }, "c_BR": { "type": "number", "min": 0, "max": 0 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL", "k_BL = BL - c_BL * x", "k_TR = TR - c_TR * x", "k_BR = BR", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_BL > 0", "k_TR > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "x": { "type": "number", "min": 3, "max": 9 },
+      "num": { "type": "number", "min": 4, "max": 12 },
+      "den": { "type": "number", "min": 3, "max": 8 },
+      "k1": { "type": "number", "min": 4, "max": 6 },
+      "k2": { "type": "number", "min": 4, "max": 6 },
+      "c_TL": { "type": "number", "min": 0, "max": 0 },
+      "c_BL": { "type": "number", "min": 2, "max": 4 },
+      "c_TR": { "type": "number", "min": 2, "max": 4 },
+      "c_BR": { "type": "number", "min": 0, "max": 0 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL",
+      "k_BL = BL - c_BL * x",
+      "k_TR = TR - c_TR * x",
+      "k_BR = BR",
+      "respuesta = x"
+    ],
+    "restricciones": ["num != den", "k1 != k2", "k_BL > 0", "k_TR > 0"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2024,22 +2375,71 @@
     "grado": "5to",
     "etapa": ["final"],
     "dificultad": ["avanzado"],
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "x": { "type": "number", "min": 4, "max": 8 }, "num": { "type": "number", "min": 7, "max": 10 }, "den": { "type": "number", "min": 3, "max": 6 }, "k1": { "type": "number", "min": 4, "max": 7 }, "k2": { "type": "number", "min": 4, "max": 7 }, "c_TL": { "type": "number", "min": 3, "max": 5 }, "c_BL": { "type": "number", "min": 0, "max": 0 }, "c_TR": { "type": "number", "min": 0, "max": 0 }, "c_BR": { "type": "number", "min": 2, "max": 4 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL - c_TL * x", "k_BL = BL", "k_TR = TR", "k_BR = BR - c_BR * x", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_TL > 0", "k_BR > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "x": { "type": "number", "min": 4, "max": 8 },
+      "num": { "type": "number", "min": 7, "max": 10 },
+      "den": { "type": "number", "min": 3, "max": 6 },
+      "k1": { "type": "number", "min": 4, "max": 7 },
+      "k2": { "type": "number", "min": 4, "max": 7 },
+      "c_TL": { "type": "number", "min": 3, "max": 5 },
+      "c_BL": { "type": "number", "min": 0, "max": 0 },
+      "c_TR": { "type": "number", "min": 0, "max": 0 },
+      "c_BR": { "type": "number", "min": 2, "max": 4 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL - c_TL * x",
+      "k_BL = BL",
+      "k_TR = TR",
+      "k_BR = BR - c_BR * x",
+      "respuesta = x"
+    ],
+    "restricciones": ["num != den", "k1 != k2", "k_TL > 0", "k_BR > 0"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
-{
+  {
     "id": "geo_thales_exp_01",
     "tema": "geometria",
     "subtipo": "thales",
     "grado": "5to",
     "etapa": ["final"],
     "dificultad": ["experto"],
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "x": { "type": "number", "min": 2, "max": 6 }, "num": { "type": "number", "min": 6, "max": 10 }, "den": { "type": "number", "min": 7, "max": 12 }, "k1": { "type": "number", "min": 4, "max": 6 }, "k2": { "type": "number", "min": 4, "max": 6 }, "c_TL": { "type": "number", "min": 1, "max": 3 }, "c_BL": { "type": "number", "min": 1, "max": 3 }, "c_TR": { "type": "number", "min": 1, "max": 3 }, "c_BR": { "type": "number", "min": 1, "max": 3 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL - c_TL * x", "k_BL = BL - c_BL * x", "k_TR = TR - c_TR * x", "k_BR = BR - c_BR * x", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_TL > 0", "k_BL > 0", "k_TR > 0", "k_BR > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "x": { "type": "number", "min": 2, "max": 6 },
+      "num": { "type": "number", "min": 6, "max": 10 },
+      "den": { "type": "number", "min": 7, "max": 12 },
+      "k1": { "type": "number", "min": 4, "max": 6 },
+      "k2": { "type": "number", "min": 4, "max": 6 },
+      "c_TL": { "type": "number", "min": 1, "max": 3 },
+      "c_BL": { "type": "number", "min": 1, "max": 3 },
+      "c_TR": { "type": "number", "min": 1, "max": 3 },
+      "c_BR": { "type": "number", "min": 1, "max": 3 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL - c_TL * x",
+      "k_BL = BL - c_BL * x",
+      "k_TR = TR - c_TR * x",
+      "k_BR = BR - c_BR * x",
+      "respuesta = x"
+    ],
+    "restricciones": [
+      "num != den",
+      "k1 != k2",
+      "k_TL > 0",
+      "k_BL > 0",
+      "k_TR > 0",
+      "k_BR > 0"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2050,9 +2450,37 @@
     "grado": "5to",
     "etapa": ["final"],
     "dificultad": ["experto"],
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "x": { "type": "number", "min": 3, "max": 7 }, "num": { "type": "number", "min": 8, "max": 14 }, "den": { "type": "number", "min": 5, "max": 9 }, "k1": { "type": "number", "min": 3, "max": 5 }, "k2": { "type": "number", "min": 3, "max": 5 }, "c_TL": { "type": "number", "min": 2, "max": 4 }, "c_BL": { "type": "number", "min": 1, "max": 3 }, "c_TR": { "type": "number", "min": 2, "max": 4 }, "c_BR": { "type": "number", "min": 1, "max": 3 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL - c_TL * x", "k_BL = BL - c_BL * x", "k_TR = TR - c_TR * x", "k_BR = BR - c_BR * x", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_TL > 0", "k_BL > 0", "k_TR > 0", "k_BR > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "x": { "type": "number", "min": 3, "max": 7 },
+      "num": { "type": "number", "min": 8, "max": 14 },
+      "den": { "type": "number", "min": 5, "max": 9 },
+      "k1": { "type": "number", "min": 3, "max": 5 },
+      "k2": { "type": "number", "min": 3, "max": 5 },
+      "c_TL": { "type": "number", "min": 2, "max": 4 },
+      "c_BL": { "type": "number", "min": 1, "max": 3 },
+      "c_TR": { "type": "number", "min": 2, "max": 4 },
+      "c_BR": { "type": "number", "min": 1, "max": 3 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL - c_TL * x",
+      "k_BL = BL - c_BL * x",
+      "k_TR = TR - c_TR * x",
+      "k_BR = BR - c_BR * x",
+      "respuesta = x"
+    ],
+    "restricciones": [
+      "num != den",
+      "k1 != k2",
+      "k_TL > 0",
+      "k_BL > 0",
+      "k_TR > 0",
+      "k_BR > 0"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2063,9 +2491,37 @@
     "grado": "5to",
     "etapa": ["final"],
     "dificultad": ["experto"],
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "x": { "type": "number", "min": 4, "max": 8 }, "num": { "type": "number", "min": 5, "max": 11 }, "den": { "type": "number", "min": 9, "max": 15 }, "k1": { "type": "number", "min": 4, "max": 7 }, "k2": { "type": "number", "min": 4, "max": 7 }, "c_TL": { "type": "number", "min": 1, "max": 3 }, "c_BL": { "type": "number", "min": 1, "max": 3 }, "c_TR": { "type": "number", "min": 1, "max": 3 }, "c_BR": { "type": "number", "min": 1, "max": 3 } },
-    "relaciones": [ "TL = k1 * num", "BL = k1 * den", "TR = k2 * num", "BR = k2 * den", "k_TL = TL - c_TL * x", "k_BL = BL - c_BL * x", "k_TR = TR - c_TR * x", "k_BR = BR - c_BR * x", "respuesta = x" ],
-    "restricciones": [ "num != den", "k1 != k2", "k_TL > 0", "k_BL > 0", "k_TR > 0", "k_BR > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "x": { "type": "number", "min": 4, "max": 8 },
+      "num": { "type": "number", "min": 5, "max": 11 },
+      "den": { "type": "number", "min": 9, "max": 15 },
+      "k1": { "type": "number", "min": 4, "max": 7 },
+      "k2": { "type": "number", "min": 4, "max": 7 },
+      "c_TL": { "type": "number", "min": 1, "max": 3 },
+      "c_BL": { "type": "number", "min": 1, "max": 3 },
+      "c_TR": { "type": "number", "min": 1, "max": 3 },
+      "c_BR": { "type": "number", "min": 1, "max": 3 }
+    },
+    "relaciones": [
+      "TL = k1 * num",
+      "BL = k1 * den",
+      "TR = k2 * num",
+      "BR = k2 * den",
+      "k_TL = TL - c_TL * x",
+      "k_BL = BL - c_BL * x",
+      "k_TR = TR - c_TR * x",
+      "k_BR = BR - c_BR * x",
+      "respuesta = x"
+    ],
+    "restricciones": [
+      "num != den",
+      "k1 != k2",
+      "k_TL > 0",
+      "k_BL > 0",
+      "k_TR > 0",
+      "k_BR > 0"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2078,8 +2534,29 @@
     "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "La figura muestra una escalera ortogonal. Si el perímetro total del polígono es {perimetro} cm, halla el valor de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "x": { "type": "number", "min": 2, "max": 8 }, "a": { "type": "number", "min": 3, "max": 6 }, "b": { "type": "number", "min": 4, "max": 7 }, "c": { "type": "number", "min": 3, "max": 5 } },
-    "relaciones": [ "r1=a", "r2=x", "r3=b", "r4=c", "c1=0", "k1=a", "c2=1", "k2=0", "c3=0", "k3=b", "c4=0", "k4=c", "perimetro = 2 * (a + b + x + c)", "respuesta = x" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "x": { "type": "number", "min": 2, "max": 8 },
+      "a": { "type": "number", "min": 3, "max": 6 },
+      "b": { "type": "number", "min": 4, "max": 7 },
+      "c": { "type": "number", "min": 3, "max": 5 }
+    },
+    "relaciones": [
+      "r1=a",
+      "r2=x",
+      "r3=b",
+      "r4=c",
+      "c1=0",
+      "k1=a",
+      "c2=1",
+      "k2=0",
+      "c3=0",
+      "k3=b",
+      "c4=0",
+      "k4=c",
+      "perimetro = 2 * (a + b + x + c)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2092,8 +2569,29 @@
     "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "La figura tiene forma de podio. Se sabe que su perímetro total mide {perimetro} cm. Halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "x": { "type": "number", "min": 3, "max": 7 }, "a": { "type": "number", "min": 4, "max": 6 }, "b": { "type": "number", "min": 5, "max": 9 }, "c": { "type": "number", "min": 4, "max": 6 } },
-    "relaciones": [ "r1=x", "r2=a", "r3=b", "r4=c", "c1=1", "k1=0", "c2=0", "k2=a", "c3=0", "k3=b", "c4=0", "k4=c", "perimetro = 2 * (a + b + c + 2*x)", "respuesta = x" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "x": { "type": "number", "min": 3, "max": 7 },
+      "a": { "type": "number", "min": 4, "max": 6 },
+      "b": { "type": "number", "min": 5, "max": 9 },
+      "c": { "type": "number", "min": 4, "max": 6 }
+    },
+    "relaciones": [
+      "r1=x",
+      "r2=a",
+      "r3=b",
+      "r4=c",
+      "c1=1",
+      "k1=0",
+      "c2=0",
+      "k2=a",
+      "c3=0",
+      "k3=b",
+      "c4=0",
+      "k4=c",
+      "perimetro = 2 * (a + b + c + 2*x)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2106,9 +2604,30 @@
     "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "En la habitación con una esquina hundida, las medidas corresponden a los segmentos adyacentes. El perímetro total es {perimetro} cm. Deduce el contorno y halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "x": { "type": "number", "min": 10, "max": 15 }, "b": { "type": "number", "min": 8, "max": 12 }, "c": { "type": "number", "min": 2, "max": 5 }, "d": { "type": "number", "min": 2, "max": 5 } },
-    "relaciones": [ "r1=x", "r2=b", "r3=c", "r4=d", "c1=1", "k1=0", "c2=0", "k2=b", "c3=0", "k3=c", "c4=0", "k4=d", "perimetro = 2 * (x + b)", "respuesta = x" ],
-    "restricciones": [ "x > c", "b > d" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "x": { "type": "number", "min": 10, "max": 15 },
+      "b": { "type": "number", "min": 8, "max": 12 },
+      "c": { "type": "number", "min": 2, "max": 5 },
+      "d": { "type": "number", "min": 2, "max": 5 }
+    },
+    "relaciones": [
+      "r1=x",
+      "r2=b",
+      "r3=c",
+      "r4=d",
+      "c1=1",
+      "k1=0",
+      "c2=0",
+      "k2=b",
+      "c3=0",
+      "k3=c",
+      "c4=0",
+      "k4=d",
+      "perimetro = 2 * (x + b)",
+      "respuesta = x"
+    ],
+    "restricciones": ["x > c", "b > d"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2121,9 +2640,30 @@
     "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "La figura tipo Tetris tiene un perímetro total de {perimetro} cm. Calcula 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "x": { "type": "number", "min": 3, "max": 6 }, "a": { "type": "number", "min": 10, "max": 16 }, "b": { "type": "number", "min": 8, "max": 12 }, "c": { "type": "number", "min": 2, "max": 5 } },
-    "relaciones": [ "r1=a", "r2=b", "r3=x", "r4=c", "c1=0", "k1=a", "c2=0", "k2=b", "c3=1", "k3=0", "c4=0", "k4=c", "perimetro = 2 * (a + b) + 2*x", "respuesta = x" ],
-    "restricciones": [ "a > c" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "x": { "type": "number", "min": 3, "max": 6 },
+      "a": { "type": "number", "min": 10, "max": 16 },
+      "b": { "type": "number", "min": 8, "max": 12 },
+      "c": { "type": "number", "min": 2, "max": 5 }
+    },
+    "relaciones": [
+      "r1=a",
+      "r2=b",
+      "r3=x",
+      "r4=c",
+      "c1=0",
+      "k1=a",
+      "c2=0",
+      "k2=b",
+      "c3=1",
+      "k3=0",
+      "c4=0",
+      "k4=c",
+      "perimetro = 2 * (a + b) + 2*x",
+      "respuesta = x"
+    ],
+    "restricciones": ["a > c"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2136,8 +2676,30 @@
     "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "La escalera tiene un perímetro de {perimetro} cm. Analiza los segmentos paralelos para hallar 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "x": { "type": "number", "min": 4, "max": 9 }, "a": { "type": "number", "min": 2, "max": 5 }, "b": { "type": "number", "min": 4, "max": 8 }, "c": { "type": "number", "min": 3, "max": 6 }, "d": { "type": "number", "min": 3, "max": 6 } },
-    "relaciones": [ "r1=a*x", "r2=b", "r3=c", "r4=d", "c1=a", "k1=0", "c2=0", "k2=b", "c3=0", "k3=c", "c4=0", "k4=d", "perimetro = 2 * (a*x + c + b + d)", "respuesta = x" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "x": { "type": "number", "min": 4, "max": 9 },
+      "a": { "type": "number", "min": 2, "max": 5 },
+      "b": { "type": "number", "min": 4, "max": 8 },
+      "c": { "type": "number", "min": 3, "max": 6 },
+      "d": { "type": "number", "min": 3, "max": 6 }
+    },
+    "relaciones": [
+      "r1=a*x",
+      "r2=b",
+      "r3=c",
+      "r4=d",
+      "c1=a",
+      "k1=0",
+      "c2=0",
+      "k2=b",
+      "c3=0",
+      "k3=c",
+      "c4=0",
+      "k4=d",
+      "perimetro = 2 * (a*x + c + b + d)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2150,8 +2712,30 @@
     "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "El podio mostrado tiene un perímetro de {perimetro} cm. Deduce la altura total y calcula 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "x": { "type": "number", "min": 3, "max": 7 }, "a": { "type": "number", "min": 2, "max": 5 }, "b": { "type": "number", "min": 2, "max": 6 }, "c": { "type": "number", "min": 3, "max": 5 }, "d": { "type": "number", "min": 3, "max": 5 } },
-    "relaciones": [ "r1=a", "r2=b*x", "r3=c", "r4=d", "c1=0", "k1=a", "c2=b", "k2=0", "c3=0", "k3=c", "c4=0", "k4=d", "perimetro = 2 * (b*x + c + d + 2*a)", "respuesta = x" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "x": { "type": "number", "min": 3, "max": 7 },
+      "a": { "type": "number", "min": 2, "max": 5 },
+      "b": { "type": "number", "min": 2, "max": 6 },
+      "c": { "type": "number", "min": 3, "max": 5 },
+      "d": { "type": "number", "min": 3, "max": 5 }
+    },
+    "relaciones": [
+      "r1=a",
+      "r2=b*x",
+      "r3=c",
+      "r4=d",
+      "c1=0",
+      "k1=a",
+      "c2=b",
+      "k2=0",
+      "c3=0",
+      "k3=c",
+      "c4=0",
+      "k4=d",
+      "perimetro = 2 * (b*x + c + d + 2*a)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2164,9 +2748,31 @@
     "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "La habitación rectangular con un recorte tiene perímetro {perimetro} cm. Determina 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "x": { "type": "number", "min": 4, "max": 8 }, "a": { "type": "number", "min": 3, "max": 6 }, "b": { "type": "number", "min": 10, "max": 20 }, "c": { "type": "number", "min": 2, "max": 4 }, "d": { "type": "number", "min": 2, "max": 4 } },
-    "relaciones": [ "r1=a*x", "r2=b", "r3=c", "r4=d", "c1=a", "k1=0", "c2=0", "k2=b", "c3=0", "k3=c", "c4=0", "k4=d", "perimetro = 2 * (a*x + b)", "respuesta = x" ],
-    "restricciones": [ "r1 > c", "b > d" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "x": { "type": "number", "min": 4, "max": 8 },
+      "a": { "type": "number", "min": 3, "max": 6 },
+      "b": { "type": "number", "min": 10, "max": 20 },
+      "c": { "type": "number", "min": 2, "max": 4 },
+      "d": { "type": "number", "min": 2, "max": 4 }
+    },
+    "relaciones": [
+      "r1=a*x",
+      "r2=b",
+      "r3=c",
+      "r4=d",
+      "c1=a",
+      "k1=0",
+      "c2=0",
+      "k2=b",
+      "c3=0",
+      "k3=c",
+      "c4=0",
+      "k4=d",
+      "perimetro = 2 * (a*x + b)",
+      "respuesta = x"
+    ],
+    "restricciones": ["r1 > c", "b > d"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2179,9 +2785,31 @@
     "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "La pieza tiene un hueco superior. Si su perímetro es {perimetro} cm, resuelve para 'x'. (Nota: Asume que ambos recortes verticales tienen la misma profundidad).",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "x": { "type": "number", "min": 3, "max": 6 }, "a": { "type": "number", "min": 20, "max": 30 }, "b": { "type": "number", "min": 15, "max": 20 }, "c": { "type": "number", "min": 2, "max": 4 }, "d": { "type": "number", "min": 5, "max": 10 } },
-    "relaciones": [ "r1=a", "r2=b", "r3=c*x", "r4=d", "c1=0", "k1=a", "c2=0", "k2=b", "c3=c", "k3=0", "c4=0", "k4=d", "perimetro = 2 * (a + b) + 2*(c*x)", "respuesta = x" ],
-    "restricciones": [ "a > d" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "x": { "type": "number", "min": 3, "max": 6 },
+      "a": { "type": "number", "min": 20, "max": 30 },
+      "b": { "type": "number", "min": 15, "max": 20 },
+      "c": { "type": "number", "min": 2, "max": 4 },
+      "d": { "type": "number", "min": 5, "max": 10 }
+    },
+    "relaciones": [
+      "r1=a",
+      "r2=b",
+      "r3=c*x",
+      "r4=d",
+      "c1=0",
+      "k1=a",
+      "c2=0",
+      "k2=b",
+      "c3=c",
+      "k3=0",
+      "c4=0",
+      "k4=d",
+      "perimetro = 2 * (a + b) + 2*(c*x)",
+      "respuesta = x"
+    ],
+    "restricciones": ["a > d"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2194,8 +2822,32 @@
     "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "La escalera con segmentos expresados en binomios tiene un perímetro de {perimetro} cm. Halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "x": { "type": "number", "min": 5, "max": 10 }, "a": { "type": "number", "min": 2, "max": 4 }, "b": { "type": "number", "min": 2, "max": 6 }, "c": { "type": "number", "min": 2, "max": 4 }, "d": { "type": "number", "min": 2, "max": 6 }, "e": { "type": "number", "min": 2, "max": 5 }, "f": { "type": "number", "min": 2, "max": 5 } },
-    "relaciones": [ "r1=a*x+b", "r2=c*x+d", "r3=e", "r4=f", "c1=a", "k1=b", "c2=c", "k2=d", "c3=0", "k3=e", "c4=0", "k4=f", "perimetro = 2 * (a*x+b + e + c*x+d + f)", "respuesta = x" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "x": { "type": "number", "min": 5, "max": 10 },
+      "a": { "type": "number", "min": 2, "max": 4 },
+      "b": { "type": "number", "min": 2, "max": 6 },
+      "c": { "type": "number", "min": 2, "max": 4 },
+      "d": { "type": "number", "min": 2, "max": 6 },
+      "e": { "type": "number", "min": 2, "max": 5 },
+      "f": { "type": "number", "min": 2, "max": 5 }
+    },
+    "relaciones": [
+      "r1=a*x+b",
+      "r2=c*x+d",
+      "r3=e",
+      "r4=f",
+      "c1=a",
+      "k1=b",
+      "c2=c",
+      "k2=d",
+      "c3=0",
+      "k3=e",
+      "c4=0",
+      "k4=f",
+      "perimetro = 2 * (a*x+b + e + c*x+d + f)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2208,8 +2860,31 @@
     "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "El perímetro total del podio es {perimetro} cm. Plantea la ecuación de traslación y halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "x": { "type": "number", "min": 4, "max": 8 }, "a": { "type": "number", "min": 2, "max": 4 }, "b": { "type": "number", "min": 2, "max": 4 }, "c": { "type": "number", "min": 2, "max": 6 }, "d": { "type": "number", "min": 2, "max": 5 }, "e": { "type": "number", "min": 2, "max": 5 } },
-    "relaciones": [ "r1=a*x", "r2=b*x+c", "r3=d", "r4=e", "c1=a", "k1=0", "c2=b", "k2=c", "c3=0", "k3=d", "c4=0", "k4=e", "perimetro = 2 * (b*x+c + d + e + 2*a*x)", "respuesta = x" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "x": { "type": "number", "min": 4, "max": 8 },
+      "a": { "type": "number", "min": 2, "max": 4 },
+      "b": { "type": "number", "min": 2, "max": 4 },
+      "c": { "type": "number", "min": 2, "max": 6 },
+      "d": { "type": "number", "min": 2, "max": 5 },
+      "e": { "type": "number", "min": 2, "max": 5 }
+    },
+    "relaciones": [
+      "r1=a*x",
+      "r2=b*x+c",
+      "r3=d",
+      "r4=e",
+      "c1=a",
+      "k1=0",
+      "c2=b",
+      "k2=c",
+      "c3=0",
+      "k3=d",
+      "c4=0",
+      "k4=e",
+      "perimetro = 2 * (b*x+c + d + e + 2*a*x)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2222,9 +2897,33 @@
     "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "Sabiendo que el perímetro real del polígono irregular es {perimetro} cm, determina el valor de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "x": { "type": "number", "min": 3, "max": 7 }, "a": { "type": "number", "min": 2, "max": 4 }, "b": { "type": "number", "min": 10, "max": 15 }, "c": { "type": "number", "min": 2, "max": 4 }, "d": { "type": "number", "min": 10, "max": 15 }, "e": { "type": "number", "min": 2, "max": 5 }, "f": { "type": "number", "min": 2, "max": 5 } },
-    "relaciones": [ "r1=a*x+b", "r2=c*x+d", "r3=e", "r4=f", "c1=a", "k1=b", "c2=c", "k2=d", "c3=0", "k3=e", "c4=0", "k4=f", "perimetro = 2 * (a*x+b + c*x+d)", "respuesta = x" ],
-    "restricciones": [ "r1 > e", "r2 > f" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "x": { "type": "number", "min": 3, "max": 7 },
+      "a": { "type": "number", "min": 2, "max": 4 },
+      "b": { "type": "number", "min": 10, "max": 15 },
+      "c": { "type": "number", "min": 2, "max": 4 },
+      "d": { "type": "number", "min": 10, "max": 15 },
+      "e": { "type": "number", "min": 2, "max": 5 },
+      "f": { "type": "number", "min": 2, "max": 5 }
+    },
+    "relaciones": [
+      "r1=a*x+b",
+      "r2=c*x+d",
+      "r3=e",
+      "r4=f",
+      "c1=a",
+      "k1=b",
+      "c2=c",
+      "k2=d",
+      "c3=0",
+      "k3=e",
+      "c4=0",
+      "k4=f",
+      "perimetro = 2 * (a*x+b + c*x+d)",
+      "respuesta = x"
+    ],
+    "restricciones": ["r1 > e", "r2 > f"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2237,9 +2936,33 @@
     "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "Plantea la ecuación para el perímetro del polígono sabiendo que en total mide {perimetro} cm. Halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "x": { "type": "number", "min": 3, "max": 6 }, "a": { "type": "number", "min": 3, "max": 5 }, "b": { "type": "number", "min": 10, "max": 15 }, "c": { "type": "number", "min": 3, "max": 5 }, "d": { "type": "number", "min": 10, "max": 15 }, "e": { "type": "number", "min": 2, "max": 4 }, "f": { "type": "number", "min": 2, "max": 5 } },
-    "relaciones": [ "r1=a*x+b", "r2=c*x+d", "r3=e*x", "r4=f", "c1=a", "k1=b", "c2=c", "k2=d", "c3=e", "k3=0", "c4=0", "k4=f", "perimetro = 2 * (a*x+b + c*x+d) + 2*e*x", "respuesta = x" ],
-    "restricciones": [ "r1 > f" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "x": { "type": "number", "min": 3, "max": 6 },
+      "a": { "type": "number", "min": 3, "max": 5 },
+      "b": { "type": "number", "min": 10, "max": 15 },
+      "c": { "type": "number", "min": 3, "max": 5 },
+      "d": { "type": "number", "min": 10, "max": 15 },
+      "e": { "type": "number", "min": 2, "max": 4 },
+      "f": { "type": "number", "min": 2, "max": 5 }
+    },
+    "relaciones": [
+      "r1=a*x+b",
+      "r2=c*x+d",
+      "r3=e*x",
+      "r4=f",
+      "c1=a",
+      "k1=b",
+      "c2=c",
+      "k2=d",
+      "c3=e",
+      "k3=0",
+      "c4=0",
+      "k4=f",
+      "perimetro = 2 * (a*x+b + c*x+d) + 2*e*x",
+      "respuesta = x"
+    ],
+    "restricciones": ["r1 > f"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2252,8 +2975,34 @@
     "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "La escalera tiene un perímetro numérico real. Si se sabe que dicho perímetro es igual a la expresión algebraica {perimetro}, halla el valor de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "x": { "type": "number", "min": 4, "max": 8 }, "a": { "type": "number", "min": 2, "max": 4 }, "b": { "type": "number", "min": 2, "max": 5 }, "c": { "type": "number", "min": 2, "max": 4 }, "d": { "type": "number", "min": 2, "max": 5 }, "e": { "type": "number", "min": 2, "max": 4 }, "f": { "type": "number", "min": 2, "max": 4 }, "p_a": { "type": "number", "min": 2, "max": 3 } },
-    "relaciones": [ "r1=a*x+b", "r2=c*x+d", "r3=e", "r4=f", "c1=a", "k1=b", "c2=c", "k2=d", "c3=0", "k3=e", "c4=0", "k4=f", "p_real = 2 * (a*x+b + e + c*x+d + f)", "cte_p = p_real - (p_a * x * x)", "respuesta = x" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "x": { "type": "number", "min": 4, "max": 8 },
+      "a": { "type": "number", "min": 2, "max": 4 },
+      "b": { "type": "number", "min": 2, "max": 5 },
+      "c": { "type": "number", "min": 2, "max": 4 },
+      "d": { "type": "number", "min": 2, "max": 5 },
+      "e": { "type": "number", "min": 2, "max": 4 },
+      "f": { "type": "number", "min": 2, "max": 4 },
+      "p_a": { "type": "number", "min": 2, "max": 3 }
+    },
+    "relaciones": [
+      "r1=a*x+b",
+      "r2=c*x+d",
+      "r3=e",
+      "r4=f",
+      "c1=a",
+      "k1=b",
+      "c2=c",
+      "k2=d",
+      "c3=0",
+      "k3=e",
+      "c4=0",
+      "k4=f",
+      "p_real = 2 * (a*x+b + e + c*x+d + f)",
+      "cte_p = p_real - (p_a * x * x)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2266,8 +3015,33 @@
     "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "Calcula el contorno del podio. Si el perímetro total equivale a {perimetro}, determina la solución positiva de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "x": { "type": "number", "min": 4, "max": 8 }, "a": { "type": "number", "min": 2, "max": 4 }, "b": { "type": "number", "min": 2, "max": 4 }, "c": { "type": "number", "min": 2, "max": 6 }, "d": { "type": "number", "min": 2, "max": 5 }, "e": { "type": "number", "min": 2, "max": 5 }, "p_a": { "type": "number", "min": 2, "max": 3 } },
-    "relaciones": [ "r1=a*x", "r2=b*x+c", "r3=d", "r4=e", "c1=a", "k1=0", "c2=b", "k2=c", "c3=0", "k3=d", "c4=0", "k4=e", "p_real = 2 * (b*x+c + d + e + 2*a*x)", "cte_p = p_real - (p_a * x * x)", "respuesta = x" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "x": { "type": "number", "min": 4, "max": 8 },
+      "a": { "type": "number", "min": 2, "max": 4 },
+      "b": { "type": "number", "min": 2, "max": 4 },
+      "c": { "type": "number", "min": 2, "max": 6 },
+      "d": { "type": "number", "min": 2, "max": 5 },
+      "e": { "type": "number", "min": 2, "max": 5 },
+      "p_a": { "type": "number", "min": 2, "max": 3 }
+    },
+    "relaciones": [
+      "r1=a*x",
+      "r2=b*x+c",
+      "r3=d",
+      "r4=e",
+      "c1=a",
+      "k1=0",
+      "c2=b",
+      "k2=c",
+      "c3=0",
+      "k3=d",
+      "c4=0",
+      "k4=e",
+      "p_real = 2 * (b*x+c + d + e + 2*a*x)",
+      "cte_p = p_real - (p_a * x * x)",
+      "respuesta = x"
+    ],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2280,9 +3054,35 @@
     "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "Al calcular el perímetro de la figura, se obtiene un valor que satisface la ecuación: P = {perimetro}. ¿Cuál es el valor de 'x'?",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "x": { "type": "number", "min": 4, "max": 8 }, "a": { "type": "number", "min": 2, "max": 4 }, "b": { "type": "number", "min": 10, "max": 15 }, "c": { "type": "number", "min": 2, "max": 4 }, "d": { "type": "number", "min": 10, "max": 15 }, "e": { "type": "number", "min": 2, "max": 5 }, "f": { "type": "number", "min": 2, "max": 5 }, "p_a": { "type": "number", "min": 2, "max": 3 } },
-    "relaciones": [ "r1=a*x+b", "r2=c*x+d", "r3=e", "r4=f", "c1=a", "k1=b", "c2=c", "k2=d", "c3=0", "k3=e", "c4=0", "k4=f", "p_real = 2 * (a*x+b + c*x+d)", "cte_p = p_real - (p_a * x * x)", "respuesta = x" ],
-    "restricciones": [ "r1 > e", "r2 > f" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "x": { "type": "number", "min": 4, "max": 8 },
+      "a": { "type": "number", "min": 2, "max": 4 },
+      "b": { "type": "number", "min": 10, "max": 15 },
+      "c": { "type": "number", "min": 2, "max": 4 },
+      "d": { "type": "number", "min": 10, "max": 15 },
+      "e": { "type": "number", "min": 2, "max": 5 },
+      "f": { "type": "number", "min": 2, "max": 5 },
+      "p_a": { "type": "number", "min": 2, "max": 3 }
+    },
+    "relaciones": [
+      "r1=a*x+b",
+      "r2=c*x+d",
+      "r3=e",
+      "r4=f",
+      "c1=a",
+      "k1=b",
+      "c2=c",
+      "k2=d",
+      "c3=0",
+      "k3=e",
+      "c4=0",
+      "k4=f",
+      "p_real = 2 * (a*x+b + c*x+d)",
+      "cte_p = p_real - (p_a * x * x)",
+      "respuesta = x"
+    ],
+    "restricciones": ["r1 > e", "r2 > f"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2295,9 +3095,35 @@
     "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "La pieza recortada tiene un perímetro que se modela mediante el polinomio {perimetro}. Aplica traslación de lados y resuelve la ecuación cuadrática para 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "x": { "type": "number", "min": 4, "max": 7 }, "a": { "type": "number", "min": 2, "max": 4 }, "b": { "type": "number", "min": 10, "max": 15 }, "c": { "type": "number", "min": 2, "max": 4 }, "d": { "type": "number", "min": 10, "max": 15 }, "e": { "type": "number", "min": 2, "max": 4 }, "f": { "type": "number", "min": 2, "max": 5 }, "p_a": { "type": "number", "min": 2, "max": 3 } },
-    "relaciones": [ "r1=a*x+b", "r2=c*x+d", "r3=e*x", "r4=f", "c1=a", "k1=b", "c2=c", "k2=d", "c3=e", "k3=0", "c4=0", "k4=f", "p_real = 2 * (a*x+b + c*x+d) + 2*e*x", "cte_p = p_real - (p_a * x * x)", "respuesta = x" ],
-    "restricciones": [ "r1 > f" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "x": { "type": "number", "min": 4, "max": 7 },
+      "a": { "type": "number", "min": 2, "max": 4 },
+      "b": { "type": "number", "min": 10, "max": 15 },
+      "c": { "type": "number", "min": 2, "max": 4 },
+      "d": { "type": "number", "min": 10, "max": 15 },
+      "e": { "type": "number", "min": 2, "max": 4 },
+      "f": { "type": "number", "min": 2, "max": 5 },
+      "p_a": { "type": "number", "min": 2, "max": 3 }
+    },
+    "relaciones": [
+      "r1=a*x+b",
+      "r2=c*x+d",
+      "r3=e*x",
+      "r4=f",
+      "c1=a",
+      "k1=b",
+      "c2=c",
+      "k2=d",
+      "c3=e",
+      "k3=0",
+      "c4=0",
+      "k4=f",
+      "p_real = 2 * (a*x+b + c*x+d) + 2*e*x",
+      "cte_p = p_real - (p_a * x * x)",
+      "respuesta = x"
+    ],
+    "restricciones": ["r1 > f"],
     "incognita_directa": "respuesta",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -2569,9 +3395,7 @@
       "area_base": { "type": "number", "min": 12, "max": 60, "step": 3 },
       "h": { "type": "number", "min": 5, "max": 15, "step": 1 }
     },
-    "relaciones": [
-      "volumen = (area_base * h) / 3"
-    ],
+    "relaciones": ["volumen = (area_base * h) / 3"],
     "restricciones": ["(area_base * h) % 3 == 0"],
     "incognita_directa": "volumen",
     "formato_respuesta": { "tipo": "entero" },
@@ -2598,7 +3422,9 @@
     "restricciones": ["(area_base * h) % 3 == 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["ecuaciones de primer grado", "base cuadrangular"] }
+    "metadata": {
+      "habilidades": ["ecuaciones de primer grado", "base cuadrangular"]
+    }
   },
   {
     "id": "geo_piramide_volumen_avanzado",
@@ -2648,7 +3474,9 @@
     "restricciones": ["(area_base * h) % 3 == 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["polinomios area y altura", "base hexagonal"] }
+    "metadata": {
+      "habilidades": ["polinomios area y altura", "base hexagonal"]
+    }
   },
   {
     "id": "geo_piramide_area_basico",
@@ -2661,11 +3489,9 @@
     "enunciado": "Calcula el área de la superficie lateral de la pirámide triangular regular.",
     "variables": {
       "lado": { "type": "number", "min": 4, "max": 12, "step": 2 },
-      "h": { "type": "number", "min": 5, "max": 15, "step": 1 } 
+      "h": { "type": "number", "min": 5, "max": 15, "step": 1 }
     },
-    "relaciones": [
-      "area_lateral = (3 * lado * h) / 2"
-    ],
+    "relaciones": ["area_lateral = (3 * lado * h) / 2"],
     "restricciones": ["(3 * lado * h) % 2 == 0"],
     "incognita_directa": "area_lateral",
     "formato_respuesta": { "tipo": "entero" },
@@ -2685,10 +3511,7 @@
       "x": { "type": "number", "min": 2, "max": 5, "step": 1 },
       "h": { "type": "number", "min": 6, "max": 15, "step": 1 }
     },
-    "relaciones": [
-      "lado = a * x",
-      "area_lateral = (4 * lado * h) / 2"
-    ],
+    "relaciones": ["lado = a * x", "area_lateral = (4 * lado * h) / 2"],
     "restricciones": ["(4 * lado * h) % 2 == 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" },
@@ -2709,10 +3532,7 @@
       "x": { "type": "number", "min": 2, "max": 5, "step": 1 },
       "h": { "type": "number", "min": 6, "max": 15, "step": 2 }
     },
-    "relaciones": [
-      "lado = a * x + b",
-      "area_lateral = (5 * lado * h) / 2"
-    ],
+    "relaciones": ["lado = a * x + b", "area_lateral = (5 * lado * h) / 2"],
     "restricciones": ["(5 * lado * h) % 2 == 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" },
@@ -2746,67 +3566,124 @@
   },
   {
     "id": "geo_circ_fig0_basico",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["clasificatoria"], "dificultad": ["basico"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "Halla la medida del ángulo inscrito si el ángulo central mide {central}°.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "central": { "type": "number", "min": 30, "max": 160, "step": 2 } },
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "central": { "type": "number", "min": 30, "max": 160, "step": 2 }
+    },
     "relaciones": ["inscrito = central / 2", "respuesta = inscrito"],
     "restricciones": ["central % 2 == 0"],
-    "incognita_directa": "respuesta", "formato_respuesta": { "tipo": "entero" },
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["ángulo central"] }
   },
   {
     "id": "geo_circ_fig1_basico",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["clasificatoria"], "dificultad": ["basico"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "Calcula el ángulo interior formado por las dos cuerdas si los arcos miden {arco1}° y {arco2}°.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "arco1": { "type": "number", "min": 20, "max": 100, "step": 2 }, "arco2": { "type": "number", "min": 20, "max": 100, "step": 2 } },
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "arco1": { "type": "number", "min": 20, "max": 100, "step": 2 },
+      "arco2": { "type": "number", "min": 20, "max": 100, "step": 2 }
+    },
     "relaciones": ["angulo = (arco1 + arco2) / 2", "respuesta = angulo"],
     "restricciones": ["(arco1 + arco2) % 2 == 0"],
-    "incognita_directa": "respuesta", "formato_respuesta": { "tipo": "entero" },
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["ángulo interior"] }
   },
   {
     "id": "geo_circ_fig2_basico",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["clasificatoria"], "dificultad": ["basico"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "Calcula el ángulo exterior formado por las secantes. Los arcos miden {arcoM}° y {arcom}°.",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "arcoM": { "type": "number", "min": 80, "max": 160, "step": 2 }, "arcom": { "type": "number", "min": 20, "max": 70, "step": 2 } },
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "arcoM": { "type": "number", "min": 80, "max": 160, "step": 2 },
+      "arcom": { "type": "number", "min": 20, "max": 70, "step": 2 }
+    },
     "relaciones": ["angulo = (arcoM - arcom) / 2", "respuesta = angulo"],
     "restricciones": ["(arcoM - arcom) % 2 == 0", "arcoM > arcom"],
-    "incognita_directa": "respuesta", "formato_respuesta": { "tipo": "entero" },
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["ángulo exterior secantes"] }
   },
   {
     "id": "geo_circ_fig3_basico",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["clasificatoria"], "dificultad": ["basico"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "La figura muestra dos tangentes exteriores. Si el arco menor mide {arco}°, halla el ángulo exterior.",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "arco": { "type": "number", "min": 60, "max": 150, "step": 1 } },
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "arco": { "type": "number", "min": 60, "max": 150, "step": 1 }
+    },
     "relaciones": ["angulo = 180 - arco", "respuesta = angulo"],
     "restricciones": ["arco < 180"],
-    "incognita_directa": "respuesta", "formato_respuesta": { "tipo": "entero" },
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["tangentes exteriores"] }
   },
   {
     "id": "geo_circ_fig4_basico",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["clasificatoria"], "dificultad": ["basico"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "En el cuadrilátero inscrito, uno de los ángulos mide {opuesto}°. Halla la medida del ángulo opuesto.",
-    "variables": { "tipo_fig": { "type": "number", "min": 4, "max": 4 }, "opuesto": { "type": "number", "min": 50, "max": 130, "step": 1 } },
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 4, "max": 4 },
+      "opuesto": { "type": "number", "min": 50, "max": 130, "step": 1 }
+    },
     "relaciones": ["angulo = 180 - opuesto", "respuesta = angulo"],
     "restricciones": ["opuesto < 180"],
-    "incognita_directa": "respuesta", "formato_respuesta": { "tipo": "entero" },
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["cuadrilátero inscrito"] }
   },
   {
     "id": "geo_circ_fig0_inter",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["clasificatoria", "final"], "dificultad": ["intermedio"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "Halla el valor de 'x' aplicando la propiedad del ángulo central e inscrito.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "a": { "type": "number", "min": 1, "max": 3 }, "c": { "type": "number", "min": 1, "max": 3 }, "d": { "type": "number", "min": 5, "max": 20 }, "x": { "type": "number", "min": 3, "max": 10 } },
-    "relaciones": [ "b = 2*c*x + 2*d - a*x", "central = a * x + b", "inscrito = c * x + d", "respuesta = x" ],
-    "restricciones": [ "b > 0", "central < 180", "inscrito > 10" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "a": { "type": "number", "min": 1, "max": 3 },
+      "c": { "type": "number", "min": 1, "max": 3 },
+      "d": { "type": "number", "min": 5, "max": 20 },
+      "x": { "type": "number", "min": 3, "max": 10 }
+    },
+    "relaciones": [
+      "b = 2*c*x + 2*d - a*x",
+      "central = a * x + b",
+      "inscrito = c * x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["b > 0", "central < 180", "inscrito > 10"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "c", "d", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2814,12 +3691,30 @@
   },
   {
     "id": "geo_circ_fig1_inter",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["clasificatoria", "final"], "dificultad": ["intermedio"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "Calcula 'x' usando la propiedad del ángulo interior cruzado.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "a": { "type": "number", "min": 4, "max": 6 }, "b": { "type": "number", "min": 2, "max": 10 }, "c": { "type": "number", "min": 1, "max": 3 }, "d": { "type": "number", "min": 5, "max": 20 }, "e": { "type": "number", "min": 1, "max": 3 }, "x": { "type": "number", "min": 4, "max": 10 } },
-    "relaciones": [ "f = 2*a*x + 2*b - c*x - d - e*x", "ang = a * x + b", "arco1 = c * x + d", "arco2 = e * x + f", "respuesta = x" ],
-    "restricciones": [ "f > 0", "ang < 180", "arco1 > 5", "arco2 > 5" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "a": { "type": "number", "min": 4, "max": 6 },
+      "b": { "type": "number", "min": 2, "max": 10 },
+      "c": { "type": "number", "min": 1, "max": 3 },
+      "d": { "type": "number", "min": 5, "max": 20 },
+      "e": { "type": "number", "min": 1, "max": 3 },
+      "x": { "type": "number", "min": 4, "max": 10 }
+    },
+    "relaciones": [
+      "f = 2*a*x + 2*b - c*x - d - e*x",
+      "ang = a * x + b",
+      "arco1 = c * x + d",
+      "arco2 = e * x + f",
+      "respuesta = x"
+    ],
+    "restricciones": ["f > 0", "ang < 180", "arco1 > 5", "arco2 > 5"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "e", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2827,12 +3722,30 @@
   },
   {
     "id": "geo_circ_fig2_inter",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["clasificatoria", "final"], "dificultad": ["intermedio"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "Aplica la propiedad del ángulo exterior por secantes para hallar 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "a": { "type": "number", "min": 1, "max": 3 }, "b": { "type": "number", "min": 2, "max": 10 }, "c": { "type": "number", "min": 4, "max": 6 }, "e": { "type": "number", "min": 1, "max": 2 }, "f": { "type": "number", "min": 2, "max": 10 }, "x": { "type": "number", "min": 4, "max": 10 } },
-    "relaciones": [ "d = 2*a*x + 2*b + e*x + f - c*x", "ang = a * x + b", "arcoM = c * x + d", "arcom = e * x + f", "respuesta = x" ],
-    "restricciones": [ "d > 0", "arcoM > arcom", "ang > 5" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "a": { "type": "number", "min": 1, "max": 3 },
+      "b": { "type": "number", "min": 2, "max": 10 },
+      "c": { "type": "number", "min": 4, "max": 6 },
+      "e": { "type": "number", "min": 1, "max": 2 },
+      "f": { "type": "number", "min": 2, "max": 10 },
+      "x": { "type": "number", "min": 4, "max": 10 }
+    },
+    "relaciones": [
+      "d = 2*a*x + 2*b + e*x + f - c*x",
+      "ang = a * x + b",
+      "arcoM = c * x + d",
+      "arcom = e * x + f",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "arcoM > arcom", "ang > 5"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "b", "c", "e", "f", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2840,12 +3753,27 @@
   },
   {
     "id": "geo_circ_fig3_inter",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["clasificatoria", "final"], "dificultad": ["intermedio"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "Por propiedad de tangentes exteriores, halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "a": { "type": "number", "min": 2, "max": 4 }, "b": { "type": "number", "min": 5, "max": 20 }, "c": { "type": "number", "min": 2, "max": 4 }, "x": { "type": "number", "min": 3, "max": 8 } },
-    "relaciones": [ "d = 180 - a*x - b - c*x", "ang = a * x + b", "arco = c * x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "ang > 10", "arco > 10" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "a": { "type": "number", "min": 2, "max": 4 },
+      "b": { "type": "number", "min": 5, "max": 20 },
+      "c": { "type": "number", "min": 2, "max": 4 },
+      "x": { "type": "number", "min": 3, "max": 8 }
+    },
+    "relaciones": [
+      "d = 180 - a*x - b - c*x",
+      "ang = a * x + b",
+      "arco = c * x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "ang > 10", "arco > 10"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "b", "c", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2853,12 +3781,27 @@
   },
   {
     "id": "geo_circ_fig4_inter",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["clasificatoria", "final"], "dificultad": ["intermedio"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "Los ángulos opuestos de un cuadrilátero inscrito suman 180°. Calcula 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 4, "max": 4 }, "a": { "type": "number", "min": 2, "max": 5 }, "b": { "type": "number", "min": 5, "max": 30 }, "c": { "type": "number", "min": 2, "max": 5 }, "x": { "type": "number", "min": 4, "max": 10 } },
-    "relaciones": [ "d = 180 - a*x - b - c*x", "ang1 = a * x + b", "ang2 = c * x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "ang1 > 20", "ang2 > 20" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 4, "max": 4 },
+      "a": { "type": "number", "min": 2, "max": 5 },
+      "b": { "type": "number", "min": 5, "max": 30 },
+      "c": { "type": "number", "min": 2, "max": 5 },
+      "x": { "type": "number", "min": 4, "max": 10 }
+    },
+    "relaciones": [
+      "d = 180 - a*x - b - c*x",
+      "ang1 = a * x + b",
+      "ang2 = c * x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "ang1 > 20", "ang2 > 20"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "b", "c", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2866,12 +3809,30 @@
   },
   {
     "id": "geo_circ_fig0_avan",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["avanzado"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "El ángulo central abarca dos arcos consecutivos. Calcula el valor de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "a": { "type": "number", "min": 1, "max": 3 }, "b": { "type": "number", "min": 5, "max": 20 }, "c": { "type": "number", "min": 1, "max": 3 }, "e": { "type": "number", "min": 3, "max": 5 }, "f": { "type": "number", "min": 10, "max": 30 }, "x": { "type": "number", "min": 4, "max": 10 } },
-    "relaciones": [ "d = 2*e*x + 2*f - a*x - b - c*x", "arcoAB = a * x + b", "arcoBC = c * x + d", "inscrito = e * x + f", "respuesta = x" ],
-    "restricciones": [ "d > 0", "arcoAB + arcoBC < 180" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "a": { "type": "number", "min": 1, "max": 3 },
+      "b": { "type": "number", "min": 5, "max": 20 },
+      "c": { "type": "number", "min": 1, "max": 3 },
+      "e": { "type": "number", "min": 3, "max": 5 },
+      "f": { "type": "number", "min": 10, "max": 30 },
+      "x": { "type": "number", "min": 4, "max": 10 }
+    },
+    "relaciones": [
+      "d = 2*e*x + 2*f - a*x - b - c*x",
+      "arcoAB = a * x + b",
+      "arcoBC = c * x + d",
+      "inscrito = e * x + f",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "arcoAB + arcoBC < 180"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "b", "c", "e", "f", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2879,12 +3840,30 @@
   },
   {
     "id": "geo_circ_fig1_avan",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["avanzado"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "En la cruz interior, halla 'x' reduciendo términos con signos negativos.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "a": { "type": "number", "min": 5, "max": 8 }, "b": { "type": "number", "min": 2, "max": 10 }, "c": { "type": "number", "min": 1, "max": 3 }, "d": { "type": "number", "min": 5, "max": 20 }, "e": { "type": "number", "min": 1, "max": 3 }, "x": { "type": "number", "min": 5, "max": 10 } },
-    "relaciones": [ "f = 2*a*x - 2*b - c*x - d - e*x", "ang = a * x - b", "arco1 = c * x + d", "arco2 = e * x + f", "respuesta = x" ],
-    "restricciones": [ "f > 0", "ang > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "a": { "type": "number", "min": 5, "max": 8 },
+      "b": { "type": "number", "min": 2, "max": 10 },
+      "c": { "type": "number", "min": 1, "max": 3 },
+      "d": { "type": "number", "min": 5, "max": 20 },
+      "e": { "type": "number", "min": 1, "max": 3 },
+      "x": { "type": "number", "min": 5, "max": 10 }
+    },
+    "relaciones": [
+      "f = 2*a*x - 2*b - c*x - d - e*x",
+      "ang = a * x - b",
+      "arco1 = c * x + d",
+      "arco2 = e * x + f",
+      "respuesta = x"
+    ],
+    "restricciones": ["f > 0", "ang > 0"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "e", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2892,12 +3871,30 @@
   },
   {
     "id": "geo_circ_fig2_avan",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["avanzado"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "Ángulo exterior complejo. Plantea la ecuación y halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "a": { "type": "number", "min": 1, "max": 3 }, "b": { "type": "number", "min": 5, "max": 15 }, "c": { "type": "number", "min": 4, "max": 7 }, "e": { "type": "number", "min": 1, "max": 2 }, "f": { "type": "number", "min": 2, "max": 15 }, "x": { "type": "number", "min": 4, "max": 10 } },
-    "relaciones": [ "d = 2*a*x + 2*b + e*x - f - c*x", "ang = a * x + b", "arcoM = c * x + d", "arcom = e * x - f", "respuesta = x" ],
-    "restricciones": [ "d > 0", "arcom > 0", "arcoM > arcom" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "a": { "type": "number", "min": 1, "max": 3 },
+      "b": { "type": "number", "min": 5, "max": 15 },
+      "c": { "type": "number", "min": 4, "max": 7 },
+      "e": { "type": "number", "min": 1, "max": 2 },
+      "f": { "type": "number", "min": 2, "max": 15 },
+      "x": { "type": "number", "min": 4, "max": 10 }
+    },
+    "relaciones": [
+      "d = 2*a*x + 2*b + e*x - f - c*x",
+      "ang = a * x + b",
+      "arcoM = c * x + d",
+      "arcom = e * x - f",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "arcom > 0", "arcoM > arcom"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "b", "c", "e", "f", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2905,12 +3902,27 @@
   },
   {
     "id": "geo_circ_fig3_avan",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["avanzado"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "Tangentes exteriores con signos negativos. Halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "a": { "type": "number", "min": 2, "max": 4 }, "b": { "type": "number", "min": 5, "max": 20 }, "c": { "type": "number", "min": 2, "max": 4 }, "x": { "type": "number", "min": 4, "max": 10 } },
-    "relaciones": [ "d = 180 + b - a*x - c*x", "ang = a * x - b", "arco = c * x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "ang > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "a": { "type": "number", "min": 2, "max": 4 },
+      "b": { "type": "number", "min": 5, "max": 20 },
+      "c": { "type": "number", "min": 2, "max": 4 },
+      "x": { "type": "number", "min": 4, "max": 10 }
+    },
+    "relaciones": [
+      "d = 180 + b - a*x - c*x",
+      "ang = a * x - b",
+      "arco = c * x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "ang > 0"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "b", "c", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2918,12 +3930,27 @@
   },
   {
     "id": "geo_circ_fig4_avan",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["avanzado"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "Cuadrilátero inscrito con resta de polinomios. Halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 4, "max": 4 }, "a": { "type": "number", "min": 3, "max": 6 }, "b": { "type": "number", "min": 10, "max": 30 }, "c": { "type": "number", "min": 3, "max": 6 }, "x": { "type": "number", "min": 4, "max": 10 } },
-    "relaciones": [ "d = 180 + b - a*x - c*x", "ang1 = a * x - b", "ang2 = c * x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "ang1 > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 4, "max": 4 },
+      "a": { "type": "number", "min": 3, "max": 6 },
+      "b": { "type": "number", "min": 10, "max": 30 },
+      "c": { "type": "number", "min": 3, "max": 6 },
+      "x": { "type": "number", "min": 4, "max": 10 }
+    },
+    "relaciones": [
+      "d = 180 + b - a*x - c*x",
+      "ang1 = a * x - b",
+      "ang2 = c * x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "ang1 > 0"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "b", "c", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2931,20 +3958,33 @@
   },
   {
     "id": "geo_circ_fig0_exp",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["experto"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "Nivel Experto: El ángulo central está compuesto por 3 arcos y el inscrito es cuadrático. Halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "a": { "type": "number", "min": 1, "max": 3 }, "b": { "type": "number", "min": 2, "max": 10 }, "c": { "type": "number", "min": 1, "max": 3 }, "e": { "type": "number", "min": 1, "max": 3 }, "f": { "type": "number", "min": 2, "max": 10 }, "h": { "type": "number", "min": 10, "max": 30 }, "x": { "type": "number", "min": 4, "max": 8 } },
-    "relaciones": [ 
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "a": { "type": "number", "min": 1, "max": 3 },
+      "b": { "type": "number", "min": 2, "max": 10 },
+      "c": { "type": "number", "min": 1, "max": 3 },
+      "e": { "type": "number", "min": 1, "max": 3 },
+      "f": { "type": "number", "min": 2, "max": 10 },
+      "h": { "type": "number", "min": 10, "max": 30 },
+      "x": { "type": "number", "min": 4, "max": 8 }
+    },
+    "relaciones": [
       "central = 2*x*x + 2*h",
-      "d = 2*x*x + 2*h - a*x - b - c*x - e*x - f", 
-      "arcoAB = a*x + b", 
-      "arcoBC = c*x + d", 
-      "arcoCD = e*x + f", 
-      "inscrito = x*x + h", 
-      "respuesta = x" 
+      "d = 2*x*x + 2*h - a*x - b - c*x - e*x - f",
+      "arcoAB = a*x + b",
+      "arcoBC = c*x + d",
+      "arcoCD = e*x + f",
+      "inscrito = x*x + h",
+      "respuesta = x"
     ],
-    "restricciones": [ "d > 0", "arcoAB + arcoBC + arcoCD < 360" ],
+    "restricciones": ["d > 0", "arcoAB + arcoBC + arcoCD < 360"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "b", "c", "e", "f", "h", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2952,12 +3992,29 @@
   },
   {
     "id": "geo_circ_fig1_exp",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["experto"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "Ángulo interior cuadrático. Resuelve por aspa simple y halla la raíz positiva.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "b": { "type": "number", "min": 2, "max": 10 }, "c": { "type": "number", "min": 1, "max": 3 }, "d": { "type": "number", "min": 10, "max": 20 }, "e": { "type": "number", "min": 1, "max": 3 }, "x": { "type": "number", "min": 5, "max": 10 } },
-    "relaciones": [ "f = 2*x*x - 2*b - c*x - d - e*x", "ang = x*x - b", "arco1 = c * x + d", "arco2 = e * x + f", "respuesta = x" ],
-    "restricciones": [ "f > 0", "ang > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "b": { "type": "number", "min": 2, "max": 10 },
+      "c": { "type": "number", "min": 1, "max": 3 },
+      "d": { "type": "number", "min": 10, "max": 20 },
+      "e": { "type": "number", "min": 1, "max": 3 },
+      "x": { "type": "number", "min": 5, "max": 10 }
+    },
+    "relaciones": [
+      "f = 2*x*x - 2*b - c*x - d - e*x",
+      "ang = x*x - b",
+      "arco1 = c * x + d",
+      "arco2 = e * x + f",
+      "respuesta = x"
+    ],
+    "restricciones": ["f > 0", "ang > 0"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "b", "c", "d", "e", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2965,12 +4022,29 @@
   },
   {
     "id": "geo_circ_fig2_exp",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["experto"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "Ángulo exterior cuadrático. Forma la ecuación y halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "a": { "type": "number", "min": 1, "max": 3 }, "b": { "type": "number", "min": 5, "max": 15 }, "e": { "type": "number", "min": 1, "max": 3 }, "f": { "type": "number", "min": 5, "max": 15 }, "x": { "type": "number", "min": 5, "max": 10 } },
-    "relaciones": [ "d = 2*a*x + 2*b + e*x - f - x*x", "ang = a * x + b", "arcoM = x*x + d", "arcom = e * x - f", "respuesta = x" ],
-    "restricciones": [ "d > 0", "arcom > 0", "arcoM > arcom" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "a": { "type": "number", "min": 1, "max": 3 },
+      "b": { "type": "number", "min": 5, "max": 15 },
+      "e": { "type": "number", "min": 1, "max": 3 },
+      "f": { "type": "number", "min": 5, "max": 15 },
+      "x": { "type": "number", "min": 5, "max": 10 }
+    },
+    "relaciones": [
+      "d = 2*a*x + 2*b + e*x - f - x*x",
+      "ang = a * x + b",
+      "arcoM = x*x + d",
+      "arcom = e * x - f",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "arcom > 0", "arcoM > arcom"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "a", "b", "e", "f", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2978,12 +4052,26 @@
   },
   {
     "id": "geo_circ_fig3_exp",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["experto"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "Tangentes exteriores con cuadráticas. Agrupa los términos y halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "b": { "type": "number", "min": 5, "max": 20 }, "c": { "type": "number", "min": 2, "max": 5 }, "x": { "type": "number", "min": 5, "max": 10 } },
-    "relaciones": [ "d = 180 + b - x*x - c*x", "ang = x*x - b", "arco = c * x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "ang > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "b": { "type": "number", "min": 5, "max": 20 },
+      "c": { "type": "number", "min": 2, "max": 5 },
+      "x": { "type": "number", "min": 5, "max": 10 }
+    },
+    "relaciones": [
+      "d = 180 + b - x*x - c*x",
+      "ang = x*x - b",
+      "arco = c * x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "ang > 0"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "b", "c", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -2991,12 +4079,26 @@
   },
   {
     "id": "geo_circ_fig4_exp",
-    "tema": "geometria", "subtipo": "angulos_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["experto"],
+    "tema": "geometria",
+    "subtipo": "angulos_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "Cuadrilátero inscrito cuadrático. Resuelve el sistema para 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 4, "max": 4 }, "b": { "type": "number", "min": 5, "max": 20 }, "c": { "type": "number", "min": 3, "max": 8 }, "x": { "type": "number", "min": 5, "max": 10 } },
-    "relaciones": [ "d = 180 + b - x*x - c*x", "ang1 = x*x - b", "ang2 = c * x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "ang1 > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 4, "max": 4 },
+      "b": { "type": "number", "min": 5, "max": 20 },
+      "c": { "type": "number", "min": 3, "max": 8 },
+      "x": { "type": "number", "min": 5, "max": 10 }
+    },
+    "relaciones": [
+      "d = 180 + b - x*x - c*x",
+      "ang1 = x*x - b",
+      "ang2 = c * x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "ang1 > 0"],
     "incognita_directa": "respuesta",
     "incognitas_inversa": ["tipo_fig", "b", "c", "x"],
     "formato_respuesta": { "tipo": "entero" },
@@ -3004,241 +4106,494 @@
   },
   {
     "id": "geo_circ_prop_fig0_basico",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["clasificatoria"], "dificultad": ["basico"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "En la figura mostrada, la recta exterior es tangente a la circunferencia en el punto 'T'. Determina la medida del ángulo 'x'.",
     "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 } },
-    "relaciones": [ "x = 90", "respuesta = x" ],
-    "restricciones": [ "x == 90" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "x"],
+    "relaciones": ["x = 90", "respuesta = x"],
+    "restricciones": ["x == 90"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Deducción de ángulo en tangencia"] }
   },
   {
     "id": "geo_circ_prop_fig1_basico",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["clasificatoria"], "dificultad": ["basico"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "Desde el punto exterior 'P' se han trazado dos rectas tangentes a la circunferencia en los puntos 'A' y 'B'. Calcula el valor de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "tang1": { "type": "number", "min": 10, "max": 50, "step": 2 } },
-    "relaciones": [ "x = tang1", "respuesta = x" ],
-    "restricciones": [ "tang1 > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "tang1", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "tang1": { "type": "number", "min": 10, "max": 50, "step": 2 }
+    },
+    "relaciones": ["x = tang1", "respuesta = x"],
+    "restricciones": ["tang1 > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "tang1", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Igualdad geométrica"] }
   },
   {
     "id": "geo_circ_prop_fig2_basico",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["clasificatoria"], "dificultad": ["basico"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "En la circunferencia de centro 'O', el radio cruza perpendicularmente a la cuerda 'AB'. Según la gráfica, calcula 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "mitad": { "type": "number", "min": 5, "max": 25, "step": 1 } },
-    "relaciones": [ "x = mitad", "respuesta = x" ],
-    "restricciones": [ "mitad > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "mitad", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "mitad": { "type": "number", "min": 5, "max": 25, "step": 1 }
+    },
+    "relaciones": ["x = mitad", "respuesta = x"],
+    "restricciones": ["mitad > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "mitad", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Bisectriz de cuerda"] }
   },
   {
     "id": "geo_circ_prop_fig3_basico",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["clasificatoria"], "dificultad": ["basico"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "En la figura, la cuerda 'AB' es paralela a la cuerda 'CD' (AB // CD). Analiza los arcos formados y calcula el valor de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "arco": { "type": "number", "min": 30, "max": 120, "step": 5 } },
-    "relaciones": [ "x = arco", "respuesta = x" ],
-    "restricciones": [ "arco > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "arco", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "arco": { "type": "number", "min": 30, "max": 120, "step": 5 }
+    },
+    "relaciones": ["x = arco", "respuesta = x"],
+    "restricciones": ["arco > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "arco", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Arcos entre paralelas"] }
   },
   {
     "id": "geo_circ_prop_fig4_basico",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["clasificatoria"], "dificultad": ["basico"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria"],
+    "dificultad": ["basico"],
     "bidireccional": false,
     "enunciado": "Un cuadrilátero 'ABCD' se encuentra circunscrito a una circunferencia. Aplicando las propiedades correspondientes, halla la longitud 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 4, "max": 4 }, "arriba": { "type": "number", "min": 10, "max": 30 }, "abajo": { "type": "number", "min": 15, "max": 40 }, "izq": { "type": "number", "min": 10, "max": 30 } },
-    "relaciones": [ "x = arriba + abajo - izq", "respuesta = x" ],
-    "restricciones": [ "x > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "arriba", "abajo", "izq", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 4, "max": 4 },
+      "arriba": { "type": "number", "min": 10, "max": 30 },
+      "abajo": { "type": "number", "min": 15, "max": 40 },
+      "izq": { "type": "number", "min": 10, "max": 30 }
+    },
+    "relaciones": ["x = arriba + abajo - izq", "respuesta = x"],
+    "restricciones": ["x > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "arriba", "abajo", "izq", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Deducción de Teorema de Pitot"] }
   },
   {
     "id": "geo_circ_prop_fig0_inter",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["clasificatoria", "final"], "dificultad": ["intermedio"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "La recta exterior es tangente a la circunferencia en el punto 'T'. Plantea la ecuación correspondiente y halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "a": { "type": "number", "min": 2, "max": 5 }, "x": { "type": "number", "min": 5, "max": 15 } },
-    "relaciones": [ "b = 90 - a*x", "ang = a*x + b", "respuesta = x" ],
-    "restricciones": [ "b > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "a", "b", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "a": { "type": "number", "min": 2, "max": 5 },
+      "x": { "type": "number", "min": 5, "max": 15 }
+    },
+    "relaciones": ["b = 90 - a*x", "ang = a*x + b", "respuesta = x"],
+    "restricciones": ["b > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "a", "b", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Ecuaciones y Tangencia"] }
   },
   {
     "id": "geo_circ_prop_fig1_inter",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["clasificatoria", "final"], "dificultad": ["intermedio"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "Desde el punto 'P' se trazan dos tangentes a la circunferencia. Construye la igualdad algebraica y encuentra 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "a": { "type": "number", "min": 3, "max": 6 }, "b": { "type": "number", "min": 2, "max": 15 }, "c": { "type": "number", "min": 1, "max": 2 }, "x": { "type": "number", "min": 4, "max": 12 } },
-    "relaciones": [ "d = a*x + b - c*x", "tang1 = a*x + b", "tang2 = c*x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "tang1 > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "a": { "type": "number", "min": 3, "max": 6 },
+      "b": { "type": "number", "min": 2, "max": 15 },
+      "c": { "type": "number", "min": 1, "max": 2 },
+      "x": { "type": "number", "min": 4, "max": 12 }
+    },
+    "relaciones": [
+      "d = a*x + b - c*x",
+      "tang1 = a*x + b",
+      "tang2 = c*x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "tang1 > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Igualdad polinómica"] }
   },
   {
     "id": "geo_circ_prop_fig2_inter",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["clasificatoria", "final"], "dificultad": ["intermedio"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "El radio de la circunferencia corta perpendicularmente a la cuerda 'AB' en el punto 'M'. Relaciona los segmentos y despeja 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "a": { "type": "number", "min": 4, "max": 7 }, "b": { "type": "number", "min": 5, "max": 20 }, "c": { "type": "number", "min": 1, "max": 3 }, "x": { "type": "number", "min": 5, "max": 10 } },
-    "relaciones": [ "d = a*x - b - c*x", "mitad1 = a*x - b", "mitad2 = c*x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "mitad1 > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "a": { "type": "number", "min": 4, "max": 7 },
+      "b": { "type": "number", "min": 5, "max": 20 },
+      "c": { "type": "number", "min": 1, "max": 3 },
+      "x": { "type": "number", "min": 5, "max": 10 }
+    },
+    "relaciones": [
+      "d = a*x - b - c*x",
+      "mitad1 = a*x - b",
+      "mitad2 = c*x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "mitad1 > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Ecuaciones con negativos"] }
   },
   {
     "id": "geo_circ_prop_fig3_inter",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["clasificatoria", "final"], "dificultad": ["intermedio"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "Las cuerdas 'AB' y 'CD' son paralelas. Aplica la propiedad de los arcos laterales y halla el valor de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "a": { "type": "number", "min": 2, "max": 5 }, "b": { "type": "number", "min": 10, "max": 30 }, "c": { "type": "number", "min": 1, "max": 3 }, "x": { "type": "number", "min": 5, "max": 15 } },
-    "relaciones": [ "d = a*x + b - c*x", "arco1 = a*x + b", "arco2 = c*x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "arco1 > 0", "arco1 < 180" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "a": { "type": "number", "min": 2, "max": 5 },
+      "b": { "type": "number", "min": 10, "max": 30 },
+      "c": { "type": "number", "min": 1, "max": 3 },
+      "x": { "type": "number", "min": 5, "max": 15 }
+    },
+    "relaciones": [
+      "d = a*x + b - c*x",
+      "arco1 = a*x + b",
+      "arco2 = c*x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "arco1 > 0", "arco1 < 180"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Igualdad de arcos"] }
   },
   {
     "id": "geo_circ_prop_fig4_inter",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["clasificatoria", "final"], "dificultad": ["intermedio"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["intermedio"],
     "bidireccional": false,
     "enunciado": "El polígono 'ABCD' encierra exactamente a la circunferencia. Plantea la relación entre sus lados y calcula 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 4, "max": 4 }, "a": { "type": "number", "min": 2, "max": 4 }, "b": { "type": "number", "min": 5, "max": 15 }, "c": { "type": "number", "min": 1, "max": 3 }, "e": { "type": "number", "min": 1, "max": 2 }, "x": { "type": "number", "min": 4, "max": 10 } },
-    "relaciones": [ "d = a*x + b + c*x - e*x", "arriba = a*x + b", "abajo = c*x", "izq = e*x", "der = d", "respuesta = x" ],
-    "restricciones": [ "d > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "e", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 4, "max": 4 },
+      "a": { "type": "number", "min": 2, "max": 4 },
+      "b": { "type": "number", "min": 5, "max": 15 },
+      "c": { "type": "number", "min": 1, "max": 3 },
+      "e": { "type": "number", "min": 1, "max": 2 },
+      "x": { "type": "number", "min": 4, "max": 10 }
+    },
+    "relaciones": [
+      "d = a*x + b + c*x - e*x",
+      "arriba = a*x + b",
+      "abajo = c*x",
+      "izq = e*x",
+      "der = d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "e", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Pitot algebraico"] }
   },
   {
     "id": "geo_circ_prop_fig0_avan",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["avanzado"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "La recta exterior es tangente a la circunferencia en 'T'. Identifica el triángulo notable formado y halla el segmento 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "k": { "type": "number", "min": 2, "max": 10 } },
-    "relaciones": [ "radio = 3*k", "hipo = 5*k", "x = 4*k", "respuesta = x" ],
-    "restricciones": [ "x > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "radio", "hipo", "x", "k"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "k": { "type": "number", "min": 2, "max": 10 }
+    },
+    "relaciones": ["radio = 3*k", "hipo = 5*k", "x = 4*k", "respuesta = x"],
+    "restricciones": ["x > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "radio", "hipo", "x", "k"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Deducción de Pitágoras"] }
   },
   {
     "id": "geo_circ_prop_fig1_avan",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["avanzado"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "Las rectas 'PA' y 'PB' son tangentes a la circunferencia. Aplica la propiedad correspondiente, reduce la ecuación y halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "a": { "type": "number", "min": 4, "max": 8 }, "b": { "type": "number", "min": 10, "max": 30 }, "c": { "type": "number", "min": 1, "max": 3 }, "x": { "type": "number", "min": 5, "max": 12 } },
-    "relaciones": [ "d = a*x - b - c*x", "tang1 = a*x - b", "tang2 = c*x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "tang1 > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "a": { "type": "number", "min": 4, "max": 8 },
+      "b": { "type": "number", "min": 10, "max": 30 },
+      "c": { "type": "number", "min": 1, "max": 3 },
+      "x": { "type": "number", "min": 5, "max": 12 }
+    },
+    "relaciones": [
+      "d = a*x - b - c*x",
+      "tang1 = a*x - b",
+      "tang2 = c*x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "tang1 > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Reducción de términos"] }
   },
   {
     "id": "geo_circ_prop_fig2_avan",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["avanzado"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "El radio corta a la cuerda perpendicularmente. Deduce la longitud del trazo oculto y halla la mitad de la cuerda ('x').",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "k": { "type": "number", "min": 2, "max": 8 } },
-    "relaciones": [ "dist = 3*k", "radio = 5*k", "x = 4*k", "respuesta = x" ],
-    "restricciones": [ "x > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "dist", "radio", "x", "k"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "k": { "type": "number", "min": 2, "max": 8 }
+    },
+    "relaciones": ["dist = 3*k", "radio = 5*k", "x = 4*k", "respuesta = x"],
+    "restricciones": ["x > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "dist", "radio", "x", "k"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Deducción de triángulos ocultos"] }
   },
   {
     "id": "geo_circ_prop_fig3_avan",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["avanzado"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "Si las cuerdas son paralelas, iguala los polinomios de los arcos, maneja los signos negativos y halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "a": { "type": "number", "min": 3, "max": 6 }, "b": { "type": "number", "min": 15, "max": 40 }, "c": { "type": "number", "min": 1, "max": 2 }, "x": { "type": "number", "min": 6, "max": 15 } },
-    "relaciones": [ "d = c*x - a*x + b", "arco1 = a*x - b", "arco2 = c*x - d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "arco1 > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "a": { "type": "number", "min": 3, "max": 6 },
+      "b": { "type": "number", "min": 15, "max": 40 },
+      "c": { "type": "number", "min": 1, "max": 2 },
+      "x": { "type": "number", "min": 6, "max": 15 }
+    },
+    "relaciones": [
+      "d = c*x - a*x + b",
+      "arco1 = a*x - b",
+      "arco2 = c*x - d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "arco1 > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Álgebra avanzada"] }
   },
   {
     "id": "geo_circ_prop_fig4_avan",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["avanzado"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["avanzado"],
     "bidireccional": false,
     "enunciado": "El polígono circunscrito presenta lados expresados en polinomios complejos. Agrupa las variables y halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 4, "max": 4 }, "a": { "type": "number", "min": 3, "max": 6 }, "b": { "type": "number", "min": 10, "max": 30 }, "c": { "type": "number", "min": 2, "max": 5 }, "e": { "type": "number", "min": 1, "max": 3 }, "x": { "type": "number", "min": 5, "max": 12 } },
-    "relaciones": [ "d = a*x - b + c*x - e*x", "arriba = a*x - b", "abajo = c*x", "izq = e*x", "der = d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "arriba > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "e", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 4, "max": 4 },
+      "a": { "type": "number", "min": 3, "max": 6 },
+      "b": { "type": "number", "min": 10, "max": 30 },
+      "c": { "type": "number", "min": 2, "max": 5 },
+      "e": { "type": "number", "min": 1, "max": 3 },
+      "x": { "type": "number", "min": 5, "max": 12 }
+    },
+    "relaciones": [
+      "d = a*x - b + c*x - e*x",
+      "arriba = a*x - b",
+      "abajo = c*x",
+      "izq = e*x",
+      "der = d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "arriba > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "e", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Sistemas polinómicos"] }
   },
   {
     "id": "geo_circ_prop_fig0_exp",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["experto"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "La recta exterior es tangente en 'T'. Plantea la ecuación cuadrática, resuélvela por aspa simple y toma la raíz positiva de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 0, "max": 0 }, "x": { "type": "number", "min": 5, "max": 9 } },
-    "relaciones": [ "b = 90 - x*x", "ang = x*x + b", "respuesta = x" ],
-    "restricciones": [ "b > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "b", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 0, "max": 0 },
+      "x": { "type": "number", "min": 5, "max": 9 }
+    },
+    "relaciones": ["b = 90 - x*x", "ang = x*x + b", "respuesta = x"],
+    "restricciones": ["b > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "b", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Cuadráticas directas"] }
   },
   {
     "id": "geo_circ_prop_fig1_exp",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["experto"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "Las rectas tangentes 'PA' y 'PB' esconden una ecuación de segundo grado. Encuentra la solución matemática para 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 1, "max": 1 }, "b": { "type": "number", "min": 5, "max": 20 }, "c": { "type": "number", "min": 2, "max": 5 }, "x": { "type": "number", "min": 6, "max": 12 } },
-    "relaciones": [ "d = x*x - b - c*x", "tang1 = x*x - b", "tang2 = c*x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "tang1 > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "b", "c", "d", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 1, "max": 1 },
+      "b": { "type": "number", "min": 5, "max": 20 },
+      "c": { "type": "number", "min": 2, "max": 5 },
+      "x": { "type": "number", "min": 6, "max": 12 }
+    },
+    "relaciones": [
+      "d = x*x - b - c*x",
+      "tang1 = x*x - b",
+      "tang2 = c*x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "tang1 > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "b", "c", "d", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Aspa simple", "Tangencias"] }
   },
   {
     "id": "geo_circ_prop_fig2_exp",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["experto"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "El radio intercepta a la cuerda formando un ángulo de 90°. Iguala los términos cuadráticos y halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 2, "max": 2 }, "b": { "type": "number", "min": 2, "max": 15 }, "c": { "type": "number", "min": 1, "max": 4 }, "x": { "type": "number", "min": 5, "max": 10 } },
-    "relaciones": [ "d = x*x + b - c*x", "mitad1 = x*x + b", "mitad2 = c*x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "b", "c", "d", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 2, "max": 2 },
+      "b": { "type": "number", "min": 2, "max": 15 },
+      "c": { "type": "number", "min": 1, "max": 4 },
+      "x": { "type": "number", "min": 5, "max": 10 }
+    },
+    "relaciones": [
+      "d = x*x + b - c*x",
+      "mitad1 = x*x + b",
+      "mitad2 = c*x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "b", "c", "d", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Deducción geométrica cuadrática"] }
   },
   {
     "id": "geo_circ_prop_fig3_exp",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["experto"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "Las cuerdas mostradas son estrictamente paralelas. Factoriza la expresión resultante y halla la raíz de 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 3, "max": 3 }, "b": { "type": "number", "min": 10, "max": 40 }, "c": { "type": "number", "min": 2, "max": 6 }, "x": { "type": "number", "min": 7, "max": 12 } },
-    "relaciones": [ "d = x*x - b - c*x", "arco1 = x*x - b", "arco2 = c*x + d", "respuesta = x" ],
-    "restricciones": [ "d > 0", "arco1 > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "b", "c", "d", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 3, "max": 3 },
+      "b": { "type": "number", "min": 10, "max": 40 },
+      "c": { "type": "number", "min": 2, "max": 6 },
+      "x": { "type": "number", "min": 7, "max": 12 }
+    },
+    "relaciones": [
+      "d = x*x - b - c*x",
+      "arco1 = x*x - b",
+      "arco2 = c*x + d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0", "arco1 > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "b", "c", "d", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Análisis de curvas paralelas"] }
   },
   {
     "id": "geo_circ_prop_fig4_exp",
-    "tema": "geometria", "subtipo": "propiedades_circunferencia", "grado": "5to", "etapa": ["final"], "dificultad": ["experto"],
+    "tema": "geometria",
+    "subtipo": "propiedades_circunferencia",
+    "grado": "5to",
+    "etapa": ["final"],
+    "dificultad": ["experto"],
     "bidireccional": false,
     "enunciado": "El polígono encierra a la circunferencia. Forma tu ecuación de segundo grado, redúcela a cero y halla 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 4, "max": 4 }, "a": { "type": "number", "min": 2, "max": 5 }, "b": { "type": "number", "min": 5, "max": 20 }, "c": { "type": "number", "min": 1, "max": 4 }, "x": { "type": "number", "min": 6, "max": 11 } },
-    "relaciones": [ "d = x*x + a*x + b - c*x", "arriba = x*x + b", "abajo = a*x", "izq = c*x", "der = d", "respuesta = x" ],
-    "restricciones": [ "d > 0" ],
-    "incognita_directa": "respuesta", "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 4, "max": 4 },
+      "a": { "type": "number", "min": 2, "max": 5 },
+      "b": { "type": "number", "min": 5, "max": 20 },
+      "c": { "type": "number", "min": 1, "max": 4 },
+      "x": { "type": "number", "min": 6, "max": 11 }
+    },
+    "relaciones": [
+      "d = x*x + a*x + b - c*x",
+      "arriba = x*x + b",
+      "abajo = a*x",
+      "izq = c*x",
+      "der = d",
+      "respuesta = x"
+    ],
+    "restricciones": ["d > 0"],
+    "incognita_directa": "respuesta",
+    "incognitas_inversa": ["tipo_fig", "a", "b", "c", "d", "x"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Pitot Cuadrático"] }
   },
@@ -3264,10 +4619,7 @@
       "cat2 = base_cat2 * k",
       "x = base_hip * k"
     ],
-    "restricciones": [
-      "cat1 > 0",
-      "cat2 > 0"
-    ],
+    "restricciones": ["cat1 > 0", "cat2 > 0"],
     "incognita_directa": "x",
     "incognitas_inversa": ["tripla_idx", "k"],
     "formato_respuesta": { "tipo": "entero" },
@@ -3297,10 +4649,7 @@
       "d2 = 2 * base_cat2 * k",
       "x = base_hip * k"
     ],
-    "restricciones": [
-      "d1 % 2 == 0",
-      "d2 % 2 == 0"
-    ],
+    "restricciones": ["d1 % 2 == 0", "d2 % 2 == 0"],
     "incognita_directa": "x",
     "incognitas_inversa": ["tripla_idx", "k"],
     "formato_respuesta": { "tipo": "entero" },
@@ -3330,9 +4679,7 @@
       "base = 2 * base_cat2 * k",
       "x = base_hip * k"
     ],
-    "restricciones": [
-      "base % 2 == 0"
-    ],
+    "restricciones": ["base % 2 == 0"],
     "incognita_directa": "x",
     "incognitas_inversa": ["tripla_idx", "k"],
     "formato_respuesta": { "tipo": "entero" },
@@ -3365,9 +4712,7 @@
       "b_mayor = b_menor + diff_bases",
       "x = base_hip * k"
     ],
-    "restricciones": [
-      "b_mayor > b_menor"
-    ],
+    "restricciones": ["b_mayor > b_menor"],
     "incognita_directa": "x",
     "incognitas_inversa": ["tripla_idx", "k", "offset_base"],
     "formato_respuesta": { "tipo": "entero" },
@@ -3397,15 +4742,15 @@
       "h = base_cat2 * k",
       "x = base_hip * k"
     ],
-    "restricciones": [
-      "h > 0",
-      "distancia > 0"
-    ],
+    "restricciones": ["h > 0", "distancia > 0"],
     "incognita_directa": "x",
     "incognitas_inversa": ["tripla_idx", "k"],
     "formato_respuesta": { "tipo": "entero" },
     "metadata": {
-      "habilidades": ["Matematización del entorno", "Identificación de hipotenusa"]
+      "habilidades": [
+        "Matematización del entorno",
+        "Identificación de hipotenusa"
+      ]
     }
   },
   {
@@ -3417,12 +4762,25 @@
     "dificultad": ["intermedio"],
     "bidireccional": true,
     "enunciado": "En el rectángulo mostrado, la base mide {base} cm y la diagonal mide {diag} cm. Calcula la altura 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 5, "max": 5 }, "tripla_idx": { "type": "number", "min": 0, "max": 3 }, "k": { "type": "number", "min": 2, "max": 5 } },
-    "relaciones": [ "c1 = [3, 5, 8, 7][tripla_idx] * k", "c2 = [4, 12, 15, 24][tripla_idx] * k", "hip = [5, 13, 17, 25][tripla_idx] * k", "base = c2", "diag = hip", "x = c1" ],
-    "restricciones": [ "base > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 5, "max": 5 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 3 },
+      "k": { "type": "number", "min": 2, "max": 5 }
+    },
+    "relaciones": [
+      "c1 = [3, 5, 8, 7][tripla_idx] * k",
+      "c2 = [4, 12, 15, 24][tripla_idx] * k",
+      "hip = [5, 13, 17, 25][tripla_idx] * k",
+      "base = c2",
+      "diag = hip",
+      "x = c1"
+    ],
+    "restricciones": ["base > 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["Cateto faltante", "Descomposición de rectángulos"] }
+    "metadata": {
+      "habilidades": ["Cateto faltante", "Descomposición de rectángulos"]
+    }
   },
   {
     "id": "geo_pitagoras_fig6_inter",
@@ -3433,9 +4791,20 @@
     "dificultad": ["intermedio"],
     "bidireccional": true,
     "enunciado": "En un rombo, una de sus diagonales mide {d1} cm y su lado mide {lado} cm. Deduce la medida de la otra diagonal 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 6, "max": 6 }, "tripla_idx": { "type": "number", "min": 0, "max": 3 }, "k": { "type": "number", "min": 1, "max": 4 } },
-    "relaciones": [ "c1 = [3, 5, 8, 7][tripla_idx] * k", "c2 = [4, 12, 15, 24][tripla_idx] * k", "hip = [5, 13, 17, 25][tripla_idx] * k", "d1 = 2 * c1", "lado = hip", "x = 2 * c2" ],
-    "restricciones": [ "d1 > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 6, "max": 6 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 3 },
+      "k": { "type": "number", "min": 1, "max": 4 }
+    },
+    "relaciones": [
+      "c1 = [3, 5, 8, 7][tripla_idx] * k",
+      "c2 = [4, 12, 15, 24][tripla_idx] * k",
+      "hip = [5, 13, 17, 25][tripla_idx] * k",
+      "d1 = 2 * c1",
+      "lado = hip",
+      "x = 2 * c2"
+    ],
+    "restricciones": ["d1 > 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Diagonales ortogonales", "Doble cateto"] }
@@ -3449,9 +4818,20 @@
     "dificultad": ["intermedio"],
     "bidireccional": true,
     "enunciado": "En el triángulo isósceles, los lados iguales miden {lado} cm y la altura relativa a la base mide {h} cm. Calcula la longitud total de la base 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 7, "max": 7 }, "tripla_idx": { "type": "number", "min": 0, "max": 3 }, "k": { "type": "number", "min": 2, "max": 6 } },
-    "relaciones": [ "c1 = [3, 5, 8, 7][tripla_idx] * k", "c2 = [4, 12, 15, 24][tripla_idx] * k", "hip = [5, 13, 17, 25][tripla_idx] * k", "h = c1", "lado = hip", "x = 2 * c2" ],
-    "restricciones": [ "h > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 7, "max": 7 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 3 },
+      "k": { "type": "number", "min": 2, "max": 6 }
+    },
+    "relaciones": [
+      "c1 = [3, 5, 8, 7][tripla_idx] * k",
+      "c2 = [4, 12, 15, 24][tripla_idx] * k",
+      "hip = [5, 13, 17, 25][tripla_idx] * k",
+      "h = c1",
+      "lado = hip",
+      "x = 2 * c2"
+    ],
+    "restricciones": ["h > 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -3464,9 +4844,22 @@
     "dificultad": ["intermedio"],
     "bidireccional": true,
     "enunciado": "La figura es un trapecio rectángulo. Sus bases miden {b_menor} cm y {b_mayor} cm, y el lado oblicuo mide {oblicuo} cm. Traza la altura imaginaria y calcula su valor 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 8, "max": 8 }, "tripla_idx": { "type": "number", "min": 0, "max": 3 }, "k": { "type": "number", "min": 1, "max": 3 }, "offset": { "type": "number", "min": 4, "max": 12 } },
-    "relaciones": [ "c1 = [4, 12, 15, 24][tripla_idx] * k", "c2 = [3, 5, 8, 7][tripla_idx] * k", "hip = [5, 13, 17, 25][tripla_idx] * k", "b_menor = offset", "b_mayor = offset + c2", "oblicuo = hip", "x = c1" ],
-    "restricciones": [ "b_mayor > b_menor" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 8, "max": 8 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 3 },
+      "k": { "type": "number", "min": 1, "max": 3 },
+      "offset": { "type": "number", "min": 4, "max": 12 }
+    },
+    "relaciones": [
+      "c1 = [4, 12, 15, 24][tripla_idx] * k",
+      "c2 = [3, 5, 8, 7][tripla_idx] * k",
+      "hip = [5, 13, 17, 25][tripla_idx] * k",
+      "b_menor = offset",
+      "b_mayor = offset + c2",
+      "oblicuo = hip",
+      "x = c1"
+    ],
+    "restricciones": ["b_mayor > b_menor"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -3479,9 +4872,22 @@
     "dificultad": ["intermedio"],
     "bidireccional": true,
     "enunciado": "Dos postes verticales miden {h1} m y {h2} m. Si la distancia que los separa en el suelo es {dist} m, ¿cuánto mide el cable 'x' que une sus puntas?",
-    "variables": { "tipo_fig": { "type": "number", "min": 9, "max": 9 }, "tripla_idx": { "type": "number", "min": 0, "max": 3 }, "k": { "type": "number", "min": 2, "max": 5 }, "offset": { "type": "number", "min": 5, "max": 15 } },
-    "relaciones": [ "c1 = [3, 5, 8, 7][tripla_idx] * k", "c2 = [4, 12, 15, 24][tripla_idx] * k", "hip = [5, 13, 17, 25][tripla_idx] * k", "h1 = offset", "h2 = offset + c1", "dist = c2", "x = hip" ],
-    "restricciones": [ "h2 > h1" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 9, "max": 9 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 3 },
+      "k": { "type": "number", "min": 2, "max": 5 },
+      "offset": { "type": "number", "min": 5, "max": 15 }
+    },
+    "relaciones": [
+      "c1 = [3, 5, 8, 7][tripla_idx] * k",
+      "c2 = [4, 12, 15, 24][tripla_idx] * k",
+      "hip = [5, 13, 17, 25][tripla_idx] * k",
+      "h1 = offset",
+      "h2 = offset + c1",
+      "dist = c2",
+      "x = hip"
+    ],
+    "restricciones": ["h2 > h1"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -3494,9 +4900,18 @@
     "dificultad": ["avanzado"],
     "bidireccional": true,
     "enunciado": "Dos triángulos rectángulos comparten un cateto común. En el primero, la hipotenusa mide {hip1} cm y un cateto mide {cat1A} cm. Si en el segundo triángulo el otro cateto mide {cat2A} cm, halla la hipotenusa 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 10, "max": 10 }, "k": { "type": "number", "min": 1, "max": 3 } },
-    "relaciones": [ "cat1A = 3 * k", "cat_comun = 4 * k", "hip1 = 5 * k", "cat2A = 3 * cat_comun", "x = 13 * k" ],
-    "restricciones": [ "x > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 10, "max": 10 },
+      "k": { "type": "number", "min": 1, "max": 3 }
+    },
+    "relaciones": [
+      "cat1A = 3 * k",
+      "cat_comun = 4 * k",
+      "hip1 = 5 * k",
+      "cat2A = 3 * cat_comun",
+      "x = 13 * k"
+    ],
+    "restricciones": ["x > 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" },
     "metadata": { "habilidades": ["Pitágoras anidado", "Lado común"] }
@@ -3510,9 +4925,22 @@
     "dificultad": ["avanzado"],
     "bidireccional": true,
     "enunciado": "En el trapecio isósceles, las bases miden {b_menor} cm y {b_mayor} cm. Si la altura trazada mide {h} cm, halla la longitud de los lados oblicuos 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 11, "max": 11 }, "tripla_idx": { "type": "number", "min": 0, "max": 3 }, "k": { "type": "number", "min": 1, "max": 4 }, "offset": { "type": "number", "min": 6, "max": 16, "step": 2 } },
-    "relaciones": [ "c1 = [4, 12, 15, 24][tripla_idx] * k", "c2 = [3, 5, 8, 7][tripla_idx] * k", "hip = [5, 13, 17, 25][tripla_idx] * k", "b_menor = offset", "b_mayor = offset + (2 * c2)", "h = c1", "x = hip" ],
-    "restricciones": [ "b_mayor > b_menor" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 11, "max": 11 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 3 },
+      "k": { "type": "number", "min": 1, "max": 4 },
+      "offset": { "type": "number", "min": 6, "max": 16, "step": 2 }
+    },
+    "relaciones": [
+      "c1 = [4, 12, 15, 24][tripla_idx] * k",
+      "c2 = [3, 5, 8, 7][tripla_idx] * k",
+      "hip = [5, 13, 17, 25][tripla_idx] * k",
+      "b_menor = offset",
+      "b_mayor = offset + (2 * c2)",
+      "h = c1",
+      "x = hip"
+    ],
+    "restricciones": ["b_mayor > b_menor"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -3525,9 +4953,20 @@
     "dificultad": ["avanzado"],
     "bidireccional": true,
     "enunciado": "Un poste de {H_total} m se quiebra. La punta cae tocando el suelo a {dist} m de la base del poste. Calcula la altura 'x' a la que ocurrió la fractura.",
-    "variables": { "tipo_fig": { "type": "number", "min": 12, "max": 12 }, "tripla_idx": { "type": "number", "min": 0, "max": 3 }, "k": { "type": "number", "min": 1, "max": 3 } },
-    "relaciones": [ "c1 = [3, 5, 8, 7][tripla_idx] * k", "c2 = [4, 12, 15, 24][tripla_idx] * k", "hip = [5, 13, 17, 25][tripla_idx] * k", "dist = c2", "H_total = c1 + hip", "x = c1" ],
-    "restricciones": [ "H_total > dist" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 12, "max": 12 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 3 },
+      "k": { "type": "number", "min": 1, "max": 3 }
+    },
+    "relaciones": [
+      "c1 = [3, 5, 8, 7][tripla_idx] * k",
+      "c2 = [4, 12, 15, 24][tripla_idx] * k",
+      "hip = [5, 13, 17, 25][tripla_idx] * k",
+      "dist = c2",
+      "H_total = c1 + hip",
+      "x = c1"
+    ],
+    "restricciones": ["H_total > dist"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -3540,9 +4979,20 @@
     "dificultad": ["avanzado"],
     "bidireccional": true,
     "enunciado": "Una antena vertical está sujeta por dos cables tensores idénticos fijados al suelo. Si la antena mide {h} m y los anclajes están a {dist} m de la base, ¿cuántos metros totales de cable 'x' se utilizaron?",
-    "variables": { "tipo_fig": { "type": "number", "min": 13, "max": 13 }, "tripla_idx": { "type": "number", "min": 0, "max": 2 }, "k": { "type": "number", "min": 2, "max": 6 } },
-    "relaciones": [ "c1 = [3, 5, 8][tripla_idx] * k", "c2 = [4, 12, 15][tripla_idx] * k", "hip = [5, 13, 17][tripla_idx] * k", "h = c1", "dist = c2", "x = 2 * hip" ],
-    "restricciones": [ "x > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 13, "max": 13 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 2 },
+      "k": { "type": "number", "min": 2, "max": 6 }
+    },
+    "relaciones": [
+      "c1 = [3, 5, 8][tripla_idx] * k",
+      "c2 = [4, 12, 15][tripla_idx] * k",
+      "hip = [5, 13, 17][tripla_idx] * k",
+      "h = c1",
+      "dist = c2",
+      "x = 2 * hip"
+    ],
+    "restricciones": ["x > 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -3555,9 +5005,20 @@
     "dificultad": ["avanzado"],
     "bidireccional": true,
     "enunciado": "En un cuadrante de circunferencia (1/4 de círculo), se ha dibujado un rectángulo inscrito. Si la base del rectángulo mide {base} cm y su altura {alt} cm, halla el radio 'x' de la circunferencia.",
-    "variables": { "tipo_fig": { "type": "number", "min": 14, "max": 14 }, "tripla_idx": { "type": "number", "min": 0, "max": 3 }, "k": { "type": "number", "min": 2, "max": 5 } },
-    "relaciones": [ "c1 = [3, 5, 8, 7][tripla_idx] * k", "c2 = [4, 12, 15, 24][tripla_idx] * k", "hip = [5, 13, 17, 25][tripla_idx] * k", "base = c2", "alt = c1", "x = hip" ],
-    "restricciones": [ "x > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 14, "max": 14 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 3 },
+      "k": { "type": "number", "min": 2, "max": 5 }
+    },
+    "relaciones": [
+      "c1 = [3, 5, 8, 7][tripla_idx] * k",
+      "c2 = [4, 12, 15, 24][tripla_idx] * k",
+      "hip = [5, 13, 17, 25][tripla_idx] * k",
+      "base = c2",
+      "alt = c1",
+      "x = hip"
+    ],
+    "restricciones": ["x > 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -3570,12 +5031,25 @@
     "dificultad": ["experto"],
     "bidireccional": true,
     "enunciado": "Una escalera tiene escalones uniformes. La suma de todas las huellas horizontales es {suma_x} cm y la de las contrapeladas verticales es {suma_y} cm. Calcula la distancia en línea recta 'x' desde el inicio hasta el final.",
-    "variables": { "tipo_fig": { "type": "number", "min": 15, "max": 15 }, "tripla_idx": { "type": "number", "min": 0, "max": 3 }, "k": { "type": "number", "min": 3, "max": 8 } },
-    "relaciones": [ "c1 = [3, 5, 8, 7][tripla_idx] * k", "c2 = [4, 12, 15, 24][tripla_idx] * k", "hip = [5, 13, 17, 25][tripla_idx] * k", "suma_x = c2", "suma_y = c1", "x = hip" ],
-    "restricciones": [ "suma_x > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 15, "max": 15 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 3 },
+      "k": { "type": "number", "min": 3, "max": 8 }
+    },
+    "relaciones": [
+      "c1 = [3, 5, 8, 7][tripla_idx] * k",
+      "c2 = [4, 12, 15, 24][tripla_idx] * k",
+      "hip = [5, 13, 17, 25][tripla_idx] * k",
+      "suma_x = c2",
+      "suma_y = c1",
+      "x = hip"
+    ],
+    "restricciones": ["suma_x > 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": { "habilidades": ["Traslación de segmentos", "Línea quebrada ortogonal"] }
+    "metadata": {
+      "habilidades": ["Traslación de segmentos", "Línea quebrada ortogonal"]
+    }
   },
   {
     "id": "geo_pitagoras_fig16_exp",
@@ -3586,9 +5060,18 @@
     "dificultad": ["experto"],
     "bidireccional": true,
     "enunciado": "Para hallar la 'Diagonal del Espacio' de un prisma rectangular, primero necesitas la diagonal de su base. Si el prisma tiene de ancho {a} cm, profundo {b} cm y alto {c} cm, halla la diagonal del espacio 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 16, "max": 16 }, "k": { "type": "number", "min": 1, "max": 4 } },
-    "relaciones": [ "a = 3 * k", "b = 4 * k", "diag_base = 5 * k", "c = 12 * k", "x = 13 * k" ],
-    "restricciones": [ "x > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 16, "max": 16 },
+      "k": { "type": "number", "min": 1, "max": 4 }
+    },
+    "relaciones": [
+      "a = 3 * k",
+      "b = 4 * k",
+      "diag_base = 5 * k",
+      "c = 12 * k",
+      "x = 13 * k"
+    ],
+    "restricciones": ["x > 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -3601,9 +5084,20 @@
     "dificultad": ["experto"],
     "bidireccional": true,
     "enunciado": "Dos móviles parten de un mismo punto P. Uno viaja hacia el Norte recorriendo {norte} km y el otro hacia el Este recorriendo {este} km. ¿Cuál es la distancia directa 'x' que los separa ahora?",
-    "variables": { "tipo_fig": { "type": "number", "min": 17, "max": 17 }, "tripla_idx": { "type": "number", "min": 0, "max": 3 }, "k": { "type": "number", "min": 5, "max": 15 } },
-    "relaciones": [ "c1 = [3, 5, 8, 7][tripla_idx] * k", "c2 = [4, 12, 15, 24][tripla_idx] * k", "hip = [5, 13, 17, 25][tripla_idx] * k", "norte = c1", "este = c2", "x = hip" ],
-    "restricciones": [ "norte > 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 17, "max": 17 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 3 },
+      "k": { "type": "number", "min": 5, "max": 15 }
+    },
+    "relaciones": [
+      "c1 = [3, 5, 8, 7][tripla_idx] * k",
+      "c2 = [4, 12, 15, 24][tripla_idx] * k",
+      "hip = [5, 13, 17, 25][tripla_idx] * k",
+      "norte = c1",
+      "este = c2",
+      "x = hip"
+    ],
+    "restricciones": ["norte > 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -3616,9 +5110,20 @@
     "dificultad": ["experto"],
     "bidireccional": true,
     "enunciado": "Dentro de un cuadrado de lado {lado} cm, se forma un triángulo rectángulo en una esquina con catetos que miden {c1} cm y {c2} cm. Calcula el perímetro del triángulo 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 18, "max": 18 }, "tripla_idx": { "type": "number", "min": 0, "max": 3 }, "k": { "type": "number", "min": 1, "max": 3 }, "offset": { "type": "number", "min": 2, "max": 5 } },
-    "relaciones": [ "c1 = [3, 5, 8, 7][tripla_idx] * k", "c2 = [4, 12, 15, 24][tripla_idx] * k", "hip = [5, 13, 17, 25][tripla_idx] * k", "lado = c2 + offset", "x = c1 + c2 + hip" ],
-    "restricciones": [ "lado > c2" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 18, "max": 18 },
+      "tripla_idx": { "type": "number", "min": 0, "max": 3 },
+      "k": { "type": "number", "min": 1, "max": 3 },
+      "offset": { "type": "number", "min": 2, "max": 5 }
+    },
+    "relaciones": [
+      "c1 = [3, 5, 8, 7][tripla_idx] * k",
+      "c2 = [4, 12, 15, 24][tripla_idx] * k",
+      "hip = [5, 13, 17, 25][tripla_idx] * k",
+      "lado = c2 + offset",
+      "x = c1 + c2 + hip"
+    ],
+    "restricciones": ["lado > c2"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
@@ -3631,13 +5136,16 @@
     "dificultad": ["experto"],
     "bidireccional": true,
     "enunciado": "En un triángulo equilátero, la altura forma dos triángulos rectángulos notables (30° y 60°). Si el lado del triángulo mide {lado} cm, la altura es igual a 'x * √3'. Calcula el valor del coeficiente entero 'x'.",
-    "variables": { "tipo_fig": { "type": "number", "min": 19, "max": 19 }, "k": { "type": "number", "min": 2, "max": 10, "step": 1 } },
-    "relaciones": [ "lado = 2 * k", "mitad = k", "x = k" ],
-    "restricciones": [ "lado % 2 == 0" ],
+    "variables": {
+      "tipo_fig": { "type": "number", "min": 19, "max": 19 },
+      "k": { "type": "number", "min": 2, "max": 10, "step": 1 }
+    },
+    "relaciones": ["lado = 2 * k", "mitad = k", "x = k"],
+    "restricciones": ["lado % 2 == 0"],
     "incognita_directa": "x",
     "formato_respuesta": { "tipo": "entero" }
   },
-{
+  {
     "id": "geo_segmentos_basico_conamat",
     "tema": "geometria",
     "subtipo": "segmentos",
@@ -3662,7 +5170,9 @@
       "respuesta = val_incognita"
     ],
     "incognita_directa": "respuesta",
-    "metadata": { "habilidades": ["punto medio rotativo", "deducción de segmento"] }
+    "metadata": {
+      "habilidades": ["punto medio rotativo", "deducción de segmento"]
+    }
   },
   {
     "id": "geo_segmentos_intermedio_conamat",
@@ -3688,8 +5198,10 @@
       "respuesta = x"
     ],
     "incognita_directa": "respuesta",
-    "metadata": { "habilidades": ["proporciones dinámicas", "ubicación espacial"] }
-  },  
+    "metadata": {
+      "habilidades": ["proporciones dinámicas", "ubicación espacial"]
+    }
+  },
   {
     "id": "geo_segmentos_avanzado_conamat",
     "tema": "geometria",
@@ -3713,7 +5225,9 @@
       "respuesta = x"
     ],
     "incognita_directa": "respuesta",
-    "metadata": { "habilidades": ["sucesiones de 5 puntos", "excesos rotativos"] }
+    "metadata": {
+      "habilidades": ["sucesiones de 5 puntos", "excesos rotativos"]
+    }
   },
   {
     "id": "geo_segmentos_experto_conamat",
@@ -3743,93 +5257,93 @@
     "metadata": { "habilidades": ["traslape quíntuple", "sistemas lineales"] }
   },
   {
-  "id": "geo_area_triangulo_basico",
-  "tema": "geometria",
-  "subtipo": "area_triangulo",
-  "grado": "5to",
-  "etapa": ["primaria"],
-  "dificultad": ["basico"],
-  "bidireccional": false,
-  "enunciado": "Calcula el área de la región triangular mostrada.",
-  "variables": {
-    "var_t": { "type": "number", "min": 0, "max": 3 },
-    "var_k": { "type": "number", "min": 1, "max": 3 },
-    "var_x": { "type": "number", "min": 2, "max": 6 },
-    "var_flip": { "type": "number", "min": 0, "max": 3 },
-    "var_hide": { "type": "number", "min": 0, "max": 1 }
+    "id": "geo_area_triangulo_basico",
+    "tema": "geometria",
+    "subtipo": "area_triangulo",
+    "grado": "5to",
+    "etapa": ["primaria"],
+    "dificultad": ["basico"],
+    "bidireccional": false,
+    "enunciado": "Calcula el área de la región triangular mostrada.",
+    "variables": {
+      "var_t": { "type": "number", "min": 0, "max": 3 },
+      "var_k": { "type": "number", "min": 1, "max": 3 },
+      "var_x": { "type": "number", "min": 2, "max": 6 },
+      "var_flip": { "type": "number", "min": 0, "max": 3 },
+      "var_hide": { "type": "number", "min": 0, "max": 1 }
+    },
+    "relaciones": [],
+    "restricciones": [],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "numero" },
+    "metadata": {}
   },
-  "relaciones": [],
-  "restricciones": [],
-  "incognita_directa": "respuesta",
-  "formato_respuesta": { "tipo": "numero" },
-  "metadata": {}
-},
-{
-  "id": "geo_area_triangulo_intermedio",
-  "tema": "geometria",
-  "subtipo": "area_triangulo",
-  "grado": "5to",
-  "etapa": ["primaria"],
-  "dificultad": ["intermedio"],
-  "bidireccional": false,
-  "enunciado": "Halla el área del triángulo considerando la altura relativa a la base.",
-  "variables": {
-    "var_t": { "type": "number", "min": 0, "max": 3 },
-    "var_k": { "type": "number", "min": 1, "max": 3 },
-    "var_x": { "type": "number", "min": 2, "max": 6 },
-    "var_flip": { "type": "number", "min": 0, "max": 3 },
-    "var_hide": { "type": "number", "min": 0, "max": 1 }
+  {
+    "id": "geo_area_triangulo_intermedio",
+    "tema": "geometria",
+    "subtipo": "area_triangulo",
+    "grado": "5to",
+    "etapa": ["primaria"],
+    "dificultad": ["intermedio"],
+    "bidireccional": false,
+    "enunciado": "Halla el área del triángulo considerando la altura relativa a la base.",
+    "variables": {
+      "var_t": { "type": "number", "min": 0, "max": 3 },
+      "var_k": { "type": "number", "min": 1, "max": 3 },
+      "var_x": { "type": "number", "min": 2, "max": 6 },
+      "var_flip": { "type": "number", "min": 0, "max": 3 },
+      "var_hide": { "type": "number", "min": 0, "max": 1 }
+    },
+    "relaciones": [],
+    "restricciones": [],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "numero" },
+    "metadata": {}
   },
-  "relaciones": [],
-  "restricciones": [],
-  "incognita_directa": "respuesta",
-  "formato_respuesta": { "tipo": "numero" },
-  "metadata": {}
-},
-{
-  "id": "geo_area_triangulo_avanzado",
-  "tema": "geometria",
-  "subtipo": "area_triangulo",
-  "grado": "5to",
-  "etapa": ["primaria"],
-  "dificultad": ["avanzado"],
-  "bidireccional": false,
-  "enunciado": "Calcula el área de la región triangular obtusa.",
-  "variables": {
-    "var_t": { "type": "number", "min": 0, "max": 3 },
-    "var_k": { "type": "number", "min": 1, "max": 3 },
-    "var_x": { "type": "number", "min": 2, "max": 6 },
-    "var_flip": { "type": "number", "min": 0, "max": 3 },
-    "var_hide": { "type": "number", "min": 0, "max": 1 }
+  {
+    "id": "geo_area_triangulo_avanzado",
+    "tema": "geometria",
+    "subtipo": "area_triangulo",
+    "grado": "5to",
+    "etapa": ["primaria"],
+    "dificultad": ["avanzado"],
+    "bidireccional": false,
+    "enunciado": "Calcula el área de la región triangular obtusa.",
+    "variables": {
+      "var_t": { "type": "number", "min": 0, "max": 3 },
+      "var_k": { "type": "number", "min": 1, "max": 3 },
+      "var_x": { "type": "number", "min": 2, "max": 6 },
+      "var_flip": { "type": "number", "min": 0, "max": 3 },
+      "var_hide": { "type": "number", "min": 0, "max": 1 }
+    },
+    "relaciones": [],
+    "restricciones": [],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "numero" },
+    "metadata": {}
   },
-  "relaciones": [],
-  "restricciones": [],
-  "incognita_directa": "respuesta",
-  "formato_respuesta": { "tipo": "numero" },
-  "metadata": {}
-},
-{
-  "id": "geo_area_triangulo_experto",
-  "tema": "geometria",
-  "subtipo": "area_triangulo",
-  "grado": "5to",
-  "etapa": ["primaria"],
-  "dificultad": ["experto"],
-  "bidireccional": false,
-  "enunciado": "Si el área de la región triangular es {A}, halla el valor de 'x'.",
-  "variables": {
-    "var_t": { "type": "number", "min": 0, "max": 3 },
-    "var_k": { "type": "number", "min": 1, "max": 3 },
-    "var_x": { "type": "number", "min": 2, "max": 6 },
-    "var_flip": { "type": "number", "min": 0, "max": 3 },
-    "var_hide": { "type": "number", "min": 0, "max": 1 }
+  {
+    "id": "geo_area_triangulo_experto",
+    "tema": "geometria",
+    "subtipo": "area_triangulo",
+    "grado": "5to",
+    "etapa": ["primaria"],
+    "dificultad": ["experto"],
+    "bidireccional": false,
+    "enunciado": "Si el área de la región triangular es {A}, halla el valor de 'x'.",
+    "variables": {
+      "var_t": { "type": "number", "min": 0, "max": 3 },
+      "var_k": { "type": "number", "min": 1, "max": 3 },
+      "var_x": { "type": "number", "min": 2, "max": 6 },
+      "var_flip": { "type": "number", "min": 0, "max": 3 },
+      "var_hide": { "type": "number", "min": 0, "max": 1 }
+    },
+    "relaciones": [],
+    "restricciones": [],
+    "incognita_directa": "respuesta",
+    "formato_respuesta": { "tipo": "numero" },
+    "metadata": {}
   },
-  "relaciones": [],
-  "restricciones": [],
-  "incognita_directa": "respuesta",
-  "formato_respuesta": { "tipo": "numero" },
-  "metadata": {}
-},
   {
     "id": "estadistica_barras_01",
     "tema": "Gráficos estadísticos (barras, poligonales, circulares)",
@@ -3850,7 +5364,12 @@
       "tipo": "barras",
       "data": {
         "labels": ["Lun", "Mar", "Mié", "Jue", "Vie"],
-        "datasets": [{ "label": "Ventas", "data": ["${lun}", "${mar}", "${mie}", "${jue}", "${vie}"] }]
+        "datasets": [
+          {
+            "label": "Ventas",
+            "data": ["${lun}", "${mar}", "${mie}", "${jue}", "${vie}"]
+          }
+        ]
       }
     },
     "formato_respuesta": { "tipo": "entero" }
@@ -3887,9 +5406,7 @@
       "promedio": { "type": "number", "min": 15, "max": 18 }
     },
     "enunciado": "Un alumno tiene dos notas: ${nota1} y ${nota2}. ¿Qué nota debe sacar en el tercer examen para que su promedio sea exactamente ${promedio}?",
-    "relaciones": [
-      "ans = (promedio * 3) - nota1 - nota2"
-    ],
+    "relaciones": ["ans = (promedio * 3) - nota1 - nota2"],
     "incognita_directa": "ans"
   },
   {
@@ -3905,9 +5422,7 @@
       "b2": { "type": "number", "min": 5, "max": 15 }
     },
     "enunciado": "El gráfico muestra las ventas de dos sedes (A y B). ¿Cuántas unidades en total vendió la Sede A en ambos días?",
-    "relaciones": [
-      "ans = a1 + a2"
-    ],
+    "relaciones": ["ans = a1 + a2"],
     "incognita_directa": "ans"
   },
   {
@@ -4097,8 +5612,8 @@
       "ans = (frec1 >= mitad) ? edad1 : ((frec1 + frec2 >= mitad) ? edad2 : edad3)"
     ],
     "incognita_directa": "ans"
-  }
-  ,{
+  },
+  {
     "id": "estadistica_tabla_variable_k",
     "tema": "estadistica",
     "subtipo": "frecuencia_algebraica",
@@ -4160,10 +5675,7 @@
     "variables": {
       "a": { "type": "number", "min": 3, "max": 12, "step": 1 }
     },
-    "relaciones": [
-      "area_total = 6 * a * a",
-      "ans = a * a * a"
-    ],
+    "relaciones": ["area_total = 6 * a * a", "ans = a * a * a"],
     "incognita_directa": "ans",
     "formato_respuesta": { "tipo": "entero" },
     "enunciado": "Observa el cubo mostrado. Se sabe que el área total de su superficie es de ${area_total} \\text{ cm}^2$. Calcula el volumen de dicho sólido.",
@@ -4184,10 +5696,7 @@
     "variables": {
       "a": { "type": "number", "min": 4, "max": 15, "step": 1 }
     },
-    "relaciones": [
-      "volumen = a * a * a",
-      "ans = 12 * a"
-    ],
+    "relaciones": ["volumen = a * a * a", "ans = 12 * a"],
     "incognita_directa": "ans",
     "formato_respuesta": { "tipo": "entero" },
     "enunciado": "Si el volumen del cubo mostrado es de ${volumen} \\text{ cm}^3$, determina la suma de las longitudes de todas sus aristas.",
@@ -4208,9 +5717,7 @@
     "variables": {
       "a": { "type": "number", "min": 2, "max": 10, "step": 1 }
     },
-    "relaciones": [
-      "ans = a * a * a"
-    ],
+    "relaciones": ["ans = a * a * a"],
     "incognita_directa": "ans",
     "formato_respuesta": { "tipo": "entero" },
     "enunciado": "En el siguiente gráfico se muestra un cubo. Determina su volumen.",
@@ -4231,9 +5738,7 @@
     "variables": {
       "a": { "type": "number", "min": 3, "max": 9, "step": 1 }
     },
-    "relaciones": [
-      "ans = 6 * a * a"
-    ],
+    "relaciones": ["ans = 6 * a * a"],
     "incognita_directa": "ans",
     "formato_respuesta": { "tipo": "entero" },
     "enunciado": "Observa el hexaedro regular (cubo) mostrado en la figura. Calcula el área total de su superficie.",
@@ -4244,7 +5749,6 @@
     }
   },
 
-
   {
     "id": "geo_cono_basico_01",
     "tema": "El Cono",
@@ -4252,8 +5756,16 @@
     "grado": "5to",
     "dificultad": ["basico"],
     "enunciado": "Calcula el volumen del cono circular recto mostrado, si su radio mide ${r}{unidad}$ y su generatriz mide ${g}{unidad}$.",
-    "variables": { "k": { "type": "number", "min": 1, "max": 3, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
-    "relaciones": [ "r = 3 * k", "h = 4 * k", "g = 5 * k", "volumen = (r * r * h) / 3" ],
+    "variables": {
+      "k": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "unidad": { "type": "list", "values": ["u", "cm"] }
+    },
+    "relaciones": [
+      "r = 3 * k",
+      "h = 4 * k",
+      "g = 5 * k",
+      "volumen = (r * r * h) / 3"
+    ],
     "incognita_directa": "volumen",
     "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
     "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 90 }
@@ -4265,8 +5777,17 @@
     "grado": "5to",
     "dificultad": ["basico"],
     "enunciado": "El diámetro de la base de un cono mide ${d}{unidad}$ y su altura mide ${h}{unidad}$. Calcula el área de su superficie lateral.",
-    "variables": { "k": { "type": "number", "min": 2, "max": 4, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
-    "relaciones": [ "r = 4 * k", "d = 8 * k", "h = 3 * k", "g = 5 * k", "area_lateral = r * g" ],
+    "variables": {
+      "k": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "unidad": { "type": "list", "values": ["u", "cm"] }
+    },
+    "relaciones": [
+      "r = 4 * k",
+      "d = 8 * k",
+      "h = 3 * k",
+      "g = 5 * k",
+      "area_lateral = r * g"
+    ],
     "incognita_directa": "area_lateral",
     "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{2}" },
     "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 90 }
@@ -4278,14 +5799,22 @@
     "grado": "5to",
     "dificultad": ["basico"],
     "enunciado": "La base de un cono tiene un área de ${area_base}\\pi {unidad}^{2}$. Si su generatriz mide ${g}{unidad}$, calcula el volumen del cono.",
-    "variables": { "k": { "type": "number", "min": 1, "max": 2, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
-    "relaciones": [ "r = 3 * k", "area_base = r * r", "h = 4 * k", "g = 5 * k", "volumen = (r * r * h) / 3" ],
+    "variables": {
+      "k": { "type": "number", "min": 1, "max": 2, "step": 1 },
+      "unidad": { "type": "list", "values": ["u", "cm"] }
+    },
+    "relaciones": [
+      "r = 3 * k",
+      "area_base = r * r",
+      "h = 4 * k",
+      "g = 5 * k",
+      "volumen = (r * r * h) / 3"
+    ],
     "incognita_directa": "volumen",
     "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
     "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 120 }
   },
 
-  
   {
     "id": "geo_cono_intermedio_01",
     "tema": "El Cono",
@@ -4293,8 +5822,17 @@
     "grado": "5to",
     "dificultad": ["intermedio"],
     "enunciado": "Un cono de revolución tiene un volumen de ${volumen}\\pi {unidad}^{3}$. Si el radio de su base mide ${r}{unidad}$, calcula el área lateral del sólido.",
-    "variables": { "k": { "type": "number", "min": 1, "max": 2, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
-    "relaciones": [ "r = 5 * k", "h = 12 * k", "g = 13 * k", "volumen = (r * r * h) / 3", "area_lateral = r * g" ],
+    "variables": {
+      "k": { "type": "number", "min": 1, "max": 2, "step": 1 },
+      "unidad": { "type": "list", "values": ["u", "cm"] }
+    },
+    "relaciones": [
+      "r = 5 * k",
+      "h = 12 * k",
+      "g = 13 * k",
+      "volumen = (r * r * h) / 3",
+      "area_lateral = r * g"
+    ],
     "incognita_directa": "area_lateral",
     "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{2}" },
     "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 150 }
@@ -4306,10 +5844,21 @@
     "grado": "5to",
     "dificultad": ["intermedio"],
     "enunciado": "En un cono equilátero, la generatriz mide ${g}{unidad}$. Calcula el volumen del sólido.",
-    "variables": { "k": { "type": "number", "min": 1, "max": 3, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
-    "relaciones": [ "r = 3 * k", "g = 6 * k", "h = 3 * k", "vol_coef = 9 * k * k * k" ],
+    "variables": {
+      "k": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "unidad": { "type": "list", "values": ["u", "cm"] }
+    },
+    "relaciones": [
+      "r = 3 * k",
+      "g = 6 * k",
+      "h = 3 * k",
+      "vol_coef = 9 * k * k * k"
+    ],
     "incognita_directa": "vol_coef",
-    "formato_respuesta": { "tipo": "latex", "sufijo": "\\sqrt{3}\\pi {unidad}^{3}" },
+    "formato_respuesta": {
+      "tipo": "latex",
+      "sufijo": "\\sqrt{3}\\pi {unidad}^{3}"
+    },
     "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 150 }
   },
   {
@@ -4326,7 +5875,6 @@
     "metadata": { "visual_type": "none", "tiempo_estimado": 120 }
   },
 
-
   {
     "id": "geo_cono_avanzado_01",
     "tema": "El Cono",
@@ -4334,8 +5882,16 @@
     "grado": "5to",
     "dificultad": ["avanzado"],
     "enunciado": "En un cono circular recto, la generatriz y el radio de la base forman un ángulo notable de $53^\\circ$. Si la altura mide ${h}{unidad}$, calcula el área lateral.",
-    "variables": { "k": { "type": "number", "min": 2, "max": 4, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
-    "relaciones": [ "r = 3 * k", "h = 4 * k", "g = 5 * k", "area_lateral = r * g" ],
+    "variables": {
+      "k": { "type": "number", "min": 2, "max": 4, "step": 1 },
+      "unidad": { "type": "list", "values": ["u", "cm"] }
+    },
+    "relaciones": [
+      "r = 3 * k",
+      "h = 4 * k",
+      "g = 5 * k",
+      "area_lateral = r * g"
+    ],
     "incognita_directa": "area_lateral",
     "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{2}" },
     "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 120 }
@@ -4347,8 +5903,16 @@
     "grado": "5to",
     "dificultad": ["avanzado"],
     "enunciado": "El radio de la base y la altura de un cono están en relación de $3$ a $4$. Si su generatriz mide ${g}{unidad}$, halla su volumen.",
-    "variables": { "k": { "type": "number", "min": 2, "max": 5, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
-    "relaciones": [ "r = 3 * k", "h = 4 * k", "g = 5 * k", "volumen = (r * r * h) / 3" ],
+    "variables": {
+      "k": { "type": "number", "min": 2, "max": 5, "step": 1 },
+      "unidad": { "type": "list", "values": ["u", "cm"] }
+    },
+    "relaciones": [
+      "r = 3 * k",
+      "h = 4 * k",
+      "g = 5 * k",
+      "volumen = (r * r * h) / 3"
+    ],
     "incognita_directa": "volumen",
     "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
     "metadata": { "visual_type": "none", "tiempo_estimado": 150 }
@@ -4360,13 +5924,18 @@
     "grado": "5to",
     "dificultad": ["avanzado"],
     "enunciado": "El área lateral de un cono es el doble del área de su base. Si el radio mide ${r}{unidad}$, halla su volumen.",
-    "variables": { "k": { "type": "number", "min": 1, "max": 3, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
-    "relaciones": [ "r = 3 * k", "vol_coef = 9 * k * k * k" ],
+    "variables": {
+      "k": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "unidad": { "type": "list", "values": ["u", "cm"] }
+    },
+    "relaciones": ["r = 3 * k", "vol_coef = 9 * k * k * k"],
     "incognita_directa": "vol_coef",
-    "formato_respuesta": { "tipo": "latex", "sufijo": "\\sqrt{3}\\pi {unidad}^{3}" },
+    "formato_respuesta": {
+      "tipo": "latex",
+      "sufijo": "\\sqrt{3}\\pi {unidad}^{3}"
+    },
     "metadata": { "visual_type": "none", "tiempo_estimado": 150 }
   },
-
 
   {
     "id": "geo_cono_experto_01",
@@ -4376,7 +5945,7 @@
     "dificultad": ["experto"],
     "enunciado": "En el cono mostrado, su altura mide $15{unidad}$. Su radio mide $x$ y su generatriz mide $x + 9$. Calcula el volumen del sólido.",
     "variables": { "unidad": { "type": "list", "values": ["u", "cm"] } },
-    "relaciones": [ "x = 8", "r = x", "h = 15", "volumen = (r * r * h) / 3" ],
+    "relaciones": ["x = 8", "r = x", "h = 15", "volumen = (r * r * h) / 3"],
     "incognita_directa": "volumen",
     "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
     "metadata": { "visual_type": "cono_3d", "tiempo_estimado": 180 }
@@ -4388,8 +5957,11 @@
     "grado": "5to",
     "dificultad": ["experto"],
     "enunciado": "Se tiene una copa cónica llena de agua hasta la mitad de su altura. Si el volumen del agua es ${v_agua}\\pi {unidad}^3$, calcula el volumen total de la copa.",
-    "variables": { "k": { "type": "number", "min": 2, "max": 10, "step": 2 }, "unidad": { "type": "list", "values": ["cm"] } },
-    "relaciones": [ "v_agua = k", "volumen_total = k * 8" ],
+    "variables": {
+      "k": { "type": "number", "min": 2, "max": 10, "step": 2 },
+      "unidad": { "type": "list", "values": ["cm"] }
+    },
+    "relaciones": ["v_agua = k", "volumen_total = k * 8"],
     "incognita_directa": "volumen_total",
     "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
     "metadata": { "visual_type": "none", "tiempo_estimado": 180 }
@@ -4401,11 +5973,18 @@
     "grado": "5to",
     "dificultad": ["experto"],
     "enunciado": "El desarrollo lateral de un cono es un sector circular de $216^\\circ$ cuyo radio mide ${g}{unidad}$. Calcula el volumen del cono.",
-    "variables": { "k": { "type": "number", "min": 1, "max": 3, "step": 1 }, "unidad": { "type": "list", "values": ["u", "cm"] } },
-    "relaciones": [ "r = 3 * k", "h = 4 * k", "g = 5 * k", "volumen = (r * r * h) / 3" ],
+    "variables": {
+      "k": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "unidad": { "type": "list", "values": ["u", "cm"] }
+    },
+    "relaciones": [
+      "r = 3 * k",
+      "h = 4 * k",
+      "g = 5 * k",
+      "volumen = (r * r * h) / 3"
+    ],
     "incognita_directa": "volumen",
     "formato_respuesta": { "tipo": "latex", "sufijo": "\\pi {unidad}^{3}" },
     "metadata": { "visual_type": "none", "tiempo_estimado": 180 }
   }
-
 ]

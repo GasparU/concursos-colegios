@@ -71,7 +71,10 @@ export const TOPICS_BY_GRADE_ONLY = {
     { nombre: "Cuatro operaciones y Operaciones combinadas", tipo: "conamat", subtipos: ["operaciones_combinadas"] },
     { nombre: "Teoría de números: Divisibilidad", tipo: "conamat", subtipos: ["criterios_divisibilidad", "multiplos", "propiedades_multiplos"] },
     { nombre: "Números primos", tipo: "conamat", subtipos: [] },
-    { nombre: "Fracciones: Clases y operaciones", tipo: "conamat", subtipos: ["suma_resta_fracciones", "comparacion_fracciones", "fracciones_basicas"] },
+    { nombre: "Ecuaciones Fraccionarias I", tipo: "conamat", subtipos: ["ecuacion_frac_num_mcm_simple", "ecuacion_frac_num_3_terminos", "ecuacion_frac_num_planteo_dinero", "ecuacion_frac_num_fraccion_restante"] },
+    { nombre: "Ecuaciones Fraccionarias II", tipo: "conamat", subtipos: ["ecuacion_frac_den_homogenea", "ecuacion_frac_den_aspa_binomio", "ecuacion_frac_den_traduccion_costo", "ecuacion_frac_den_trampa_dominio"] },
+    { nombre: "Ecuaciones de 2do Grado Básicas", tipo: "conamat", subtipos: ["ecuacion_cuadratica_incompleta_pura", "ecuacion_cuadratica_factorizada_raices", "ecuacion_cuadratica_planteo_narrativo", "ecuacion_cuadratica_geometria_raiz_directa"] },
+
     { nombre: "Fracción de una fracción", tipo: "conamat", subtipos: ["fraccion_de_una_fraccion", "reparto_sucesivo", "consumo_volumen"] },
     { nombre: "Números decimales (Operaciones)", tipo: "conamat", subtipos: [] },
     { nombre: "Equivalencia y cambio monetario", tipo: "conamat", subtipos: ["canje_monetario", "vuelto_compra", "presupuesto_gastos"] },
@@ -97,19 +100,29 @@ export const TOPICS_BY_GRADE_ONLY = {
     { nombre: "Gráficos estadísticos (barras, poligonales, circulares)", tipo: "conamat", subtipos: ["grafico_barras", "grafico_barras_doble", "grafico_circular", "tabla_frecuencias", "pictograma"] },
     { nombre: "Sucesos numéricos probables e improbables", tipo: "conamat", subtipos: ["probabilidad_basica", "probabilidad_fraccion", "suceso_contrario", "extraccion_doble"] },
     { nombre: "Términos Semejantes", tipo: "conamat", subtipos: ["reduccion_basica", "ecuacion_exponentes", "reduccion_avanzada", "sistema_ecuaciones"] },
-    { nombre: "Orden de Información", tipo: "conamat", subtipos: ["lineal_basico", "vertical_basico", "circular_basico", "matriz_basico", "lineal_intermedio", "crono_intermedio", "circular_intermedio", "matriz_intermedio", "lineal_avanzado", "vertical_avanzado", "circular_avanzado", "matriz_avanzado", "lineal_experto", "crono_experto", "circular_experto", "matriz_experto"] },
+    { nombre: "Orden de Información", tipo: "conamat", subtipos: ["verdades_mentiras", "orden_vertical", "orden_circular", "orden_matriz"] },
+    { nombre: "Reducción de Términos Semejantes", tipo: "conamat", subtipos: ["reduc_semej_operativo_basico", "reduc_semej_signos_intermedio", "reduc_semej_exponente_avanzado", "reduc_semej_sistema_experto"] },
 
     // RAZONAMIENTO MATEMÁTICO
     { nombre: "Sucesiones numéricas y alfabéticas",tipo: "conamat", subtipos: ["sucesion_numerica", "sucesion_alfabetica","sucesion_alfanumerica", "sucesion_algebraica", "sucesion_intercalada", "sucesion_cuadratica"] },
     { nombre: "Operadores Matemáticos", tipo: "conamat", subtipos: ["basico_directo", "basico_anidado", "basico_inverso", "inter_cambio_var", "inter_ecuacion", "inter_condicional", "avanz_compuesto", "avanz_cond_magnitud", "avanz_cambio_doble", "experto_recursivo", "experto_induccion", "experto_implicito"] },
-    { nombre: "Criptoaritmética", tipo: "conamat", subtipos: ["criptoaritmetica"] },
+    { nombre: "Criptoaritmética Pro", tipo: "conamat", subtipos: ["cripto_v2_suma_basico", "cripto_v2_resta_intermedio", "cripto_v2_mult_avanzado", "cripto_v2_div_experto"] },
+
+
     { nombre: "Problemas de Edades", tipo: "conamat", subtipos: ["problemas_edades"] },
     { nombre: "Planteo de Ecuaciones", tipo: "conamat", subtipos: ["planteo_ecuaciones"] },
+    { nombre: "Relojes I: Ángulos", tipo: "conamat", subtipos: ["relojes_ang_basico", "relojes_ang_intermedio", "relojes_ang_avanzado", "relojes_ang_experto"] },
+    { nombre: "Relojes II: Cronometría", tipo: "conamat", subtipos: ["relojes_time_basico", "relojes_time_intermedio", "relojes_time_avanzado", "relojes_time_experto"] },
 
     // 🔵 TEMARIO ACADEMIA (Requisitos y Complementos)
     { nombre: "MCD y MCM (Requisito)", tipo: "academia", subtipos: ["coincidencia_tiempo", "encuentro_amigos", "reparto_equitativo", "baldosas_piso"] },
     { nombre: "Descomposición Polinómica (Requisito)", tipo: "academia", subtipos: ["descomposicion_polinomica"] },
-    { nombre: "Leyes de Exponentes y Radicación (Requisito)", tipo: "academia", subtipos: ["teoria_exponentes", "radicacion"] },
+    { nombre: "Leyes de Exponentes I", tipo: "academia", subtipos: ["teoria_exp_producto_cociente", "teoria_exp_descomposicion_bases", "teoria_exp_factor_comun", "teoria_exp_ecuacion_implicita"] },
+     { nombre: "Leyes de Exponentes II", tipo: "academia", subtipos: ["teoria_exp_potencia_vs_cadena", "teoria_exp_cadenas_anidadas", "teoria_exp_ecuacion_torres", "teoria_exp_analogia_compuesta"] },
+     { nombre: "Grado de Polinomio: Absoluto y Relativo", tipo: "academia", subtipos: ["grados_monomio_sistema", "grados_polinomio_trampa", "grados_operaciones_basicas", "grados_sistema_ecuaciones"] },
+     { nombre: "Polinomios Especiales: Idénticos y Homogeneos", tipo: "academia", subtipos: ["polinomio_especial_homogeneo", "polinomio_especial_identicos", "polinomio_especial_completo_ordenado", "polinomio_especial_identicamente_nulo"] },
+    { nombre: "Radicación", tipo: "academia", subtipos: ["radicacion_raiz_de_raiz", "radicacion_indices_diferentes", "radicacion_sucesiva_sandwich", "radicacion_indices_variables"] },
+
     { nombre: "Ecuaciones e Inecuaciones (Requisito)", tipo: "academia", subtipos: ["lineal", "sueldo_minimo", "punto_equilibrio", "area_maxima", "maximizar_productos"] },
     { nombre: "Teorema de Pitágoras y T. Notables (Requisito)", tipo: "academia", subtipos: ["teorema_pitagoras", "triangulos_notables"] },
     { nombre: "Promedios (Requisito)", tipo: "academia", subtipos: ["agregar_numero", "promedio_ponderado", "promedio_geometrico", "eliminar_numero"] },
@@ -121,7 +134,7 @@ export const TOPICS_BY_GRADE_ONLY = {
 
 // 2. Tema exclusivo para Pirámides (Mapea al subtipo de tus JSON de pirámides)
     { nombre: "Sólidos 3D: Pirámides (Complemento)", tipo: "academia", subtipos: ["volumen_piramide", "area_piramide"] },
-    { nombre: "Polinomios: Valor Numérico (Complemento)", tipo: "academia", subtipos: ["polinomios"] },
+    { nombre: "Polinomios: Valor Numérico (Complemento)", tipo: "academia", subtipos: ["polinomios_reemplazo_negativo", "polinomios_igualacion_previa", "polinomios_evaluacion_multiple", "polinomios_composicion"] },
     { nombre: "Plano Cartesiano y Distancias (Complemento)", tipo: "academia", subtipos: ["plano_cartesiano"] },
     { nombre: "Intervalos Numéricos (Complemento)", tipo: "academia", subtipos: ["intervalos"] },
     { nombre: "Circunferencia y Propiedades (Complemento)", tipo: "academia", subtipos: ["angulos_circunferencia", "propiedades_circunferencia", "segmentos_circunferencia"] },
