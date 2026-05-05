@@ -450,6 +450,9 @@ export class ParametricGeneratorService {
                 // 🔥 Inyectamos los $ para los cuadrados
                 const fmtC = (a: number, b: number, c: number) => `$${a}n^2 ${b < 0 ? '-' : '+'} ${Math.abs(b)}n ${c < 0 ? '-' : '+'} ${Math.abs(c)}$`;
                 distractores = [fmtC(A+1, B, C), fmtC(A, B+1, C), fmtC(A, B, C+1), fmtC(A, B-1, C)];
+            } else if (typeof respuesta === 'string') {
+                // 🛡️ MODO RAZONAMIENTO: Si es texto, usamos los otros nombres del problema como distractores
+                distractores = Object.values(valores).filter(v => typeof v === 'string' && v !== respuesta && v.length > 1);
             } else if (esValido) {
                 const diff = (numBase > 20) ? 4 : 2;
                 const fmt = (n: number) => formatRespuesta(n, plantilla.formato_respuesta, unidadActual);
@@ -461,9 +464,13 @@ export class ParametricGeneratorService {
         let saltos = 1;
 
         while (opcionesArray.length < 5) {
-            if (esValido) { // <-- Ahora sí usará el valor 'true' de arriba
+            if (esValido) { 
                 const falso = numBase + (saltos * 3);
                 opcionesArray.push(formatRespuesta(falso, plantilla.formato_respuesta, unidadActual));
+            } else if (typeof respuesta === 'string') {
+                // 🛡️ Salvavidas si faltan nombres en la plantilla
+                const fallbacks = ["Ninguno", "Todos", "Faltan datos", "No se sabe", "Ambos"];
+                opcionesArray.push(fallbacks[saltos % fallbacks.length]);
             } else {
                 opcionesArray.push(`N.A. ${saltos}`);
             }

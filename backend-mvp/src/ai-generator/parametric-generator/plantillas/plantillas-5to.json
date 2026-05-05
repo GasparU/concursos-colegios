@@ -1285,248 +1285,466 @@
       "habilidades": ["Reconstrucción de numerales", "Criptoaritmética"]
     }
   },
+
+
+
+
+
+
+
+
+
+  
   {
-    "id": "edades_basico",
+    "id": "edades_basico_1_engano",
     "tema": "razonamiento_matematico",
-    "subtipo": "problemas_edades",
+    "subtipo": "edades_ecuacion_basico",
     "grado": "5to",
-    "etapa": ["clasificatoria"],
     "dificultad": ["basico"],
-    "bidireccional": true,
-    "enunciado": "La edad de {nombre} es el triple de la edad de su hijo. Si el hijo tiene {hijo} años, ¿cuántos años tiene {nombre}?",
     "variables": {
-      "nombre": {
-        "type": "string",
-        "opciones": ["Carlos", "María", "Pedro", "Ana"]
-      },
-      "hijo": { "type": "number", "min": 5, "max": 12, "step": 1 }
+      "nombre": { "type": "string", "opciones": ["Sonia", "María", "Lucía", "Ariana"] },
+      "x": { "type": "number", "min": 12, "max": 20, "step": 1 },
+      "r1": { "type": "number", "min": 5, "max": 15, "step": 1 }
     },
-    "relaciones": ["padre = 3 * hijo"],
-    "restricciones": ["padre > hijo"],
-    "incognita_directa": "padre",
-    "incognitas_inversa": ["hijo"],
+    "relaciones": [
+      "r2 = 2 * x - r1",
+      "ans = x"
+    ],
+    "incognita_directa": "ans",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["ecuaciones lineales", "edades"],
-      "tiempo_estimado": 60,
-      "requiere_calculadora": false,
-      "fuente": "Adaptado"
-    }
+    "enunciado": "El cuádruple de la edad de {nombre}, disminuida en {r1} años, es igual al doble de su edad aumentada en {r2} años. Halla su edad.",
+    "metadata": { "fuente": "CONAMAT", "truco": "Planteo puro en texto. k1=4, k2=2 hardcodeado." }
   },
+  {
+    "id": "edades_basico_2_complemento",
+    "tema": "razonamiento_matematico",
+    "subtipo": "edades_ecuacion_basico",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "variables": {
+      "x": { "type": "number", "min": 10, "max": 18, "step": 1 },
+      "r1": { "type": "number", "min": 5, "max": 15, "step": 1 }
+    },
+    "relaciones": [
+      "meta = 6 * x - r1",
+      "ans = x"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Si al quíntuple de mi edad le resto {r1} años, obtengo exactamente lo que me falta para cumplir {meta} años. Halla mi edad.",
+    "metadata": { "fuente": "CONAMAT", "truco": "Complemento con quíntuple hardcodeado. Similar a tu Ej 2." }
+  },
+  {
+    "id": "edades_basico_3_fracciones",
+    "tema": "razonamiento_matematico",
+    "subtipo": "edades_ecuacion_basico",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "variables": {
+      "nombre": { "type": "string", "opciones": ["Lucía", "Carmen", "Elena"] },
+      "p": { "type": "number", "min": 2, "max": 6, "step": 2 },
+      "f": { "type": "number", "min": 10, "max": 18, "step": 2 }
+    },
+    "relaciones": [
+      "ans = (3 * p + f) / 2"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Halla la edad de {nombre}, sabiendo que hace {p} años su edad era la tercera parte de la que tendrá dentro de {f} años.",
+    "metadata": { "fuente": "CONAMAT", "truco": "Fracción en texto 'la tercera parte'. Ecuación de 1 sujeto." }
+  },
+  {
+    "id": "edades_intermedio_1_sumafutura",
+    "tema": "razonamiento_matematico",
+    "subtipo": "edades_futuro_intermedio",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "variables": {
+      "n1": { "type": "string", "opciones": ["Carlos", "Luis", "Mateo"] },
+      "n2": { "type": "string", "opciones": ["Hugo", "Javier", "Diego"] },
+      "x": { "type": "number", "min": 8, "max": 15, "step": 1 },
+      "f": { "type": "number", "min": 8, "max": 15, "step": 1 }
+    },
+    "relaciones": [
+      "suma_f = 4 * x + 2 * f",
+      "ans = x"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Si la edad de {n1} es el triple de la de {n2} y dentro de {f} años suman {suma_f}, halla la edad actual de {n2}.",
+    "metadata": { "fuente": "CONAMAT", "truco": "Idéntico a tu Ejercicio 4." }
+  },
+  {
+    "id": "edades_intermedio_2_pasadopresente",
+    "tema": "razonamiento_matematico",
+    "subtipo": "edades_futuro_intermedio",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "variables": {
+      "x_p": { "type": "number", "min": 5, "max": 12, "step": 1 },
+      "p": { "type": "number", "min": 4, "max": 10, "step": 1 }
+    },
+    "relaciones": [
+      "suma_act = 5 * x_p + 2 * p",
+      "ans = 4 * x_p + p"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Hace {p} años, la edad del padre era 4 veces la del hijo. Si hoy suman {suma_act} años, halla la edad actual del padre.",
+    "metadata": { "fuente": "CONAMAT", "truco": "Idéntico a tu Ejercicio 5." }
+  },
+  {
+    "id": "edades_intermedio_3_proporciones",
+    "tema": "razonamiento_matematico",
+    "subtipo": "edades_futuro_intermedio",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "variables": {
+      "n1": { "type": "string", "opciones": ["María", "Julia", "Paola"] },
+      "n2": { "type": "string", "opciones": ["Miguel", "Pedro", "Andrés"] },
+      "k": { "type": "number", "min": 3, "max": 6, "step": 1 }
+    },
+    "relaciones": [
+      "f = 2 * k",
+      "ans = 3 * k"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "La edad de {n1} es a la de {n2} como 2 es a 3, y dentro de {f} años será como 4 es a 5. Halla la edad de {n2}.",
+    "metadata": { "fuente": "CONAMAT", "truco": "Idéntico a tu Ejercicio 3 pero en texto deductivo (proporciones a/b = c/d)." }
+  },
+  {
+    "id": "edades_avanzado_1_nacimientofrac",
+    "tema": "razonamiento_matematico",
+    "subtipo": "edades_diferencia_avanzado",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "variables": {
+      "n1": { "type": "string", "opciones": ["Daniela", "Camila", "Sofía"] },
+      "x": { "type": "number", "min": 10, "max": 15, "step": 1 },
+      "f": { "type": "number", "min": 8, "max": 15, "step": 1 }
+    },
+    "relaciones": [
+      "dif = 2 * x",
+      "ans = x + f"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Si al nacer {n1} su madre tenía {dif} años, y hoy la edad de la madre es el triple de la edad de {n1}, halla la edad de {n1} dentro de {f} años.",
+    "metadata": { "fuente": "CONAMAT", "truco": "Adaptación limpia de tu Ejercicio 10 sin fracciones raras." }
+  },
+  {
+    "id": "edades_avanzado_2_difoculta",
+    "tema": "razonamiento_matematico",
+    "subtipo": "edades_diferencia_avanzado",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "variables": {
+      "x_p": { "type": "number", "min": 4, "max": 8, "step": 1 },
+      "p": { "type": "number", "min": 5, "max": 12, "step": 1 }
+    },
+    "relaciones": [
+      "suma = 5 * x_p + 2 * p",
+      "ans = 3 * x_p"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Si la suma de las edades de dos hermanos es {suma} y hace {p} años el mayor tenía el cuádruple del menor, halla la edad del mayor cuando nació el menor.",
+    "metadata": { "fuente": "CONAMAT", "truco": "Idéntico a tu Ejercicio 8." }
+  },
+  {
+    "id": "edades_avanzado_3_proyeccion",
+    "tema": "razonamiento_matematico",
+    "subtipo": "edades_diferencia_avanzado",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "variables": {
+      "n1": { "type": "string", "opciones": ["Juan", "Alex", "David"] },
+      "p": { "type": "number", "min": 4, "max": 8, "step": 2 },
+      "f": { "type": "number", "min": 20, "max": 35, "step": 5 },
+      "dif": { "type": "number", "min": 3, "max": 6, "step": 1 },
+      "m": { "type": "number", "min": 30, "max": 40, "step": 5 }
+    },
+    "relaciones": [
+      "ans = m - dif"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Halla la edad de {n1}, sabiendo que hace {p} años era la tercera parte de la que tendrá dentro de {f}. Luego, calcula la edad de su hermana cuando él cumpla {m}, si ella nació cuando él tenía {dif}.",
+    "metadata": { "fuente": "CONAMAT", "truco": "Idéntico a tu Ejercicio 9. Tres tiempos y rastreo de diferencia." }
+  },
+  {
+    "id": "edades_experto_1_nuevotiempo",
+    "tema": "razonamiento_matematico",
+    "subtipo": "edades_tiempos_experto",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "variables": {
+      "x": { "type": "number", "min": 3, "max": 6, "step": 1 },
+      "p": { "type": "number", "min": 4, "max": 6, "step": 1 },
+      "f": { "type": "number", "min": 8, "max": 12, "step": 2 }
+    },
+    "relaciones": [
+      "suma_f = 6 * x + 2 * p + 2 * f",
+      "ans = 3 * x - p"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Hace {p} años, la edad de un padre era el quíntuple de la de su hijo. Si dentro de {f} años sumarán {suma_f} años, ¿dentro de cuántos años la edad del padre será el doble de la del hijo?",
+    "metadata": { "fuente": "CONAMAT FINAL", "truco": "Desbloqueo de una 3ra ecuación para hallar un tiempo 't' desconocido." }
+  },
+  {
+    "id": "edades_experto_2_tressujetos",
+    "tema": "razonamiento_matematico",
+    "subtipo": "edades_tiempos_experto",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "variables": {
+      "k": { "type": "number", "min": 4, "max": 7, "step": 1 },
+      "f": { "type": "number", "min": 5, "max": 10, "step": 1 }
+    },
+    "relaciones": [
+      "dif = 3 * k",
+      "ans = 10 * k + 3 * f"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Las edades de tres hermanos son proporcionales a 2, 3 y 5. Si cuando nació el menor, el hermano mayor tenía {dif} años, halla cuánto sumarán sus edades dentro de {f} años.",
+    "metadata": { "fuente": "CONAMAT FINAL", "truco": "Texto puro cruzando Aritmética con Razonamiento." }
+  },
+  {
+    "id": "edades_experto_3_cripto",
+    "tema": "razonamiento_matematico",
+    "subtipo": "edades_tiempos_experto",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "variables": {
+      "a": { "type": "number", "min": 8, "max": 9, "step": 1 },
+      "b": { "type": "number", "min": 1, "max": 3, "step": 1 },
+      "n_n": { "type": "number", "min": 20, "max": 25, "step": 1 },
+      "f": { "type": "number", "min": 5, "max": 10, "step": 1 }
+    },
+    "relaciones": [
+      "dif = 9 * (a - b)",
+      "sum = 11 * (a + b)",
+      "h = 10 * b + a",
+      "ans = (h - n_n) + f"
+    ],
+    "restricciones": [
+      "a > b",
+      "h > n_n"
+    ],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "La edad de un abuelo es un número de dos cifras. Si invertimos el orden, obtenemos la edad de su hijo. Si la diferencia de sus edades es {dif} y suman {sum}, halla la edad del nieto dentro de {f} años, si nació cuando su padre tenía {n_n} años.",
+    "metadata": { "fuente": "CONAMAT FINAL", "truco": "Cripto edad en prosa." }
+  }
+,
+
+
+
+
+
+
 
   {
-    "id": "edades_intermedio",
-    "tema": "razonamiento_matematico",
-    "subtipo": "problemas_edades",
-    "grado": "5to",
-    "etapa": ["clasificatoria", "final"],
-    "dificultad": ["intermedio"],
-    "bidireccional": true,
-    "enunciado": "La suma de las edades de {p1} y {p2} es {suma}. Si {p1} tiene el doble de la edad de {p2} menos {dif} años, ¿cuántos años tiene cada uno?",
-    "variables": {
-      "p1": { "type": "string", "opciones": ["Juan", "Luis", "Marta"] },
-      "p2": { "type": "string", "opciones": ["José", "Ana", "Luz"] },
-      "suma": { "type": "number", "min": 30, "max": 60, "step": 5 },
-      "dif": { "type": "number", "min": 2, "max": 8, "step": 2 }
-    },
-    "relaciones": ["x + y = suma", "x = 2*y - dif"],
-    "restricciones": ["x > 0", "y > 0"],
-    "incognita_directa": ["x", "y"],
-    "incognitas_inversa": ["suma", "dif"],
-    "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["sistemas de ecuaciones", "edades"],
-      "tiempo_estimado": 90,
-      "requiere_calculadora": false,
-      "fuente": "Adaptado"
-    }
-  },
-  {
-    "id": "edades_avanzado",
-    "tema": "razonamiento_matematico",
-    "subtipo": "problemas_edades",
-    "grado": "5to",
-    "etapa": ["final"],
-    "dificultad": ["avanzado"],
-    "bidireccional": true,
-    "enunciado": "La edad de {abuelo} es el cuadrado de la edad de {nieto}. Dentro de {anios} años, la edad del abuelo será el triple de la edad del nieto. ¿Cuántos años tienen actualmente?",
-    "variables": {
-      "abuelo": { "type": "string", "opciones": ["Don José", "Doña María"] },
-      "nieto": { "type": "string", "opciones": ["Carlitos", "Ana"] },
-      "n": { "type": "number", "min": 4, "max": 8, "step": 1 }
-    },
-    "relaciones": ["a = n * n", "anios = (n*n - 3*n) / 2"],
-    "restricciones": [],
-    "incognita_directa": ["a", "n"],
-    "incognitas_inversa": ["anios"],
-    "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["ecuaciones cuadráticas", "edades futuras"],
-      "tiempo_estimado": 120,
-      "requiere_calculadora": true,
-      "fuente": "Adaptado"
-    }
-  },
-  {
-    "id": "edades_experto",
-    "tema": "razonamiento_matematico",
-    "subtipo": "problemas_edades",
-    "grado": "5to",
-    "etapa": ["final"],
-    "dificultad": ["experto"],
-    "bidireccional": true,
-    "enunciado": "Hace {pasado} años, la edad de {p1} era el triple de la edad de {p2}. Dentro de {futuro} años, la edad de {p1} será el doble de la edad de {p2}. ¿Cuántos años tienen actualmente?",
-    "variables": {
-      "p1": { "type": "string", "opciones": ["Ricardo", "Patricia"] },
-      "p2": { "type": "string", "opciones": ["Miguel", "Sofía"] },
-      "pasado": { "type": "number", "min": 5, "max": 15, "step": 5 },
-      "futuro": { "type": "number", "min": 5, "max": 15, "step": 5 }
-    },
-    "relaciones": [
-      "x - pasado = 3*(y - pasado)",
-      "x + futuro = 2*(y + futuro)"
-    ],
-    "restricciones": ["x > 0", "y > 0"],
-    "incognita_directa": ["x", "y"],
-    "incognitas_inversa": ["pasado", "futuro"],
-    "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["sistemas de ecuaciones con dos tiempos", "edades"],
-      "tiempo_estimado": 150,
-      "requiere_calculadora": true,
-      "fuente": "Adaptado"
-    }
-  },
-  {
-    "id": "ecuacion_tigre_basico",
+    "id": "planteo_basico_1_coma",
     "tema": "algebra",
-    "subtipo": "planteo_ecuaciones",
+    "subtipo": "ecuacion_directa_basico",
     "grado": "5to",
-    "etapa": ["clasificatoria"],
     "dificultad": ["basico"],
-    "bidireccional": true,
-    "enunciado": "Si al triple de un número de {contexto} le sumamos {a} obtenemos {b}. ¿Cuál es el número?",
     "variables": {
-      "contexto": {
-        "type": "string",
-        "opciones": [
-          "canicas",
-          "soles",
-          "manzanas",
-          "lápices",
-          "figuritas",
-          "caramelos"
-        ]
-      },
-      "x": { "type": "number", "min": 2, "max": 10, "step": 1 },
-      "a": { "type": "number", "min": 5, "max": 20, "step": 5 }
+      "a": { "type": "number", "min": 10, "max": 20 },
+      "x": { "type": "number", "min": 5, "max": 15 }
     },
-    "relaciones": ["b = 3*x + a"],
-    "restricciones": ["b > 0"],
-    "incognita_directa": "x",
-    "incognitas_inversa": ["a", "b"],
+    "relaciones": ["b = 3 * (x + a)", "ans = x"],
+    "incognita_directa": "ans",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["planteo de ecuaciones lineales"],
-      "tiempo_estimado": 60,
-      "requiere_calculadora": false,
-      "fuente": "Adaptado"
-    }
+    "enunciado": "El triple, de un número aumentado en {a}, es igual a {b}. Halla dicho número.",
+    "metadata": { "truco": "Uso de la coma para indicar paréntesis 3(x+a)." }
   },
   {
-    "id": "ecuacion_tigre_intermedio",
+    "id": "planteo_basico_2_consecutivos",
     "tema": "algebra",
-    "subtipo": "planteo_ecuaciones",
+    "subtipo": "ecuacion_directa_basico",
     "grado": "5to",
-    "etapa": ["clasificatoria", "final"],
+    "dificultad": ["basico"],
+    "variables": {
+      "n": { "type": "number", "min": 10, "max": 30 }
+    },
+    "relaciones": ["suma = 3 * n", "ans = 2 * (n - 1)"],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "La suma de tres números enteros consecutivos es {suma}. Halla el doble del número menor.",
+    "metadata": { "truco": "Modelado de consecutivos (x-1, x, x+1) y lectura de la pregunta final." }
+  },
+  {
+    "id": "planteo_basico_3_exceso",
+    "tema": "algebra",
+    "subtipo": "ecuacion_directa_basico",
+    "grado": "5to",
+    "dificultad": ["basico"],
+    "variables": {
+      "a": { "type": "number", "min": 30, "max": 50 },
+      "b": { "type": "number", "min": 80, "max": 120 },
+      "x": { "type": "number", "min": 20, "max": 40 }
+    },
+    "relaciones": ["k = 3*x - a - (b - x)", "ans = x"],
+    "restricciones": ["k == 0"],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "El exceso del triple de un número sobre {a} es igual al exceso de {b} sobre el mismo número. ¿Cuál es el número?",
+    "metadata": { "truco": "Traducción de la palabra 'exceso' como una resta." }
+  },
+  {
+    "id": "planteo_intermedio_1_billetes",
+    "tema": "algebra",
+    "subtipo": "ecuacion_proporcional_intermedio",
+    "grado": "5to",
     "dificultad": ["intermedio"],
-    "bidireccional": true,
-    "enunciado": "La suma de dos números de {contexto} es {suma}. Si el mayor excede al menor en {dif}, ¿cuáles son los números?",
     "variables": {
-      "contexto": {
-        "type": "string",
-        "opciones": ["canicas", "soles", "manzanas", "años", "puntos", "votos"]
-      },
-      "suma": { "type": "number", "min": 20, "max": 100, "step": 10 },
-      "dif": { "type": "number", "min": 4, "max": 20, "step": 2 }
+      "v20": { "type": "number", "min": 4, "max": 10 }
     },
-    "relaciones": ["x + y = suma", "x - y = dif"],
-    "restricciones": ["x > 0", "y > 0"],
-    "incognita_directa": ["x", "y"],
-    "incognitas_inversa": ["suma", "dif"],
+    "relaciones": ["v10 = 3 * v20", "monto_total = v10 * 10 + v20 * 20", "ans = v10 * 10"],
+    "incognita_directa": "ans",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["sistemas de ecuaciones", "planteo"],
-      "tiempo_estimado": 90,
-      "requiere_calculadora": false,
-      "fuente": "Adaptado"
-    }
+    "enunciado": "Tengo un total de {monto_total} soles en billetes de diez y veinte soles. Si el número de billetes de diez es el triple que los de veinte, ¿cuánto dinero tengo solo en billetes de diez?",
+    "metadata": { "truco": "Diferenciar cantidad de objetos de su valor nominal." }
   },
   {
-    "id": "ecuacion_tigre_avanzado",
+    "id": "planteo_intermedio_2_examen",
     "tema": "algebra",
-    "subtipo": "planteo_ecuaciones",
+    "subtipo": "ecuacion_proporcional_intermedio",
     "grado": "5to",
-    "etapa": ["final"],
+    "dificultad": ["intermedio"],
+    "variables": {
+      "total": { "type": "number", "min": 20, "max": 40 },
+      "buenos": { "type": "number", "min": 15, "max": 19 }
+    },
+    "relaciones": ["puntos = buenos * 5 - (total - buenos) * 2", "ans = total - buenos"],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "En un examen de {total} preguntas, por cada respuesta correcta se ganan 5 puntos y por cada error se pierden 2 puntos. Si un alumno obtuvo {puntos} puntos, ¿cuántas preguntas falló?",
+    "metadata": { "truco": "Planteo de sistema de puntos ganados vs perdidos." }
+  },
+  {
+    "id": "planteo_intermedio_3_division",
+    "tema": "algebra",
+    "subtipo": "ecuacion_proporcional_intermedio",
+    "grado": "5to",
+    "dificultad": ["intermedio"],
+    "variables": {
+      "menor": { "type": "number", "min": 10, "max": 30 }
+    },
+    "relaciones": ["mayor = 4 * menor", "suma = mayor + menor", "ans = mayor"],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "La suma de dos números es {suma}. Si dividimos el mayor entre el menor, el cociente es exactamente cuatro. Halla el número mayor.",
+    "metadata": { "truco": "Relacionar la división exacta con un múltiplo." }
+  },
+  {
+    "id": "planteo_avanzado_1_compra",
+    "tema": "algebra",
+    "subtipo": "ecuacion_sistemas_avanzado",
+    "grado": "5to",
     "dificultad": ["avanzado"],
-    "bidireccional": true,
-    "enunciado": "En una granja hay {total} animales entre gallinas y conejos. Si se cuentan {patas} patas en total, ¿cuántas gallinas y cuántos conejos hay?",
     "variables": {
-      "total": { "type": "number", "min": 10, "max": 30, "step": 5 },
-      "patas": { "type": "number", "min": 20, "max": 80, "step": 10 }
+      "cantidad": { "type": "number", "min": 10, "max": 20 }
     },
-    "relaciones": ["g + c = total", "2*g + 4*c = patas"],
-    "restricciones": ["g >= 0", "c >= 0"],
-    "incognita_directa": ["g", "c"],
-    "incognitas_inversa": ["total", "patas"],
+    "relaciones": ["costo_total = cantidad * (cantidad + 5)", "costo_hipotetico = costo_total / (cantidad + 5)", "ans = cantidad"],
+    "incognita_directa": "ans",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["sistemas de ecuaciones", "problemas de granja"],
-      "tiempo_estimado": 120,
-      "requiere_calculadora": false,
-      "fuente": "Adaptado"
-    }
+    "enunciado": "Compré cierto número de cuadernos por {costo_total} soles. Si hubiera comprado 5 cuadernos más por el mismo dinero, cada uno me habría costado 5 soles menos. ¿Cuántos cuadernos compré?",
+    "metadata": { "truco": "Variable en el denominador resuelta por deducción lógica." }
   },
   {
-    "id": "ecuacion_tigre_experto",
+    "id": "planteo_avanzado_2_corral",
     "tema": "algebra",
-    "subtipo": "planteo_ecuaciones",
+    "subtipo": "ecuacion_sistemas_avanzado",
     "grado": "5to",
-    "etapa": ["final"],
-    "dificultad": ["experto"],
-    "bidireccional": true,
-    "enunciado": "Un padre reparte {soles} {contexto} entre sus dos hijos. Al mayor le da el triple de lo que le da al menor, pero si el mayor le diera {cant} {contexto} al menor, entonces ambos tendrían la misma cantidad. ¿Cuánto recibió cada uno inicialmente?",
+    "dificultad": ["avanzado"],
     "variables": {
-      "contexto": {
-        "type": "string",
-        "opciones": [
-          "soles",
-          "canicas",
-          "manzanas",
-          "cromos",
-          "estampas",
-          "monedas"
-        ]
-      },
-      "soles": { "type": "number", "min": 80, "max": 200, "step": 20 },
-      "cant": { "type": "number", "min": 10, "max": 30, "step": 5 }
+      "gallinas": { "type": "number", "min": 5, "max": 12 }
     },
-    "relaciones": [
-      "mayor + menor = soles",
-      "mayor = 3 * menor",
-      "mayor - cant = menor + cant"
-    ],
-    "restricciones": ["mayor > 0", "menor > 0"],
-    "incognita_directa": ["mayor", "menor"],
-    "incognitas_inversa": ["soles", "cant"],
+    "relaciones": ["patos = 2 * gallinas", "conejos = gallinas + 5", "total_patas = gallinas * 2 + patos * 2 + conejos * 4", "ans = gallinas + patos + conejos"],
+    "incognita_directa": "ans",
     "formato_respuesta": { "tipo": "entero" },
-    "metadata": {
-      "habilidades": ["sistemas de ecuaciones", "transferencias"],
-      "tiempo_estimado": 150,
-      "requiere_calculadora": false,
-      "fuente": "Adaptado"
-    }
+    "enunciado": "En un corral hay patos, gallinas y conejos. El número de patos es el doble que el de gallinas, y los conejos son 5 más que las gallinas. Si en total hay {total_patas} patas, ¿cuántos animales hay en total?",
+    "metadata": { "truco": "Tres sujetos con distintas cantidades de extremidades." }
   },
+  {
+    "id": "planteo_avanzado_3_transferencia",
+    "tema": "algebra",
+    "subtipo": "ecuacion_sistemas_avanzado",
+    "grado": "5to",
+    "dificultad": ["avanzado"],
+    "variables": {
+      "dar": { "type": "number", "min": 15, "max": 30 }
+    },
+    "relaciones": ["yo = dar * 2", "tu = yo * 2", "ans = tu"],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Tú tienes el doble de lo que yo tengo. Si me dieras {dar} soles, ambos tendríamos la misma cantidad. ¿Cuánto dinero tienes tú?",
+    "metadata": { "truco": "Efecto espejo en transferencias: uno pierde x y el otro gana x." }
+  },
+  {
+    "id": "planteo_experto_1_sobrafalta",
+    "tema": "algebra",
+    "subtipo": "ecuacion_retos_experto",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "variables": {
+      "precio": { "type": "number", "min": 10, "max": 15 },
+      "n1": { "type": "number", "min": 10, "max": 14 },
+      "n2": { "type": "number", "min": 6, "max": 9 }
+    },
+    "relaciones": ["falta = 40", "sobra = 24", "ans = precio * n1 - falta"],
+    "restricciones": ["precio == (falta + sobra) / (n1 - n2)"],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Si compro {n1} entradas para el teatro me faltan {falta} soles, pero si compro solo {n2} entradas me sobran {sobra} soles. ¿Cuánto dinero tengo?",
+    "metadata": { "truco": "Método de las diferencias o doble falsa posición." }
+  },
+  {
+    "id": "planteo_experto_2_cripto",
+    "tema": "algebra",
+    "subtipo": "ecuacion_retos_experto",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "variables": {
+      "n": { "type": "number", "min": 40, "max": 60 }
+    },
+    "relaciones": ["nuevo = 300 + n", "k = nuevo / n", "ans = (n / 10) + (n % 10)"],
+    "restricciones": ["nuevo % n == 0", "k == 7"],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "A un número de dos cifras se le añade un tres a la izquierda, convirtiéndose en un número que es siete veces el original. Halla la suma de las cifras del número original.",
+    "metadata": { "truco": "Descomposición polinómica implícita en el texto." }
+  },
+  {
+    "id": "planteo_experto_3_grifos",
+    "tema": "algebra",
+    "subtipo": "ecuacion_retos_experto",
+    "grado": "5to",
+    "dificultad": ["experto"],
+    "variables": {
+      "t1": { "type": "number", "min": 3, "max": 4 },
+      "t2": { "type": "number", "min": 5, "max": 6 }
+    },
+    "relaciones": ["t3 = 12", "ans = 6 / (1/t1 + 1/t2 - 1/t3)"],
+    "restricciones": ["ans % 1 == 0"],
+    "incognita_directa": "ans",
+    "formato_respuesta": { "tipo": "entero" },
+    "enunciado": "Un grifo A llena un estanque en {t1} horas, un grifo B en {t2} horas y un desagüe C lo vacía en {t3} horas. Si se abren los tres juntos estando el estanque a la mitad, ¿en cuántas horas se terminará de llenar?",
+    "metadata": { "truco": "Reducción a la unidad con fracciones y estado inicial no vacío." }
+  }
+  ,
+
+
+
+
+
+
 
   {
     "id": "promedios_001",
@@ -5058,6 +5276,12 @@
     }
   },
 
+
+
+
+
+
+  
   {
     "id": "rm_vym_basico_tesla",
     "tema": "Razonamiento Matemático",

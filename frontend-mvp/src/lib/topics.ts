@@ -109,8 +109,8 @@ export const TOPICS_BY_GRADE_ONLY = {
     { nombre: "Criptoaritmética Pro", tipo: "conamat", subtipos: ["cripto_v2_suma_basico", "cripto_v2_resta_intermedio", "cripto_v2_mult_avanzado", "cripto_v2_div_experto"] },
 
 
-    { nombre: "Problemas de Edades", tipo: "conamat", subtipos: ["problemas_edades"] },
-    { nombre: "Planteo de Ecuaciones", tipo: "conamat", subtipos: ["planteo_ecuaciones"] },
+    { nombre: "Problemas de Edades", tipo: "conamat", subtipos: ["edades_ecuacion_basico", "edades_futuro_intermedio", "edades_diferencia_avanzado", "edades_tiempos_experto"] },
+    { nombre: "Planteo de Ecuaciones", tipo: "conamat", subtipos: ["ecuacion_directa_basico", "ecuacion_proporcional_intermedio", "ecuacion_sistemas_avanzado", "ecuacion_retos_experto"] },
     { nombre: "Relojes I: Ángulos", tipo: "conamat", subtipos: ["relojes_ang_basico", "relojes_ang_intermedio", "relojes_ang_avanzado", "relojes_ang_experto"] },
     { nombre: "Relojes II: Cronometría", tipo: "conamat", subtipos: ["relojes_time_basico", "relojes_time_intermedio", "relojes_time_avanzado", "relojes_time_experto"] },
 

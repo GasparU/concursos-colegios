@@ -199,8 +199,8 @@ export const TEMARIO_MAESTRO = {
 
 
 
-    { nombre: "Problemas de Edades", tipo: "conamat", subtipos: ["problemas_edades"] },
-    { nombre: "Planteo de Ecuaciones", tipo: "conamat", subtipos: ["planteo_ecuaciones"] },
+    { nombre: "Problemas de Edades", tipo: "conamat", subtipos: ["edades_ecuacion_basico", "edades_futuro_intermedio", "edades_diferencia_avanzado", "edades_tiempos_experto"] },
+    { nombre: "Planteo de Ecuaciones", tipo: "conamat", subtipos: ["ecuacion_directa_basico", "ecuacion_proporcional_intermedio", "ecuacion_sistemas_avanzado", "ecuacion_retos_experto"] },
     { nombre: "Relojes I: Ángulos", tipo: "conamat", subtipos: ["relojes_ang_basico", "relojes_ang_intermedio", "relojes_ang_avanzado", "relojes_ang_experto"] },
     { nombre: "Relojes II: Cronometría", tipo: "conamat", subtipos: ["relojes_time_basico", "relojes_time_intermedio", "relojes_time_avanzado", "relojes_time_experto"] },
 

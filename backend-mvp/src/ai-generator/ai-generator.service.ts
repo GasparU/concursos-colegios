@@ -174,8 +174,9 @@ export class AiGeneratorService {
 
     const esOperadores = topicLower.includes('operador');
 
-    const esLogicaOAlgebra = /orden|semejante|operador|razonamiento/i.test(topicLower);
+    const esLogicaOAlgebra = /semejante|operador|algebra|ecuacion/i.test(topicLower);
 
+    const esNarrativaMatematica = /edades|parentesco|orden|verdades|mentiras|razonamiento|planteo/i.test(topicLower);
     // 2. Arsenal de contextos creativos (Para que nunca se repita)
     const contextos = [
       'Chefs preparando banquetes o pasteles',
@@ -200,8 +201,8 @@ export class AiGeneratorService {
     Tema: "${topic}"
     Texto original: "${baseText}"
 
-    ${esLogicaOAlgebra ? `
-    🛡️ REGLA DE PROTECCIÓN DE LÓGICA/ÁLGEBRA:
+    ${esLogicaOAlgebra || esNarrativaMatematica ? `
+    🛡️ REGLA DE PROTECCIÓN DE LÓGICA/ÁLGEBRA Y NARRATIVA:
     - EL TEXTO ORIGINAL ES SAGRADO E INMUTABLE.
     - PROHIBIDO resumir, omitir premisas o simplificar el planteamiento.
     - Mantén todas las frases y condiciones intactas. Solo puedes mejorar la redacción sin quitar información.
@@ -227,7 +228,7 @@ export class AiGeneratorService {
     - PROHIBIDO inventar historias o personajes.
     - SÉ DIRECTO, frío y operativo. 
     - Usa frases como: "Halla el valor de...", "Calcula...", "Si se sabe que...".
-    - El inicio debe ser matemático (ej: "Si $A * B = ...$").
+    ${esNarrativaMatematica ? '- EXCEPCIÓN: PROHIBIDO usar lenguaje simbólico o plantear la ecuación (x, y, =, +). Usa puro lenguaje natural deductivo.' : '- El inicio debe ser matemático (ej: "Si $A * B = ...$").'}
     `
     }
 
@@ -437,9 +438,11 @@ export class AiGeneratorService {
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '');
         const esLetras =
-          /comunic|lenguaj|verbal|lect|gramat|comprensi|texto|ortograf|acento|tono|fonema|silaba|hiato|diptongo|triptongo|sustantivo|adjetivo|verbo|pronombre|articulo|oracion|sujeto|predicado|mayuscula|punto|coma|sintaxis|semant|sinon|anton|paron|homon|analo|termino|excluid|series|conector|plan|redacc|literat|histor|geog|civic|psicol|pobl|americ|litic|arcaic|chavin|paracas|mochica|nasca|wari|tiahua|chimu|chincha|inca|tahuant|invasion|conquist|virrein|coloni|reformas|precurs|independ|libertad|militarism|guano|salitre|guerra/i.test(
+          /comunic|lenguaj|verbal|lect|gramat|comprensi|texto|ortograf|acento|tono|fonema|silaba|hiato|diptongo|triptongo|sustantivo|adjetivo|verbo|pronombre|articulo|oracion|sujeto|predicado|mayuscula|punto|coma|sintaxis|semant|sinon|anton|paron|homon|analo|termino|excluid|series|conector|plan|redacc|literat|histor|geog|civic|psicol|pobl|americ|litic|arcaic|chavin|paracas|mochica|nasca|wari|tiahua|chimu|chincha|inca|tahuant|invasion|conquist|virrein|coloni|reformas|precurs|independ|libertad|militarism|guano|salitre|guerra|orden|informacion|mentiras|verdades|parentesco/i.test(
             normalizedTopic,
           );
+
+        this.logger.debug(`[DEBUG] Generando: ${normalizedTopic} | esLetras: ${esLetras}`);
 
         // 1. PREPARAR PROMPT (Igual que antes)
         let systemPrompt = getSystemPrompt(topic, grade, difficulty);
@@ -538,6 +541,7 @@ export class AiGeneratorService {
              
               REQUISITO DE ESTILO: ${styleConstraint}
               SEMILLA DE SEGURIDAD: ${uniqueSeed}
+              - options: Genera 5 alternativas (A, B, C, D, E) donde una sea la correcta y las otras 4 sean distractores realistas y coherentes con el tema.
               - solution_markdown: Explica la resolución paso a paso, usando LaTeX para cada operación. Sé directo y operativo.
               `;
 
@@ -729,14 +733,19 @@ export class AiGeneratorService {
         params.x_value = finalX;
         console.log('✅ [DEBUG] x_value final (IA vs Geo):', finalX);
 
+        const esRespuestaTexto = isNaN(Number(result.correct_answer)) 
+
         const esIAVerbal =
           esLetras ||
           esAritmetica ||
-          result.math_data?.type?.includes('arithmetic');
+          result.math_data?.type?.includes('arithmetic') ||
+          esRespuestaTexto;
+
+        this.logger.debug(`[DEBUG] esIAVerbal: ${esIAVerbal} | Respuesta: ${result.correct_answer}`);
 
         if (esIAVerbal) {
           this.logger.log(
-            `✅ RETORNO DIRECTO: Categoría detectada (${esLetras ? 'Letras' : 'Aritmética'}).`,
+            `✅ RETORNO DIRECTO: Categoría detectada (${esLetras ? 'Letras' : 'Aritmética/Narrativa'}).`,
           );
 
           result.visual_data = null;
@@ -827,30 +836,23 @@ export class AiGeneratorService {
                 context[incognitaKey] ?? arithResult.correctValue;
 
               // Si la plantilla trae fórmulas de distractores, las usamos
-              let finalOptions: number[] = [];
-              if (
-                mathData.distractores &&
-                Array.isArray(mathData.distractores)
-              ) {
+              let finalOptions: any[] = []; 
+              if (mathData.distractores && Array.isArray(mathData.distractores)) {
                 finalOptions = mathData.distractores.map((f) =>
-                  this.evaluateTemplateFormula(f, {
-                    ...context,
-                    correcto: correctValue,
-                  }),
+                  this.evaluateTemplateFormula(f, { ...context, correcto: correctValue })
                 );
+              } else if (typeof correctValue === 'string') {
+                // 🛡️ Si es texto, usamos los otros valores de la plantilla como distractores
+                finalOptions = Object.values(mathData.params).filter(v => typeof v === 'string' && v !== correctValue);
               } else {
-                // Fallback: Distractores inteligentes genéricos
-                finalOptions = [
-                  correctValue + 1,
-                  correctValue - 1,
-                  correctValue + 10,
-                  correctValue - 10,
-                ];
+                // Fallback numérico seguro
+                const cv = Number(correctValue);
+                finalOptions = [cv + 1, cv - 1, cv + 10, cv - 10];
               }
 
-              // Mezclar y asignar letras
+              // 🔥 FILTRO DE SEGURIDAD: Permite strings y números, elimina nulos y vacíos
               const pool = [...new Set([correctValue, ...finalOptions])]
-                .filter((v) => !isNaN(v))
+                .filter((v) => v !== null && v !== undefined && v !== '' && v !== 'undefined')
                 .sort(() => Math.random() - 0.5)
                 .slice(0, 5);
 
