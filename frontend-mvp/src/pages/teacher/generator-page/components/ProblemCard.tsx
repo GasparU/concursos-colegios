@@ -324,11 +324,11 @@ export default function ProblemCard({
                 : "text-slate-400 hover:text-indigo-600 hover:bg-slate-50"
             }`}
           >
-            <span>VER SOLUCIÓN PASO A PASO</span>
+            {/* <span>VER SOLUCIÓN PASO A PASO</span>
             <ChevronDown
               size={14}
               className="group-open:rotate-180 transition-transform"
-            />
+            /> */}
           </summary>
 
           <div

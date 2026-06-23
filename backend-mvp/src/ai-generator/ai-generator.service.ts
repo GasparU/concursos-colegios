@@ -617,7 +617,10 @@ export class AiGeneratorService {
           'numeración',
         ];
 
+        const esGeometriaTopic = /geometr|ángul|triángul|polígon|segment|recta|circunferencia|círculo|paralela/i.test(topicLower);
+
         const esAritmetica =
+          !esGeometriaTopic && (
           arithmeticKeywords.some((keyword) => topicLower.includes(keyword)) ||
           topicLower.includes('edades') || 
           result.math_data?.type?.includes('edades') || 
@@ -632,7 +635,7 @@ export class AiGeneratorService {
           result.math_data?.type === 'fraction_equation' ||
           result.math_data?.type === 'successive_percentage' ||
           result.math_data?.type === 'motion_problem' || // 🔥 Aquí tenía un ; y ahora tiene ||
-          result.math_data?.type === 'money_exchange_simple';
+          result.math_data?.type === 'money_exchange_simple');
 
         // =============================================================
         // 🔥 CONTROL DE ALUCINACIONES POR LONGITUD DE SOLUCIÓN
@@ -673,7 +676,7 @@ export class AiGeneratorService {
         }
 
         // Si después de todo sigue sin haber math_data, lanzar error
-        if (!result.math_data && !esLetras) {
+        if (!result.math_data && !esLetras && !esAritmetica) {
           throw new Error('La IA no generó math_data');
         }
 
@@ -697,9 +700,15 @@ export class AiGeneratorService {
         console.log('🔍 [DEBUG] x_value detectado:', xSource);
 
         if (xSource === null || xSource === undefined) {
-          throw new Error(
-            'La IA devolvió un x_value nulo o ausente. Reintentando...',
-          );
+          if (!esAritmetica) {
+            throw new Error(
+              'La IA devolvió un x_value nulo o ausente. Reintentando...',
+            );
+          }
+          // Para aritmetica, x_value no es necesario; usamos 0 como safe default
+          result.math_data = result.math_data || { type: 'ia_pura', params: {} };
+          result.math_data.params = result.math_data.params || {};
+          result.math_data.params.x_value = 0;
         }
 
         let rawX: number;

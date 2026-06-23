@@ -11,7 +11,8 @@ import { QuintoGradoService } from './grados/quinto.grado.service';
 import { SextoGradoService } from './grados/sexto.grado.service';
 import { BaseGradoService } from './grados/base.grado.service';
 import { denominador, MCD, MCM, numerador } from './utils/math-helpers';
-import { TEMARIO_MAESTRO } from 'src/temario/temario.db';
+import { TEMARIO_MAESTRO } from '../../temario/temario.db';
+
 
 
 export interface VariableDef {

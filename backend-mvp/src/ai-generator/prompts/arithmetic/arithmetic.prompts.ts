@@ -57,7 +57,7 @@ Solución:
 ====================================================================
 📌 FORMATO DE SALIDA
 ====================================================================
-- Incluye 'math_data' solo si es necesario (generalmente no). Puedes poner "math_data": { "type": "none" }.
+- Para problemas de aritmética pura (sin gráficos), usa "math_data": null.
 - 'visual_data' puede ser { "type": "none" }.
 
 ====================================================================
